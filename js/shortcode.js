@@ -12,7 +12,7 @@ jQuery(document).ready(function(){
 					})
 				) 
 			) 
-		}).css({"display":"inline-block"});
+		}).css({"display":"inline-block","position":"relative","left":function(index){ return "-"+jQuery(this).parent('span.text').prevAll('span.sup:first').outerWidth(true)+"px"; } });
 	});		
 });
 

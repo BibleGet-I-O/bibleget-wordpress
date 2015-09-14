@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 3.1
+ * Version: 3.2
  * Plugin URI: http://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -27,7 +27,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define("PLUGINVERSION","v3_1");
+define("PLUGINVERSION","v3_2");
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -190,7 +190,7 @@ add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
 function queryServer($finalquery) {
-	$ch = curl_init ( "query.bibleget.io/index2.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( $_SERVER ['HTTP_HOST'] . "&pluginversion=" . PLUGINVERSION ) );
+	$ch = curl_init ( "query.bibleget.io/index2.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( $_SERVER ['HTTP_HOST'] ) . "&pluginversion=" . PLUGINVERSION );
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 	
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
