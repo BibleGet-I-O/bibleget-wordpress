@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation
 Requires at least: 3.3
 Tested up to: 4.3
-Stable tag: 3.2
+Stable tag: 3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 == Changelog ==
 
+= 3.3 =
+* Fix languages array's German translation
+
 = 3.2 =
 * Further enhancements on CSS styling, especially for the NABRE text
 * Added a few more localized button images
@@ -205,6 +208,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 3.3 =
+Minor update with bugfix for incorrect entries in languages array for German language
 
 = 3.2 =
 Minor update with further CSS styling enhancements especially for the NABRE text plus small bugfix

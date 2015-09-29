@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 3.2
+ * Version: 3.3
  * Plugin URI: http://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -27,15 +27,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define("PLUGINVERSION","v3_2");
+define ( "PLUGINVERSION", "v3_3" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
 	header ( 'HTTP/1.1 403 Forbidden' );
 	exit ();
 }
-
-
 function BibleGet_on_activation() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -46,8 +44,6 @@ function BibleGet_on_activation() {
 	// exit( var_dump( $_GET ) );
 	SetOptions ();
 }
-
-
 function BibleGet_on_deactivation() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -58,8 +54,6 @@ function BibleGet_on_deactivation() {
 	// exit( var_dump( $_GET ) );
 	// DeleteOptions();
 }
-
-
 function BibleGet_on_uninstall() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -174,10 +168,12 @@ function bibleget_shortcode($atts, $content = null) {
 				// $output = $finalquery;
 				// return '<div class="bibleget-quote-div">' . $output . '</div>';
 				$output = queryServer ( $finalquery );
-				$output = str_replace(PHP_EOL, '', $output);
+				$output = str_replace ( PHP_EOL, '', $output );
 				set_transient ( md5 ( $finalquery ), $output, 24 * HOUR_IN_SECONDS );
 			}
-			wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
+			wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array (
+					'jquery' 
+			), '1.0', true );
 			return '<div class="bibleget-quote-div">' . $output . '</div>';
 		}
 	} else {
@@ -187,8 +183,6 @@ function bibleget_shortcode($atts, $content = null) {
 	}
 }
 add_shortcode ( 'bibleget', 'bibleget_shortcode' );
-
-
 function queryServer($finalquery) {
 	$ch = curl_init ( "query.bibleget.io/index2.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( $_SERVER ['HTTP_HOST'] ) . "&pluginversion=" . PLUGINVERSION );
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
@@ -217,7 +211,6 @@ function queryServer($finalquery) {
 	
 	return $output;
 }
-
 function processQueries($queries, $versions) {
 	$goodqueries = array ();
 	
@@ -280,7 +273,6 @@ function processQueries($queries, $versions) {
 	update_option ( 'bibleget_error_admin_notices', $notices );
 	return $goodqueries;
 }
-
 function checkQuery($thisquery, $indexes, $thisbook = "") {
 	// write_log("value of thisquery = ".$thisquery);
 	$errorMessages = array ();
@@ -541,8 +533,8 @@ function checkQuery($thisquery, $indexes, $thisbook = "") {
 							update_option ( 'bibleget_error_admin_notices', $errs );
 							return false;
 						}
-					} 					// if there's no comma after, we're dealing with chapter,verse to verse
-					else {
+					}  // if there's no comma after, we're dealing with chapter,verse to verse
+else {
 						$matchesA_temp = explode ( ",", $matchA [1] );
 						$matchesA = explode ( "-", $matchesA_temp [1] );
 						if ($matchesA [0] >= $matchesA [1]) {
@@ -607,7 +599,6 @@ function toProperCase($txt) {
 		return $txt;
 	}
 }
-
 function idxOf($needle, $haystack) {
 	foreach ( $haystack as $index => $value ) {
 		if (is_array ( $haystack [$index] )) {
@@ -690,7 +681,6 @@ function getMetaData($request) {
 		return false;
 	}
 }
-
 function queryClean($query) {
 	// enforce query rules
 	if ($query === '') {
@@ -714,7 +704,6 @@ function queryClean($query) {
 	
 	return array_map ( "toProperCase", $queries );
 }
-
 function bibleget_admin_notices() {
 	if ($notices = get_option ( 'bibleget_error_admin_notices' )) {
 		foreach ( $notices as $notice ) {
@@ -730,27 +719,25 @@ function bibleget_admin_notices() {
 	}
 }
 add_action ( 'admin_notices', 'bibleget_admin_notices' );
-
 function DeleteOptions() {
-	//DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
+	// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
 	for($i = 0; $i < 73; $i ++) {
 		delete_option ( "bibleget_biblebooks" . $i );
 	}
 	
-	//DELETE BIBLEGET_LANGUAGES CACHED INFO
+	// DELETE BIBLEGET_LANGUAGES CACHED INFO
 	delete_option ( "bibleget_languages" );
 	
-	//DELETE BIBLEGET_VERSIONS CACHED INFO
+	// DELETE BIBLEGET_VERSIONS CACHED INFO
 	$bibleversions = json_decode ( get_option ( "bibleget_versions" ) );
 	delete_option ( "bibleget_versions" );
 	
-	//DELETE BIBLEGET_VERSIONINDEX CACHED INFO
+	// DELETE BIBLEGET_VERSIONINDEX CACHED INFO
 	$bibleversionsabbrev = get_object_vars ( $bibleversions );
 	foreach ( $bibleversionsabbrev as $abbrev ) {
 		delete_option ( "bibleget_" . $abbrev . "IDX" );
 	}
 }
-
 function SetOptions() {
 	$metadata = getMetaData ( "biblebooks" );
 	if ($metadata !== false) {
@@ -996,14 +983,14 @@ $worldlanguages = array (
 				"it" => "Inglese",
 				"es" => "Inglés",
 				"fr" => "Anglais",
-				"de" => "Griechisch" 
+				"de" => "Englisch" 
 		),
 		"French" => array (
 				"en" => "French",
 				"it" => "Francese",
 				"es" => "Francés",
 				"fr" => "Français",
-				"de" => "Ungarisch" 
+				"de" => "Französisch" 
 		),
 		"German" => array (
 				"en" => "German",
@@ -1017,42 +1004,42 @@ $worldlanguages = array (
 				"it" => "Greco",
 				"es" => "Griego",
 				"fr" => "Grec",
-				"de" => "Japanisch" 
+				"de" => "Griechisch" 
 		),
 		"Hungarian" => array (
 				"en" => "Hungarian",
 				"it" => "Ungherese",
 				"es" => "Húngaro",
 				"fr" => "Hongrois",
-				"de" => "Koreanisch" 
+				"de" => "Ungarisch" 
 		),
 		"Italian" => array (
 				"en" => "Italian",
 				"it" => "Italiano",
 				"es" => "Italiano",
 				"fr" => "Italien",
-				"de" => "Latein" 
+				"de" => "Italienisch" 
 		),
 		"Japanese" => array (
 				"en" => "Japanese",
 				"it" => "Giapponese",
 				"es" => "Japonés",
 				"fr" => "Japonais",
-				"de" => "Japanese" 
+				"de" => "Japanisch" 
 		),
 		"Korean" => array (
 				"en" => "Korean",
 				"it" => "Coreano",
 				"es" => "Coreano",
 				"fr" => "Coréen",
-				"de" => "Korean" 
+				"de" => "Koreanisch" 
 		),
 		"Latin" => array (
 				"en" => "Latin",
 				"it" => "Latino",
 				"es" => "Latín",
 				"fr" => "Latin",
-				"de" => "Latin" 
+				"de" => "Lateinisch" 
 		),
 		"Polish" => array (
 				"en" => "Polish",
@@ -1080,14 +1067,14 @@ $worldlanguages = array (
 				"it" => "Russo",
 				"es" => "Ruso",
 				"fr" => "Russe",
-				"de" => "Russian" 
+				"de" => "Russisch" 
 		),
 		"Spanish" => array (
 				"en" => "Spanish",
 				"it" => "Spagnolo",
 				"es" => "Español",
 				"fr" => "Espagnol",
-				"de" => "Thailändisch" 
+				"de" => "Spanisch" 
 		),
 		"Tagalog" => array (
 				"en" => "Tagalog",
@@ -1101,14 +1088,14 @@ $worldlanguages = array (
 				"it" => "Tamil",
 				"es" => "Tamil",
 				"fr" => "Tamoul",
-				"de" => "Tamil" 
+				"de" => "Tamilisch" 
 		),
 		"Thai" => array (
 				"en" => "Thai",
 				"it" => "Thai",
 				"es" => "Thai",
 				"fr" => "Thaï",
-				"de" => "Thai" 
+				"de" => "Thailändisch" 
 		),
 		"Vietnamese" => array (
 				"en" => "Vietnamese",
@@ -1118,6 +1105,7 @@ $worldlanguages = array (
 				"de" => "Vietnamesisch" 
 		) 
 );
+
 function Sortify($string) {
 	return preg_replace ( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i', '$1' . chr ( 255 ) . '$2', htmlentities ( $string, ENT_QUOTES, 'UTF-8' ) );
 }
