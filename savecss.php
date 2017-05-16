@@ -1,10 +1,10 @@
 <?php 
 	/* AJAX check  */
 	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-		$file = $_POST["file"];
-		$contents = $_POST["contents"];
-		
-		if(file_exists($file)){
+		$contents = preg_replace('/<\\?.*(\\?>|$)/Us', '',$_POST["contents"]);
+
+		$file = $_POST["file"];		
+		if(basename($file)=="styles.css" && file_exists($file)){			
 			if(file_put_contents ($file,$contents)){
 				echo "UPDATE SUCCESSFUL";
 			}

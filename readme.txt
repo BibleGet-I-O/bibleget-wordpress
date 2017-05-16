@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation
 Requires at least: 3.3
-Tested up to: 4.3
-Stable tag: 3.4
+Tested up to: 4.7.4
+Stable tag: 3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 == Changelog ==
 
+= 3.5 =
+* Fix possible vulnerability in the script that saves the custom css file
+
 = 3.4 =
 * Better error handling: server errors from the BibleGet server will only be shown in backend notifications, and will not be saved in any transients. (this update is thanks to user feedback from Mr. D.N., user feedback is very helpful!)
 
@@ -211,6 +214,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 3.5 =
+This is a minor update with a bugfix for a possible vulnerability
 
 = 3.4 =
 Minor update with better error handling, errors from the bibleget server will only show in backend
