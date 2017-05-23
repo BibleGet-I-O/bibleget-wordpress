@@ -1,0 +1,438 @@
+# Copyright (C) 2015 BibleGet I/O
+# This file is distributed under the same license as the BibleGet I/O package.
+# Translators:
+# John R. D'Orazio <priest@johnromanodorazio.com>, 2016
+# John R. D'Orazio <priest@johnromanodorazio.com>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: BibleGet I/O Plugin for Wordpress\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/bibleget-io\n"
+"POT-Creation-Date: 2015-02-14 16:29:15+00:00\n"
+"PO-Revision-Date: 2017-05-17 14:52+0000\n"
+"Last-Translator: John R. D'Orazio <priest@johnromanodorazio.com>\n"
+"Language-Team: Czech (http://www.transifex.com/bibleget-io/bibleget-io-plugin-for-wordpress/language/cs/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#. translators: do NOT translate the parameter names \"version\" or
+#. \"versions\" !!!
+#: bibleget-io.php:131
+msgid ""
+"You must indicate the desired version with the parameter \"version\" (or the"
+" desired versions as a comma separated list with the parameter \"versions\")"
+msgstr "Musíte uvést požadovanou verzi s parametr \"version\" (nebo požadované verze jako čárkami oddělený seznam s parametrem \"verze\")"
+
+#. translators: you must not change the placeholders \"%s\" or the html <a
+#. href=\"%s\">, </a>
+#: bibleget-io.php:147
+msgid ""
+"The requested version \"%s\" is not valid, please check the list of valid "
+"versions in the <a href=\"%s\">settings page</a>"
+msgstr "Požadovanou verzi \"%s\" není platný, zkontrolujte, zda v seznamu platných verzí v <a href=\"%s\"> nastavení stránky</a>"
+
+#. translators: do not translate "shortcode" unless the version of wordpress
+#. in
+#. your language uses a translated term to refer to shortcodes
+#: bibleget-io.php:174
+msgid ""
+"There are errors in the shortcode, please check carefully your query syntax:"
+msgstr "Existují chyby v krátký, pečlivě zkontrolujte syntaxi:"
+
+#: bibleget-io.php:199
+msgid ""
+"There was an error communicating with the BibleGet server, please wait a few"
+" minutes and try again: "
+msgstr "Došlo k chybě při komunikaci se serverem BibleGet, počkejte několik minut a akci opakujte: "
+
+#. translators: do not change the placeholders <%s>
+#: bibleget-io.php:257
+msgid ""
+"The first query <%s> in the querystring <%s> must start with a valid book "
+"indicator!"
+msgstr "První dotaz <%s> v querystring <%s> musí začít s indikátorem platný kniha!"
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:279
+msgid "There cannot be more commas than there are dots."
+msgstr "Nemůže existovat více čárky, než je počet teček."
+
+#: bibleget-io.php:280
+msgid "You must have a valid chapter following the book indicator!"
+msgstr "Musí mít platné kapitoly po indikátor kniha!"
+
+#: bibleget-io.php:281
+msgid ""
+"The book indicator is not valid. Please check the documentation for a list "
+"of valid book indicators."
+msgstr "Kniha ukazatele není platný. Zkontrolujte v dokumentaci k seznamu ukazatelů platných knihu."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:283
+msgid ""
+"You cannot use a dot without first using a comma. A dot is a liason between "
+"verses, which are separated from the chapter by a comma."
+msgstr "Nelze použít tečku nepoužijete čárku. Tečka je prostředník mezi verše, které jsou odděleny čárkou od kapitoly."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:285
+msgid ""
+"A dot must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Tečkou musí být a následnou číslic 1 až 3, z nichž první číslice nemůže být nulový."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:287
+msgid ""
+"A comma must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Čárkou musí být a následnou číslic 1 až 3, z nichž první číslice nemůže být nulový."
+
+#: bibleget-io.php:288
+msgid ""
+"A dash must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Pomlčkou musí být a následnou číslic 1 až 3, z nichž první číslice nemůže být nulový."
+
+#: bibleget-io.php:289
+msgid ""
+"If there is a chapter-verse construct following a dash, there must also be a"
+" chapter-verse construct preceding the same dash."
+msgstr "Pokud tam je po pomlčku kapitolu verš konstrukce, musí existovat také kapitolu verš konstrukce předchází stejné pomlčka."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:291
+msgid ""
+"There are multiple dashes in the query, but there are not enough dots. There"
+" can only be one more dash than dots."
+msgstr "Existuje více pomlčky v dotazu, ale nejsou dost tečky. Může existovat pouze jeden víc elánu, než tečky."
+
+#. translators: the expressions %1$d, %2$d, and %3$s must be left as is, they
+#. will be substituted dynamically by values in the script. See
+#. http:php.net/sprintf.
+#: bibleget-io.php:293
+msgid ""
+"The values concatenated by the dot must be consecutive, instead %1$d >= %2$d"
+" in the expression <%3$s>"
+msgstr "Hodnoty spojeny tečkou musí být po sobě, místo %1$ d video = %2$ d ve výrazu <%3$s>"
+
+#: bibleget-io.php:294
+msgid ""
+"A query that doesn't start with a book indicator must however start with a "
+"valid chapter indicator!"
+msgstr "Dotaz, který nelze spustit s indikátorem knihy musí nicméně začít s indikátorem platné kapitoly!"
+
+#. translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be
+#. left
+#. as is, they will be substituted dynamically by values in the script. See
+#. http:php.net/sprintf.
+#: bibleget-io.php:371 bibleget-io.php:490
+msgid ""
+"A chapter in the query is out of bounds: there is no chapter <%1$d> in the "
+"book <%2$s> in the requested version <%3$s>, the last possible chapter is "
+"<%4$d>"
+msgstr "Kapitola v dotazu je mimo hranice: neexistuje žádná kapitola <%1$d> v knize <%2$s> v požadované verzi <%3$s>, poslední možné kapitola je <%4$d>"
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:384
+msgid "You cannot have more than one comma and not have a dash!"
+msgstr "Nemůžete mít více než jednu čárku a nemá pomlčku!"
+
+#: bibleget-io.php:390
+msgid ""
+"You seem to have a malformed querystring, there should be only one dash."
+msgstr "Vypadá to, že mají poškozené querystring, měla by existovat pouze jeden pomlčka."
+
+#. translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must
+#. be
+#. left as is, they will be substituted dynamically by values in the script.
+#. See http:php.net/sprintf.
+#: bibleget-io.php:402 bibleget-io.php:430 bibleget-io.php:450
+#: bibleget-io.php:470
+msgid ""
+"A verse in the query is out of bounds: there is no verse <%1$d> in the book "
+"<%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible "
+"verse is <%5$d>"
+msgstr "Verše v dotazu je mimo hranice: neexistuje žádný verš <%1$d> v knize <%2$s> v kapitole <%3$d> v požadované verzi <%4$s>, poslední možné verš je <%5$d>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:530
+msgid ""
+"Chapters must be consecutive. Instead the first chapter indicator <%s> is "
+"greater than or equal to the second chapter indicator <%s> in the expression"
+" <%s>"
+msgstr "Kapitol musí být po sobě. Místo toho první kapitola indikátor <%s> je větší než nebo rovno druhé kapitoly indikátor <%s> ve výrazu <%s>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:541
+msgid ""
+"Verses in the same chapter must be consecutive. Instead verse <%s> is "
+"greater than verse <%s> in the expression <%s>"
+msgstr "Verše v téže kapitoly, musí být za sebou. Místo toho je větší než verš <%s> ve výrazu <%s> verš <%s>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:552
+msgid ""
+"Verses concatenated by a dash must be consecutive, instead <%s> is greater "
+"than or equal to <%s> in the expression <%s>"
+msgstr "Verše spojení pomlčkou musí být po sobě, místo <%s> je větší než nebo rovno <%s> ve výrazu <%s>"
+
+#. translators: do not change the placeholders or the html markup, though you
+#. can translate the anchor title
+#: bibleget-io.php:656
+msgid ""
+"There was a problem communicating with the BibleGet server. <a href=\"%s\" "
+"title=\"update metadata now\">Metadata needs to be manually updated</a>."
+msgstr "Došlo k potížím komunikaci se serverem BibleGet. <a href=\"%s\" title=\"update metadata now\"> Metadata je třeba aktualizovat ručně</a>."
+
+#. translators: do not change the placeholders or the html markup, though you
+#. can translate the anchor title
+#: bibleget-io.php:666 bibleget-io.php:681
+msgid ""
+"There may have been a problem communicating with the BibleGet server. <a "
+"href=\"%s\" title=\"update metadata now\">Metadata needs to be manually "
+"updated</a>."
+msgstr "Pravděpodobně došlo k potížím komunikaci se serverem BibleGet. <a href=\"%s\" title=\"update metadata now\"> Metadata je třeba aktualizovat ručně</a>."
+
+#: bibleget-io.php:690
+msgid "You cannot send an empty query."
+msgstr "Nemůžete odeslat prázdný dotaz."
+
+#: bibleget-io.php:697
+msgid ""
+"Mixed notations have been detected. Please use either english notation or "
+"european notation."
+msgstr "Smíšené zápisy byly zjištěny. Použijte prosím anglická notace nebo evropských notace."
+
+#: bibleget-io.php:803
+msgid "BibleGet Server data has been successfully renewed."
+msgstr "Data BibleGet serveru byla úspěšně obnovena."
+
+#: options.php:85
+msgid "BibleGet I/O Settings"
+msgstr "BibleGet I/O nastavení"
+
+#: options.php:98
+msgid "Preview"
+msgstr "Náhled"
+
+#: options.php:100
+msgid "Genesis"
+msgstr "Genesis"
+
+#: options.php:102
+msgid "In the beginning, when God created the heavens and the earth—"
+msgstr "Na začátku, když Bůh stvořil nebesa a zemi –"
+
+#: options.php:102
+msgid ""
+"and the earth was without form or shape, with darkness over the abyss and a "
+"mighty wind sweeping over the waters—"
+msgstr "a země byla bez formuláře nebo tvaru, s tmou nad propasti a silný vítr dostihla a vod-"
+
+#: options.php:102
+msgid "Then God said: Let there be light, and there was light."
+msgstr "Pak řekl Bůh: Budiž světlo, a bylo světlo."
+
+#: options.php:108
+msgid "Edit the stylesheet directly"
+msgstr "Upravit šablony stylů přímo"
+
+#: options.php:109
+msgid ""
+"You can edit and save the stylesheet directly, but any changes you make "
+"directly to the stylesheet will be overwritten the next time you use the "
+"above options form. Also the changes made directly here to the stylesheet "
+"will not be reflected in the preview box, they will only be reflected on the"
+" pages that contain the shortcode."
+msgstr "Můžete upravit a Uložit šablony stylů přímo, ale veškeré změny, které provedete přímo do šablony stylů, budou přepsány při příštím použití výše uvedené možnosti formuláře. Také změny provedené přímo zde na šablony stylů se neprojeví v poli Náhled se se projeví pouze na stránkách, které obsahují krátký."
+
+#: options.php:118
+msgid "SAVE STYLESHEET"
+msgstr "ULOŽIT ŠABLONY STYLŮ"
+
+#: options.php:122
+msgid "Current BibleGet I/O engine information:"
+msgstr "Aktuální informace pro modul BibleGet I/O:"
+
+#. translators: please do not change the placeholders %s, they will be
+#. substituted dynamically by values in the script. See http:php.net/printf.
+#: options.php:134
+msgid ""
+"The BibleGet I/O engine currently supports %s versions of the Bible in %s "
+"different languages."
+msgstr "BibleGet I/O modul v současné době podporuje %s verze Bible v různých jazycích %s."
+
+#: options.php:136
+msgid ""
+"Here is the list of currently supported versions, subdivided by language:"
+msgstr "Zde je seznam aktuálně podporovaných verzí, rozdělené podle jazyka:"
+
+#. translators: please do not change the placeholders %s, they will be
+#. substituted dynamically by values in the script. See http:php.net/printf.
+#: options.php:151
+msgid ""
+"The BibleGet I/O engine currently recognizes the names of the books of the "
+"Bible in %s different languages:"
+msgstr "BibleGet I/O modul v současnosti rozpoznává názvy knih Bible v různých jazycích %s:"
+
+#: options.php:156
+msgid ""
+"This information from the BibleGet server is cached locally to improve "
+"performance. If new versions have been added to the BibleGet server or new "
+"languages are supported, this information might be outdated. In that case "
+"you can click on the button below to renew the information."
+msgstr "Tyto informace ze serveru BibleGet je místně do mezipaměti pro zlepšení výkonu. Pokud byly přidány nové verze na serveru BibleGet nebo nové jazyky jsou podporovány, tyto informace mohou být zastaralé. V takovém případě po klepnutí na tlačítko obnovit informace."
+
+#: options.php:157
+msgid "RENEW INFORMATION FROM BIBLEGET SERVER"
+msgstr "OBNOVIT INFORMACE ZE SERVERU BIBLEGET"
+
+#: options.php:184
+msgid "Font & Style Settings"
+msgstr "Písem & nastavení stylu"
+
+#: options.php:191
+msgid "Font Family for Biblical Quotes"
+msgstr "Rodina písma pro biblické Citáty"
+
+#: options.php:199
+msgid "Font Size for Books and Chapters"
+msgstr "Velikost písma pro knih a kapitol"
+
+#: options.php:207
+msgid "Font Size for Verse Numbers"
+msgstr "Velikost písma pro čísla veršů"
+
+#: options.php:215
+msgid "Font Size for Text of Verses"
+msgstr "Velikost písma pro Text veršů"
+
+#: options.php:223
+msgid "Font Style for Books and Chapters"
+msgstr "Řez písma pro knih a kapitol"
+
+#: options.php:231
+msgid "Font Style for Verse Numbers"
+msgstr "Řez písma pro čísla veršů"
+
+#: options.php:239
+msgid "Font Style for Text of Verses"
+msgstr "Řez písma pro Text veršů"
+
+#: options.php:247
+msgid "Font Color for Books and Chapters"
+msgstr "Barva písma pro knih a kapitol"
+
+#: options.php:255
+msgid "Font Color for Verse Numbers"
+msgstr "Barva písma pro čísla veršů"
+
+#: options.php:263
+msgid "Font Color for Text of Verses"
+msgstr "Barva písma pro Text veršů"
+
+#: options.php:271
+msgid "Line-spacing for Verses Paragraphs"
+msgstr "Řádkování odstavců verše"
+
+#: options.php:279
+msgid "Preferences Settings"
+msgstr "Nastavení předvoleb"
+
+#: options.php:286
+msgid "Preferred version or versions (when not indicated in shortcode)"
+msgstr "Upřednostňovaná verze nebo verze (Pokud není uvedeno v krátký)"
+
+#: options.php:346
+msgid "Customize the appearance and styling of the Bible Quotations:"
+msgstr "Přizpůsobení vzhledu a stylu citátů Bible:"
+
+#: options.php:351
+msgid "Choose your preferences to facilitate the usage of the shortcode:"
+msgstr "Vyberte si své preference pro usnadnění použití krátký:"
+
+#. translators: the letter that can represent "Bold" style in a toolbar
+#: options.php:510 options.php:553 options.php:608
+msgid "B"
+msgstr "B"
+
+#. translators: the letter that can represent "Italic" style in a toolbar
+#: options.php:516 options.php:559 options.php:614
+msgid "I"
+msgstr "Já"
+
+#. translators: the letter that can represent "Underline" style in a toolbar
+#: options.php:522 options.php:565 options.php:620
+msgid "U"
+msgstr "U"
+
+#. translators: the letter that can represent "Strikethrough" style in a
+#. toolbar
+#: options.php:528 options.php:571 options.php:626
+msgid "S"
+msgstr "S"
+
+#. translators: letters that can represent "Superscript" style in a toolbar
+#: options.php:577
+msgid "SUP"
+msgstr "SUP"
+
+#. translators: letters that can represent "Subscript" style in a toolbar
+#: options.php:583
+msgid "SUB"
+msgstr "SUB"
+
+#. translators: "single" refers to line-spacing: "single line-spacing"
+#: options.php:645
+msgid "single"
+msgstr "jeden"
+
+#. translators: "double" refers to line-spacing: "double line-spacing"
+#: options.php:647
+msgid "double"
+msgstr "dvojité"
+
+#: options.php:949
+msgid ""
+"There was an error saving the settings data. You may have to try again."
+msgstr "Došlo k chybě při ukládání dat nastavení. Budete muset zkusit znovu."
+
+#. Plugin Name of the plugin/theme
+msgid "BibleGet I/O"
+msgstr "BibleGet I/O"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.bibleget.io/"
+msgstr "http://www.bibleget.IO/"
+
+#. Description of the plugin/theme
+msgid ""
+"Easily insert Bible quotes from a choice of Bible versions into your "
+"articles or pages with the shortcode [bibleget]."
+msgstr "Snadno vložte Bible citáty z Bible provedeních do své články nebo stránky s shortcode [bibleget]."
+
+#. Author of the plugin/theme
+msgid "John Romano D'Orazio"
+msgstr "John Romano D'Orazio"
+
+#. Author URI of the plugin/theme
+msgid "http://www.cappellaniauniroma3.org/"
+msgstr "http://www.cappellaniauniroma3.org/"

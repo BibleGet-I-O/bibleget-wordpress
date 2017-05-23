@@ -1,0 +1,438 @@
+# Copyright (C) 2015 BibleGet I/O
+# This file is distributed under the same license as the BibleGet I/O package.
+# Translators:
+# John R. D'Orazio <priest@johnromanodorazio.com>, 2016
+# John R. D'Orazio <priest@johnromanodorazio.com>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: BibleGet I/O Plugin for Wordpress\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/bibleget-io\n"
+"POT-Creation-Date: 2015-02-14 16:29:15+00:00\n"
+"PO-Revision-Date: 2017-05-17 14:52+0000\n"
+"Last-Translator: John R. D'Orazio <priest@johnromanodorazio.com>\n"
+"Language-Team: Portuguese (http://www.transifex.com/bibleget-io/bibleget-io-plugin-for-wordpress/language/pt/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. translators: do NOT translate the parameter names \"version\" or
+#. \"versions\" !!!
+#: bibleget-io.php:131
+msgid ""
+"You must indicate the desired version with the parameter \"version\" (or the"
+" desired versions as a comma separated list with the parameter \"versions\")"
+msgstr "Você deve indicar a versão desejada com o parâmetro \"versão\" (ou as versões desejadas como uma lista separada por vírgulas com o parâmetro \"versões\")"
+
+#. translators: you must not change the placeholders \"%s\" or the html <a
+#. href=\"%s\">, </a>
+#: bibleget-io.php:147
+msgid ""
+"The requested version \"%s\" is not valid, please check the list of valid "
+"versions in the <a href=\"%s\">settings page</a>"
+msgstr "A versão solicitada \"%s\" não é válida, por favor, verifique a lista de versões válidas na <a href=\"%s\"> página de configurações</a>"
+
+#. translators: do not translate "shortcode" unless the version of wordpress
+#. in
+#. your language uses a translated term to refer to shortcodes
+#: bibleget-io.php:174
+msgid ""
+"There are errors in the shortcode, please check carefully your query syntax:"
+msgstr "Há erros em corrigir o defeito, por favor, verifique cuidadosamente sua sintaxe de consulta:"
+
+#: bibleget-io.php:199
+msgid ""
+"There was an error communicating with the BibleGet server, please wait a few"
+" minutes and try again: "
+msgstr "Houve um erro de comunicação com o servidor de BibleGet, por favor, aguarde alguns minutos e tente novamente: "
+
+#. translators: do not change the placeholders <%s>
+#: bibleget-io.php:257
+msgid ""
+"The first query <%s> in the querystring <%s> must start with a valid book "
+"indicator!"
+msgstr "A primeira consulta <%s> na querystring <%s> deve começar com um indicador válido do livro!"
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:279
+msgid "There cannot be more commas than there are dots."
+msgstr "Não pode haver mais vírgulas que há pontos."
+
+#: bibleget-io.php:280
+msgid "You must have a valid chapter following the book indicator!"
+msgstr "Você deve ter um capítulo válido após o indicador de livro!"
+
+#: bibleget-io.php:281
+msgid ""
+"The book indicator is not valid. Please check the documentation for a list "
+"of valid book indicators."
+msgstr "O indicador do livro não é válido. Por favor, verifique a documentação para obter uma lista de indicadores válidos do livro."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:283
+msgid ""
+"You cannot use a dot without first using a comma. A dot is a liason between "
+"verses, which are separated from the chapter by a comma."
+msgstr "Você não pode usar um ponto sem primeiro usar uma vírgula. Um ponto é uma ligação entre os versos, que são separados por uma vírgula do capítulo."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:285
+msgid ""
+"A dot must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Um ponto deve ser precedido e seguido por 1 a 3 dígitos, dos quais o primeiro dígito não pode ser zero."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:287
+msgid ""
+"A comma must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Uma vírgula deve ser precedida e seguida por 1 a 3 dígitos, dos quais o primeiro dígito não pode ser zero."
+
+#: bibleget-io.php:288
+msgid ""
+"A dash must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr "Um traço deve ser precedido e seguido por 1 a 3 dígitos, dos quais o primeiro dígito não pode ser zero."
+
+#: bibleget-io.php:289
+msgid ""
+"If there is a chapter-verse construct following a dash, there must also be a"
+" chapter-verse construct preceding the same dash."
+msgstr "Se houver uma construção capítulo-verso seguindo um traço, também deve haver uma construção do versículo do capítulo anterior o mesmo traço."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:291
+msgid ""
+"There are multiple dashes in the query, but there are not enough dots. There"
+" can only be one more dash than dots."
+msgstr "Existem vários traços na consulta, mas não há pontos suficientes. Só pode haver um traço mais do que pontos."
+
+#. translators: the expressions %1$d, %2$d, and %3$s must be left as is, they
+#. will be substituted dynamically by values in the script. See
+#. http:php.net/sprintf.
+#: bibleget-io.php:293
+msgid ""
+"The values concatenated by the dot must be consecutive, instead %1$d >= %2$d"
+" in the expression <%3$s>"
+msgstr "Os valores concatenados por ponto devem ser consecutivos, em vez disso %1$ d > = %2$ d na expressão <%3$s>"
+
+#: bibleget-io.php:294
+msgid ""
+"A query that doesn't start with a book indicator must however start with a "
+"valid chapter indicator!"
+msgstr "Uma consulta que não começa com um indicador de livro, no entanto, deve começar com um indicador válido capítulo!"
+
+#. translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be
+#. left
+#. as is, they will be substituted dynamically by values in the script. See
+#. http:php.net/sprintf.
+#: bibleget-io.php:371 bibleget-io.php:490
+msgid ""
+"A chapter in the query is out of bounds: there is no chapter <%1$d> in the "
+"book <%2$s> in the requested version <%3$s>, the last possible chapter is "
+"<%4$d>"
+msgstr "Um capítulo na consulta está fora dos limites: não há nenhum capítulo <%1$d> no livro <%2$s> na versão solicitada <%3$s>, o último capítulo possível é <%4$d>"
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation
+#. notation; in some notations (such as english notation) colons are used
+#. instead of commas, and commas are used instead of dots
+#: bibleget-io.php:384
+msgid "You cannot have more than one comma and not have a dash!"
+msgstr "Você não pode ter mais de uma vírgula e não têm um traço!"
+
+#: bibleget-io.php:390
+msgid ""
+"You seem to have a malformed querystring, there should be only one dash."
+msgstr "Você parece ter uma querystring malformado, deve haver apenas um traço."
+
+#. translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must
+#. be
+#. left as is, they will be substituted dynamically by values in the script.
+#. See http:php.net/sprintf.
+#: bibleget-io.php:402 bibleget-io.php:430 bibleget-io.php:450
+#: bibleget-io.php:470
+msgid ""
+"A verse in the query is out of bounds: there is no verse <%1$d> in the book "
+"<%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible "
+"verse is <%5$d>"
+msgstr "Um verso na consulta está fora dos limites: não há nenhum versículo <%1$d> no livro <%2$s> no capítulo <%3$d> na versão solicitada <%4$s>, o último verso possível é <%5$d>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:530
+msgid ""
+"Chapters must be consecutive. Instead the first chapter indicator <%s> is "
+"greater than or equal to the second chapter indicator <%s> in the expression"
+" <%s>"
+msgstr "Capítulos devem ser consecutivos. Em vez disso, o primeiro indicador de capítulo <%s> é maior ou igual ao segundo indicador capítulo <%s> na expressão <%s>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:541
+msgid ""
+"Verses in the same chapter must be consecutive. Instead verse <%s> is "
+"greater than verse <%s> in the expression <%s>"
+msgstr "Versos no mesmo capítulo devem ser consecutivos. Em vez disso verso <%s> é maior do que o verso <%s> na expressão <%s>"
+
+#. translators: do not change the placeholders <%s>, they will be substituted
+#. dynamically by values in the script. See http:php.net/sprintf.
+#: bibleget-io.php:552
+msgid ""
+"Verses concatenated by a dash must be consecutive, instead <%s> is greater "
+"than or equal to <%s> in the expression <%s>"
+msgstr "Versos concatenados por um traço devem ser consecutivos, em vez disso <%s> é maior que ou igual a <%s> na expressão <%s>"
+
+#. translators: do not change the placeholders or the html markup, though you
+#. can translate the anchor title
+#: bibleget-io.php:656
+msgid ""
+"There was a problem communicating with the BibleGet server. <a href=\"%s\" "
+"title=\"update metadata now\">Metadata needs to be manually updated</a>."
+msgstr "Houve um problema na comunicação com o servidor de BibleGet. <a href=\"%s\" title=\"update metadata now\"> metadados precisa ser atualizado manualmente</a>."
+
+#. translators: do not change the placeholders or the html markup, though you
+#. can translate the anchor title
+#: bibleget-io.php:666 bibleget-io.php:681
+msgid ""
+"There may have been a problem communicating with the BibleGet server. <a "
+"href=\"%s\" title=\"update metadata now\">Metadata needs to be manually "
+"updated</a>."
+msgstr "Pode ter havido um problema de comunicação com o servidor de BibleGet. <a href=\"%s\" title=\"update metadata now\"> metadados precisa ser atualizado manualmente</a>."
+
+#: bibleget-io.php:690
+msgid "You cannot send an empty query."
+msgstr "Você não pode enviar uma consulta vazia."
+
+#: bibleget-io.php:697
+msgid ""
+"Mixed notations have been detected. Please use either english notation or "
+"european notation."
+msgstr "Misto de notações foram detectadas. Por favor use a notação inglesa ou notação Europeia."
+
+#: bibleget-io.php:803
+msgid "BibleGet Server data has been successfully renewed."
+msgstr "Dados do servidor de BibleGet foi renovados com sucesso."
+
+#: options.php:85
+msgid "BibleGet I/O Settings"
+msgstr "Configurações de BibleGet de e/s"
+
+#: options.php:98
+msgid "Preview"
+msgstr "Visualizar"
+
+#: options.php:100
+msgid "Genesis"
+msgstr "Gênesis"
+
+#: options.php:102
+msgid "In the beginning, when God created the heavens and the earth—"
+msgstr "No início, quando Deus criou os céus e a terra —"
+
+#: options.php:102
+msgid ""
+"and the earth was without form or shape, with darkness over the abyss and a "
+"mighty wind sweeping over the waters—"
+msgstr "e a terra era sem forma ou forma, com as trevas sobre o abismo e um vento impetuoso, varrendo sobre as águas —"
+
+#: options.php:102
+msgid "Then God said: Let there be light, and there was light."
+msgstr "Então disse Deus: haja luz, e houve luz."
+
+#: options.php:108
+msgid "Edit the stylesheet directly"
+msgstr "Editar a folha de estilo diretamente"
+
+#: options.php:109
+msgid ""
+"You can edit and save the stylesheet directly, but any changes you make "
+"directly to the stylesheet will be overwritten the next time you use the "
+"above options form. Also the changes made directly here to the stylesheet "
+"will not be reflected in the preview box, they will only be reflected on the"
+" pages that contain the shortcode."
+msgstr "Você pode editar e salvar a folha de estilo diretamente, mas as alterações feitas diretamente para a folha de estilo serão substituídas na próxima vez que você usar o formulário de opções acima. Também as alterações feitas diretamente aqui a folha de estilo não se refletirão na caixa visualização, eles só serão refletidos nas páginas que contêm o shortcode."
+
+#: options.php:118
+msgid "SAVE STYLESHEET"
+msgstr "SALVE A FOLHA DE ESTILOS"
+
+#: options.php:122
+msgid "Current BibleGet I/O engine information:"
+msgstr "Informações atuais do motor BibleGet i/o:"
+
+#. translators: please do not change the placeholders %s, they will be
+#. substituted dynamically by values in the script. See http:php.net/printf.
+#: options.php:134
+msgid ""
+"The BibleGet I/O engine currently supports %s versions of the Bible in %s "
+"different languages."
+msgstr "O mecanismo de i/o BibleGet atualmente oferece suporte a %s versões da Bíblia em línguas diferentes de %s."
+
+#: options.php:136
+msgid ""
+"Here is the list of currently supported versions, subdivided by language:"
+msgstr "Aqui está a lista das versões atualmente suportadas, subdivididos por idioma:"
+
+#. translators: please do not change the placeholders %s, they will be
+#. substituted dynamically by values in the script. See http:php.net/printf.
+#: options.php:151
+msgid ""
+"The BibleGet I/O engine currently recognizes the names of the books of the "
+"Bible in %s different languages:"
+msgstr "O mecanismo de e/s BibleGet atualmente reconhece os nomes dos livros da Bíblia em línguas diferentes de %s:"
+
+#: options.php:156
+msgid ""
+"This information from the BibleGet server is cached locally to improve "
+"performance. If new versions have been added to the BibleGet server or new "
+"languages are supported, this information might be outdated. In that case "
+"you can click on the button below to renew the information."
+msgstr "Esta informação do servidor BibleGet em cache localmente para melhorar o desempenho. Se novas versões foram adicionadas para o servidor de BibleGet ou novos idiomas são suportados, esta informação pode ser ultrapassada. Nesse caso, você pode clicar no botão abaixo para renovar as informações."
+
+#: options.php:157
+msgid "RENEW INFORMATION FROM BIBLEGET SERVER"
+msgstr "RENOVAR AS INFORMAÇÕES DO SERVIDOR BIBLEGET"
+
+#: options.php:184
+msgid "Font & Style Settings"
+msgstr "Fonte e configurações de estilo"
+
+#: options.php:191
+msgid "Font Family for Biblical Quotes"
+msgstr "Família de fontes para citações bíblicas"
+
+#: options.php:199
+msgid "Font Size for Books and Chapters"
+msgstr "Tamanho da fonte para livros e capítulos"
+
+#: options.php:207
+msgid "Font Size for Verse Numbers"
+msgstr "Tamanho da fonte para os números do verso"
+
+#: options.php:215
+msgid "Font Size for Text of Verses"
+msgstr "Tamanho da fonte para texto de versos"
+
+#: options.php:223
+msgid "Font Style for Books and Chapters"
+msgstr "Estilo de fonte para livros e capítulos"
+
+#: options.php:231
+msgid "Font Style for Verse Numbers"
+msgstr "Estilo da fonte para os números do verso"
+
+#: options.php:239
+msgid "Font Style for Text of Verses"
+msgstr "Estilo da fonte para texto de versos"
+
+#: options.php:247
+msgid "Font Color for Books and Chapters"
+msgstr "Cor da fonte para livros e capítulos"
+
+#: options.php:255
+msgid "Font Color for Verse Numbers"
+msgstr "Cor da fonte para os números do verso"
+
+#: options.php:263
+msgid "Font Color for Text of Verses"
+msgstr "Cor da fonte para texto de versos"
+
+#: options.php:271
+msgid "Line-spacing for Verses Paragraphs"
+msgstr "Espaçamento de linha para versos parágrafos"
+
+#: options.php:279
+msgid "Preferences Settings"
+msgstr "Configurações de preferências"
+
+#: options.php:286
+msgid "Preferred version or versions (when not indicated in shortcode)"
+msgstr "Versão preferencial ou versões (quando não indicado no shortcode)"
+
+#: options.php:346
+msgid "Customize the appearance and styling of the Bible Quotations:"
+msgstr "Personalize a aparência e o estilo de citações da Bíblia:"
+
+#: options.php:351
+msgid "Choose your preferences to facilitate the usage of the shortcode:"
+msgstr "Escolha suas preferências para facilitar o uso de corrigir o defeito:"
+
+#. translators: the letter that can represent "Bold" style in a toolbar
+#: options.php:510 options.php:553 options.php:608
+msgid "B"
+msgstr "B"
+
+#. translators: the letter that can represent "Italic" style in a toolbar
+#: options.php:516 options.php:559 options.php:614
+msgid "I"
+msgstr "Eu"
+
+#. translators: the letter that can represent "Underline" style in a toolbar
+#: options.php:522 options.php:565 options.php:620
+msgid "U"
+msgstr "U"
+
+#. translators: the letter that can represent "Strikethrough" style in a
+#. toolbar
+#: options.php:528 options.php:571 options.php:626
+msgid "S"
+msgstr "S"
+
+#. translators: letters that can represent "Superscript" style in a toolbar
+#: options.php:577
+msgid "SUP"
+msgstr "SUP"
+
+#. translators: letters that can represent "Subscript" style in a toolbar
+#: options.php:583
+msgid "SUB"
+msgstr "SUB"
+
+#. translators: "single" refers to line-spacing: "single line-spacing"
+#: options.php:645
+msgid "single"
+msgstr "único"
+
+#. translators: "double" refers to line-spacing: "double line-spacing"
+#: options.php:647
+msgid "double"
+msgstr "duplo"
+
+#: options.php:949
+msgid ""
+"There was an error saving the settings data. You may have to try again."
+msgstr "Houve um erro ao salvar os dados de configurações. Você pode ter que tentar de novo."
+
+#. Plugin Name of the plugin/theme
+msgid "BibleGet I/O"
+msgstr "BibleGet i/o"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.bibleget.io/"
+msgstr "http://www.bibleget.Io/"
+
+#. Description of the plugin/theme
+msgid ""
+"Easily insert Bible quotes from a choice of Bible versions into your "
+"articles or pages with the shortcode [bibleget]."
+msgstr "Inserir facilmente citações bíblicas de uma escolha de versões da Bíblia em seus artigos ou páginas com o shortcode [bibleget]."
+
+#. Author of the plugin/theme
+msgid "John Romano D'Orazio"
+msgstr "John Romano D'Orazio"
+
+#. Author URI of the plugin/theme
+msgid "http://www.cappellaniauniroma3.org/"
+msgstr "http://www.cappellaniauniroma3.org/"

@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation
 Requires at least: 3.3
-Tested up to: 4.7.4
-Stable tag: 3.5
+Tested up to: 4.7.5
+Stable tag: 3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,13 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 == Changelog ==
 
+= 3.6 =
+* Complete overhaul of the style settings to use the Wordpress customizer
+* Fix bug that prevented favourite versions option from being used when versions option not used in shorttag
+* Change internal function names to be more specific, avoiding any possible conflicts with other plugins 
+* Better rendering of spacing in Bible Book names and between verse numbers and verse text
+* Update language files
+
 = 3.5 =
 * Fix possible vulnerability in the script that saves the custom css file
 
@@ -214,6 +221,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 3.6 =
+Major update with complete overhaul of style settings and other bugfixes, update is mandatory
 
 = 3.5 =
 This is a minor update with a bugfix for a possible vulnerability
