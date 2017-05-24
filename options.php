@@ -117,6 +117,7 @@ class BibleGetSettingsPage
         	<hr>
         	<?php 
         		$locale = apply_filters('plugin_locale', get_locale(), 'bibleget-io');
+        		//let's keep the image files to the general locale, so we don't have to make a different image for every specific country locale...
         		if( strpos($locale,"_") !== false ) { $locale_lang = explode("_",$locale)[0]; }
         		else { $locale_lang = $locale; }
         		if(file_exists(plugins_url( 'images/btn_donateCC_LG'.($locale_lang ? '-'.$locale_lang : '').'.gif', __FILE__ )) ){
@@ -310,15 +311,8 @@ class BibleGetSettingsPage
     	if($hook != 'settings_page_bibleget-settings-admin'){
     		return;
 		}
-		//$handle = 'jquery-ui';
-    	//if (!wp_script_is( $handle, 'registered' )) {
-		//	wp_register_script( $handle, '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js', array('jquery'));
-    	//	wp_enqueue_script( $handle );
-    	//}
-
-    	//wp_enqueue_style('jquery-ui-smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/sunny/jquery-ui.css', false, null);
     	
-    	wp_register_script( 'admin-js', plugins_url('js/admin.js', __FILE__), array($handle) );
+    	wp_register_script( 'admin-js', plugins_url('js/admin.js', __FILE__), array('jquery') );
     	$thisoptions = get_option( 'bibleget_settings' );
     	$myoptions = array();
     	if($thisoptions){
@@ -841,15 +835,7 @@ class BibleGet_Customize {
    }
    
    public static function bibleget_customizer_print_script($hook) {
-      //wp_dequeue_script( 'jquery-ui-core' );
-      //$handle = 'jquery-ui';
-     	//if (!wp_script_is( $handle, 'registered' ) && !wp_script_is( $handle, 'enqueued' ) ) {
-     	//	wp_register_script( $handle, '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('jquery'));
-     	//	wp_enqueue_script( $handle );
-     	//}
-     	//wp_enqueue_script( 'jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('jquery') );
-     	//wp_enqueue_style('jquery-ui-smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css', false, null);
-   	
+   		//can load custom scripts here...
    }
    
    /**

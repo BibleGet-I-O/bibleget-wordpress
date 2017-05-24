@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 3.8
+ * Version: 3.9
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v3_8" );
+define ( "BIBLEGETPLUGINVERSION", "v3_9" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -76,6 +76,10 @@ function BibleGet_on_uninstall() {
 		// Uncomment the following line to see the function in action
 		// exit( var_dump( $_GET ) );
 	bibleGetDeleteOptions ();
+	
+	//does these need to be outside of bibleGetDeleteOptions? 
+	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here... 
+	delete_option ( "bibleget_settings" );
 	
 }
 
@@ -773,7 +777,6 @@ function bibleGetDeleteOptions() {
 	foreach ( $bibleversionsabbrev as $abbrev ) {
 		delete_option ( "bibleget_" . $abbrev . "IDX" );
 	}
-	delete_option ( "bibleget_settings" );
 	
 }
 function bibleGetSetOptions() {

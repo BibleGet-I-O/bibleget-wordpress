@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 3.8
+Stable tag: 3.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,6 +163,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 == Changelog ==
 
+= 3.9 =
+* Remove leftover dependencies on external jquery-ui
+
 = 3.8 =
 * Fix Portuguese language translation after 3.6
 
@@ -262,6 +265,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 3.9 =
+Please update, complete overhaul of style settings now using Wordpress Customizer and other bugfixes
 
 = 3.8 =
 While 3.6 was a Major update with complete overhaul of style settings and other bugfixes, this update fixes some language translations
