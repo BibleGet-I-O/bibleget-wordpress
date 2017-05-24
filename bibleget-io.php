@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 3.7
+ * Version: 3.8
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v3_7" );
+define ( "BIBLEGETPLUGINVERSION", "v3_8" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -45,12 +45,12 @@ function BibleGet_on_activation() {
 	
 	// let's do some cleanup from previous versions
 	if(file_exists(plugin_dir_path( __FILE__ ) . 'css/styles.css') ){
-		if(unlink(plugin_dir_path( __FILE__ ) . 'css/styles.css') === false){
-			unlink(realpath(plugin_dir_path( __FILE__ ) . 'css/styles.css'));
+		if(wp_delete_file(plugin_dir_path( __FILE__ ) . 'css/styles.css') === false){
+			wp_delete_file(realpath(plugin_dir_path( __FILE__ ) . 'css/styles.css'));
 		}
 	}
 	// we have renamed the image files, so these will be left over...
-	array_map('unlink', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
+	array_map('wp_delete_file', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
 	
 }
 function BibleGet_on_deactivation() {
@@ -76,7 +76,7 @@ function BibleGet_on_uninstall() {
 		// Uncomment the following line to see the function in action
 		// exit( var_dump( $_GET ) );
 	bibleGetDeleteOptions ();
-	delete_option ( 'bibleget_settings' );
+	
 }
 
 register_activation_hook ( __FILE__, 'BibleGet_on_activation' );
@@ -178,7 +178,7 @@ function bibleget_shortcode($atts, $content = null) {
 				$output = bibleGetQueryServer ( $finalquery );
 				if ($output) {
 					$output = str_replace ( PHP_EOL, '', $output );
-					set_transient ( md5 ( $finalquery ), $output, 24 * HOUR_IN_SECONDS );
+					set_transient ( md5 ( $finalquery ), $output, 7 * 24 * HOUR_IN_SECONDS );
 				} else {
 					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "BibleGet Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
 				}
@@ -752,6 +752,9 @@ function bibleget_admin_notices() {
 	}
 }
 add_action ( 'admin_notices', 'bibleget_admin_notices' );
+
+
+
 function bibleGetDeleteOptions() {
 	// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
 	for($i = 0; $i < 73; $i ++) {
@@ -770,6 +773,8 @@ function bibleGetDeleteOptions() {
 	foreach ( $bibleversionsabbrev as $abbrev ) {
 		delete_option ( "bibleget_" . $abbrev . "IDX" );
 	}
+	delete_option ( "bibleget_settings" );
+	
 }
 function bibleGetSetOptions() {
 	$metadata = bibleGetGetMetaData ( "biblebooks" );

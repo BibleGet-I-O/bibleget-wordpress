@@ -484,9 +484,9 @@ class BibleGet_Customize {
     $bibleget_styles_general->font_color = new stdClass();
     
     /* translators: "pt" refers to points as used in CSS rules, do not translate */
-    $bibleget_styles_general->font_size->title = __("Font Size (in pt)");
-    $bibleget_styles_general->font_style->title = __("Font Style");
-    $bibleget_styles_general->font_color->title = __("Font Color");
+    $bibleget_styles_general->font_size->title = __("Font Size (in pt)","bibleget-io");
+    $bibleget_styles_general->font_style->title = __("Font Style","bibleget-io");
+    $bibleget_styles_general->font_color->title = __("Font Color","bibleget-io");
     
     $bibleget_styles_general->font_size->type = 'select';
     $bibleget_styles_general->font_style->type = 'style';

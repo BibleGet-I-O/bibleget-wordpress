@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 3.7
+Stable tag: 3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,82 +12,82 @@ Creates a shortcode [bibleget] for inserting Bible quotes in articles or pages u
 
 == Description ==
 
-* [ENGLISH] 
+**_[ENGLISH]_** 
 This plugin creates a shortcode to use in articles and pages, that will inject Bible citations into your article or page,
 by retrieving them from the BibleGet service endpoint at *https://query.bibleget.io*.
-USAGE: [bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"] 
-USAGE: [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
+**USAGE:** [bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"] 
+**USAGE:** [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
 
 The Plugin also has a settings page “BibleGet I/O” under the “Settings” area in the Dashboard, 
 where you can choose your preferred Bible versions from those available on the BibleGet server
 so that you don’t have to use the “version” or “versions” option every time. 
 After you have made your choices in the settings area, remember to click on “Save”!
 Once the preferred version is set you can simply use:
-USAGE: [bibleget query=“1 Cor 13”] 
+**USAGE:** [bibleget query=“1 Cor 13”] 
 
 The style settings are customizable using the Wordpress Customizer, 
 so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
-
-* [ESPAÑOL] 
+------
+**_[ESPAÑOL]_** 
 Este plugin crea un shortcode para ser utilizado en artículos o páginas, que puede inyectar citas Bíblicas en el artículo o página,
 recuperando las citas desde el servidor de BibleGet en la dirección *https://query.bibleget.io*.
-UTILIZACIÓN: [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
-UTILIZACIÓN: [bibleget query="Mateo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
+**UTILIZACIÓN:** [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
+**UTILIZACIÓN:** [bibleget query="Mateo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
 
 El Plugin también tiene una página de opciones “BibleGet I/O” bajo el área “Configuración” en el cuadro de instrumentos (Dashboard), 
 donde se puede elegir sus versiones biblicas preferidas entre las que son disponibles en el servidor de BibleGet 
 en manera que no sea necesario utilizar siempre la opcion “version” o “versions”.
 Después que has elegido sus versiones preferidas en el área de configuración, no olvide hacer clic en “Guardar”! 
 Una vez que has ajustado la version preferida, puedes utilizar el shortcode en esta manera:
-UTILIZACIÓN: [bibleget query="1 Cor 13"]  
+**UTILIZACIÓN:** [bibleget query="1 Cor 13"]  
 
 Las preferencias estilísticas son personalizables utilizando Wordpress Customizer,
 en manera que las citas bíblicas inyectadas pueden encajar en el estilo de su propio blog / sitio WordPress.
-
-* [FRANÇAIS] 
+------
+**_[FRANÇAIS]_** 
 Ce plugin crée un shortcode pour être utilisé dans des articles ou pages, qui peut injecter des citations Bibliques dans l'article ou la page,
 en les récupérant du service BibleGet à *https://query.bibleget.io*.
-UTILISATION: [bibleget query="Éxodo 19,5-6.8;20,1-17" version="CEI2008"]  
-UTILISATION: [bibleget query="Mathieu 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
+**UTILISATION:** [bibleget query="Éxodo 19,5-6.8;20,1-17" version="CEI2008"]  
+**UTILISATION:** [bibleget query="Mathieu 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
 
 Le plugin a également une page de paramètres “BibleGet I/O” dans la zone “Paramètres” dans le tableau de bord (Dashboard), 
 où vous pouvez choisir le préférence des versions bibliques entre quelles que son disponibles dans le serveur de BibleGet
 de façon qu’il ne soit pas nécessaire d’utiliser toujours l’option « version » ou « versions ».
 Après avoir fait vos choix dans la zone des paramètres, ne oubliez pas de cliquer sur “Enregistrer”!
 Une fois que vous avez défini la version préférée, vous pouvez utiliser le shortcode de cette façon:
-UTILISATION: [bibleget query="1 Cor 13"]  
+**UTILISATION:** [bibleget query="1 Cor 13"]  
 
 Les préférences de style sont personnalisables en utilisant WordPress Customizer,
 de façon que les citations bibliques injectées peuvent se intégrer dans le style de votre propre blog / site WordPress.
-
-* [ITALIANO] 
+------
+**_[ITALIANO]_** 
 Questo plugin crea uno shortcode da utilizzare all’interno di articoli o pagine, che può iniettare citazioni Bibliche nell’articolo o nella pagina,
 recuperandole dal servizio BibleGet all'indirizzo *https://query.bibleget.io*. 
-UTILIZZO: [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
-UTILIZZO: [bibleget query="Matteo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
+**UTILIZZO:** [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
+**UTILIZZO:** [bibleget query="Matteo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
 
 Il Plugin offre anche una pagina di opzioni “BibleGet I/O” sotto “Impostazioni” nella Dashboard, 
 che permette di scegliere le versioni bibliche preferite tra quelle disponibili dal server di BibleGet
 in modo che non sia necessario utilizzare ogni volta l’opzione “version” o “versions”.
 Dopo aver cambiato le preferenze, ricòrdati di cliccare sul pulsante “Salva le modifiche”!
 Una volta impostata la versione preferita, potete usare lo shortcode in questo modo:
-UTILIZZO: [bibleget query="1 Cor 13"]  
+**UTILIZZO:** [bibleget query="1 Cor 13"]  
 
 Le preferenze di stile sono personalizzabili utilizzando il Customizer di Wordpress,
 in modo che le citazioni iniettate nelle pagine abbiano uno stile confacente al proprio blog / sito WordPress.
-
-* [DEUTSCH] 
+------
+**_[DEUTSCH]_** 
 Das Plugin erzeugt eine shortcode die in Artikeln oder Seiten verwendet werden können, und welche die Bibelzitate in dem Artikel oder Seite injizieren können,
 indem sie sie aus dem BibleGet Service Endpunkt bei *https://query.bibleget.io* abrufen.
-VERWENDUNG: [bibleget query="Exodus 19,5-6.8;20,1-17" version="CEI2008"]
-VERWENDUNG: [bibleget query="Matthäus 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]
+**VERWENDUNG:** [bibleget query="Exodus 19,5-6.8;20,1-17" version="CEI2008"]
+**VERWENDUNG:** [bibleget query="Matthäus 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]
 
 Das Plugin hat auch eine Einstellungsseite „BibleGet I/O“ im Bereich „Einstellungen“ im Dashboard, 
 wodurch es möglich ist, die bevorzugten Bibel-Versionen zu wählen, unter den zur Verfügung auf dem Server von BibleGet
 so dass es nicht notwendig ist, jedes Mal, wenn die „version“ oder „versions“ Option zu verwenden.
 Nachdem Sie Ihre Auswahl im Bereich Einstellungen vorgenommen haben, denken Sie daran, auf „Speichern“ klicken!
 Sobald Sie die bevorzugte Version gesetzt haben, sie können die „shortcode“ auf diese Weise verwenden:
-VERWENDUNG: [bibleget query="1 Kor 13"]
+**VERWENDUNG:** [bibleget query="1 Kor 13"]
 
 Die Stileinstellungen können angepasst werden mit die Wordpress Customizer,
 so dass die injizierten Bibelzitaten kann in den Stil Ihrer eigenen Blog / Wordpress-Website passen.
@@ -163,8 +163,11 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 == Changelog ==
 
+= 3.8 =
+* Fix Portuguese language translation after 3.6
+
 = 3.7 =
-* Fix some language translations after 3.6 overhaul
+* Fix main language translations after 3.6 overhaul (Italian, French, Spanish, German)
 
 = 3.6 =
 * Complete overhaul of the style settings to use the Wordpress customizer
@@ -259,6 +262,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 3.8 =
+While 3.6 was a Major update with complete overhaul of style settings and other bugfixes, this update fixes some language translations
 
 = 3.7 =
 While 3.6 was a Major update with complete overhaul of style settings and other bugfixes, this update fixes some language translations
