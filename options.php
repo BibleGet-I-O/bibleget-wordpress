@@ -115,8 +115,16 @@ class BibleGetSettingsPage
         		<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e("RENEW INFORMATION FROM BIBLEGET SERVER","bibleget-io") ?></button>
         	</div>
         	<hr>
-        	<?php $locale = apply_filters('plugin_locale', get_locale(), 'bibleget-io'); ?>
-        	<div id="bibleget-donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58"></a><button><img src="<?php echo plugins_url( 'images/btn_donateCC_LG'.($locale ? '-'.$locale : '').'.gif', __FILE__ ); ?>" /></button></a></div>
+        	<?php 
+        		$locale = apply_filters('plugin_locale', get_locale(), 'bibleget-io');
+        		if( strpos($locale,"_") !== false ) { $locale_lang = explode("_",$locale)[0]; }
+        		else { $locale_lang = $locale; }
+        		if(file_exists(plugins_url( 'images/btn_donateCC_LG'.($locale_lang ? '-'.$locale_lang : '').'.gif', __FILE__ )) ){
+        			$donate_img = plugins_url( 'images/btn_donateCC_LG'.($locale_lang ? '-'.$locale_lang : '').'.gif', __FILE__ );
+        		}
+        		else $donate_img = plugins_url( 'images/btn_donateCC_LG.gif', __FILE__ );
+        	?>
+        	<div id="bibleget-donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58"></a><button><img src="<?php echo $donate_img; ?>" /></button></a></div>
         </div>
         <?php
     }
@@ -302,13 +310,13 @@ class BibleGetSettingsPage
     	if($hook != 'settings_page_bibleget-settings-admin'){
     		return;
 		}
-		$handle = 'jquery-ui';
-    	if (!wp_script_is( $handle, 'registered' )) {
-			wp_register_script( $handle, '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js', array('jquery'));
-    		wp_enqueue_script( $handle );
-    	}
+		//$handle = 'jquery-ui';
+    	//if (!wp_script_is( $handle, 'registered' )) {
+		//	wp_register_script( $handle, '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js', array('jquery'));
+    	//	wp_enqueue_script( $handle );
+    	//}
 
-    	wp_enqueue_style('jquery-ui-smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/sunny/jquery-ui.css', false, null);
+    	//wp_enqueue_style('jquery-ui-smoothness', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/sunny/jquery-ui.css', false, null);
     	
     	wp_register_script( 'admin-js', plugins_url('js/admin.js', __FILE__), array($handle) );
     	$thisoptions = get_option( 'bibleget_settings' );
@@ -333,18 +341,7 @@ class BibleGetSettingsPage
           if($this->options === false ){
           	// let's set some default options
           }
-          
-//         	."div.results p.verses span.sm { text-transform: lowercase; font-variant: small-caps; } \n"
-//         	."/* Senseline. A line that is broken to be reading aloud/public speaking. Poetry is included in this category. */ \n"
-// 			."div.results p.verses span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.po { display: block; margin-left:5%; margin-top:-1%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.pos { display: block; margin-top:1em; margin-left:5%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.poif { display: block; margin-left:7%; margin-top:1%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-// 			."div.results p.verses span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: ".(isset($this->options['linespacing_verses']) && $this->options['linespacing_verses'] ? $this->options['linespacing_verses'] : "150" )."%; } \n"
-//             ."div.results p.verses span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; margin-right: 10px; font-size: ".(isset($this->options['fontsize_versenumbers']) && $this->options['fontsize_versenumbers'] ? number_format((($this->options['fontsize_versenumbers'] / 10) * 0.666666667),1,'.','') : "0.7" )."em; } \n";
-       
+                 
        }
     }
 
@@ -364,48 +361,49 @@ class BibleGet_Customize {
   public static function init(){
     self::$bibleget_style_settings = new stdClass();
 
-		self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
-		self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
-		self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font Family for Biblical Quotes',"bibleget-io");
-		self::$bibleget_style_settings->bibleget_fontfamily->type = 'select';
-		self::$bibleget_style_settings->bibleget_fontfamily->choices = array(
-    		"Arial"					   => "Arial",
-    		"Arial Black"			 => "Arial Black",
-    		"Book Antiqua"		 => "Book Antiqua",
-    		"Courier New"			 => "Courier New",
-    		"Georgia"			  	 => "Georgia",
-    		"Impact"			   	 => "Impact",
-    		"Lucida Console"	 => "Lucida Console",
-    		"Lucida Sans Unicode"	 => "Lucida Sans Unicode",
-    		"Palatino Linotype"		 => "Palatino Linotype",
-    		"Tahoma"			   	 => "Tahoma",
-    		"Times New Roman"	 => "Times New Roman",
-    		"Trebuchet MS"		 => "Trebuchet MS",
-    		"Verdana"			  	 => "Verdana"
-    	);
+	self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
+	self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
+	self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font Family for Biblical Quotes',"bibleget-io");
+	self::$bibleget_style_settings->bibleget_fontfamily->type = 'select';
+	self::$bibleget_style_settings->bibleget_fontfamily->choices = array(
+    	"Arial"					 => "Arial",
+    	"Arial Black"			 => "Arial Black",
+    	"Book Antiqua"			 => "Book Antiqua",
+    	"Courier New"			 => "Courier New",
+    	"Georgia"			  	 => "Georgia",
+    	"Impact"			   	 => "Impact",
+    	"Lucida Console"		 => "Lucida Console",
+    	"Lucida Sans Unicode"	 => "Lucida Sans Unicode",
+    	"Palatino Linotype"		 => "Palatino Linotype",
+    	"Tahoma"			   	 => "Tahoma",
+    	"Times New Roman"		 => "Times New Roman",
+    	"Trebuchet MS"			 => "Trebuchet MS",
+    	"Verdana"			  	 => "Verdana"
+    );
 
-		self::$bibleget_style_settings->bibleget_borderwidth = new stdClass();
-    self::$bibleget_style_settings->bibleget_borderwidth->dfault = '1';
+	self::$bibleget_style_settings->bibleget_borderwidth = new stdClass();
+    self::$bibleget_style_settings->bibleget_borderwidth->dfault = '2';    
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_borderwidth->title = __('Border-width for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderwidth->type = 'number';
     
-		self::$bibleget_style_settings->bibleget_borderstyle = new stdClass();
-    self::$bibleget_style_settings->bibleget_borderstyle->dfault = '1';
+	self::$bibleget_style_settings->bibleget_borderstyle = new stdClass();
+    self::$bibleget_style_settings->bibleget_borderstyle->dfault = 'solid';
     self::$bibleget_style_settings->bibleget_borderstyle->title = __('Border-style for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderstyle->type = 'select';
     self::$bibleget_style_settings->bibleget_borderstyle->choices = array(
-        "none"    => "none",
-        "hidden"  => "hidden",
-        "dotted"  => "dotted",
-        "dashed"  => "dashed",
-				"solid" 	=> "solid",
-				"double"	=> "double",
-				"groove"	=> "groove",
-				"ridge"	  => "ridge",
-				"inset"	  => "inset",
-				"outset"	=> "outset",
-				"initial"	=> "initial",
-        "inherit" => "inherit"
+        "none"		=> "none",
+        "hidden"	=> "hidden",
+        "dotted"	=> "dotted",
+        "dashed"	=> "dashed",
+		"solid"		=> "solid",
+		"double"	=> "double",
+		"groove"	=> "groove",
+		"ridge"		=> "ridge",
+		"inset"		=> "inset",
+		"outset"	=> "outset",
+		"initial"	=> "initial",
+       	"inherit"	=> "inherit"
     );
     
     self::$bibleget_style_settings->bibleget_bordercolor = new stdClass();
@@ -415,6 +413,7 @@ class BibleGet_Customize {
     
     self::$bibleget_style_settings->bibleget_borderradius = new stdClass();
     self::$bibleget_style_settings->bibleget_borderradius->dfault = 6;
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_borderradius->title = __('Border-radius for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderradius->type = 'number';
     
@@ -440,30 +439,35 @@ class BibleGet_Customize {
     
     self::$bibleget_style_settings->bibleget_margintopbottom = new stdClass();
     self::$bibleget_style_settings->bibleget_margintopbottom->dfault = 12;
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_margintopbottom->title = __('Margin top/bottom for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_margintopbottom->type = 'select';
     self::$bibleget_style_settings->bibleget_margintopbottom->choices = $margin_padding_vals;
     
     self::$bibleget_style_settings->bibleget_marginleftright = new stdClass();
     self::$bibleget_style_settings->bibleget_marginleftright->dfault = 'auto';
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_marginleftright->title = __('Margin left/right for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_marginleftright->type = 'select';
     self::$bibleget_style_settings->bibleget_marginleftright->choices = $margin_padding_vals;
     
     self::$bibleget_style_settings->bibleget_paddingtopbottom = new stdClass();
     self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault = 12;
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_paddingtopbottom->title = __('Padding top/bottom for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_paddingtopbottom->type = 'select';
     self::$bibleget_style_settings->bibleget_paddingtopbottom->choices = $margin_padding_vals;
 
     self::$bibleget_style_settings->bibleget_paddingleftright = new stdClass();
     self::$bibleget_style_settings->bibleget_paddingleftright->dfault = 12;
+    /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_paddingleftright->title = __('Padding left/right for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_paddingleftright->type = 'select';
     self::$bibleget_style_settings->bibleget_paddingleftright->choices = $margin_padding_vals;
     
     self::$bibleget_style_settings->bibleget_width = new stdClass();
     self::$bibleget_style_settings->bibleget_width->dfault = 85;
+    /* translators: "%" refers to percentage as used in CSS rules (width: 100%), do not translate */
     self::$bibleget_style_settings->bibleget_width->title = __('Width for Biblical Quotes (in %)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_width->type = 'number';
     
@@ -479,6 +483,7 @@ class BibleGet_Customize {
     $bibleget_styles_general->font_style = new stdClass();
     $bibleget_styles_general->font_color = new stdClass();
     
+    /* translators: "pt" refers to points as used in CSS rules, do not translate */
     $bibleget_styles_general->font_size->title = __("Font Size (in pt)");
     $bibleget_styles_general->font_style->title = __("Font Style");
     $bibleget_styles_general->font_color->title = __("Font Color");
@@ -501,6 +506,7 @@ class BibleGet_Customize {
 			$o = str_replace("_","",$i);
 
 			self::$bibleget_style_settings->{'bookchapter_'.$o} = new stdClass();
+			/* translators: in reference to Font Size, Style and Color */
 			self::$bibleget_style_settings->{'bookchapter_'.$o}->title = $styleobj->title . " " . __('for Books and Chapters',"bibleget-io");
 			self::$bibleget_style_settings->{'bookchapter_'.$o}->type = $styleobj->type;
 			if($styleobj->type == 'select'){
@@ -510,6 +516,7 @@ class BibleGet_Customize {
         self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_choices_arr;
       }
 			self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
+			/* translators: in reference to Font Size, Style and Color */
 			self::$bibleget_style_settings->{'versenumber_'.$o}->title = $styleobj->title . " " . __('for Verse Numbers',"bibleget-io");
 			self::$bibleget_style_settings->{'versenumber_'.$o}->type = $styleobj->type;
 			if($styleobj->type == 'select'){
@@ -519,6 +526,7 @@ class BibleGet_Customize {
         self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_choices_arr;
       }
 			self::$bibleget_style_settings->{'versetext_'.$o} = new stdClass();
+			/* translators: in reference to Font Size, Style and Color */
 			self::$bibleget_style_settings->{'versetext_'.$o}->title = $styleobj->title . " " . __('for Text of Verses',"bibleget-io");
 			self::$bibleget_style_settings->{'versetext_'.$o}->type = $styleobj->type;
 			if($styleobj->type == 'select'){
@@ -820,11 +828,11 @@ class BibleGet_Customize {
               echo '/* Senseline. A line that is broken to be reading aloud/public speaking. Poetry is included in this category. */'; echo PHP_EOL;      		
            	  echo "div.results p.verses span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
               echo "div.results p.verses span.po { display: block; margin-left:5%; margin-top:-1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
- 			        echo "div.results p.verses span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
- 			        echo "div.results p.verses span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
- 			        echo "div.results p.verses span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
- 			        echo "div.results p.verses span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
- 			        echo "div.results p.verses span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
+ 			  echo "div.results p.verses span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
+ 			  echo "div.results p.verses span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
+ 			  echo "div.results p.verses span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
+ 			  echo "div.results p.verses span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
+ 			  echo "div.results p.verses span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
               echo "div.results p.verses span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; margin-right: 10px; font-size: $fontsize_versenumber"."pt; }"; echo PHP_EOL;
           ?>
       </style> 

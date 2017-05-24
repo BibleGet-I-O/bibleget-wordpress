@@ -1,9 +1,9 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 3.6
+ * Version: 3.7
  * Plugin URI: https://www.bibleget.io/
- * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode[bibleget].
+ * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
  * Author URI: https://www.cappellaniauniroma3.org/
  * Text Domain: bibleget-io
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "PLUGINVERSION", "v3_6" );
+define ( "BIBLEGETPLUGINVERSION", "v3_7" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -41,7 +41,17 @@ function BibleGet_on_activation() {
 	
 	// Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
-	bibleGetSetOptions ();
+	bibleGetSetOptions();
+	
+	// let's do some cleanup from previous versions
+	if(file_exists(plugin_dir_path( __FILE__ ) . 'css/styles.css') ){
+		if(unlink(plugin_dir_path( __FILE__ ) . 'css/styles.css') === false){
+			unlink(realpath(plugin_dir_path( __FILE__ ) . 'css/styles.css'));
+		}
+	}
+	// we have renamed the image files, so these will be left over...
+	array_map('unlink', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
+	
 }
 function BibleGet_on_deactivation() {
 	if (! current_user_can ( 'activate_plugins' ))
@@ -116,8 +126,8 @@ function bibleget_shortcode($atts, $content = null) {
 	}
 	
 	if (count ( $versions ) < 1) {
-		/* translators: do NOT translate the parameter names \"version\" or \"versions\" !!! */
-		$output = '<span style="color:Red;font-weight:bold;">' . __ ( 'You must indicate the desired version with the parameter "version"(or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
+		/* translators: do NOT translate the parameter names "version" or "versions" !!! */
+		$output = '<span style="color:Red;font-weight:bold;">' . __ ( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
 		return '<div class="bibleget-quote-div">' . $output . '</div>';
 	}
 	
@@ -188,7 +198,7 @@ add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
 function bibleGetQueryServer($finalquery) {
-	$ch = curl_init ( "https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . PLUGINVERSION );
+	$ch = curl_init ( "https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 	
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
@@ -823,8 +833,8 @@ function bibleGetSetOptions() {
 	// we only want the script to die if it's an ajax request...
 	if (isset ( $_POST ["isajax"] ) && $_POST ["isajax"] == 1) {
 		$notices = get_option ( 'bibleget_admin_notices', array () );
-		$notices [] = "BIBLEGET PLUGIN NOTICE: " . __ ( "BibleGet Server data has been successfully renewed.", "bibleget-io" );
-		update_option ( 'bibleget_admin_notices', $notices );
+		$notices[] = "BIBLEGET PLUGIN NOTICE: " . __( "BibleGet Server data has been successfully renewed.", "bibleget-io" );
+		update_option( 'bibleget_admin_notices', $notices );
 		echo "datarefreshed";
 		wp_die ();
 	}
