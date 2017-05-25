@@ -1,20 +1,19 @@
 ﻿=== BibleGet I/O ===
 Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
-Tags: bible,shortcode,quote,citation
+Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 3.9
+Stable tag: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Creates a shortcode [bibleget] for inserting Bible quotes in articles or pages using the BibleGet I/O Service endpoint https://query.bibleget.io
+Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages; uses the BibleGet I/O Service endpoint https://query.bibleget.io
 
 == Description ==
 
-**_[ENGLISH]_** 
-This plugin creates a shortcode to use in articles and pages, that will inject Bible citations into your article or page,
-by retrieving them from the BibleGet service endpoint at *https://query.bibleget.io*.
+Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages from different versions of the Bible in different languages.
+The text of the Bible quotes are retrieved from the BibleGet service endpoint *[https://query.bibleget.io](https://query.bibleget.io "BibleGet Service endpoint")*.
 **USAGE:** [bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"] 
 **USAGE:** [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
 
@@ -27,70 +26,6 @@ Once the preferred version is set you can simply use:
 
 The style settings are customizable using the Wordpress Customizer, 
 so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
-------
-**_[ESPAÑOL]_** 
-Este plugin crea un shortcode para ser utilizado en artículos o páginas, que puede inyectar citas Bíblicas en el artículo o página,
-recuperando las citas desde el servidor de BibleGet en la dirección *https://query.bibleget.io*.
-**UTILIZACIÓN:** [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
-**UTILIZACIÓN:** [bibleget query="Mateo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
-
-El Plugin también tiene una página de opciones “BibleGet I/O” bajo el área “Configuración” en el cuadro de instrumentos (Dashboard), 
-donde se puede elegir sus versiones biblicas preferidas entre las que son disponibles en el servidor de BibleGet 
-en manera que no sea necesario utilizar siempre la opcion “version” o “versions”.
-Después que has elegido sus versiones preferidas en el área de configuración, no olvide hacer clic en “Guardar”! 
-Una vez que has ajustado la version preferida, puedes utilizar el shortcode en esta manera:
-**UTILIZACIÓN:** [bibleget query="1 Cor 13"]  
-
-Las preferencias estilísticas son personalizables utilizando Wordpress Customizer,
-en manera que las citas bíblicas inyectadas pueden encajar en el estilo de su propio blog / sitio WordPress.
-------
-**_[FRANÇAIS]_** 
-Ce plugin crée un shortcode pour être utilisé dans des articles ou pages, qui peut injecter des citations Bibliques dans l'article ou la page,
-en les récupérant du service BibleGet à *https://query.bibleget.io*.
-**UTILISATION:** [bibleget query="Éxodo 19,5-6.8;20,1-17" version="CEI2008"]  
-**UTILISATION:** [bibleget query="Mathieu 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
-
-Le plugin a également une page de paramètres “BibleGet I/O” dans la zone “Paramètres” dans le tableau de bord (Dashboard), 
-où vous pouvez choisir le préférence des versions bibliques entre quelles que son disponibles dans le serveur de BibleGet
-de façon qu’il ne soit pas nécessaire d’utiliser toujours l’option « version » ou « versions ».
-Après avoir fait vos choix dans la zone des paramètres, ne oubliez pas de cliquer sur “Enregistrer”!
-Une fois que vous avez défini la version préférée, vous pouvez utiliser le shortcode de cette façon:
-**UTILISATION:** [bibleget query="1 Cor 13"]  
-
-Les préférences de style sont personnalisables en utilisant WordPress Customizer,
-de façon que les citations bibliques injectées peuvent se intégrer dans le style de votre propre blog / site WordPress.
-------
-**_[ITALIANO]_** 
-Questo plugin crea uno shortcode da utilizzare all’interno di articoli o pagine, che può iniettare citazioni Bibliche nell’articolo o nella pagina,
-recuperandole dal servizio BibleGet all'indirizzo *https://query.bibleget.io*. 
-**UTILIZZO:** [bibleget query="Esodo 19,5-6.8;20,1-17" version="CEI2008"]  
-**UTILIZZO:** [bibleget query="Matteo 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]  
-
-Il Plugin offre anche una pagina di opzioni “BibleGet I/O” sotto “Impostazioni” nella Dashboard, 
-che permette di scegliere le versioni bibliche preferite tra quelle disponibili dal server di BibleGet
-in modo che non sia necessario utilizzare ogni volta l’opzione “version” o “versions”.
-Dopo aver cambiato le preferenze, ricòrdati di cliccare sul pulsante “Salva le modifiche”!
-Una volta impostata la versione preferita, potete usare lo shortcode in questo modo:
-**UTILIZZO:** [bibleget query="1 Cor 13"]  
-
-Le preferenze di stile sono personalizzabili utilizzando il Customizer di Wordpress,
-in modo che le citazioni iniettate nelle pagine abbiano uno stile confacente al proprio blog / sito WordPress.
-------
-**_[DEUTSCH]_** 
-Das Plugin erzeugt eine shortcode die in Artikeln oder Seiten verwendet werden können, und welche die Bibelzitate in dem Artikel oder Seite injizieren können,
-indem sie sie aus dem BibleGet Service Endpunkt bei *https://query.bibleget.io* abrufen.
-**VERWENDUNG:** [bibleget query="Exodus 19,5-6.8;20,1-17" version="CEI2008"]
-**VERWENDUNG:** [bibleget query="Matthäus 1,1-10.12-15" versions="NVBSE,CEI2008,LUZZI"]
-
-Das Plugin hat auch eine Einstellungsseite „BibleGet I/O“ im Bereich „Einstellungen“ im Dashboard, 
-wodurch es möglich ist, die bevorzugten Bibel-Versionen zu wählen, unter den zur Verfügung auf dem Server von BibleGet
-so dass es nicht notwendig ist, jedes Mal, wenn die „version“ oder „versions“ Option zu verwenden.
-Nachdem Sie Ihre Auswahl im Bereich Einstellungen vorgenommen haben, denken Sie daran, auf „Speichern“ klicken!
-Sobald Sie die bevorzugte Version gesetzt haben, sie können die „shortcode“ auf diese Weise verwenden:
-**VERWENDUNG:** [bibleget query="1 Kor 13"]
-
-Die Stileinstellungen können angepasst werden mit die Wordpress Customizer,
-so dass die injizierten Bibelzitaten kann in den Stil Ihrer eigenen Blog / Wordpress-Website passen.
 _________
 THE AUTHOR WOULD LIKE TO THANK THE FOLLOWING USERS FOR CONTRIBUTED TRANSLATIONS:
 
@@ -100,9 +35,9 @@ POLISH TRANSLATION: Ula Gnatowska <ula.gnatowska@gmail.com> WEBSITE: [comunità 
 
 GREEK TRANSLATION: anonymous user contribution
 
-[BibleGet I/O](
-http://www.bibleget.io/
- "BibleGet IO Website")
+[BibleGet Project Website](https://www.bibleget.io/ "BibleGet Project Website")
+[BibleGet Project Facebook Page](https://www.facebook.com/BibleGetIO/ "BibleGet Project Facebook Page")
+[BibleGet Project Google+ Page](https://plus.google.com/+BibleGetIO "BibleGet Project Google+ Page")
 
 == Installation ==
 
@@ -132,27 +67,6 @@ At least the first query (of a series of queries chained by a semi-colon) must i
  When a query following a semi-colon does not indicate the book name, it is intended that the request be made upon the same book as the previous query.
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
 
-[ITALIANO]
-Il parametro "query" deve contenere una citazione formulata seguendo la notazione standard per le citazioni della Sacra Scrittura: 
-
-   * “,”: è il separatore capitolo – versetto. “15,5” significa “capitolo 15, versetto 5”.
-
-   * “-”: è il separatore da – a, e può essere utilizzato in tre modi diversi:
-
-      1. da capitolo a capitolo: “15-16″ significa “da capitolo 15 a capitolo 16”.
-      2. da capitolo,versetto a versetto (dello stesso capitolo): “15,1-5” significa “capitolo 15, dal versetto 1 al versetto 5”.
-      3. da capitolo,versetto a capitolo,versetto: “15,1-16,5” significa “dal capitolo 15,versetto 1 al capitolo 16,versetto 5”.
-
-   * “.”: è il separatore tra versetto e versetto. “15,5.7.9” significa “capitolo 15,versetto 5 poi versetto 7 poi versetto 9”.
-
-   * “;”: è il separatore tra una query e l’altra. “15,5-7;16,3-9.11-13” significa “capitolo 15, versetti 5 a 7; poi capitolo 16, versetti 3 a 9 e versetti 11 a 13”.
-
-Almeno la prima query deve indicare il nome del libro sul quale effettuare la ricerca;
- il nome del libro si può indicare per intero oppure utilizzando la forma abbreviata
- come indicata alla pagina [Lista di Abbreviazioni di Libri](http://www.bibleget.io/come-funziona/lista-abbreviazioni-libri/ "Lista di Abbreviazioni di Libri").
- Quando le query successive non hanno indicazione di nome di libro,
- è sottinteso che la query viene effettuata sullo stesso libro indicato precedentemente.
- "Gen1,7-9;4,4-5;Es3,19" significa “Genesi capitolo 1, versetti 7 a 9; poi ancora Genesi capitolo 4, versetti 4 a 5; poi Esodo capitolo 3, versetto 19″.
 
 == Screenshots ==
 
@@ -162,6 +76,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.0 =
+* Another bugfix, the fix that made the spacing better between verse number and verse text was also removing the specific formatting for the NABRE text 
 
 = 3.9 =
 * Remove leftover dependencies on external jquery-ui
@@ -174,7 +91,7 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 = 3.6 =
 * Complete overhaul of the style settings to use the Wordpress customizer
-* Fix bug that prevented favourite versions option from being used when versions option not used in shorttag
+* Fix bug that prevented the favourite versions option from being used when "versions" option not used in shortcode
 * Change internal function names to be more specific, avoiding any possible conflicts with other plugins 
 * Better rendering of spacing in Bible Book names and between verse numbers and verse text
 * Update language files
@@ -246,7 +163,7 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 * Compatible with Wordpress 4.0 "Benny"
 * Added local checks for the validity and integrity of the queries
 * Corrected a bug that created an error on preg_match_all for versions of PHP < 5.4
-* Use the new and definitive domain for the BibleGet I/O service http://query.bibleget.io
+* Use the new and definitive domain for the BibleGet I/O service https://query.bibleget.io
 
 = 1.4 =
 * Corrected a bug that created an error when the server has safe_mode or open_basedir set (such as some servers with shared hosting)
@@ -265,6 +182,9 @@ Almeno la prima query deve indicare il nome del libro sul quale effettuare la ri
 
 
 == Upgrade Notice ==
+
+= 4.0 =
+Complete overhaul porting the style settings from the Settings Page to the Wordpress Customizer since 3.6 plus bugfixes
 
 = 3.9 =
 Please update, complete overhaul of style settings now using Wordpress Customizer and other bugfixes
