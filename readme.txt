@@ -129,8 +129,7 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 * Added specific functionality for parsing NABRE text and applying NABRE specific styles
 
 = 2.7 =
-* Added Polish translation thanks to Ula Gnatowska Ula Gnatowska <ula.gnatowska@gmail.com> [comunità delle beatitudini](http://beatitudini.it/ "comunità delle beatitudini")
-* Added Serbian translation thanks to Ogi Djuraskovic <ognjend@firstsiteguide.com> [firstsiteguide](http://firstsiteguide.com "firstsiteguide")
+* Added Polish translation thanks to Ula Gnatowska <ula.gnatowska@gmail.com> [Community of the Beatitudes](http://beatitudini.it/ "community of the beatitudes")
 
 = 2.6 =
 * Minor bugfix undeclared variable on options page

@@ -33,6 +33,12 @@
 		} );
 	} );
 	
+	wp.customize( 'bibleget_bgcolor', function( value ) {
+		value.bind( function( newval ) {
+			$('div.results').css('background-color', newval );
+		} );
+	} );
+	
 	wp.customize( 'bibleget_borderradius', function( value ) {
 		value.bind( function( newval ) {
 			$('div.results').css('border-radius', newval.toString()+'px' );

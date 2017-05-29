@@ -1,98 +1,23 @@
 h2#bibleget-h2:before {
-    content: '\f331';
-    display: inline-block;
-    -webkit-font-smoothing: antialiased;
-    font: normal 29px/1 'dashicons';
-    vertical-align: middle;
-    margin-right: 0.3em;
+	content: '\f331';
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 29px/1 'dashicons';
+	vertical-align: middle;
+	margin-right: 0.3em;
 }
 
-#page-wrap > div.leftfloat {
+#page-wrap>div.leftfloat {
 	float: left;
 	width: 45%;
 }
 
-#page-clear {
+.page-clear {
 	clear: both;
 }
 
-#preview {
-	border: 1px solid Blue;
-	border-radius: 6px;
-	padding: 12px;
-	background-color: White;
-	box-shadow: 3px 3px 6px #222222;
-	text-align: justify;
-	position:fixed;
-	width: 35%;
-	top: 100px;	
-}
-
-#preview legend{
-	font-weight: 600;
-	font-size: 14px;
-	color: #222;
-	line-height: 1.3;
-	padding: 5px 20px;
-	border: 2px inset #000066;
-	border-radius: 3px;
-	background-color: #EEEEEE;
-	box-shadow: inset 0px 0px 3px #666666;
-}
-
-form input[type=color]{
+form input[type=color] {
 	height: 2em;
-}
-
-span.sup,span.sub { 
-  font-size: 0.7em; 
-  vertical-align: baseline; 
-  position: relative; 
-} 
-span.sup{
-	top:-0.6em;
-}
-span.sub{
-	bottom:-0.6em;
-}
-
-#bibleget-css-editor {
-	border-top: 2px groove White;
-	width: 80%;
-	margin: 0px auto;
-	padding-top: 12px;
-}
-
-#bibleget-edit-stylesheet {
-	border: 3px inset #554466;
-	border-radius: 6px;
-	padding: 24px;
-	background-color: #AAAAAA;
-	box-shadow: inset 0px 0px 6px #222222;
-	width: 85%;
-	margin-bottom: 12px;
-}
-
-#bibleget-edit-stylesheet legend{
-	font-weight: 600;
-	font-size: 14px;
-	color: #222;
-	line-height: 1.3;
-	padding: 5px 20px;
-	border: 2px inset #000066;
-	border-radius: 3px;
-	background-color: #EEEEEE;
-	box-shadow: inset 0px 0px 3px #666666;
-}
-
-#bibleget-edit-stylesheet pre {
-	border: 2px solid #ffff80;
-	border-radius: 2px;
-	/* box-shadow: 3px 3px 3px LightYellow; */
-	padding: 12px;
-	background-color: White;
-	font-weight: bold;
-	color: Black;
 }
 
 .bibleget-dynamic-data {
@@ -104,7 +29,7 @@ span.sub{
 	text-shadow: 1px 1px 1px Black;
 	margin: 0px 6px;
 	font-size: 1.3em;
-	font-family: 'Courier New', Courier, monospace;	
+	font-family: 'Courier New', Courier, monospace;
 }
 
 .bibleget-dynamic-data-wrapper {
@@ -118,19 +43,85 @@ span.sub{
 }
 
 #versionlangs-ol {
+	
 }
 
-#versionlangs-ol > li {
+#versionlangs-ol>li {
 	font-weight: bold;
 }
-#versionlangs-ol > li > ul {
+
+#versionlangs-ol>li>ul {
 	font-weight: normal;
 }
 
 #bibleget-donate {
 	text-align: center;
 }
+
 #bibleget-donate button {
 	cursor: pointer;
 	padding: 12px;
+}
+
+#bibleget-settings-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+#bibleget-settings-contents, #bibleget_ajax_spinner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+#bibleget_ajax_spinner {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.7);
+	text-align: center;
+	z-index: 10;
+	display: none;
+}
+
+#bibleget_ajax_spinner img {
+	position: relative;
+	top: 50%;
+	margin-top: -16px;
+}
+
+#bibleget-settings-notification {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	height: 50px;
+	width: 50%;
+	margin-top: -25px;
+	margin-left: -25%;
+	z-index: 105;
+	text-align: center;
+	font-weight: normal;
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+	background-color: #FF7800;
+	padding: 15px;
+	border: 2px solid DarkGreen;
+	border-radius: 12px;
+}
+
+#bibleget-settings-notification span.bibleget-settings-notification-dismiss {
+	border: 2px solid #FFF;
+	padding: 0 5px;
+	cursor: pointer;
+	float: right;
+	margin-right: 10px;
+}
+
+#bibleget-settings-notification a {
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
 }

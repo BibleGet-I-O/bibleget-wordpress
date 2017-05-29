@@ -202,7 +202,25 @@ add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
 function bibleGetQueryServer($finalquery) {
-	$ch = curl_init ( "https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
+	//We will make a secure connection to the BibleGet service endpoint, 
+	//if this server's OpenSSL and CURL versions support TLSv1.2 
+	$version = curl_version();
+	$ssl_version = str_replace('OpenSSL/','',$version['ssl_version']);
+	if( version_compare( $version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
+		//we should be good to go for secure SSL communication supporting TLSv1_2
+		$ch = curl_init ( "https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
+		//echo "<div>" . plugins_url ( 'DST_Root_CA.cer',__FILE__ ) . "</div>";
+		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.cer"); //seems to work.. ???
+		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
+	
+	}
+	else{
+		$ch = curl_init ( "http://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
+	}
+	
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 	
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {

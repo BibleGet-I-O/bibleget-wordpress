@@ -7,7 +7,6 @@ class BibleGetSettingsPage
      */
     private $options;
     private $options_page_hook;
-    private $safe_fonts;
     private $versionsbylang;
     private $versionlangs;
     private $countversionsbylang;
@@ -74,51 +73,64 @@ class BibleGetSettingsPage
             ?>
             </form>
             </div>
-            <div id="page-clear"></div>
-        	<div>
-        		<hr>
-        		<h3><?php _e("Current BibleGet I/O engine information:","bibleget-io") ?></h3>
-        		<ol type="A">
-        			<li><?php 
-            			if($this->countversionsbylang<1 || $this->countversionlangs<1){
-        					echo "Seems like the version info was not yet initialized. Now attempting to initialize...";
-							$this->getVersionsByLang();
-        				}
-        				$b1 = '<b class="bibleget-dynamic-data">';
-        				$b2 = '</b>';
-        				$string1 = $b1.$this->countversionsbylang.$b2;
-        				$string2 = $b1.$this->countversionlangs.$b2;
-        				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
-        				printf(__("The BibleGet I/O engine currently supports %s versions of the Bible in %s different languages.","bibleget-io"),$string1,$string2);
-        				echo "<br />";
-        				_e("Here is the list of currently supported versions, subdivided by language:","bibleget-io");
-        				echo "<div class=\"bibleget-dynamic-data-wrapper\"><ol id=\"versionlangs-ol\">";
-        				$cc=0;
-        				foreach($this->versionlangs as $lang){
-        					echo '<li>-'.$lang.'-<ul>';
-        					foreach($this->versionsbylang[$lang] as $abbr => $value){
-        						echo '<li>'.(++$cc).') '.$abbr.' — '.$value["fullname"].' ('.$value["year"].')</li>';
-        					}
-        					echo '</ul><div></li>';
-        				}
-        				echo "</ol>";
-        			?></li>
-        			<li><?php 
-        				$string3 = $b1.count($this->biblebookslangs).$b2;
-        				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
-        				printf(__("The BibleGet I/O engine currently recognizes the names of the books of the Bible in %s different languages:","bibleget-io"),$string3); 
-        				echo "<br />";
-        				echo "<div class=\"bibleget-dynamic-data-wrapper\">".implode(", ",$this->biblebookslangs)."</div>";
-        			?></li>
-        		</ol>
-        		<p><?php _e("This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.","bibleget-io"); ?></p>
-        		<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e("RENEW INFORMATION FROM BIBLEGET SERVER","bibleget-io") ?></button>
+            <div class="page-clear"></div>
+        	  
+            <hr>
+            <div id="bibleget-settings-container">        		
+      				<div id="bibleget-settings-contents">
+            		<h3><?php _e("Current BibleGet I/O engine information:","bibleget-io") ?></h3>
+            		<ol type="A">
+            			<li><?php 
+                			if($this->countversionsbylang<1 || $this->countversionlangs<1){
+            					echo "Seems like the version info was not yet initialized. Now attempting to initialize...";
+    							$this->getVersionsByLang();
+            				}
+            				$b1 = '<b class="bibleget-dynamic-data">';
+            				$b2 = '</b>';
+            				$string1 = $b1.$this->countversionsbylang.$b2;
+            				$string2 = $b1.$this->countversionlangs.$b2;
+            				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
+            				printf(__("The BibleGet I/O engine currently supports %s versions of the Bible in %s different languages.","bibleget-io"),$string1,$string2);
+            				echo "<br />";
+            				_e("Here is the list of currently supported versions, subdivided by language:","bibleget-io");
+            				echo "<div class=\"bibleget-dynamic-data-wrapper\"><ol id=\"versionlangs-ol\">";
+            				$cc=0;
+            				foreach($this->versionlangs as $lang){
+            					echo '<li>-'.$lang.'-<ul>';
+            					foreach($this->versionsbylang[$lang] as $abbr => $value){
+            						echo '<li>'.(++$cc).') '.$abbr.' — '.$value["fullname"].' ('.$value["year"].')</li>';
+            					}
+            					echo '</ul><div></li>';
+            				}
+            				echo "</ol>";
+            			?></li>
+            			<li><?php 
+            				$string3 = $b1.count($this->biblebookslangs).$b2;
+            				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
+            				printf(__("The BibleGet I/O engine currently recognizes the names of the books of the Bible in %s different languages:","bibleget-io"),$string3); 
+            				echo "<br />";
+            				echo "<div class=\"bibleget-dynamic-data-wrapper\">".implode(", ",$this->biblebookslangs)."</div>";
+            			?></li>
+            		</ol>
+            		<p><?php _e("This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.","bibleget-io"); ?></p>
+            		<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e("RENEW INFORMATION FROM BIBLEGET SERVER","bibleget-io") ?></button>
+              </div>
+              <div id="bibleget_ajax_spinner"><img src="<?php echo admin_url(); ?>images/wpspin_light-2x.gif" /></div>
         	</div>
+          	<div class="page-clear"></div>
         	<hr>
         	<?php 
         		$locale = apply_filters('plugin_locale', get_locale(), 'bibleget-io');
         		//let's keep the image files to the general locale, so we don't have to make a different image for every specific country locale...
-        		if( strpos($locale,"_") !== false ) { $locale_lang = explode("_",$locale)[0]; }
+        		if( strpos($locale,"_") !== false ) { 
+        			if (version_compare(phpversion(), '5.4.0', '>=')) {
+        				$locale_lang = explode("_",$locale)[0]; //variable dereferencing available only since PHP 5.4
+        			}
+        			else{
+        				list($locale_lang,$locale_country) = explode("_",$locale); //lower than PHP 5.4
+        			}
+        			 
+        		}
         		else { $locale_lang = $locale; }
         		if(file_exists(plugins_url( 'images/btn_donateCC_LG'.($locale_lang ? '-'.$locale_lang : '').'.gif', __FILE__ )) ){
         			$donate_img = plugins_url( 'images/btn_donateCC_LG'.($locale_lang ? '-'.$locale_lang : '').'.gif', __FILE__ );
@@ -127,6 +139,9 @@ class BibleGetSettingsPage
         	?>
         	<div id="bibleget-donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58"></a><button><img src="<?php echo $donate_img; ?>" /></button></a></div>
         </div>
+		<div id="bibleget-settings-notification">
+		  <span class="bibleget-settings-notification-dismiss"><a title="dismiss this notification">x</a></span>
+		</div>        
         <?php
     }
 
@@ -405,6 +420,11 @@ class BibleGet_Customize {
     self::$bibleget_style_settings->bibleget_bordercolor->title = __('Border-color for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_bordercolor->type = 'color';
     
+    self::$bibleget_style_settings->bibleget_bgcolor = new stdClass();
+    self::$bibleget_style_settings->bibleget_bgcolor->dfault = '#ffffff';
+    self::$bibleget_style_settings->bibleget_bgcolor->title = __('Background color for Biblical Quotes',"bibleget-io");
+    self::$bibleget_style_settings->bibleget_bgcolor->type = 'color';
+    
     self::$bibleget_style_settings->bibleget_borderradius = new stdClass();
     self::$bibleget_style_settings->bibleget_borderradius->dfault = 6;
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
@@ -486,8 +506,8 @@ class BibleGet_Customize {
     $bibleget_styles_general->font_style->type = 'style';
     $bibleget_styles_general->font_color->type = 'color';
     
-		$bibleget_style_sizes_arr = array(4=>'4',5=>'5',6=>'6',7=>'7',8=>'8',9=>'9',10=>'10',11=>'11',12=>'12',14=>'14',16=>'16',18=>'18',20=>'20',22=>'22',24=>'24',26=>'26',28=>'28');
-		$bibleget_style_choices_arr = array(
+	$bibleget_style_sizes_arr = array(4=>'4',5=>'5',6=>'6',7=>'7',8=>'8',9=>'9',10=>'10',11=>'11',12=>'12',14=>'14',16=>'16',18=>'18',20=>'20',22=>'22',24=>'24',26=>'26',28=>'28');
+	$bibleget_style_choices_arr = array(
       'bold'         => __("B","bibleget-io"),
       'italic'       => __("I", "bibleget-io"),
       'underline'    => __("U", "bibleget-io"),
@@ -497,54 +517,54 @@ class BibleGet_Customize {
     );
     
     foreach($bibleget_styles_general as $i => $styleobj){
-			$o = str_replace("_","",$i);
+		$o = str_replace("_","",$i);
 
-			self::$bibleget_style_settings->{'bookchapter_'.$o} = new stdClass();
-			/* translators: in reference to Font Size, Style and Color */
-			self::$bibleget_style_settings->{'bookchapter_'.$o}->title = $styleobj->title . " " . __('for Books and Chapters',"bibleget-io");
-			self::$bibleget_style_settings->{'bookchapter_'.$o}->type = $styleobj->type;
-			if($styleobj->type == 'select'){
-				self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_sizes_arr;
-			}
-      elseif($styleobj->type == 'style'){
-        self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_choices_arr;
-      }
-			self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
-			/* translators: in reference to Font Size, Style and Color */
-			self::$bibleget_style_settings->{'versenumber_'.$o}->title = $styleobj->title . " " . __('for Verse Numbers',"bibleget-io");
-			self::$bibleget_style_settings->{'versenumber_'.$o}->type = $styleobj->type;
-			if($styleobj->type == 'select'){
-				self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_sizes_arr;
-			}
-      elseif($styleobj->type == 'style'){
-        self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_choices_arr;
-      }
+		self::$bibleget_style_settings->{'bookchapter_'.$o} = new stdClass();
+		/* translators: in reference to Font Size, Style and Color */
+		self::$bibleget_style_settings->{'bookchapter_'.$o}->title = $styleobj->title . " " . __('for Books and Chapters',"bibleget-io");
+		self::$bibleget_style_settings->{'bookchapter_'.$o}->type = $styleobj->type;
+		if($styleobj->type == 'select'){
+			self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_sizes_arr;
+		}
+      	elseif($styleobj->type == 'style'){
+        	self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_choices_arr;
+      	}
+		self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
+		/* translators: in reference to Font Size, Style and Color */
+		self::$bibleget_style_settings->{'versenumber_'.$o}->title = $styleobj->title . " " . __('for Verse Numbers',"bibleget-io");
+		self::$bibleget_style_settings->{'versenumber_'.$o}->type = $styleobj->type;
+		if($styleobj->type == 'select'){
+			self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_sizes_arr;
+		}
+      	elseif($styleobj->type == 'style'){
+        	self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_choices_arr;
+      	}
 			self::$bibleget_style_settings->{'versetext_'.$o} = new stdClass();
 			/* translators: in reference to Font Size, Style and Color */
 			self::$bibleget_style_settings->{'versetext_'.$o}->title = $styleobj->title . " " . __('for Text of Verses',"bibleget-io");
 			self::$bibleget_style_settings->{'versetext_'.$o}->type = $styleobj->type;
-			if($styleobj->type == 'select'){
-				self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_sizes_arr;
-			}
-      elseif($styleobj->type == 'style'){
-        self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_choices_arr;
-      }
+		if($styleobj->type == 'select'){
+			self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_sizes_arr;
 		}
-		self::$bibleget_style_settings->bookchapter_fontsize->dfault = 14;
-		self::$bibleget_style_settings->bookchapter_fontstyle->dfault = 'bold';
-		self::$bibleget_style_settings->bookchapter_fontcolor->dfault = '#284f29';
-		self::$bibleget_style_settings->versenumber_fontsize->dfault = 7;
-		self::$bibleget_style_settings->versenumber_fontstyle->dfault = 'superscript';
-		self::$bibleget_style_settings->versenumber_fontcolor->dfault = '#c10005';
-		self::$bibleget_style_settings->versetext_fontsize->dfault = 10;
-		self::$bibleget_style_settings->versetext_fontstyle->dfault = '';
-		self::$bibleget_style_settings->versetext_fontcolor->dfault = '#646d73';
-		
-		self::$bibleget_style_settings->linespacing_verses = new stdClass();
-		self::$bibleget_style_settings->linespacing_verses->dfault = 150;
-		self::$bibleget_style_settings->linespacing_verses->title = __('Line-spacing for Verses Paragraphs',"bibleget-io");
-		self::$bibleget_style_settings->linespacing_verses->type = 'select';
-		self::$bibleget_style_settings->linespacing_verses->choices = array(100 => 'single',150 => '1½',200 => 'double');
+      	elseif($styleobj->type == 'style'){
+        	self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_choices_arr;
+      	}
+	}
+	self::$bibleget_style_settings->bookchapter_fontsize->dfault = 14;
+	self::$bibleget_style_settings->bookchapter_fontstyle->dfault = 'bold';
+	self::$bibleget_style_settings->bookchapter_fontcolor->dfault = '#284f29';
+	self::$bibleget_style_settings->versenumber_fontsize->dfault = 7;
+	self::$bibleget_style_settings->versenumber_fontstyle->dfault = 'superscript';
+	self::$bibleget_style_settings->versenumber_fontcolor->dfault = '#c10005';
+	self::$bibleget_style_settings->versetext_fontsize->dfault = 10;
+	self::$bibleget_style_settings->versetext_fontstyle->dfault = '';
+	self::$bibleget_style_settings->versetext_fontcolor->dfault = '#646d73';
+	
+	self::$bibleget_style_settings->linespacing_verses = new stdClass();
+	self::$bibleget_style_settings->linespacing_verses->dfault = 150;
+	self::$bibleget_style_settings->linespacing_verses->title = __('Line-spacing for Verses Paragraphs',"bibleget-io");
+	self::$bibleget_style_settings->linespacing_verses->type = 'select';
+	self::$bibleget_style_settings->linespacing_verses->choices = array(100 => 'single',150 => '1½',200 => 'double');
 
   }
 
@@ -665,6 +685,7 @@ class BibleGet_Customize {
            <?php self::generate_css('div.results', 'border-width', 'bibleget_borderwidth','','px'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'border-style', 'bibleget_borderstyle'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'border-color', 'bibleget_bordercolor'); echo PHP_EOL; ?>
+           <?php self::generate_css('div.results', 'background-color', 'bibleget_bgcolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'border-radius', 'bibleget_borderradius','','px'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'width', 'bibleget_width','','%'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results p.verses', 'text-align', 'bibleget_textalign'); echo PHP_EOL; ?>
