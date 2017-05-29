@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 4.0
+Stable tag: 4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,11 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.1 =
+* Added check for compatibility of curl and openssl version on each website's server with TLS v1.2 protocol for secure communications;
+  if not compatible fall back to http request, otherwise https request to the BibleGet server will be made
+* Added ajax spinner for better user feedback when renewing metadata from the BibleGet server
 
 = 4.0 =
 * Another bugfix, the fix that made the spacing better between verse number and verse text was also removing the specific formatting for the NABRE text 
@@ -181,6 +186,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.1 =
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.1 adds ajax spinner and ssl compatibility check.
 
 = 4.0 =
 Complete overhaul porting the style settings from the Settings Page to the Wordpress Customizer since 3.6 plus bugfixes
