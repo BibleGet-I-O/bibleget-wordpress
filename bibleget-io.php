@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.1
+ * Version: 4.2
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v4_1" );
+define ( "BIBLEGETPLUGINVERSION", "v4_2" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -694,9 +694,27 @@ function bibleGetGetMetaData($request) {
 	// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions
 	$notices = get_option ( 'bibleget_error_admin_notices', array () );
 	
-	$url = "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
-	$ch = curl_init ( $url );
+	$version = curl_version();
+	$ssl_version = str_replace('OpenSSL/','',$version['ssl_version']);
+	if( version_compare( $version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
+		//we should be good to go for secure SSL communication supporting TLSv1_2
+		$url = "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+		$ch = curl_init ( $url );
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
+		//echo "<div>" . plugins_url ( 'DST_Root_CA.cer',__FILE__ ) . "</div>";
+		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.cer"); //seems to work.. ???
+		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
+	
+	}
+	else{
+		$url = "http://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+		$ch = curl_init ( $url );
+	}
+		
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+	
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
 		// safe mode is on, we can't use some settings
 	} else {

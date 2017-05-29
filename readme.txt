@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 4.1
+Stable tag: 4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,9 +77,13 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 == Changelog ==
 
+= 4.2 =
+* Added check for compatibility of curl and openssl version on each website's server with TLS v1.2 protocol for secure communications,
+  also in the case of metadata updates when refreshing server data from the BibleGet server
+
 = 4.1 =
 * Added check for compatibility of curl and openssl version on each website's server with TLS v1.2 protocol for secure communications;
-  if not compatible fall back to http request, otherwise https request to the BibleGet server will be made
+  if not compatible fall back to http request when fetching bible verses, otherwise https request to the BibleGet server will be made
 * Added ajax spinner for better user feedback when renewing metadata from the BibleGet server
 
 = 4.0 =
@@ -186,6 +190,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.2 =
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.2 adds ssl compatibility check.
 
 = 4.1 =
 Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.1 adds ajax spinner and ssl compatibility check.
