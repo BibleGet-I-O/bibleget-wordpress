@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.7.5
-Stable tag: 4.2
+Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,7 @@ GREEK TRANSLATION: anonymous user contribution
 [BibleGet Project Website](https://www.bibleget.io/ "BibleGet Project Website")
 [BibleGet Project Facebook Page](https://www.facebook.com/BibleGetIO/ "BibleGet Project Facebook Page")
 [BibleGet Project Google+ Page](https://plus.google.com/+BibleGetIO "BibleGet Project Google+ Page")
+[BibleGet Twitter Profile](https://twitter.com/biblegetio "@BibleGetIO")
 
 == Installation ==
 
@@ -76,6 +77,11 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.3 =
+* Enhancement: add newline before verse number of specific formatted poetic verses in the NABRE version
+* Enhancement: add option in the Wordpress Customizer for styling the Version Indicator
+* Enhancement: re-organize styling options in the customizer into subsections
 
 = 4.2 =
 * Added check for compatibility of curl and openssl version on each website's server with TLS v1.2 protocol for secure communications,
@@ -191,8 +197,11 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 == Upgrade Notice ==
 
+= 4.3 =
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.3 presents enhancements in text formatting and styling options
+
 = 4.2 =
-Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.2 adds ssl compatibility check.
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.2 adds another ssl compatibility check.
 
 = 4.1 =
 Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.1 adds ajax spinner and ssl compatibility check.

@@ -368,9 +368,12 @@ class BibleGet_Customize {
   public static $bibleget_style_settings;
   
   public static function init(){
-    self::$bibleget_style_settings = new stdClass();
+    
+  	/* Define object that will contain all the information for all settings and controls */
+  	self::$bibleget_style_settings = new stdClass();
 
-	self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
+  	/* Define bibleget_fontfamily setting and control */
+  	self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
 	self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
 	self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font Family for Biblical Quotes',"bibleget-io");
 	self::$bibleget_style_settings->bibleget_fontfamily->type = 'select';
@@ -389,14 +392,18 @@ class BibleGet_Customize {
     	"Trebuchet MS"			 => "Trebuchet MS",
     	"Verdana"			  	 => "Verdana"
     );
+	self::$bibleget_style_settings->bibleget_fontfamily->section = 'bibleget_paragraph_style_options';
 
+  	/* Define bibleget_borderwidth setting and control */
 	self::$bibleget_style_settings->bibleget_borderwidth = new stdClass();
     self::$bibleget_style_settings->bibleget_borderwidth->dfault = '2';    
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_borderwidth->title = __('Border-width for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderwidth->type = 'number';
+    self::$bibleget_style_settings->bibleget_borderwidth->section = 'bibleget_paragraph_style_options';
     
-	self::$bibleget_style_settings->bibleget_borderstyle = new stdClass();
+  	/* Define bibleget_borderstyle setting and control */
+    self::$bibleget_style_settings->bibleget_borderstyle = new stdClass();
     self::$bibleget_style_settings->bibleget_borderstyle->dfault = 'solid';
     self::$bibleget_style_settings->bibleget_borderstyle->title = __('Border-style for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderstyle->type = 'select';
@@ -414,22 +421,33 @@ class BibleGet_Customize {
 		"initial"	=> "initial",
        	"inherit"	=> "inherit"
     );
+    self::$bibleget_style_settings->bibleget_borderstyle->section = 'bibleget_paragraph_style_options';
     
+  	
+  	/* Define bibleget_bordercolor setting and control */
     self::$bibleget_style_settings->bibleget_bordercolor = new stdClass();
     self::$bibleget_style_settings->bibleget_bordercolor->dfault = '#d3d3d3';
     self::$bibleget_style_settings->bibleget_bordercolor->title = __('Border-color for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_bordercolor->type = 'color';
+    self::$bibleget_style_settings->bibleget_bordercolor->section = 'bibleget_paragraph_style_options';
     
+  	
+  	/* Define bibleget_bgcolor setting and control */
     self::$bibleget_style_settings->bibleget_bgcolor = new stdClass();
     self::$bibleget_style_settings->bibleget_bgcolor->dfault = '#ffffff';
     self::$bibleget_style_settings->bibleget_bgcolor->title = __('Background color for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_bgcolor->type = 'color';
+    self::$bibleget_style_settings->bibleget_bgcolor->section = 'bibleget_paragraph_style_options';
     
+
+  	/* Define bibleget_borderradius setting and control */
     self::$bibleget_style_settings->bibleget_borderradius = new stdClass();
     self::$bibleget_style_settings->bibleget_borderradius->dfault = 6;
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_borderradius->title = __('Border-radius for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_borderradius->type = 'number';
+    self::$bibleget_style_settings->bibleget_borderradius->section = 'bibleget_paragraph_style_options';
+    
     
     $margin_padding_vals = array(
         "auto"    => "auto",
@@ -450,46 +468,65 @@ class BibleGet_Customize {
         18         => "18",
         20         => "20"        
     );
+
     
+  	/* Define bibleget_margintopbottom setting and control */
     self::$bibleget_style_settings->bibleget_margintopbottom = new stdClass();
     self::$bibleget_style_settings->bibleget_margintopbottom->dfault = 12;
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_margintopbottom->title = __('Margin top/bottom for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_margintopbottom->type = 'select';
     self::$bibleget_style_settings->bibleget_margintopbottom->choices = $margin_padding_vals;
+    self::$bibleget_style_settings->bibleget_margintopbottom->section = 'bibleget_paragraph_style_options';
     
+    
+  	/* Define bibleget_marginleftright setting and control */
     self::$bibleget_style_settings->bibleget_marginleftright = new stdClass();
     self::$bibleget_style_settings->bibleget_marginleftright->dfault = 'auto';
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_marginleftright->title = __('Margin left/right for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_marginleftright->type = 'select';
     self::$bibleget_style_settings->bibleget_marginleftright->choices = $margin_padding_vals;
+    self::$bibleget_style_settings->bibleget_marginleftright->section = 'bibleget_paragraph_style_options';
+
     
+  	/* Define bibleget_paddingtopbottom setting and control */
     self::$bibleget_style_settings->bibleget_paddingtopbottom = new stdClass();
     self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault = 12;
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_paddingtopbottom->title = __('Padding top/bottom for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_paddingtopbottom->type = 'select';
     self::$bibleget_style_settings->bibleget_paddingtopbottom->choices = $margin_padding_vals;
+    self::$bibleget_style_settings->bibleget_paddingtopbottom->section = 'bibleget_paragraph_style_options';
 
+       
+  	/* Define bibleget_paddingleftright setting and control */
     self::$bibleget_style_settings->bibleget_paddingleftright = new stdClass();
     self::$bibleget_style_settings->bibleget_paddingleftright->dfault = 12;
     /* translators: "px" refers to pixels as used in CSS rules, do not translate */
     self::$bibleget_style_settings->bibleget_paddingleftright->title = __('Padding left/right for Biblical Quotes (in px)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_paddingleftright->type = 'select';
     self::$bibleget_style_settings->bibleget_paddingleftright->choices = $margin_padding_vals;
+    self::$bibleget_style_settings->bibleget_paddingleftright->section = 'bibleget_paragraph_style_options';
     
+
+  	/* Define bibleget_width setting and control */
     self::$bibleget_style_settings->bibleget_width = new stdClass();
     self::$bibleget_style_settings->bibleget_width->dfault = 85;
     /* translators: "%" refers to percentage as used in CSS rules (width: 100%), do not translate */
     self::$bibleget_style_settings->bibleget_width->title = __('Width for Biblical Quotes (in %)',"bibleget-io");
     self::$bibleget_style_settings->bibleget_width->type = 'number';
+    self::$bibleget_style_settings->bibleget_width->section = 'bibleget_paragraph_style_options'; 
     
+    
+  	/* Define bibleget_textalign setting and control */
     self::$bibleget_style_settings->bibleget_textalign = new stdClass();
     self::$bibleget_style_settings->bibleget_textalign->dfault = 'justify';
     self::$bibleget_style_settings->bibleget_textalign->title = __('Text-align for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_textalign->type = 'select';
     self::$bibleget_style_settings->bibleget_textalign->choices = array('left' => 'left','right'=>'right','center'=>'center','justify'=>'justify','inherit'=>'inherit','start'=>'start','end'=>'end');
+    
+    
     
     
     $bibleget_styles_general = new stdClass();
@@ -519,7 +556,20 @@ class BibleGet_Customize {
     foreach($bibleget_styles_general as $i => $styleobj){
 		$o = str_replace("_","",$i);
 
+    	self::$bibleget_style_settings->{'version_'.$o} = new stdClass();
+    	self::$bibleget_style_settings->{'version_'.$o}->section = 'bibleget_bibleversion_style_options';
+		/* translators: in reference to Font Size, Style and Color */
+		self::$bibleget_style_settings->{'version_'.$o}->title = $styleobj->title . " " . __('for Version Indicator',"bibleget-io");
+		self::$bibleget_style_settings->{'version_'.$o}->type = $styleobj->type;
+		if($styleobj->type == 'select'){
+			self::$bibleget_style_settings->{'version_'.$o}->choices = $bibleget_style_sizes_arr;
+		}
+      	elseif($styleobj->type == 'style'){
+        	self::$bibleget_style_settings->{'version_'.$o}->choices = $bibleget_style_choices_arr;
+      	}
+		
 		self::$bibleget_style_settings->{'bookchapter_'.$o} = new stdClass();
+    	self::$bibleget_style_settings->{'bookchapter_'.$o}->section = 'bibleget_bookchapter_style_options';
 		/* translators: in reference to Font Size, Style and Color */
 		self::$bibleget_style_settings->{'bookchapter_'.$o}->title = $styleobj->title . " " . __('for Books and Chapters',"bibleget-io");
 		self::$bibleget_style_settings->{'bookchapter_'.$o}->type = $styleobj->type;
@@ -529,8 +579,10 @@ class BibleGet_Customize {
       	elseif($styleobj->type == 'style'){
         	self::$bibleget_style_settings->{'bookchapter_'.$o}->choices = $bibleget_style_choices_arr;
       	}
-		self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
-		/* translators: in reference to Font Size, Style and Color */
+		
+      	self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
+    	self::$bibleget_style_settings->{'versenumber_'.$o}->section = 'bibleget_versenumber_style_options';
+      	/* translators: in reference to Font Size, Style and Color */
 		self::$bibleget_style_settings->{'versenumber_'.$o}->title = $styleobj->title . " " . __('for Verse Numbers',"bibleget-io");
 		self::$bibleget_style_settings->{'versenumber_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){
@@ -539,10 +591,12 @@ class BibleGet_Customize {
       	elseif($styleobj->type == 'style'){
         	self::$bibleget_style_settings->{'versenumber_'.$o}->choices = $bibleget_style_choices_arr;
       	}
-			self::$bibleget_style_settings->{'versetext_'.$o} = new stdClass();
-			/* translators: in reference to Font Size, Style and Color */
-			self::$bibleget_style_settings->{'versetext_'.$o}->title = $styleobj->title . " " . __('for Text of Verses',"bibleget-io");
-			self::$bibleget_style_settings->{'versetext_'.$o}->type = $styleobj->type;
+		
+      	self::$bibleget_style_settings->{'versetext_'.$o} = new stdClass();
+    	self::$bibleget_style_settings->{'versetext_'.$o}->section = 'bibleget_versetext_style_options';
+      	/* translators: in reference to Font Size, Style and Color */
+		self::$bibleget_style_settings->{'versetext_'.$o}->title = $styleobj->title . " " . __('for Text of Verses',"bibleget-io");
+		self::$bibleget_style_settings->{'versetext_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){
 			self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_sizes_arr;
 		}
@@ -550,6 +604,7 @@ class BibleGet_Customize {
         	self::$bibleget_style_settings->{'versetext_'.$o}->choices = $bibleget_style_choices_arr;
       	}
 	}
+
 	self::$bibleget_style_settings->bookchapter_fontsize->dfault = 14;
 	self::$bibleget_style_settings->bookchapter_fontstyle->dfault = 'bold';
 	self::$bibleget_style_settings->bookchapter_fontcolor->dfault = '#284f29';
@@ -565,7 +620,8 @@ class BibleGet_Customize {
 	self::$bibleget_style_settings->linespacing_verses->title = __('Line-spacing for Verses Paragraphs',"bibleget-io");
 	self::$bibleget_style_settings->linespacing_verses->type = 'select';
 	self::$bibleget_style_settings->linespacing_verses->choices = array(100 => 'single',150 => '1½',200 => 'double');
-
+	self::$bibleget_style_settings->linespacing_verses->section = 'bibleget_paragraph_style_options';
+	
   }
 
 	/**
@@ -582,17 +638,72 @@ class BibleGet_Customize {
 	 */
 	public static function register ( $wp_customize ) {
 		
-    self::init();
+    	self::init();
     		
-    require_once 'custom_controls.php';
+    	require_once 'custom_controls.php';
     		
-		//1. Define a new section (if desired) to the Theme Customizer
-		$wp_customize->add_section( 'bibleget_style_options',
+		$wp_customize->add_panel('bibleget_style_options', 
 				array(
-						'title'       => __( 'BibleGet Plugin Styles', 'bibleget-io' ), //Visible title of section
-						'priority'    => 35, //Determines what order this appears in
-						'capability'  => 'publish_posts', //Capability needed to tweak
-						'description' => __( 'Custom styles that apply to the text formatting of the biblical quotes', 'bibleget-io' ) 
+						'priority'			=> 35,
+						'capability'		=> 'edit_theme_options',
+						//'theme_supports'	=> '',
+						'title'				=> __( 'BibleGet Plugin Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the text formatting of the biblical quotes', 'bibleget-io' )
+				)
+		);
+		
+		$wp_customize->add_section( 'bibleget_paragraph_style_options',
+				array(
+						'priority'			=> 10, //Determines what order this appears in
+						'capability'		=> 'edit_theme_options', //Capability needed to tweak
+						//'theme_supports'	=> '',
+						'title'				=> __( 'General Paragraph Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the general paragraph and to the box model of the biblical quotes', 'bibleget-io' ),
+						'panel'				=> 'bibleget_style_options'
+				)
+		);
+		
+		$wp_customize->add_section( 'bibleget_bibleversion_style_options',
+				array(
+						'priority'			=> 20, //Determines what order this appears in
+						'capability'		=> 'edit_theme_options', //Capability needed to tweak
+						//'theme_supports'	=> '',
+						'title'				=> __( 'Bible Version Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the version indicator of the biblical quotes', 'bibleget-io' ),
+						'panel'				=> 'bibleget_style_options'
+				)
+		);
+		
+		$wp_customize->add_section( 'bibleget_bookchapter_style_options',
+				array(
+						'priority'			=> 30, //Determines what order this appears in
+						'capability'		=> 'edit_theme_options', //Capability needed to tweak
+						//'theme_supports'	=> '',
+						'title'				=> __( 'Book / Chapter Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the book and chapter indicators of the biblical quotes', 'bibleget-io' ),
+						'panel'				=> 'bibleget_style_options'
+				)
+		);
+
+		$wp_customize->add_section( 'bibleget_versenumber_style_options',
+				array(
+						'priority'			=> 40, //Determines what order this appears in
+						'capability'		=> 'edit_theme_options', //Capability needed to tweak
+						//'theme_supports'	=> '',
+						'title'				=> __( 'Verse Number Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the verse numbers of the biblical quotes', 'bibleget-io' ),
+						'panel'				=> 'bibleget_style_options'
+				)
+		);
+		
+		$wp_customize->add_section( 'bibleget_versetext_style_options',
+				array(
+						'priority'			=> 50, //Determines what order this appears in
+						'capability'		=> 'edit_theme_options', //Capability needed to tweak
+						//'theme_supports'	=> '',
+						'title'				=> __( 'Verse Text Styles', 'bibleget-io' ), //Visible title of section
+						'description'		=> __( 'Custom styles that apply to the verse text of the biblical quotes', 'bibleget-io' ),
+						'panel'				=> 'bibleget_style_options'
 				)
 		);
 		
@@ -618,7 +729,7 @@ class BibleGet_Customize {
 								'label'      => $style_setting_obj->title, //Admin-visible name of the control
 								'settings'   => $style_setting, //Which setting to load and manipulate (serialized is okay)
 								'priority'   => $bibleget_style_settings_cc++, //Determines the order this control appears in for the specified section
-								'section'    => 'bibleget_style_options' //ID of the section this control should render in (can be one of yours, or a WordPress default section)
+								'section'    => $style_setting_obj->section //ID of the section this control should render in (can be one of yours, or a WordPress default section)
 						)
 						)
 				);				
@@ -629,7 +740,7 @@ class BibleGet_Customize {
 								'label'	  	=> $style_setting_obj->title,
 								'settings'	=> $style_setting,
 								'priority'	=> $bibleget_style_settings_cc++,
-								'section' 	=> 'bibleget_style_options',
+								'section' 	=> $style_setting_obj->section,
 								'type'	   	=> 'select',
 								'choices' 	=> $style_setting_obj->choices
 						)
@@ -643,23 +754,23 @@ class BibleGet_Customize {
 								'label'	  	=> $style_setting_obj->title,
 								'settings'	=> $style_setting,
 								'priority'	=> $bibleget_style_settings_cc++,
-								'section' 	=> 'bibleget_style_options',
-                'choices'   => $style_setting_obj->choices
+								'section' 	=> $style_setting_obj->section,
+                				'choices'   => $style_setting_obj->choices
 						)
 						)
 				);
 			}
-      elseif($style_setting_obj->type == 'number'){
-        $wp_customize->add_control($style_setting . '_ctl',
-          array(
-              'label'       => $style_setting_obj->title,
-              'settings'    => $style_setting,
-              'priority'    => $bibleget_style_settings_cc++,
-              'section'     => 'bibleget_style_options',
-              'type'        => 'number'              
-          )
-        );
-      }
+      		elseif($style_setting_obj->type == 'number'){
+        		$wp_customize->add_control($style_setting . '_ctl',
+          				array(
+								'label'       => $style_setting_obj->title,
+								'settings'    => $style_setting,
+								'priority'    => $bibleget_style_settings_cc++,
+								'section'     => $style_setting_obj->section,
+								'type'        => 'number'              
+						)
+				);
+			}
 		}
 
 		
@@ -687,9 +798,7 @@ class BibleGet_Customize {
            <?php self::generate_css('div.results', 'border-color', 'bibleget_bordercolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'background-color', 'bibleget_bgcolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results', 'border-radius', 'bibleget_borderradius','','px'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'width', 'bibleget_width','','%'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results p.verses', 'text-align', 'bibleget_textalign'); echo PHP_EOL; ?>
-           
+           <?php self::generate_css('div.results', 'width', 'bibleget_width','','%'); echo PHP_EOL; ?>           
            <?php $mod = get_theme_mod('bibleget_margintopbottom',self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
              		$cssrule = '';
              		if ( ! empty( $mod ) ) {
@@ -757,15 +866,19 @@ class BibleGet_Customize {
              		}
            ?>
            
+           <?php self::generate_css('div.results p.verses', 'text-align', 'bibleget_textalign'); echo PHP_EOL; ?>           
+
+           <?php self::generate_css('div.results p.version', 'color', 'version_fontcolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results p.book', 'color', 'bookchapter_fontcolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results p.verses', 'color', 'versetext_fontcolor'); echo PHP_EOL; ?>
            <?php self::generate_css('div.results p.verses span.sup', 'color', 'versenumber_fontcolor'); echo PHP_EOL; ?>
+
            <?php echo 'div.results p.verses span.sup { margin: 0px 3px; }'; ?>
-           <?php 
-           		$fontsizerules = array(
-                'bookchapter_fontsize' => 'div.results p.book',
-                'versetext_fontsize' => 'div.results p.verses',
-                'versenumber_fontsize' => 'div.results p.verses span.sup'
+           <?php $fontsizerules = array(
+                'version_fontsize'		=> 'div.results p.version',
+           		'bookchapter_fontsize'	=> 'div.results p.book',
+                'versetext_fontsize'	=> 'div.results p.verses',
+                'versenumber_fontsize'	=> 'div.results p.verses span.sup'
                 );
               foreach ($fontsizerules as $fontsizerule => $css_selector){
                 $mod = get_theme_mod($fontsizerule,self::$bibleget_style_settings->$fontsizerule->dfault);
@@ -774,17 +887,20 @@ class BibleGet_Customize {
              			$cssrule = sprintf('%s { %s:%s; }',
              					$css_selector,
              					'font-size',
-                      $mod.'pt'
+                      			$mod.'pt'
              					//number_format(($mod / 10),1,'.','').'em'
              			);
-         				  echo $cssrule; echo PHP_EOL;
+         				echo $cssrule; 
+         				echo PHP_EOL;
              		}
               }
            ?>
+
            <?php 
               $fontstylerules = array(
-                'bookchapter_fontstyle' => 'div.results p.book',
-                'versetext_fontstyle' => 'div.results p.verses',
+                'version_fontstyle'		=> 'div.results p.version',
+              	'bookchapter_fontstyle' => 'div.results p.book',
+                'versetext_fontstyle'	=> 'div.results p.verses',
                 'versenumber_fontstyle' => 'div.results p.verses span.sup'
                 );
               foreach ($fontstylerules as $fontstylerule => $css_selector){
@@ -848,7 +964,7 @@ class BibleGet_Customize {
  			  echo "div.results p.verses span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
  			  echo "div.results p.verses span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
  			  echo "div.results p.verses span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses"."%; }"; echo PHP_EOL;
-              echo "div.results p.verses span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; margin-right: 10px; font-size: $fontsize_versenumber"."pt; }"; echo PHP_EOL;
+              echo "div.results p.verses span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber"."pt; }"; echo PHP_EOL;
           ?>
       </style> 
       <!--/Customizer CSS-->
