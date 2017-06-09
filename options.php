@@ -605,12 +605,18 @@ class BibleGet_Customize {
       	}
 	}
 
+	self::$bibleget_style_settings->version_fontsize->dfault = 12;
+	self::$bibleget_style_settings->version_fontstyle->dfault = 'italic';
+	self::$bibleget_style_settings->version_fontcolor->dfault = '#000';
+
 	self::$bibleget_style_settings->bookchapter_fontsize->dfault = 14;
 	self::$bibleget_style_settings->bookchapter_fontstyle->dfault = 'bold';
 	self::$bibleget_style_settings->bookchapter_fontcolor->dfault = '#284f29';
+	
 	self::$bibleget_style_settings->versenumber_fontsize->dfault = 7;
 	self::$bibleget_style_settings->versenumber_fontstyle->dfault = 'superscript';
 	self::$bibleget_style_settings->versenumber_fontcolor->dfault = '#c10005';
+	
 	self::$bibleget_style_settings->versetext_fontsize->dfault = 10;
 	self::$bibleget_style_settings->versetext_fontstyle->dfault = '';
 	self::$bibleget_style_settings->versetext_fontcolor->dfault = '#646d73';

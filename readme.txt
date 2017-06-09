@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
-Tested up to: 4.7.5
-Stable tag: 4.3
+Tested up to: 4.8
+Stable tag: 4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.4 =
+* Compatibility with Wordpress 4.8
+* Minor bugfix: fixed defaults for Bible version indicator styling settings in customizer
 
 = 4.3 =
 * Enhancement: add newline before verse number of specific formatted poetic verses in the NABRE version
@@ -196,6 +200,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.4 =
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.4 presents compatibility with Wordpress 4.8
 
 = 4.3 =
 Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.3 presents enhancements in text formatting and styling options
