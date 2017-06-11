@@ -10,8 +10,8 @@ wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 	ready : function() {
 		'use strict';
 
-		var control = this, checkboxes = jQuery('input:checkbox',
-				control.container);
+		var control = this, 
+			checkboxes = jQuery('input:checkbox', control.container);
 
 		// console.log("stylebar control constructor extension script is
 		// ready");

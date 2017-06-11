@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.3
+ * Version: 4.5
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v4_4" );
+define ( "BIBLEGETPLUGINVERSION", "v4_5" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -641,15 +641,15 @@ else {
 /* Mighty fine and dandy helper function I created! */
 function bibleGetToProperCase($txt) {
 	// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";
-	preg_match ( "/\p{L}/u", $txt, $mList, PREG_OFFSET_CAPTURE );
-	$idx = intval ( $mList [0] [1] );
+	preg_match( "/\p{L}/u", $txt, $mList, PREG_OFFSET_CAPTURE );
+	$idx = intval( $mList[0][1] );
 	// echo "<div style=\"border:3px solid Purple;\">idx = $idx</div>";
-	$chr = mb_substr ( $txt, $idx, 1, 'UTF-8' );
+	$chr = mb_substr( $txt, $idx, 1, 'UTF-8' );
 	// echo "<div style=\"border:3px solid Pink;\">chr = $chr</div>";
-	if (preg_match ( "/\p{L&}/u", $chr )) {
-		$post = mb_substr ( $txt, $idx + 1, mb_strlen ( $txt ), 'UTF-8' );
+	if (preg_match( "/\p{L&}/u", $chr )) {
+		$post = mb_substr( $txt, $idx + 1, mb_strlen ( $txt ), 'UTF-8' );
 		// echo "<div style=\"border:3px solid Black;\">post = $post</div>";
-		return mb_substr ( $txt, 0, $idx, 'UTF-8' ) . mb_strtoupper ( $chr, 'UTF-8' ) . mb_strtolower ( $post, 'UTF-8' );
+		return mb_substr( $txt, 0, $idx, 'UTF-8' ) . mb_strtoupper ( $chr, 'UTF-8' ) . mb_strtolower ( $post, 'UTF-8' );
 	} else {
 		return $txt;
 	}
@@ -678,7 +678,7 @@ function bibleGetIsValidBook($book) {
 	if (get_option ( "bibleget_biblebooks0" ) === false) {
 		bibleGetSetOptions ();
 	}
-	for($i = 0; $i < 73; $i ++) {
+	for($i = 0; $i < 73; $i++) {
 		$usrprop = "bibleget_biblebooks" . $i;
 		$jsbook = json_decode ( get_option ( $usrprop ), true );
 		array_push ( $biblebooks, $jsbook );
@@ -704,7 +704,7 @@ function bibleGetGetMetaData($request) {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 		//echo "<div>" . plugins_url ( 'DST_Root_CA.cer',__FILE__ ) . "</div>";
-		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.cer"); //seems to work.. ???
+		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "ca/DST_Root_CA.cer"); //seems to work.. ???
 		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
 	
 	}
@@ -723,13 +723,41 @@ function bibleGetGetMetaData($request) {
 	}
 	
 	$response = curl_exec ( $ch );
-	if (curl_errno ( $ch )) {
+	if (curl_errno ( $ch ) && (curl_errno($ch) === 77 || curl_errno($ch) === 60) && $url == "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json" ) {
+		//error 60: SSL certificate problem: unable to get local issuer certificate
+		//error 77: error setting certificate verify locations CAPath: none
+		//curl.cainfo needs to be set in php.ini to point to the curl pem bundle available at https://curl.haxx.se/ca/cacert.pem
+		//until that's fixed on the server environment let's resort to a simple http request
+		$url = "http://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+		curl_setopt( $ch, CURLOPT_URL, $url );
+		$response = curl_exec ( $ch );
+		if (curl_errno ( $ch )) {
+			$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
+			/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
+			$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+			update_option ( 'bibleget_error_admin_notices', $notices );
+			return false;
+		}
+		else {
+			$info = curl_getinfo ( $ch );
+			// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
+			if ($info ["http_code"] != 200) {
+				$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
+				/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
+				$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+				update_option ( 'bibleget_error_admin_notices', $notices );
+				return false;
+			}
+		}
+	}
+	elseif (curl_errno ( $ch )){
 		$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 		/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
 		$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 		update_option ( 'bibleget_error_admin_notices', $notices );
 		return false;
-	} else {
+	}
+	else {
 		$info = curl_getinfo ( $ch );
 		// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
 		if ($info ["http_code"] != 200) {
@@ -1272,19 +1300,4 @@ function bibleGetCurrentPageUrl() {
 	return $pageURL;
 }
 
-/**
- * Function bibleGetSaveCss_action
- * Handles ajax requests for the modification of the custom css file
- */
-add_action ( 'wp_ajax_bibleGetSaveCss_action', 'bibleGetSaveCss_action' );
-function bibleGetSaveCss_action() {
-	global $wpdb; // this is how you get access to the database
-	
-	$whatever = intval ( $_POST ['whatever'] );
-	
-	$whatever += 10;
-	
-	echo $whatever;
-	
-	wp_die (); // this is required to terminate immediately and return a proper response
-}
+

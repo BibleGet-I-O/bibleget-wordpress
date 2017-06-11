@@ -376,8 +376,9 @@ class BibleGet_Customize {
   	self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
 	self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
 	self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font Family for Biblical Quotes',"bibleget-io");
-	self::$bibleget_style_settings->bibleget_fontfamily->type = 'select';
-	self::$bibleget_style_settings->bibleget_fontfamily->choices = array(
+	self::$bibleget_style_settings->bibleget_fontfamily->type = 'fontselect';
+	
+	/*self::$bibleget_style_settings->bibleget_fontfamily->choices = array(
     	"Arial"					 => "Arial",
     	"Arial Black"			 => "Arial Black",
     	"Book Antiqua"			 => "Book Antiqua",
@@ -392,6 +393,7 @@ class BibleGet_Customize {
     	"Trebuchet MS"			 => "Trebuchet MS",
     	"Verdana"			  	 => "Verdana"
     );
+	*/
 	self::$bibleget_style_settings->bibleget_fontfamily->section = 'bibleget_paragraph_style_options';
 
   	/* Define bibleget_borderwidth setting and control */
@@ -721,7 +723,7 @@ class BibleGet_Customize {
 					array(
 							'default'    => $style_setting_obj->dfault, //Default setting/value to save
 							'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
-							'capability' => 'publish_posts', //Optional. Special permissions for accessing this setting.
+							'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
 							'transport'  => 'postMessage' //What triggers a refresh of the setting? 'refresh' or 'postMessage' (instant)?
 					)
 			);				
@@ -749,6 +751,20 @@ class BibleGet_Customize {
 								'section' 	=> $style_setting_obj->section,
 								'type'	   	=> 'select',
 								'choices' 	=> $style_setting_obj->choices
+						)
+				);
+			}
+			elseif($style_setting_obj->type == 'fontselect'){
+				$wp_customize->add_control( new BibleGet_Customize_FontSelect_Control(
+						$wp_customize,
+						$style_setting . '_ctl',
+						array(
+								'label'	  	=> $style_setting_obj->title,
+								'settings'	=> $style_setting,
+								'priority'	=> $bibleget_style_settings_cc++,
+								'section' 	=> $style_setting_obj->section
+								//'choices' 	=> $style_setting_obj->choices
+						)
 						)
 				);
 			}

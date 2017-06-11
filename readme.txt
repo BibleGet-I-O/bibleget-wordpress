@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.8
-Stable tag: 4.4
+Stable tag: 4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.5 =
+* Enhancement: further check for incorrect server environments where a recent version of curl does not however have a correct cainfo path set with a certificate bundle
+* Enhancement: font-family selection now previews the font itself in the dropdown
 
 = 4.4 =
 * Compatibility with Wordpress 4.8
@@ -187,10 +191,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 * Corrected a bug that created an error when the server has safe_mode or open_basedir set (such as some servers with shared hosting)
 
 = 1.3 =
-*
+* ...
 
 = 1.2 =
-* 
+* ...
 
 = 1.1 =
 * Corrected a bug that created an error when there is a space in the query
@@ -200,6 +204,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.5 =
+Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.5 presents a couple of small enhancements from 4.4
 
 = 4.4 =
 Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.4 presents compatibility with Wordpress 4.8
@@ -259,22 +266,22 @@ Added Serbian and Polish translations.
 Minor bugfix from version 2.5, added Serbian translation.
 
 = 2.5 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
 
 = 2.4 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
 
 = 2.3 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update. (plus Bugfixes)
 
 = 2.2 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
 
 = 2.1 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
 
 = 2.0 =
-This is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
+v2.0 is a major release which uses the new and upgraded BibleGet I/O service engine. Must update.
 
 = 1.5 =
 Si prega aggiornare alla versione 1.5, compatibile con Wordpress 4.0.
