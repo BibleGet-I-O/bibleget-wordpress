@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.8
-Stable tag: 4.5
+Stable tag: 4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.6 =
+* Enhancement: freely modified and implemented the jQuery Fontselect plugin by Tom Moor with it's hardcoded list of Google WebFonts to accomodate both regular websafe fonts and google fonts 
 
 = 4.5 =
 * Enhancement: further check for incorrect server environments where a recent version of curl does not however have a correct cainfo path set with a certificate bundle
@@ -204,6 +207,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.6 =
+Versions prior to 3.6 must be updated. v4.6 incorporates hard-coded list of Google WebFonts.
 
 = 4.5 =
 Versions prior to 3.6 must be updated, style settings now using Wordpress Customizer. 4.5 presents a couple of small enhancements from 4.4

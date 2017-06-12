@@ -365,9 +365,10 @@ class BibleGetSettingsPage
  */
 class BibleGet_Customize {
 
-  public static $bibleget_style_settings;
-  
-  public static function init(){
+	public static $bibleget_style_settings;
+	private static $websafe_fonts;
+	
+	public static function init(){
     
   	/* Define object that will contain all the information for all settings and controls */
   	self::$bibleget_style_settings = new stdClass();
@@ -376,24 +377,7 @@ class BibleGet_Customize {
   	self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
 	self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
 	self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font Family for Biblical Quotes',"bibleget-io");
-	self::$bibleget_style_settings->bibleget_fontfamily->type = 'fontselect';
-	
-	/*self::$bibleget_style_settings->bibleget_fontfamily->choices = array(
-    	"Arial"					 => "Arial",
-    	"Arial Black"			 => "Arial Black",
-    	"Book Antiqua"			 => "Book Antiqua",
-    	"Courier New"			 => "Courier New",
-    	"Georgia"			  	 => "Georgia",
-    	"Impact"			   	 => "Impact",
-    	"Lucida Console"		 => "Lucida Console",
-    	"Lucida Sans Unicode"	 => "Lucida Sans Unicode",
-    	"Palatino Linotype"		 => "Palatino Linotype",
-    	"Tahoma"			   	 => "Tahoma",
-    	"Times New Roman"		 => "Times New Roman",
-    	"Trebuchet MS"			 => "Trebuchet MS",
-    	"Verdana"			  	 => "Verdana"
-    );
-	*/
+	self::$bibleget_style_settings->bibleget_fontfamily->type = 'fontselect';	
 	self::$bibleget_style_settings->bibleget_fontfamily->section = 'bibleget_paragraph_style_options';
 
   	/* Define bibleget_borderwidth setting and control */
@@ -527,7 +511,7 @@ class BibleGet_Customize {
     self::$bibleget_style_settings->bibleget_textalign->title = __('Text-align for Biblical Quotes',"bibleget-io");
     self::$bibleget_style_settings->bibleget_textalign->type = 'select';
     self::$bibleget_style_settings->bibleget_textalign->choices = array('left' => 'left','right'=>'right','center'=>'center','justify'=>'justify','inherit'=>'inherit','start'=>'start','end'=>'end');
-    
+    self::$bibleget_style_settings->bibleget_textalign->section = 'bibleget_paragraph_style_options';
     
     
     
@@ -630,7 +614,29 @@ class BibleGet_Customize {
 	self::$bibleget_style_settings->linespacing_verses->choices = array(100 => 'single',150 => '1½',200 => 'double');
 	self::$bibleget_style_settings->linespacing_verses->section = 'bibleget_paragraph_style_options';
 	
-  }
+	self::$websafe_fonts = array(
+					array("font-family" => "Arial", "fallback" => "Helvetica", "generic-family" => "sans-serif"),
+					array("font-family" => "Arial Black", "fallback" => "Gadget", "generic-family" => "sans-serif"),
+					array("font-family" => "Book Antiqua", "fallback" => "Palatino", "generic-family" => "serif"),
+					array("font-family" => "Courier New", "fallback" => "Courier", "generic-family" => "monospace"),
+					array("font-family" => "Georgia", "generic-family" => "serif"),
+					array("font-family" => "Impact", "fallback" => "Charcoal", "generic-family" => "sans-serif"),
+					array("font-family" => "Lucida Console", "fallback" => "Monaco", "generic-family" => "monospace"),
+					array("font-family" => "Lucida Sans Unicode", "fallback" => "Lucida Grande", "generic-family" => "sans-serif"),
+					array("font-family" => "Palatino Linotype", "fallback" => "Palatino", "generic-family" => "serif"),
+					array("font-family" => "Tahoma", "fallback" => "Geneva", "generic-family" => "sans-serif"),
+					array("font-family" => "Times New Roman", "fallback" => "Times", "generic-family" => "serif"),
+					array("font-family" => "Trebuchet MS", "fallback" => "Helvetica", "generic-family" => "sans-serif"),
+					array("font-family" => "Verdana", "fallback" => "Geneva", "generic-family" => "sans-serif")
+			);
+	}
+
+	public static function get_font_index($fontfamily){
+		foreach(self::$websafe_fonts as $index => $font){
+			if($font["font-family"] == $fontfamily){ return $index; }
+		}
+		return false;
+	}
 
 	/**
 	 * This hooks into 'customize_register' (available as of WP 3.4) and allows
@@ -809,20 +815,41 @@ class BibleGet_Customize {
 	 * @since BibleGet I/O 3.6
 	 */
 	public static function header_output() {
-		
-      self::init();
-    ?>
-      <!--Customizer CSS--> 
-      <style type="text/css">
-           <?php self::generate_css('div.results', 'font-family', 'bibleget_fontfamily'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'border-width', 'bibleget_borderwidth','','px'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'border-style', 'bibleget_borderstyle'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'border-color', 'bibleget_bordercolor'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'background-color', 'bibleget_bgcolor'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'border-radius', 'bibleget_borderradius','','px'); echo PHP_EOL; ?>
-           <?php self::generate_css('div.results', 'width', 'bibleget_width','','%'); echo PHP_EOL; ?>           
-           <?php $mod = get_theme_mod('bibleget_margintopbottom',self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
-             		$cssrule = '';
+		self::init();
+	?>
+	<!--Customizer CSS--> 
+		<?php $is_googlefont = false;
+			$mod = get_theme_mod('bibleget_fontfamily', self::$bibleget_style_settings->bibleget_fontfamily->dfault);
+			if( ! empty( $mod ) ) {
+				//let's check if it's a websafe font or a google font
+				if(self::get_font_index($mod) === false){
+					//not a websafe font, so most probably a google font...
+					//TODO: add a double check against current google fonts here before proceeding?
+					$is_googlefont = true;
+					echo '<link href="https://fonts.googleapis.com/css?family=' . $mod . '" rel="stylesheet" type="text/css" />';
+				}
+				
+			}
+		?>
+	<style type="text/css">
+		<?php 
+			if($is_googlefont && !empty($mod) ){
+				$t = explode(":",$mod);
+				$ff = preg_replace("/[\+|:]/"," ",$t[0]);
+				$cssrule = sprintf('%s { %s:%s; }', 'div.results', 'font-family', "'".$ff."'");
+				echo $cssrule;
+			}
+			else { self::generate_css('div.results', 'font-family',	'bibleget_fontfamily'); }
+			echo PHP_EOL; 
+			?>
+		<?php self::generate_css('div.results', 'border-width',		'bibleget_borderwidth','','px');echo PHP_EOL; ?>
+		<?php self::generate_css('div.results', 'border-style',		'bibleget_borderstyle'); 		echo PHP_EOL; ?>
+		<?php self::generate_css('div.results', 'border-color', 	'bibleget_bordercolor'); 		echo PHP_EOL; ?>
+		<?php self::generate_css('div.results', 'background-color',	'bibleget_bgcolor'); 			echo PHP_EOL; ?>
+		<?php self::generate_css('div.results', 'border-radius',	'bibleget_borderradius','','px');echo PHP_EOL; ?>
+		<?php self::generate_css('div.results', 'width',			'bibleget_width','','%'); 		echo PHP_EOL; ?>           
+		<?php $mod = get_theme_mod('bibleget_margintopbottom',self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
+				$cssrule = '';
              		if ( ! empty( $mod ) ) {
              			$cssrule = sprintf('%s { %s:%s; }',
              					'div.results',
@@ -1034,7 +1061,7 @@ class BibleGet_Customize {
      */
     public static function generate_css( $selector, $style, $mod_name, $prefix='', $postfix='', $echoback=true ) {
       $returnval = '';
-      $mod = get_theme_mod($mod_name,self::$bibleget_style_settings->$mod_name->dfault);
+      $mod = get_theme_mod($mod_name, self::$bibleget_style_settings->$mod_name->dfault);
       if ( ! empty( $mod ) ) {
          $returnval = sprintf('%s { %s:%s; }',
             $selector,

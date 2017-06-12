@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.5
+ * Version: 4.6
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,13 +26,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v4_5" );
+define ( "BIBLEGETPLUGINVERSION", "v4_6" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
 	header ( 'HTTP/1.1 403 Forbidden' );
 	exit ();
 }
+
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+
 function BibleGet_on_activation() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -1251,16 +1255,16 @@ function bibleGetWriteLog($log) {
 	if ($myfile = fopen ( $debugfile, "a" )) {
 		if (is_array ( $log ) || is_object ( $log )) {
 			if (! fwrite ( $myfile, "[" . $datetime . "] " . print_r ( $log, true ) . "\n" )) {
-				echo '<div style="border: 1px solid Red;background-color:LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
+				echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
 			}
 		} else {
 			if (! fwrite ( $myfile, "[" . $datetime . "] " . $log . "\n" )) {
-				echo '<div style="border: 1px solid Red;background-color:LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
+				echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
 			}
 		}
 		fclose ( $myfile );
 	} else {
-		echo '<div style="border: 1px solid Red;background-color:LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
+		echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
 	}
 }
 
@@ -1271,6 +1275,7 @@ function bibleGetAddActionLinks($links) {
 	);
 	return array_merge ( $links, $mylinks );
 }
+
 function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 	$nodes = array ();
 	
@@ -1284,6 +1289,7 @@ function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 	
 	return $nodes;
 }
+
 function bibleGetCurrentPageUrl() {
 	$pageURL = 'http';
 	if (isset ( $_SERVER ["HTTPS"] )) {
