@@ -10,6 +10,8 @@
  * Modified by John Romano D'Orazio, https://www.johnromanodorazio.com
  * Modification Date June 12, 2017
  * 
+ * TODO: allow user to get updated list of google fonts with a developer api key
+ * 
  */
 
 (function($){
@@ -359,14 +361,18 @@
 			Fontselect.prototype.moveToSelected = function(){
 
 				var $li, font = this.$original.val();
-
+				console.log("value of font: " + font);
 				if (font){
+					console.log("now finding the corresponding li element...");
 					$li = $("li[data-value='"+ font +"']", this.$results);
+					console.log($li);
 				} else {
 					$li = $("li", this.$results).first();
 				}
-
-				this.$results.scrollTop($li.addClass('active').position().top);
+				$li.addClass('active');
+				var pos = $li.position().top;
+				console.log("this li's position is: " + pos);
+				if(pos > 100) this.$results.scrollTop($li.position().top);
 			};
 
 			Fontselect.prototype.activateFont = function(ev){
@@ -396,7 +402,7 @@
 					}					
 				}
 				else if(fontType == 'websafe'){
-					$('span', this.$element).text(font).css({"font-family":font});
+					$('span', this.$element).text(font).css({"font-family":font,"font-weight":"normal","font-style":"normal"});
 				}
 			};
 
@@ -442,7 +448,7 @@
 					s = this.toStyle(this.fonts[i]);
 					//console.log('r >> ' + r);
 					//console.log('s >> ' + s);
-					h += '<li data-fonttype="googlefont" data-value="'+ this.fonts[i] +'" style="font-family: '+s['font-family'] +'; font-weight: '+s['font-weight'] +';">'+ r +'</li>';
+					h += '<li data-fonttype="googlefont" data-value="'+ this.fonts[i] +'" style="font-family: '+s['font-family'] +'; font-weight: '+s['font-weight'] +';' + (s.hasOwnProperty('font-style') ? ' font-style: '+s['font-style'] +';' : '' ) + '">'+ r +'</li>';
 				}
 				//console.log(h);
 				//console.log('fontsAsHtml END');
@@ -450,12 +456,34 @@
 			};
 
 			Fontselect.prototype.toReadable = function(font){
-				return font.replace(/[\+|:]/g, ' ');
+				var t = font.split(':');
+				var rdbl = t[0].replace(/[\+]/g, ' ');
+				if(t[1] !== undefined  && t[1].length > 0 && /^([0-9]*)([a-z]*)$/.test(t[1])){
+					var q = t[1].match(/^([0-9]*)([a-z]*)$/);
+					q.splice(0,1);
+					return rdbl + ' ' + q.join(' ');
+				}
+				return rdbl;
 			};
 
 			Fontselect.prototype.toStyle = function(font){
 				var t = font.split(':');
-				return {'font-family': this.toReadable(t[0]), 'font-weight': (t[1] || 400)};
+				if(t[1] !== undefined && /[a-z]/.test(t[1]) ){
+					//console.log("value of t[1]:");
+					//console.log(t[1]);
+					if(/[0-9]/.test(t[1]) ){
+						var q = t[1].match(/^([0-9]+)([a-z]+)$/);
+						//console.log("value of q:");
+						//console.log(q);
+						return {'font-family': this.toReadable(t[0]), 'font-weight': (q[1] || 400), 'font-style': (q[2] || 'normal')};						
+					}
+					else{
+						if(t[1] == 'bold'){ return {'font-family': this.toReadable(t[0]), 'font-weight': 'bold' }; }
+						else if(t[1] == 'italic'){ return {'font-family': this.toReadable(t[0]), 'font-style': 'italic' }; }
+						else return false;
+					}
+				}
+				else { return {'font-family': this.toReadable(t[0]), 'font-weight': (t[1] || 400), 'font-style': 'normal'}; }
 			};
 
 			Fontselect.prototype.getVisibleFonts = function(){
