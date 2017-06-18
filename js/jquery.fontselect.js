@@ -10,7 +10,7 @@
  * Modified by John Romano D'Orazio, https://www.johnromanodorazio.com
  * Modification Date June 12, 2017
  * 
- * TODO: allow user to get updated list of google fonts with a developer api key
+ * 
  * 
  */
 

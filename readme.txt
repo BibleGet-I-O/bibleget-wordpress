@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.8
-Stable tag: 4.6
+Stable tag: 4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.7 =
+* Minor bugfix: the jQuery Fontselect dropdown was not always opening in correspondance with the last selected font
+* Minor bugfix: the jQuery Fontselect plugin was not processing italic or bold styled fonts
+* Bugfix: typo in a PHP variable was causing an error 
 
 = 4.6 =
 * Enhancement: freely modified and implemented the jQuery Fontselect plugin by Tom Moor with it's hardcoded list of Google WebFonts to accomodate both regular websafe fonts and google fonts 
@@ -194,10 +199,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 * Corrected a bug that created an error when the server has safe_mode or open_basedir set (such as some servers with shared hosting)
 
 = 1.3 =
-* ...
+* trying to figure out the update process...
 
 = 1.2 =
-* ...
+* trying to figure out the update process...
 
 = 1.1 =
 * Corrected a bug that created an error when there is a space in the query
@@ -207,6 +212,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.7 =
+Versions prior to 3.6 must be updated. v4.7 has a couple of minor bugfixes on the jQuery Fontselect plugin
 
 = 4.6 =
 Versions prior to 3.6 must be updated. v4.6 incorporates hard-coded list of Google WebFonts.

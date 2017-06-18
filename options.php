@@ -284,7 +284,7 @@ class BibleGetSettingsPage
     public function favorite_version_callback()
     {
 		//double check to see if the values have been set
-    	if($this->countversionsbylang<1 || $this->countversionslangs<1){
+    	if($this->countversionsbylang<1 || $this->countversionlangs<1){
 			$this->getVersionsByLang();
 		}
     	

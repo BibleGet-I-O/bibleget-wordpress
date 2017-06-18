@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.6
+ * Version: 4.7
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -26,7 +26,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define ( "BIBLEGETPLUGINVERSION", "v4_6" );
+
+//TODO: allow user to get updated list of google fonts with a developer api key
+//TODO: better ui for the customizer, use sliders
+
+define ( "BIBLEGETPLUGINVERSION", "v4_7" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -37,6 +41,11 @@ if (! defined ( 'ABSPATH' )) {
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 
+/**
+ * BibleGet_on_activation
+ * Function that is triggered upon activation of the plugin
+ * Will set default options and will try to do a bit of cleanup from older versions
+ */
 function BibleGet_on_activation() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -57,6 +66,12 @@ function BibleGet_on_activation() {
 	array_map('wp_delete_file', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
 	
 }
+
+/**
+ * BibleGet_on_deactivation
+ * Function that is triggered on plugin deactivation
+ * Does not delete options, in case the user decides to activate again
+ */
 function BibleGet_on_deactivation() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -67,6 +82,12 @@ function BibleGet_on_deactivation() {
 	// exit( var_dump( $_GET ) );
 	// bibleGetDeleteOptions();
 }
+
+/**
+ * BibleGet_on_uninstall
+ * Function that is triggered when the plugin is uninstalled
+ * Will remove any options that have been set
+ */
 function BibleGet_on_uninstall() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
@@ -77,11 +98,11 @@ function BibleGet_on_uninstall() {
 	if (__FILE__ != WP_UNINSTALL_PLUGIN)
 		return;
 		
-		// Uncomment the following line to see the function in action
-		// exit( var_dump( $_GET ) );
-	bibleGetDeleteOptions ();
+	// Uncomment the following line to see the function in action
+	// exit( var_dump( $_GET ) );
+	bibleGetDeleteOptions();
 	
-	//does these need to be outside of bibleGetDeleteOptions? 
+	//does this need to be outside of bibleGetDeleteOptions? 
 	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here... 
 	delete_option ( "bibleget_settings" );
 	
@@ -93,9 +114,7 @@ register_uninstall_hook ( __FILE__, 'BibleGet_on_uninstall' );
 
 /**
  * Load plugin textdomain.
- *
- * @since 1.0.0
- *       
+ * 
  */
 function bibleget_load_textdomain() {
 	$domain = 'bibleget-io';
@@ -109,8 +128,16 @@ function bibleget_load_textdomain() {
 // should the action be 'init' instead of 'plugins_loaded'? see http://geertdedeckere.be/article/loading-wordpress-language-files-the-right-way
 add_action ( 'plugins_loaded', 'bibleget_load_textdomain' );
 
-// [bibleget query="Matthew1:1-5" version="CEI2008"]
-// [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
+
+/**
+ * BibleGet Shortcode
+ * @param unknown $atts
+ * @param unknown $content
+ * Creates the shortcode useful for injecting Bible Verses into a page
+ * Example usage:
+ * [bibleget query="Matthew1:1-5" version="CEI2008"]
+ * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
+ */
 function bibleget_shortcode($atts, $content = null) {
 	$a = shortcode_atts ( array (
 			'query' => "Matthew1:1-5",
@@ -205,6 +232,13 @@ function bibleget_shortcode($atts, $content = null) {
 add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
+
+/**
+ * BibleGet Query Server Function 
+ * @param unknown $finalquery
+ * After a query has been checked for integrity, this will send the query request to the BibleGet Server
+ * Returns the response from the BibleGet Server
+ */
 function bibleGetQueryServer($finalquery) {
 	//We will make a secure connection to the BibleGet service endpoint, 
 	//if this server's OpenSSL and CURL versions support TLSv1.2 
@@ -270,6 +304,16 @@ function bibleGetQueryServer($finalquery) {
 	
 	return $output;
 }
+
+
+/**
+ * BibleGet Process Queries
+ * @param unknown $queries
+ * @param unknown $versions
+ * Prepares the queries for integrity checks and prepares the relative indexes for the requested versions
+ * After filtering the queries through an integrity check function, returns the good queries that can be sent to the BibleGet Server
+ */
+
 function bibleGetProcessQueries($queries, $versions) {
 	$goodqueries = array ();
 	
@@ -324,14 +368,30 @@ function bibleGetProcessQueries($queries, $versions) {
 		$thisbook = bibleGetCheckQuery ( $thisquery, $indexes, $thisbook );
 		// bibleGetWriteLog("value of thisbook after bibleGetCheckQuery = ".$thisbook);
 		if ($thisbook !== false) {
+			//TODO: why are we returning $thisbook if we don't even use it here?
 			array_push ( $goodqueries, $thisquery );
 		} else {
-			return $thisbook;
+			return $thisbook; 
+			//TODO: double check if this really needs to return false here? 
+			//Does this prevent it from continuing integrity checks with the rest of the queries?
+			//Shouldn't it just be "continue;"?
 		}
 	}
 	update_option ( 'bibleget_error_admin_notices', $notices );
 	return $goodqueries;
 }
+
+/**
+ * BibleGet Check Query Function
+ * @param unknown $thisquery
+ * @param unknown $indexes
+ * @param string $thisbook
+ * 
+ * Performs complex integrity checks on the queries
+ * Gives feedback on the malformed queries to help the user get their query right
+ * Returns false if the query is not healthy enough to send to the BibleGet Server
+ * Else returns the current Bible Book that the query refers to
+ */
 function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 	// bibleGetWriteLog("value of thisquery = ".$thisquery);
 	$errorMessages = array ();
@@ -593,7 +653,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 							return false;
 						}
 					}  // if there's no comma after, we're dealing with chapter,verse to verse
-else {
+					else {
 						$matchesA_temp = explode ( ",", $matchA [1] );
 						$matchesA = explode ( "-", $matchesA_temp [1] );
 						if ($matchesA [0] >= $matchesA [1]) {
@@ -643,6 +703,14 @@ else {
 }
 
 /* Mighty fine and dandy helper function I created! */
+/**
+ * BibleGet To ProperCase
+ * @param unknown $txt
+ * 
+ * Helper function that modifies the query so that it is in a correct Proper Case, 
+ * taking into account numbers at the beginning of the string
+ * Can handle any kind of Unicode string in any language
+ */
 function bibleGetToProperCase($txt) {
 	// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";
 	preg_match( "/\p{L}/u", $txt, $mList, PREG_OFFSET_CAPTURE );
@@ -658,6 +726,14 @@ function bibleGetToProperCase($txt) {
 		return $txt;
 	}
 }
+
+/**
+ * BibleGet IndexOf Function
+ * @param unknown $needle
+ * @param unknown $haystack
+ * 
+ * Helper function that will return the index of a bible book from a two-dimensional index array
+ */
 function bibleGetIdxOf($needle, $haystack) {
 	foreach ( $haystack as $index => $value ) {
 		if (is_array ( $haystack [$index] )) {
@@ -673,9 +749,11 @@ function bibleGetIdxOf($needle, $haystack) {
 	return false;
 }
 
-/*
+
+
+/**
  * FUNCTION bibleGetIsValidBook
- * @var book
+ * @param unknown $book
  */
 function bibleGetIsValidBook($book) {
 	$biblebooks = array ();
@@ -690,7 +768,7 @@ function bibleGetIsValidBook($book) {
 	return bibleGetIdxOf ( $book, $biblebooks );
 }
 
-/*
+/**
  * FUNCTION bibleGetGetMetaData
  * @var request
  */
@@ -786,6 +864,13 @@ function bibleGetGetMetaData($request) {
 		return false;
 	}
 }
+
+
+/**
+ * 
+ * @param unknown $query
+ * @return number
+ */
 function bibleGetQueryClean($query) {
 	// enforce query rules
 	if ($query === '') {
@@ -809,6 +894,11 @@ function bibleGetQueryClean($query) {
 	
 	return array_map ( "bibleGetToProperCase", $queries );
 }
+
+
+/**
+ * 
+ */
 function bibleget_admin_notices() {
 	if ($notices = get_option ( 'bibleget_error_admin_notices' )) {
 		foreach ( $notices as $notice ) {
@@ -826,7 +916,9 @@ function bibleget_admin_notices() {
 add_action ( 'admin_notices', 'bibleget_admin_notices' );
 
 
-
+/**
+ * 
+ */
 function bibleGetDeleteOptions() {
 	// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
 	for($i = 0; $i < 73; $i ++) {
@@ -847,6 +939,11 @@ function bibleGetDeleteOptions() {
 	}
 	
 }
+
+
+/**
+ * 
+ */
 function bibleGetSetOptions() {
 	$metadata = bibleGetGetMetaData ( "biblebooks" );
 	if ($metadata !== false) {
@@ -1213,6 +1310,11 @@ $bibleget_worldlanguages = array (
 				"de" => "Vietnamesisch" 
 		) 
 );
+
+/**
+ * 
+ * @param unknown $string
+ */
 function bibleGetSortify($string) {
 	return preg_replace ( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i', '$1' . chr ( 255 ) . '$2', htmlentities ( $string, ENT_QUOTES, 'UTF-8' ) );
 }
@@ -1223,6 +1325,15 @@ if (is_admin ()) {
 	// bibleGetWriteLog("about to initialize creation of admin page...");
 	$bibleget_settings_page = new BibleGetSettingsPage ();
 }
+
+
+/**
+ * END OF SETTINGS PAGE
+ * 
+ * START OF CUSTOMIZER OPTIONS
+ */
+
+
 
 // //add_action( 'wp_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
 // add_action( 'admin_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
@@ -1245,9 +1356,11 @@ add_action ( 'customize_preview_init', array (
 		'live_preview' 
 ) );
 
-/*
+/**
  * Function bibleGetWriteLog
  * useful for debugging purposes
+ * 
+ * @param unknown $log
  */
 function bibleGetWriteLog($log) {
 	$debugfile = plugin_dir_path ( __FILE__ ) . "debug.txt";
@@ -1268,7 +1381,13 @@ function bibleGetWriteLog($log) {
 	}
 }
 
+
+
 add_filter ( 'plugin_action_links_' . plugin_basename ( __FILE__ ), 'bibleGetAddActionLinks' );
+/**
+ * 
+ * @param unknown $links
+ */
 function bibleGetAddActionLinks($links) {
 	$mylinks = array (
 			'<a href="' . admin_url ( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __ ( 'Settings' ) . '</a>' 
@@ -1276,6 +1395,13 @@ function bibleGetAddActionLinks($links) {
 	return array_merge ( $links, $mylinks );
 }
 
+
+/**
+ * 
+ * @param unknown $parentNode
+ * @param unknown $tagName
+ * @param unknown $className
+ */
 function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 	$nodes = array ();
 	
@@ -1290,6 +1416,10 @@ function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 	return $nodes;
 }
 
+
+/**
+ * 
+ */
 function bibleGetCurrentPageUrl() {
 	$pageURL = 'http';
 	if (isset ( $_SERVER ["HTTPS"] )) {
