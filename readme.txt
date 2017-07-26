@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 4.8
-Stable tag: 4.7
+Stable tag: 4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,9 @@ Creates a shortcode [bibleget] that you can use to insert Bible quotes in articl
 The text of the Bible quotes are retrieved from the BibleGet service endpoint *[https://query.bibleget.io](https://query.bibleget.io "BibleGet Service endpoint")*.
 **USAGE:** [bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"] 
 **USAGE:** [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
+
+It is also possible to place the desired Bible verse quote in the contents of the shortcode, like so:
+**USAGE:** [bibleget version="NABRE"]John 3:16;1 John 4,7-8[/bibleget] 
 
 The Plugin also has a settings page “BibleGet I/O” under the “Settings” area in the Dashboard, 
 where you can choose your preferred Bible versions from those available on the BibleGet server
@@ -77,6 +80,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.8 =
+* Enhancement: added "popup" parameter to shortcode, to allow hiding the contents of the bible quote and show it only on click in a popup
 
 = 4.7 =
 * Minor bugfix: the jQuery Fontselect dropdown was not always opening in correspondance with the last selected font
@@ -212,6 +218,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.8 =
+Versions prior to 3.6 must be updated. v4.8 adds a parameter "popup" to the [bibleget] shortcode, to allow hiding the contents of the bible quote and show it only on click in a popup
 
 = 4.7 =
 Versions prior to 3.6 must be updated. v4.7 has a couple of minor bugfixes on the jQuery Fontselect plugin

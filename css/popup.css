@@ -1,0 +1,7 @@
+.bibleget-popup-trigger {
+	cursor: pointer;
+}
+.bibleget-quote-div.bibleget-popup {
+	display: none;
+	z-index: 999;
+}

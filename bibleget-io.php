@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.7
+ * Version: 4.8
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -30,7 +30,7 @@
 //TODO: allow user to get updated list of google fonts with a developer api key
 //TODO: better ui for the customizer, use sliders
 
-define ( "BIBLEGETPLUGINVERSION", "v4_7" );
+define ( "BIBLEGETPLUGINVERSION", "v4_8" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -138,14 +138,17 @@ add_action ( 'plugins_loaded', 'bibleget_load_textdomain' );
  * [bibleget query="Matthew1:1-5" version="CEI2008"]
  * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
  */
-function bibleget_shortcode($atts, $content = null) {
+function bibleget_shortcode($atts = [], $content = null, $tag = '') {
+       
+    // override default attributes with user attributes
 	$a = shortcode_atts ( array (
-			'query' => "Matthew1:1-5",
-			'version' => "",
-			'versions' => "",
-			'forceversion' => false,
-			'forcecopyright' => false 
-	), $atts );
+			'query' 		=> "Matthew1:1-5",
+			'version' 		=> "NABRE",
+			'versions' 		=> "",
+			'forceversion' 	=> false,
+			'forcecopyright'=> false,
+			'popup' 		=> false
+	), $atts, $tag );
 	
 	// echo "<div style=\"border:10px solid Blue;\">".$a["query"]."</div>";
 	
@@ -173,7 +176,7 @@ function bibleget_shortcode($atts, $content = null) {
 	}
 	$validversions = array_keys ( $vversions );
 	// echo "<div style=\"border:10px solid Blue;\">".print_r($validversions)."</div>";
-	if ($a ['forceversion'] != "true") {
+	if ($a ['forceversion'] !== "true") {
 		foreach ( $versions as $version ) {
 			if (! in_array ( $version, $validversions )) {
 				$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
@@ -184,7 +187,13 @@ function bibleget_shortcode($atts, $content = null) {
 		}
 	}
 	
-	$queries = bibleGetQueryClean ( $a ["query"] );
+	if($content !== null && $content != ""){
+		$queries = bibleGetQueryClean ( $content );
+	}
+	else{
+		$queries = bibleGetQueryClean ( $a ["query"] );
+	}
+	
 	if (is_array ( $queries )) {
 		$goodqueries = bibleGetProcessQueries ( $queries, $versions );
 		// bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
@@ -218,10 +227,20 @@ function bibleget_shortcode($atts, $content = null) {
 					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "BibleGet Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
 				}
 			}
-			wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array (
-					'jquery' 
-			), '1.0', true );
-			return '<div class="bibleget-quote-div">' . $output . '</div>';
+			
+			wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
+			
+			if($a ['popup'] == "true"){
+				wp_enqueue_script ( 'jquery-ui-dialog' );
+				wp_enqueue_style ( 'wp-jquery-ui-dialog' );
+				wp_enqueue_style ( 'bibleget-popup', plugins_url ( 'css/popup.css', __FILE__ ) );
+				if($content !== null && $content !== ""){
+					return '<a href="#" class="bibleget-popup-trigger">' . $content . '</a><div class="bibleget-quote-div bibleget-popup">' . $output . '</div>';
+				}
+			}
+			else {
+				return '<div class="bibleget-quote-div">' . $output . '</div>';
+			}
 		}
 	} else {
 		/* translators: do not translate "shortcode" unless the version of wordpress in your language uses a translated term to refer to shortcodes */
@@ -240,6 +259,7 @@ add_shortcode ( 'bibleget', 'bibleget_shortcode' );
  * Returns the response from the BibleGet Server
  */
 function bibleGetQueryServer($finalquery) {
+	$errs = array();
 	//We will make a secure connection to the BibleGet service endpoint, 
 	//if this server's OpenSSL and CURL versions support TLSv1.2 
 	$version = curl_version();
