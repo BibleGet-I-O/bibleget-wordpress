@@ -4,4 +4,15 @@
 .bibleget-quote-div.bibleget-popup {
 	display: none;
 	z-index: 999;
+	clear: both;
+}
+
+.ui-dialog-titlebar {
+	height: auto;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+	height: 30px;
+	padding: 0px;
+	margin: -20px 0 0 0;
 }

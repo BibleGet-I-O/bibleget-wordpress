@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
-Tested up to: 4.8
-Stable tag: 4.8
+Tested up to: 4.9
+Stable tag: 4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 4.9 =
+* Bugfix: corrected evaluation of shortcode parameters for correct implementation of versions and popup functionality
+* verified compatibility with Wordpress 4.9
 
 = 4.8 =
 * Enhancement: added "popup" parameter to shortcode, to allow hiding the contents of the bible quote and show it only on click in a popup
@@ -218,6 +222,9 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 
 == Upgrade Notice ==
+
+= 4.9 =
+Versions prior to 3.6 must be updated. v4.9 corrects evaluation of shortcode paramters for correct implementation of "popup" parameter functionality
 
 = 4.8 =
 Versions prior to 3.6 must be updated. v4.8 adds a parameter "popup" to the [bibleget] shortcode, to allow hiding the contents of the bible quote and show it only on click in a popup

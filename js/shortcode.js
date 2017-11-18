@@ -3,7 +3,8 @@
 	jQuery(document).ready(function(){
 	
 		jQuery(".bibleget-popup-trigger").each(function(){
-			var dlg = $(this).next("div.bibleget-popup").dialog({
+			var popup_content = he.decode($(this).attr("data-popupcontent"));
+			var dlg = $('<div class="bibleget-quote-div bibleget-popup">'+popup_content+'</div>').dialog({
 				autoOpen: false,
 				width: ($(window).width() * 0.8),
 				maxHeight: ($(window).height() * 0.8),

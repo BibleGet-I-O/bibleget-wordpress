@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.8
+ * Version: 4.9
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -30,7 +30,7 @@
 //TODO: allow user to get updated list of google fonts with a developer api key
 //TODO: better ui for the customizer, use sliders
 
-define ( "BIBLEGETPLUGINVERSION", "v4_8" );
+define ( "BIBLEGETPLUGINVERSION", "v4_9" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -188,11 +188,11 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 	}
 	
 	if($content !== null && $content != ""){
-		$queries = bibleGetQueryClean ( $content );
-	}
-	else{
-		$queries = bibleGetQueryClean ( $a ["query"] );
-	}
+        $queries = bibleGetQueryClean ( $content );
+    }
+    else{
+        $queries = bibleGetQueryClean ( $a ['query'] );
+    }
 	
 	if (is_array ( $queries )) {
 		$goodqueries = bibleGetProcessQueries ( $queries, $versions );
@@ -229,14 +229,23 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			}
 			
 			wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
+			wp_enqueue_script ( 'htmlentities-script', plugins_url ( 'js/he.min.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
 			
 			if($a ['popup'] == "true"){
 				wp_enqueue_script ( 'jquery-ui-dialog' );
 				wp_enqueue_style ( 'wp-jquery-ui-dialog' );
 				wp_enqueue_style ( 'bibleget-popup', plugins_url ( 'css/popup.css', __FILE__ ) );
 				if($content !== null && $content !== ""){
+					return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars($output) . '">' . $content . '</a>';
+				}
+                else{
+					return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars($output) . '">' . $a ['query'] . '</a>';
+                }
+				/*
+				if($content !== null && $content !== ""){
 					return '<a href="#" class="bibleget-popup-trigger">' . $content . '</a><div class="bibleget-quote-div bibleget-popup">' . $output . '</div>';
 				}
+				*/
 			}
 			else {
 				return '<div class="bibleget-quote-div">' . $output . '</div>';
