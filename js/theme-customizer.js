@@ -11,6 +11,7 @@
 
 	wp.customize( 'bibleget_fontfamily', function( value ) {
 		value.bind( function( newval ) {
+			var fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
 			//alert(newval);
 			//console.log('wp.customize bibleget_fontfamily BEGIN');
 			//console.log(newval);
@@ -18,13 +19,15 @@
 			font = font.split(':');
 			//console.log(font);
 			//console.log('wp.customize bibleget_fontfamily END');
-			var link = 'https://fonts.googleapis.com/css?family=' + newval;
-			if ($("link[href*='" + font + "']").length > 0){
-				$("link[href*='" + font + "']").attr('href',link)
-			}
-			else{
-				$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
-			}
+			if(fontType == 'googlefont'){
+                var link = 'https://fonts.googleapis.com/css?family=' + newval;
+    			if ($("link[href*='" + font + "']").length > 0){
+    				$("link[href*='" + font + "']").attr('href',link)
+    			}
+    			else{
+    				$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
+    			}
+            }
 			$('div.results').css('font-family', font[0] );
 		} );
 	} );

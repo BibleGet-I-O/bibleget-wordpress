@@ -59,15 +59,15 @@ if (class_exists ( 'WP_Customize_Control' )) {
 		public function __construct($manager, $id, $args = array() ){
 			parent::__construct( $manager, $id, $args );
 		}
-		
+
 		*/
 		public function enqueue() {
-			
+
 			wp_enqueue_script ( 'bibleget-fontselect-library', // Give the script a unique ID
 					plugins_url ( 'js/jquery.fontselect.js', __FILE__ ), // Define the path to the JS file
 					array ( 'jquery' ), // Define dependencies
 					'', // Define a version (optional)
-					true ); // Specify whether to put in footer (leave this true)			
+					true ); // Specify whether to put in footer (leave this true)
 			wp_enqueue_script ( 'bibleget-fontselect-control', // Give the script a unique ID
 					plugins_url ( 'js/fontselect-control.js', __FILE__ ), // Define the path to the JS file
 					array ( 'bibleget-fontselect-library' ), // Define dependencies
@@ -76,7 +76,25 @@ if (class_exists ( 'WP_Customize_Control' )) {
 			wp_enqueue_style ( 'bibleget-fontselect-control-style',
 					plugins_url ( 'css/fontselect.css', __FILE__ ) // Define the path to the CSS file
 					);
-			
+
+		    if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css'  ) ){
+                wp_enqueue_style( 'bibleget-fontselect-preview',
+                    plugins_url ('css/gfonts_preview/gfonts_preview.css', __FILE__ )
+                );
+            }
+            else{
+                echo '<!-- gfonts_preview.css not found -->';
+            }
+
+			//I'm guessing this is where we do our background checks on the Google Fonts API key?
+			$bibleget_settings = get_option( 'bibleget_settings' );
+			if(isset( $bibleget_settings['googlefontsapi_key'] ) && $bibleget_settings['googlefontsapi_key'] != ""){
+				if(get_transient ( md5 ( $bibleget_settings['googlefontsapi_key'] ) ) == "SUCCESS"){
+					//We have a google fonts key that has been tested successfully in the past 3 months
+                    wp_localize_script('bibleget-fontselect-library','FontSelect_Control',array('bibleget_settings' => $bibleget_settings,'pluginUrl' => plugins_url("", __FILE__ )));
+				}
+			}
+
 		}
 
 		public function render_content() {
@@ -85,10 +103,10 @@ if (class_exists ( 'WP_Customize_Control' )) {
 <?php if (! empty ( $this->description )) : ?>
 			<span class="description customize-control-description"><?php echo esc_html( $this->description ); ?></span>
 <?php endif; ?>
-			<input id="bibleget-googlefonts"  <?php $this->link(); ?> type="hidden" value="<?php $this->value(); ?>" />
+			<input id="bibleget-googlefonts"  <?php $this->link(); ?> type="hidden" data-fonttype="websafe" value="<?php $this->value(); ?>" />
 
-<?php						
+<?php
 		} // end public function render_content
 	} // end class BibleGet_Customize_FontSelect_Control
-					
+
 } // end if class exists WP_Customize_Control

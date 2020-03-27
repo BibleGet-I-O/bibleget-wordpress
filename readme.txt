@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
-Tested up to: 4.9
-Stable tag: 4.9
+Tested up to: 5.3.2
+Stable tag: 5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,33 @@ At least the first query (of a series of queries chained by a semi-colon) must i
  When a query following a semi-colon does not indicate the book name, it is intended that the request be made upon the same book as the previous query.
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
 
+= What happens if I add a Google Fonts API key? =
+[ENGLISH]
+If you add a Google Fonts API key, the BibleGet plugin will immediately test it's validity.
+If valid, it will remember that you have a key and that it's valid for 3 months.
+Every three months starting from this moment the BibleGet plugin will talk with the Google Fonts API
+to get the latest list of available Google Fonts, and will download to the plugin folders a local compressed
+copy of each of those fonts for the purpose of previewing them in the customizer interface.
+You will need to be a bit patient the first time as it will take a couple minutes to complete the download process.
+A progress bar will let you know how the download is progressing. If you have a slow connection,
+the progress might stall for a few seconds every now an then (around 25%, 50%, and 75%), 
+just be patient and it should continue to progress to the end. In the future, whenever the plugin
+talks with the Google Fonts API, the process should go a lot faster as it will only need to download new fonts. 
+It will also generate a css file that will load the preview of the fonts when you open the customizer interface.
+This does have a bit of a performance impact, and especially the first time you open the customizer it might take a minute to load.
+After this it should go a little faster as the fonts previews should be cached by the browser.
+If you are not happy with the performance impact, I would suggest to delete the Google Fonts API key.
+
+= I have added the Google Fonts API key but the list of available fonts isn't updated =
+[ENGLISH]
+The BibleGet plugin will remember that your key is valid for 3 months. 
+This means that it will not fetch the list of fonts from the Google Fonts API until the relative transient expires.
+If a new font has come out that you would like to see and use in the customizer interface for the BibleGet plugin,
+and you don't want to have to wait until the transient expires in that 3 month time slot, then you could use a transient manager
+to look for a transient which has a value of "SUCCESS" and a long key of seemingly random characters;
+this is most probably the one you need to delete. Once the transient is deleted, go back to the admin interface for the BibleGet plugin
+and it will automatically start talking with the Google Fonts API again. The newer fonts previews should be downloaded locally
+and become available in the customizer interface for the BibleGet plugin.
 
 == Screenshots ==
 
@@ -80,6 +107,10 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 5.0 =
+* verified compatibility with Wordpress 5.3.2
+* added option for Google Fonts API key
 
 = 4.9 =
 * Bugfix: corrected evaluation of shortcode parameters for correct implementation of versions and popup functionality
@@ -223,8 +254,11 @@ At least the first query (of a series of queries chained by a semi-colon) must i
 
 == Upgrade Notice ==
 
+= 5.0 =
+Versions prior to 3.6 must be updated. v5.0 verifies compatibility with Wordpress 5.3.2 and adds Google Fonts API option
+
 = 4.9 =
-Versions prior to 3.6 must be updated. v4.9 corrects evaluation of shortcode paramters for correct implementation of "popup" parameter functionality
+Versions prior to 3.6 must be updated. v4.9 corrects evaluation of shortcode parameters for correct implementation of "popup" parameter functionality
 
 = 4.8 =
 Versions prior to 3.6 must be updated. v4.8 adds a parameter "popup" to the [bibleget] shortcode, to allow hiding the contents of the bible quote and show it only on click in a popup

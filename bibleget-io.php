@@ -1,17 +1,17 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 4.9
+ * Version: 5.0
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
- * Author URI: https://www.cappellaniauniroma3.org/
+ * Author URI: https://www.johnromanodorazio.com/
  * Text Domain: bibleget-io
  * Domain Path: /languages/
  * License: GPL v3
  *
  * WordPress BibleGet I/O Plugin
- * Copyright(C) 2014-2020, John Romano D'Orazio - john.dorazio@cappellaniauniroma3.org
+ * Copyright(C) 2014-2020, John Romano D'Orazio - priest@johnromanodorazio.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 //TODO: allow user to get updated list of google fonts with a developer api key
 //TODO: better ui for the customizer, use sliders
 
-define ( "BIBLEGETPLUGINVERSION", "v4_9" );
+define ( "BIBLEGETPLUGINVERSION", "v5_0" );
 
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
@@ -38,8 +38,8 @@ if (! defined ( 'ABSPATH' )) {
 	exit ();
 }
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'on');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'on');
 
 /**
  * BibleGet_on_activation
@@ -51,11 +51,11 @@ function BibleGet_on_activation() {
 		return;
 	$plugin = isset ( $_REQUEST ['plugin'] ) ? $_REQUEST ['plugin'] : '';
 	check_admin_referer ( "activate-plugin_{$plugin}" );
-	
+
 	// Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
 	bibleGetSetOptions();
-	
+
 	// let's do some cleanup from previous versions
 	if(file_exists(plugin_dir_path( __FILE__ ) . 'css/styles.css') ){
 		if(wp_delete_file(plugin_dir_path( __FILE__ ) . 'css/styles.css') === false){
@@ -64,7 +64,7 @@ function BibleGet_on_activation() {
 	}
 	// we have renamed the image files, so these will be left over...
 	array_map('wp_delete_file', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
-	
+
 }
 
 /**
@@ -77,7 +77,7 @@ function BibleGet_on_deactivation() {
 		return;
 	$plugin = isset ( $_REQUEST ['plugin'] ) ? $_REQUEST ['plugin'] : '';
 	check_admin_referer ( "deactivate-plugin_{$plugin}" );
-	
+
 	// Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
 	// bibleGetDeleteOptions();
@@ -92,20 +92,20 @@ function BibleGet_on_uninstall() {
 	if (! current_user_can ( 'activate_plugins' ))
 		return;
 	check_admin_referer ( 'bulk-plugins' );
-	
+
 	// Important: Check if the file is the one
 	// that was registered during the uninstall hook.
 	if (__FILE__ != WP_UNINSTALL_PLUGIN)
 		return;
-		
+
 	// Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
 	bibleGetDeleteOptions();
-	
-	//does this need to be outside of bibleGetDeleteOptions? 
-	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here... 
+
+	//does this need to be outside of bibleGetDeleteOptions?
+	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here...
 	delete_option ( "bibleget_settings" );
-	
+
 }
 
 register_activation_hook ( __FILE__, 'BibleGet_on_activation' );
@@ -114,7 +114,7 @@ register_uninstall_hook ( __FILE__, 'BibleGet_on_uninstall' );
 
 /**
  * Load plugin textdomain.
- * 
+ *
  */
 function bibleget_load_textdomain() {
 	$domain = 'bibleget-io';
@@ -122,7 +122,7 @@ function bibleget_load_textdomain() {
 	$locale = apply_filters ( 'plugin_locale', get_locale (), $domain );
 	// Allow users to add their own custom translations by dropping them in the Wordpress 'languages' directory
 	load_textdomain ( $domain, WP_LANG_DIR . '/plugins/' . $domain . '-' . $locale . '.mo' );
-	
+
 	load_plugin_textdomain ( $domain, false, dirname ( plugin_basename ( __FILE__ ) ) . '/languages' );
 }
 // should the action be 'init' instead of 'plugins_loaded'? see http://geertdedeckere.be/article/loading-wordpress-language-files-the-right-way
@@ -139,7 +139,7 @@ add_action ( 'plugins_loaded', 'bibleget_load_textdomain' );
  * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
  */
 function bibleget_shortcode($atts = [], $content = null, $tag = '') {
-       
+
     // override default attributes with user attributes
 	$a = shortcode_atts ( array (
 			'query' 		=> "Matthew1:1-5",
@@ -149,9 +149,9 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			'forcecopyright'=> false,
 			'popup' 		=> false
 	), $atts, $tag );
-	
+
 	// echo "<div style=\"border:10px solid Blue;\">".$a["query"]."</div>";
-	
+
 	// Determine bible version(s)
 	$versions = array ();
 	if ($a ["versions"] !== "") {
@@ -162,13 +162,13 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 	} else {
 		$versions = explode ( ",", $a ["version"] );
 	}
-	
+
 	if (count ( $versions ) < 1) {
 		/* translators: do NOT translate the parameter names "version" or "versions" !!! */
 		$output = '<span style="color:Red;font-weight:bold;">' . __ ( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
 		return '<div class="bibleget-quote-div">' . $output . '</div>';
 	}
-	
+
 	$vversions = get_option ( "bibleget_versions", array () );
 	if (count ( $vversions ) < 1) {
 		bibleGetSetOptions ();
@@ -186,14 +186,14 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			}
 		}
 	}
-	
+
 	if($content !== null && $content != ""){
         $queries = bibleGetQueryClean ( $content );
     }
     else{
         $queries = bibleGetQueryClean ( $a ['query'] );
     }
-	
+
 	if (is_array ( $queries )) {
 		$goodqueries = bibleGetProcessQueries ( $queries, $versions );
 		// bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
@@ -202,7 +202,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			$output = __ ( "BibleGet Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
 			return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
 		}
-		
+
 		$finalquery = "query=";
 		$finalquery .= implode ( ";", $goodqueries );
 		$finalquery .= "&version=";
@@ -215,7 +215,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 		}
 		// bibleGetWriteLog("value of finalquery = ".$finalquery);
 		if ($finalquery != "") {
-			
+
 			if (false === ($output = get_transient ( md5 ( $finalquery ) ))) {
 				// $output = $finalquery;
 				// return '<div class="bibleget-quote-div">' . $output . '</div>';
@@ -227,10 +227,10 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "BibleGet Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
 				}
 			}
-			
+
 			wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
 			wp_enqueue_script ( 'htmlentities-script', plugins_url ( 'js/he.min.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
-			
+
 			if($a ['popup'] == "true"){
 				wp_enqueue_script ( 'jquery-ui-dialog' );
 				wp_enqueue_style ( 'wp-jquery-ui-dialog' );
@@ -262,34 +262,34 @@ add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
 /**
- * BibleGet Query Server Function 
+ * BibleGet Query Server Function
  * @param unknown $finalquery
  * After a query has been checked for integrity, this will send the query request to the BibleGet Server
  * Returns the response from the BibleGet Server
  */
 function bibleGetQueryServer($finalquery) {
 	$errs = array();
-	//We will make a secure connection to the BibleGet service endpoint, 
-	//if this server's OpenSSL and CURL versions support TLSv1.2 
-	$version = curl_version();
-	$ssl_version = str_replace('OpenSSL/','',$version['ssl_version']);
-	if( version_compare( $version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
+	//We will make a secure connection to the BibleGet service endpoint,
+	//if this server's OpenSSL and CURL versions support TLSv1.2
+	$curl_version = curl_version();
+	$ssl_version = str_replace('OpenSSL/','',$curl_version['ssl_version']);
+	if( version_compare( $curl_version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
 		//we should be good to go for secure SSL communication supporting TLSv1_2
 		$ch = curl_init ( "https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 		//echo "<div>" . plugins_url ( 'DST_Root_CA.cer',__FILE__ ) . "</div>";
 		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.cer"); //seems to work.. ???
 		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
-	
+
 	}
 	else{
 		$ch = curl_init ( "http://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode ( site_url () ) . "&pluginversion=" . BIBLEGETPLUGINVERSION );
 	}
-	
+
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-	
+
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
 		// safe mode is on, we can't use some settings
 	} else {
@@ -301,13 +301,13 @@ function bibleGetQueryServer($finalquery) {
 		// remove style and title tags from the output if they are present(should not be present with more recent BibleGet engine
 		$output = substr ( $output, 0, strpos ( $output, "<style" ) ) . substr ( $output, strpos ( $output, "</style" ), strlen ( $output ) );
 		$output = substr ( $output, 0, strpos ( $output, "<title" ) ) . substr ( $output, strpos ( $output, "</title" ), strlen ( $output ) );
-		
+
 		$count1 = null;
 		$count2 = null;
 		$output = preg_replace ( '/&lt;(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '<span class="$1">', $output, - 1, $count1 );
 		$output = preg_replace ( '/&lt;\/(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '</span>', $output, - 1, $count2 );
 		// $output .= "<br /><br />Effettuate ".$count1." e ".$count2." sostituzioni.";
-		
+
 		$matches = null;
 		if (preg_match_all ( "/<div class=\"errors\" id=\"errors\">.*?<\/div>/s", $output, $matches )) {
 			// capture table of error messages, and turn it into notices for backend
@@ -328,9 +328,9 @@ function bibleGetQueryServer($finalquery) {
 		$output = false;
 	}
 	curl_close ( $ch );
-	
+
 	update_option ( 'bibleget_error_admin_notices', $errs );
-	
+
 	return $output;
 }
 
@@ -345,7 +345,7 @@ function bibleGetQueryServer($finalquery) {
 
 function bibleGetProcessQueries($queries, $versions) {
 	$goodqueries = array ();
-	
+
 	$thisbook = null;
 	if (get_option ( "bibleget_" . $versions [0] . "IDX" ) === false) {
 		bibleGetSetOptions ();
@@ -382,9 +382,9 @@ function bibleGetProcessQueries($queries, $versions) {
 	}
 	// bibleGetWriteLog("indexes array should now be populated:");
 	// bibleGetWriteLog($indexes);
-	
+
 	$notices = get_option ( 'bibleget_error_admin_notices', array () );
-	
+
 	foreach ( $queries as $key => $value ) {
 		$thisquery = bibleGetToProperCase ( $value ); // shouldn't be necessary because already array_mapped, but better safe than sorry
 		if ($key === 0) {
@@ -400,8 +400,8 @@ function bibleGetProcessQueries($queries, $versions) {
 			//TODO: why are we returning $thisbook if we don't even use it here?
 			array_push ( $goodqueries, $thisquery );
 		} else {
-			return $thisbook; 
-			//TODO: double check if this really needs to return false here? 
+			return $thisbook;
+			//TODO: double check if this really needs to return false here?
 			//Does this prevent it from continuing integrity checks with the rest of the queries?
 			//Shouldn't it just be "continue;"?
 		}
@@ -415,7 +415,7 @@ function bibleGetProcessQueries($queries, $versions) {
  * @param unknown $thisquery
  * @param unknown $indexes
  * @param string $thisbook
- * 
+ *
  * Performs complex integrity checks on the queries
  * Gives feedback on the malformed queries to help the user get their query right
  * Returns false if the query is not healthy enough to send to the BibleGet Server
@@ -441,10 +441,10 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 	/* translators: the expressions %1$d, %2$d, and %3$s must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
 	$errorMessages [9] = __ ( 'The values concatenated by the dot must be consecutive, instead %1$d >= %2$d in the expression <%3$s>', "bibleget-io" );
 	$errorMessages [10] = __ ( "A query that doesn't start with a book indicator must however start with a valid chapter indicator!", "bibleget-io" );
-	
+
 	$errs = get_option ( 'bibleget_error_admin_notices', array () );
 	$dummy = array (); // to avoid error messages on systems with PHP < 5.4 which required third parameter in preg_match_all
-	
+
 	if (preg_match ( "/^([1-3]{0,1}((\p{L}\p{M}*)+))/", $thisquery, $res )) {
 		$thisbook = $res [0];
 		if (! preg_match ( "/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery ) || preg_match_all ( "/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery, $dummy ) != preg_match_all ( "/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery, $dummy )) {
@@ -452,11 +452,11 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 			update_option ( 'bibleget_error_admin_notices', $errs );
 			return false;
 		}
-		
+
 		$validBookIndex = ( int ) bibleGetIsValidBook ( $thisbook );
 		if ($validBookIndex != - 1) {
 			$thisquery = str_replace ( $thisbook, "", $thisquery );
-			
+
 			if (strpos ( $thisquery, "." )) {
 				if (! strpos ( $thisquery, "," ) || strpos ( $thisquery, "," ) > strpos ( $thisquery, "." )) {
 					// error message: You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.
@@ -469,7 +469,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 					update_option ( 'bibleget_error_admin_notices', $errs );
 					return false;
 				}
-				
+
 				// if(preg_match_all("/(?=[1-9][0-9]{0,2}\.[1-9][0-9]{0,2})/",$query) != substr_count($query,".") ){
 				// if(preg_match_all("/(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/",$query) < substr_count($query,".") ){
 				if (preg_match_all ( "/(?<![0-9])(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/", $thisquery, $dummy ) != substr_count ( $thisquery, "." )) {
@@ -502,7 +502,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 					if (preg_match_all ( "/([1-9][0-9]{0,2})\,/", $thisquery, $matches )) {
 						if (! is_array ( $matches [1] )) {
 							$matches [1] = array (
-									$matches [1] 
+									$matches [1]
 							);
 						}
 						$myidx = $validBookIndex + 1;
@@ -525,7 +525,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 								}
 							}
 						}
-						
+
 						$commacount = substr_count ( $thisquery, "," );
 						// bibleGetWriteLog("commacount = ".$commacount);
 						if ($commacount > 1) {
@@ -566,7 +566,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 								if (preg_match_all ( "/[,\.][1-9][0-9]{0,2}\-([1-9][0-9]{0,2})/", $thisquery, $matches )) {
 									if (! is_array ( $matches [1] )) {
 										$matches [1] = array (
-												$matches [1] 
+												$matches [1]
 										);
 									}
 									$highverse = intval ( array_pop ( $matches [1] ) );
@@ -604,11 +604,11 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 									}
 								}
 							}
-							
+
 							if (preg_match_all ( "/\.([1-9][0-9]{0,2})$/", $thisquery, $matches )) {
 								if (! is_array ( $matches [1] )) {
 									$matches [1] = array (
-											$matches [1] 
+											$matches [1]
 									);
 								}
 								$highverse = array_pop ( $matches [1] );
@@ -645,7 +645,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 					}
 				}
 			}
-			
+
 			if (strpos ( $thisquery, "-" )) {
 				if (preg_match_all ( "/[1-9][0-9]{0,2}\-[1-9][0-9]{0,2}/", $thisquery, $dummy ) != substr_count ( $thisquery, "-" )) {
 					// error message: A dash must be preceded and followed by 1 to 3 digits etc.
@@ -667,7 +667,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 					update_option ( 'bibleget_error_admin_notices', $errs );
 					return false;
 				}
-				
+
 				// if there's a comma before
 				if (preg_match ( "/([1-9][0-9]{0,2}\,[1-9][0-9]{0,2}\-[1-9][0-9]{0,2})/", $thisquery, $matchA )) {
 					// if there's a comma after, we're dealing with chapter,verse to chapter,verse
@@ -735,8 +735,8 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 /**
  * BibleGet To ProperCase
  * @param unknown $txt
- * 
- * Helper function that modifies the query so that it is in a correct Proper Case, 
+ *
+ * Helper function that modifies the query so that it is in a correct Proper Case,
  * taking into account numbers at the beginning of the string
  * Can handle any kind of Unicode string in any language
  */
@@ -760,7 +760,7 @@ function bibleGetToProperCase($txt) {
  * BibleGet IndexOf Function
  * @param unknown $needle
  * @param unknown $haystack
- * 
+ *
  * Helper function that will return the index of a bible book from a two-dimensional index array
  */
 function bibleGetIdxOf($needle, $haystack) {
@@ -804,10 +804,10 @@ function bibleGetIsValidBook($book) {
 function bibleGetGetMetaData($request) {
 	// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions
 	$notices = get_option ( 'bibleget_error_admin_notices', array () );
-	
-	$version = curl_version();
-	$ssl_version = str_replace('OpenSSL/','',$version['ssl_version']);
-	if( version_compare( $version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
+
+	$curl_version = curl_version();
+	$ssl_version = str_replace('OpenSSL/','',$curl_version['ssl_version']);
+	if( version_compare( $curl_version['version'], '7.34.0', '>=') && version_compare( $ssl_version, '1.0.1', '>=' ) ){
 		//we should be good to go for secure SSL communication supporting TLSv1_2
 		$url = "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
 		$ch = curl_init ( $url );
@@ -817,22 +817,22 @@ function bibleGetGetMetaData($request) {
 		//echo "<div>" . plugins_url ( 'DST_Root_CA.cer',__FILE__ ) . "</div>";
 		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "ca/DST_Root_CA.cer"); //seems to work.. ???
 		//curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
-	
+
 	}
 	else{
 		$url = "http://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
 		$ch = curl_init ( $url );
 	}
-		
+
 	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-	
+
 	if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
 		// safe mode is on, we can't use some settings
 	} else {
 		curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, TRUE );
 		curl_setopt ( $ch, CURLOPT_AUTOREFERER, TRUE );
 	}
-	
+
 	$response = curl_exec ( $ch );
 	if (curl_errno ( $ch ) && (curl_errno($ch) === 77 || curl_errno($ch) === 60) && $url == "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json" ) {
 		//error 60: SSL certificate problem: unable to get local issuer certificate
@@ -880,7 +880,7 @@ function bibleGetGetMetaData($request) {
 		}
 	}
 	curl_close ( $ch );
-	
+
 	$myjson = json_decode ( $response );
 	if (property_exists ( $myjson, "results" )) {
 		return $myjson;
@@ -896,7 +896,7 @@ function bibleGetGetMetaData($request) {
 
 
 /**
- * 
+ *
  * @param unknown $query
  * @return number
  */
@@ -908,7 +908,7 @@ function bibleGetQueryClean($query) {
 	$query = trim ( $query );
 	$query = preg_replace ( '/\s+/', '', $query );
 	$query = str_replace ( ' ', '', $query );
-	
+
 	if (strpos ( $query, ':' ) && strpos ( $query, '.' )) {
 		return __ ( "Mixed notations have been detected. Please use either english notation or european notation.", "bibleget-io" ) . '<' + $query + '>';
 	} else if (strpos ( $query, ':' )) { // if english notation is detected, translate it to european notation
@@ -920,13 +920,13 @@ function bibleGetQueryClean($query) {
 	$queries = array_values ( array_filter ( explode ( ';', $query ), function ($var) {
 		return $var !== "";
 	} ) );
-	
+
 	return array_map ( "bibleGetToProperCase", $queries );
 }
 
 
 /**
- * 
+ *
  */
 function bibleget_admin_notices() {
 	if ($notices = get_option ( 'bibleget_error_admin_notices' )) {
@@ -946,32 +946,32 @@ add_action ( 'admin_notices', 'bibleget_admin_notices' );
 
 
 /**
- * 
+ *
  */
 function bibleGetDeleteOptions() {
 	// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
 	for($i = 0; $i < 73; $i ++) {
 		delete_option ( "bibleget_biblebooks" . $i );
 	}
-	
+
 	// DELETE BIBLEGET_LANGUAGES CACHED INFO
 	delete_option ( "bibleget_languages" );
-	
+
 	// DELETE BIBLEGET_VERSIONS CACHED INFO
 	$bibleversions = json_decode ( get_option ( "bibleget_versions" ) );
 	delete_option ( "bibleget_versions" );
-	
+
 	// DELETE BIBLEGET_VERSIONINDEX CACHED INFO
 	$bibleversionsabbrev = get_object_vars ( $bibleversions );
 	foreach ( $bibleversionsabbrev as $abbrev ) {
 		delete_option ( "bibleget_" . $abbrev . "IDX" );
 	}
-	
+
 }
 
 
 /**
- * 
+ *
  */
 function bibleGetSetOptions() {
 	$metadata = bibleGetGetMetaData ( "biblebooks" );
@@ -994,7 +994,7 @@ function bibleGetSetOptions() {
 			update_option ( "bibleget_languages", $languages );
 		}
 	}
-	
+
 	$metadata = bibleGetGetMetaData ( "bibleversions" );
 	$versionsabbrev = array ();
 	if ($metadata !== false) {
@@ -1010,7 +1010,7 @@ function bibleGetSetOptions() {
 		// bibleGetWriteLog("versionsabbrev should now be populated:");
 		// bibleGetWriteLog($versionsabbrev);
 	}
-	
+
 	if (count ( $versionsabbrev ) > 0) {
 		$versionsstr = implode ( ',', $versionsabbrev );
 		$metadata = bibleGetGetMetaData ( "versionindex&versions=" . $versionsstr );
@@ -1031,7 +1031,7 @@ function bibleGetSetOptions() {
 			}
 		}
 	}
-	
+
 	// we only want the script to die if it's an ajax request...
 	if (isset ( $_POST ["isajax"] ) && $_POST ["isajax"] == 1) {
 		$notices = get_option ( 'bibleget_admin_notices', array () );
@@ -1166,7 +1166,7 @@ $bibleget_langcodes = array (
 		"xh" => "Xhosa",
 		"yi" => "Yiddish",
 		"yo" => "Yoruba",
-		"zu" => "Zulu" 
+		"zu" => "Zulu"
 );
 
 $bibleget_worldlanguages = array (
@@ -1175,173 +1175,173 @@ $bibleget_worldlanguages = array (
 				"it" => "Afrikaans",
 				"es" => "Afrikáans",
 				"fr" => "Afrikaans",
-				"de" => "Afrikaans" 
+				"de" => "Afrikaans"
 		),
 		"Albanian" => array (
 				"en" => "Albanian",
 				"it" => "Albanese",
 				"es" => "Albanés",
 				"fr" => "Albanais",
-				"de" => "Albanisch" 
+				"de" => "Albanisch"
 		),
 		"Arabic" => array (
 				"en" => "Arabic",
 				"it" => "Arabo",
 				"es" => "Árabe",
 				"fr" => "Arabe",
-				"de" => "Arabisch" 
+				"de" => "Arabisch"
 		),
 		"Chinese" => array (
 				"en" => "Chinese",
 				"it" => "Cinese",
 				"es" => "Chino",
 				"fr" => "Chinois",
-				"de" => "Chinesische" 
+				"de" => "Chinesische"
 		),
 		"Croatian" => array (
 				"en" => "Croatian",
 				"it" => "Croato",
 				"es" => "Croata",
 				"fr" => "Croate",
-				"de" => "Kroatisch" 
+				"de" => "Kroatisch"
 		),
 		"Czech" => array (
 				"en" => "Czech",
 				"it" => "Ceco",
 				"es" => "Checo",
 				"fr" => "Tchèque",
-				"de" => "Tschechisch" 
+				"de" => "Tschechisch"
 		),
 		"English" => array (
 				"en" => "English",
 				"it" => "Inglese",
 				"es" => "Inglés",
 				"fr" => "Anglais",
-				"de" => "Englisch" 
+				"de" => "Englisch"
 		),
 		"French" => array (
 				"en" => "French",
 				"it" => "Francese",
 				"es" => "Francés",
 				"fr" => "Français",
-				"de" => "Französisch" 
+				"de" => "Französisch"
 		),
 		"German" => array (
 				"en" => "German",
 				"it" => "Tedesco",
 				"es" => "Alemán",
 				"fr" => "Allemand",
-				"de" => "Deutsch" 
+				"de" => "Deutsch"
 		),
 		"Greek" => array (
 				"en" => "Greek",
 				"it" => "Greco",
 				"es" => "Griego",
 				"fr" => "Grec",
-				"de" => "Griechisch" 
+				"de" => "Griechisch"
 		),
 		"Hungarian" => array (
 				"en" => "Hungarian",
 				"it" => "Ungherese",
 				"es" => "Húngaro",
 				"fr" => "Hongrois",
-				"de" => "Ungarisch" 
+				"de" => "Ungarisch"
 		),
 		"Italian" => array (
 				"en" => "Italian",
 				"it" => "Italiano",
 				"es" => "Italiano",
 				"fr" => "Italien",
-				"de" => "Italienisch" 
+				"de" => "Italienisch"
 		),
 		"Japanese" => array (
 				"en" => "Japanese",
 				"it" => "Giapponese",
 				"es" => "Japonés",
 				"fr" => "Japonais",
-				"de" => "Japanisch" 
+				"de" => "Japanisch"
 		),
 		"Korean" => array (
 				"en" => "Korean",
 				"it" => "Coreano",
 				"es" => "Coreano",
 				"fr" => "Coréen",
-				"de" => "Koreanisch" 
+				"de" => "Koreanisch"
 		),
 		"Latin" => array (
 				"en" => "Latin",
 				"it" => "Latino",
 				"es" => "Latín",
 				"fr" => "Latin",
-				"de" => "Lateinisch" 
+				"de" => "Lateinisch"
 		),
 		"Polish" => array (
 				"en" => "Polish",
 				"it" => "Polacco",
 				"es" => "Polaco",
 				"fr" => "Polonais",
-				"de" => "Russisch" 
+				"de" => "Russisch"
 		),
 		"Portuguese" => array (
 				"en" => "Portuguese",
 				"it" => "Portoghese",
 				"es" => "Portugués",
 				"fr" => "Portugais",
-				"de" => "Portugiesisch" 
+				"de" => "Portugiesisch"
 		),
 		"Romanian" => array (
 				"en" => "Romanian",
 				"it" => "Rumeno",
 				"es" => "Rumano",
 				"fr" => "Roumain",
-				"de" => "Rumänischen" 
+				"de" => "Rumänischen"
 		),
 		"Russian" => array (
 				"en" => "Russian",
 				"it" => "Russo",
 				"es" => "Ruso",
 				"fr" => "Russe",
-				"de" => "Russisch" 
+				"de" => "Russisch"
 		),
 		"Spanish" => array (
 				"en" => "Spanish",
 				"it" => "Spagnolo",
 				"es" => "Español",
 				"fr" => "Espagnol",
-				"de" => "Spanisch" 
+				"de" => "Spanisch"
 		),
 		"Tagalog" => array (
 				"en" => "Tagalog",
 				"it" => "Tagalog",
 				"es" => "Tagalo",
 				"fr" => "Tagalog",
-				"de" => "Tagalog" 
+				"de" => "Tagalog"
 		),
 		"Tamil" => array (
 				"en" => "Tamil",
 				"it" => "Tamil",
 				"es" => "Tamil",
 				"fr" => "Tamoul",
-				"de" => "Tamilisch" 
+				"de" => "Tamilisch"
 		),
 		"Thai" => array (
 				"en" => "Thai",
 				"it" => "Thai",
 				"es" => "Thai",
 				"fr" => "Thaï",
-				"de" => "Thailändisch" 
+				"de" => "Thailändisch"
 		),
 		"Vietnamese" => array (
 				"en" => "Vietnamese",
 				"it" => "Vietnamita",
 				"es" => "Vietnamita",
 				"fr" => "Vietnamien",
-				"de" => "Vietnamesisch" 
-		) 
+				"de" => "Vietnamesisch"
+		)
 );
 
 /**
- * 
+ *
  * @param unknown $string
  */
 function bibleGetSortify($string) {
@@ -1358,7 +1358,7 @@ if (is_admin ()) {
 
 /**
  * END OF SETTINGS PAGE
- * 
+ *
  * START OF CUSTOMIZER OPTIONS
  */
 
@@ -1370,25 +1370,25 @@ if (is_admin ()) {
 // Setup the Theme Customizer settings and controls...
 add_action ( 'customize_register', array (
 		'BibleGet_Customize',
-		'register' 
+		'register'
 ) );
 
 // Output custom CSS to live site
 add_action ( 'wp_head', array (
 		'BibleGet_Customize',
-		'header_output' 
+		'header_output'
 ) );
 
 // Enqueue live preview javascript in Theme Customizer admin screen
 add_action ( 'customize_preview_init', array (
 		'BibleGet_Customize',
-		'live_preview' 
+		'live_preview'
 ) );
 
 /**
  * Function bibleGetWriteLog
  * useful for debugging purposes
- * 
+ *
  * @param unknown $log
  */
 function bibleGetWriteLog($log) {
@@ -1414,26 +1414,26 @@ function bibleGetWriteLog($log) {
 
 add_filter ( 'plugin_action_links_' . plugin_basename ( __FILE__ ), 'bibleGetAddActionLinks' );
 /**
- * 
+ *
  * @param unknown $links
  */
 function bibleGetAddActionLinks($links) {
 	$mylinks = array (
-			'<a href="' . admin_url ( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __ ( 'Settings' ) . '</a>' 
+			'<a href="' . admin_url ( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __ ( 'Settings' ) . '</a>'
 	);
 	return array_merge ( $links, $mylinks );
 }
 
 
 /**
- * 
+ *
  * @param unknown $parentNode
  * @param unknown $tagName
  * @param unknown $className
  */
 function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 	$nodes = array ();
-	
+
 	$childNodeList = $parentNode->getElementsByTagName ( $tagName );
 	for($i = 0; $i < $childNodeList->length; $i ++) {
 		$temp = $childNodeList->item ( $i );
@@ -1441,13 +1441,13 @@ function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
 			$nodes [] = $temp;
 		}
 	}
-	
+
 	return $nodes;
 }
 
 
 /**
- * 
+ *
  */
 function bibleGetCurrentPageUrl() {
 	$pageURL = 'http';

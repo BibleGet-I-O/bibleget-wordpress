@@ -125,3 +125,40 @@ form input[type=color] {
 	text-decoration: none;
 	font-weight: bold;
 }
+
+#gfontsBatchRunProgressBarOverlay {
+    background-color: black;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.5; /* also -moz-opacity, etc. */
+}
+
+#gfontsBatchRunProgressBarWrapper {
+    position: fixed;
+    top: 50%;
+    width: 100%;
+}
+
+#gfontsBatchRunProgressbar{
+	position:relative;
+    width: 50%;
+    margin: 0px auto;
+}
+
+#gfontsBatchRunProgressbarLabelWrapper {
+    position: absolute;
+    top: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+#gfontsBatchRunProgressbarLabel {
+	position: relative;
+    color:#000;
+	font-weight: bold;
+	top: 4px;
+    margin: 0px auto;
+}

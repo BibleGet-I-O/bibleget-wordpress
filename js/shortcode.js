@@ -8,7 +8,11 @@
 				autoOpen: false,
 				width: ($(window).width() * 0.8),
 				maxHeight: ($(window).height() * 0.8),
-				title: $(this).text()
+				title: $(this).text(),
+				create: function () {
+			      // style fix for WordPress admin
+			      $('.ui-dialog-titlebar-close').addClass('ui-button');
+			    }
 			});
 			
 			$(this).click(function(){

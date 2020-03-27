@@ -9,7 +9,7 @@
  * 
  * Modified by John Romano D'Orazio, https://www.johnromanodorazio.com
  * Modification Date June 12, 2017
- * 
+ * Modification Date March 25, 2020
  * 
  * 
  */
@@ -313,7 +313,8 @@
 					}					 
 				} // END IF FONT
 				this.$original.data('fonttype',fontType); 
-				//console.log('>>>> setting this.$original.data("fonttype") to:' +fontType);
+                this.$original.attr('data-fonttype',fontType);
+				console.log('>>>> setting this.$original.data("fonttype") to:' +fontType);
 				this.updateSelected(); //this will download the full font set for google fonts, which is useful so that preview text will be shown in this font
 				this.getVisibleFonts();
 				this.bindEvents();
@@ -352,7 +353,8 @@
 				var font = $('li.active', this.$results).data('value');
 				var fontType = $('li.active', this.$results).data('fonttype');
 				this.$original.data('fonttype',fontType);
-				//console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
+                this.$original.attr('data-fonttype',fontType);
+				console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
 				this.$original.val(font).change();
 				this.updateSelected();
 				this.toggleDrop();
@@ -389,7 +391,7 @@
 
 				var font = this.$original.val();
 				var fontType = this.$original.data('fonttype');
-				//console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
+				console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
 				if(fontType == 'googlefont'){
 					$('span', this.$element).text(this.toReadable(font)).css(this.toStyle(font));
 					var link = this.options.api + font;
@@ -417,8 +419,15 @@
 				this.$drop = $('<div>', {'class': 'fs-drop'});
 				this.$results = $('<ul>', {'class': 'fs-results'});
 				this.$original.after(this.$element.append(this.$select.append(this.$arrow)).append(this.$drop));
-				this.$drop.append(this.$results.append(this.fontsAsHtml())).hide();
-				//console.log('setupHtml END');
+				this.$fontsAsHtml = $(this.fontsAsHtml());
+                this.$drop.append(this.$results.append(this.$fontsAsHtml)).hide();
+                
+				this.$prefetch = $('<div>', {'class': 'font-select-prefetch'});
+                this.$results_prefetch = this.$results.clone();
+                this.$fontsAsHtml_prefetch = this.$fontsAsHtml.clone();
+                this.$prefetch.append(this.$results_prefetch.append(this.$fontsAsHtml_prefetch));
+                jQuery('body').append(this.$prefetch);
+                //console.log('setupHtml END');
 			};
 
 			Fontselect.prototype.fontsAsHtml = function(){
@@ -516,11 +525,18 @@
 
 			Fontselect.prototype.addFontLink = function(font){
 
-				var link = this.options.api + font + '&text=' + encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
-
-				if ($("link[href*='" + font + "']").length === 0){
-					$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
-				}
+				//var link = this.options.api + font + '&amp;text=' + encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
+                /*
+                var fontfilename = encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
+                var link = '/css/gfonts_preview/' + fontfilename + '.css';
+				if(typeof FontSelect_Control !== 'undefined'){
+                    if(FontSelect_Control.hasOwnProperty('pluginUrl') && FontSelect_Control.pluginUrl != ''){
+                        if ($("link[href='" + FontSelect_Control.pluginUrl + link + "']").length === 0){
+        					$('link:last').after('<link href="' + FontSelect_Control.pluginUrl + link + '" rel="stylesheet" type="text/css">');
+        				}                    
+                    }
+                }
+                */
 			};
 
 			return Fontselect;
@@ -530,7 +546,36 @@
 			if (options) {
 				$.extend( settings, options );
 			}
-			return new Fontselect(this, settings, $.fontselect.google_fonts);
+            if(typeof FontSelect_Control !== 'undefined'){
+                if(FontSelect_Control.hasOwnProperty('bibleget_settings') && FontSelect_Control.bibleget_settings.hasOwnProperty('googlefontsapi_key') && FontSelect_Control.bibleget_settings.googlefontsapi_key != ''){
+                    settings.api = 'https://fonts.googleapis.com/css2?key='+FontSelect_Control.bibleget_settings.googlefontsapi_key+'&amp;family=';
+                    var $ths = this;
+                    jQuery.ajax({
+                        url: 'https://www.googleapis.com/webfonts/v1/webfonts',
+                        data: {'key':FontSelect_Control.bibleget_settings.googlefontsapi_key},
+                        dataType: 'json',
+                        type: 'get',
+                        success: function(data){
+                            //console.log(data);
+                            var webfontList = data.items;
+                            $.fontselect.google_fonts = [];
+                            for(var it = 0; it < webfontList.length; it++){
+                                $.fontselect.google_fonts[it] = webfontList[it].family.replace(/ /g, "+");
+                            }
+                            //console.log('new fontselect.google_fonts:');
+                            //console.log($.fontselect.google_fonts);
+                            return new Fontselect($ths, settings, $.fontselect.google_fonts);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
+                        }
+                    });
+                }
+                //console.log(bibleget_settings);
+            }
+			else {
+                return new Fontselect(this, settings, $.fontselect.google_fonts);
+            }
 		});
 
 	};
