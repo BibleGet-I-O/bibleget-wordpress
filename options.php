@@ -456,19 +456,23 @@ class BibleGetSettingsPage
     	if($this->gfontsAPIkeyCheckResult){
     		switch ($this->gfontsAPIkeyCheckResult){
     			case "SUCCESS":
-    				echo '<span style="color:Green;font-weight:bold;margin-left:12px;">SUCCESS</span>';
+    				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+    				echo '<span style="color:Green;font-weight:bold;margin-left:12px;">'.__("SUCCESS","bibleget-io").'</span>';
     				break;
     			case "CURL_ERROR":
-    				echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">CURL ERROR WHEN SENDING REQUEST</span>';
+    				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+    				echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">'.__("CURL ERROR WHEN SENDING REQUEST","bibleget-io").'</span>';
     				foreach($this->gfontsAPI_errors as $er){
     					echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . $er . '</i>';
     				}
     				break;
     			case "JSON_ERROR":
-    				echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">NO VALID JSON RESPONSE</span>';
+    				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+    				echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">'.__("NO VALID JSON RESPONSE","bibleget-io").'</span>';
     				break;
     			case "REQUEST_NOT_SENT":
-    				echo '<span style="color:Red;font-weight:bold;margin-left:12px;">SERVER UNABLE TO MAKE REQUESTS</span>';
+    				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+    				echo '<span style="color:Red;font-weight:bold;margin-left:12px;">'.__("SERVER UNABLE TO MAKE REQUESTS","bibleget-io").'</span>';
     				break;
     		}
     	}
@@ -529,13 +533,15 @@ class BibleGetSettingsPage
 	    				}
 					} else {
 						if(!$response){
-							$this->gfontsAPI_errors[] = "Response from curl request is false";
+    						/* translators: refers to the outcome of the communication with the Google Fonts API as a boolean value */
+							$this->gfontsAPI_errors[] = __("Response from curl request is false","bibleget-io");
 						}
 						if(curl_errno($ch)){
 							$this->gfontsAPI_errors[] = curl_error($ch);
 						}
 						if($status != 200){
-							$this->gfontsAPI_errors[] = "Status = " . $status;
+    						/* translators: refers to the status of the http response during communication with the Google Fonts API */
+							$this->gfontsAPI_errors[] = __("Status","bibleget-io"). " = " . $status;
 						}
 						$result = "CURL_ERROR";
 					}
