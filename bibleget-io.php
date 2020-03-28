@@ -199,7 +199,8 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 		// bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
 		// bibleGetWriteLog($goodqueries);
 		if ($goodqueries === false) {
-			$output = __ ( "BibleGet Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
+			/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
+			$output = __ ( "Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
 			return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
 		}
 
@@ -224,7 +225,8 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 					$output = str_replace ( PHP_EOL, '', $output );
 					set_transient ( md5 ( $finalquery ), $output, 7 * 24 * HOUR_IN_SECONDS );
 				} else {
-					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "BibleGet Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
+					/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
+					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
 				}
 			}
 

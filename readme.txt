@@ -18,7 +18,7 @@ The text of the Bible quotes are retrieved from the BibleGet service endpoint *[
 **USAGE:** [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
 
 It is also possible to place the desired Bible verse quote in the contents of the shortcode, like so:
-**USAGE:** [bibleget version="NABRE"]John 3:16;1 John 4,7-8[/bibleget] 
+**USAGE:** [bibleget version="NABRE"]John 3:16;1 John 4:7-8[/bibleget] 
 
 The Plugin also has a settings page “BibleGet I/O” under the “Settings” area in the Dashboard, 
 where you can choose your preferred Bible versions from those available on the BibleGet server
@@ -51,7 +51,6 @@ GREEK TRANSLATION: anonymous user contribution
 == Frequently Asked Questions ==
 
 = How do I formulate a Bible citation? =
-[ENGLISH]
 The query parameter must contain a citation that is formulated following the standard notation for Bible citations (see [Bible citation notation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation")):
    * “:”: is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
 
@@ -72,7 +71,6 @@ At least the first query (of a series of queries chained by a semi-colon) must i
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
 
 = What happens if I add a Google Fonts API key? =
-[ENGLISH]
 If you add a Google Fonts API key, the BibleGet plugin will immediately test it's validity.
 If valid, it will remember that you have a key and that it's valid for 3 months.
 Every three months starting from this moment the BibleGet plugin will talk with the Google Fonts API
@@ -89,7 +87,6 @@ After this it should go a little faster as the fonts previews should be cached b
 If you are not happy with the performance impact, I would suggest to delete the Google Fonts API key.
 
 = I have added the Google Fonts API key but the list of available fonts isn't updated =
-[ENGLISH]
 The BibleGet plugin will remember that your key is valid for 3 months. 
 This means that it will not fetch the list of fonts from the Google Fonts API until the relative transient expires.
 If a new font has come out that you would like to see and use in the customizer interface for the BibleGet plugin,

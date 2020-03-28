@@ -472,11 +472,16 @@ class BibleGetSettingsPage
     				break;
     		}
     	}
-    	echo '<br /><i>' . __("If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.' .
-                ' If you do not yet have a Google Fonts API Key, you can get one here", "bibleget-io") . ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
-    			' If you choose to apply restrictions to your api key, choose "IP Addresses (web servers, cron jobs etc)" and if you restrict to specific IP addresses be sure to include any and all interface network addresses that your server may use;' .
-    			' specifically the ip address found in the &#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D; variable (it may take a few minutes to be effective).' .
-                ' A successful key will be cached and retested every 3 months. Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer. If you notice that it becomes too sluggish, you had best leave this field empty.</i>';
+    	echo "<br /><i>" . __("If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.", "bibleget-io") .
+                " " . __("If you do not yet have a Google Fonts API Key, you can get one here", "bibleget-io") .
+                ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
+    			" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
+    			" " . __("and if you restrict to specific IP addresses be sure to include any and all interface network addresses that your server may use","bibleget-io") .
+    			"; " . __("specifically the ip address found in the &#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D; variable (it may take a few minutes to be effective).","bibleget-io") .
+                " " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .
+                " " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
+                " " . __("If you notice that it becomes too sluggish, you had best leave this field empty.","bibleget-io") .
+                "</i>";
     }
 
     public function gfontsAPIkeyCheck(){
@@ -961,12 +966,18 @@ class BibleGet_Customize {
 
 	$bibleget_style_sizes_arr = array(4=>'4',5=>'5',6=>'6',7=>'7',8=>'8',9=>'9',10=>'10',11=>'11',12=>'12',14=>'14',16=>'16',18=>'18',20=>'20',22=>'22',24=>'24',26=>'26',28=>'28');
 	$bibleget_style_choices_arr = array(
-      'bold'         => __("B","bibleget-io"),
-      'italic'       => __("I", "bibleget-io"),
-      'underline'    => __("U", "bibleget-io"),
-      'strikethrough'=> __("S","bibleget-io"),
-      'superscript'  => __("SUP","bibleget-io"),
-      'subscript'    => __("SUB","bibleget-io")
+	  /* translators: "B" refers to "bold style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
+	  'bold'         => __("B","bibleget-io"),
+	  /* translators: "I" refers to "italic style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
+	  'italic'       => __("I", "bibleget-io"),
+	  /* translators: "U" refers to "underline style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
+	  'underline'    => __("U", "bibleget-io"),
+	  /* translators: "S" refers to "strikethrough style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
+	  'strikethrough'=> __("S","bibleget-io"),
+	  /* translators: "SUP" refers to "superscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
+	  'superscript'  => __("SUP","bibleget-io"),
+	  /* translators: "SUB" refers to "subscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
+	  'subscript'    => __("SUB","bibleget-io")
     );
 
     foreach($bibleget_styles_general as $i => $styleobj){
