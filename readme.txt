@@ -8,7 +8,7 @@ Stable tag: 5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages; uses the BibleGet I/O Service endpoint https://query.bibleget.io
+Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages; uses the BibleGet I/O Service endpoint (https://query.bibleget.io).
 
 == Description ==
 
