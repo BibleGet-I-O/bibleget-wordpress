@@ -481,6 +481,7 @@ class BibleGetSettingsPage
                 ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
     			" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
     			" " . __("and if you restrict to specific IP addresses be sure to include any and all interface network addresses that your server may use","bibleget-io") .
+    			/* TRANSLATORS: do not change what seems like garbled characters (between &#x24; and &#x5D;), these are html special character codes */
     			"; " . __("specifically the ip address found in the &#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D; variable (it may take a few minutes to be effective).","bibleget-io") .
                 " " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .
                 " " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
@@ -991,7 +992,7 @@ class BibleGet_Customize {
 
     	self::$bibleget_style_settings->{'version_'.$o} = new stdClass();
     	self::$bibleget_style_settings->{'version_'.$o}->section = 'bibleget_bibleversion_style_options';
-		/* translators: in reference to Font Size, Style and Color */
+		/* translators: in reference to Font Size, Style and Color (e.g. 'style for version indicator') */
 		self::$bibleget_style_settings->{'version_'.$o}->title = $styleobj->title . " " . __('for Version Indicator',"bibleget-io");
 		self::$bibleget_style_settings->{'version_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){
@@ -1003,7 +1004,7 @@ class BibleGet_Customize {
 
 		self::$bibleget_style_settings->{'bookchapter_'.$o} = new stdClass();
     	self::$bibleget_style_settings->{'bookchapter_'.$o}->section = 'bibleget_bookchapter_style_options';
-		/* translators: in reference to Font Size, Style and Color */
+		/* translators: in reference to Font Size, Style and Color (e.g. 'style for books and chapters') */
 		self::$bibleget_style_settings->{'bookchapter_'.$o}->title = $styleobj->title . " " . __('for Books and Chapters',"bibleget-io");
 		self::$bibleget_style_settings->{'bookchapter_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){
@@ -1015,7 +1016,7 @@ class BibleGet_Customize {
 
       	self::$bibleget_style_settings->{'versenumber_'.$o} = new stdClass();
     	self::$bibleget_style_settings->{'versenumber_'.$o}->section = 'bibleget_versenumber_style_options';
-      	/* translators: in reference to Font Size, Style and Color */
+      	/* translators: in reference to Font Size, Style and Color (e.g. 'style for verse numbers') */
 		self::$bibleget_style_settings->{'versenumber_'.$o}->title = $styleobj->title . " " . __('for Verse Numbers',"bibleget-io");
 		self::$bibleget_style_settings->{'versenumber_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){
@@ -1027,7 +1028,7 @@ class BibleGet_Customize {
 
       	self::$bibleget_style_settings->{'versetext_'.$o} = new stdClass();
     	self::$bibleget_style_settings->{'versetext_'.$o}->section = 'bibleget_versetext_style_options';
-      	/* translators: in reference to Font Size, Style and Color */
+      	/* translators: in reference to Font Size, Style and Color (e.g. 'style for text of verses') */
 		self::$bibleget_style_settings->{'versetext_'.$o}->title = $styleobj->title . " " . __('for Text of Verses',"bibleget-io");
 		self::$bibleget_style_settings->{'versetext_'.$o}->type = $styleobj->type;
 		if($styleobj->type == 'select'){

@@ -27,7 +27,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//TODO: allow user to get updated list of google fonts with a developer api key
 //TODO: better ui for the customizer, use sliders
 
 define ( "BIBLEGETPLUGINVERSION", "v5_0" );
