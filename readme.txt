@@ -66,9 +66,15 @@ The query parameter must contain a citation that is formulated following the sta
 
 At least the first query (of a series of queries chained by a semi-colon) must indicate the name of the book upon which to make the request;
  the name of the book can be written in full in more than 20 different languages, or written using the abbreviated form.
- See the page [Lista di Abbreviazioni di Libri](http://www.bibleget.io/come-funziona/lista-abbreviazioni-libri/ "Lista di Abbreviazioni di Libri").
+ See the page [Lista di Abbreviazioni di Libri](https://www.bibleget.io/come-funziona/lista-abbreviazioni-libri/ "Lista di Abbreviazioni di Libri").
  When a query following a semi-colon does not indicate the book name, it is intended that the request be made upon the same book as the previous query.
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
+
+= I am requesting a long Bible quote but I'm only getting 30 verses =
+If you are using a version of the Bible that is covered by copyright, you will not be able to quote more than 30 verses at once.
+So if you request for example “Gen1” using the NABRE version, you might expect to get back Gen1:1-31 but instead you will only get back Gen1:1-30.
+This is a limit imposed by the legal agreements for usage of these versions, it's not a bug, it's by design. 
+If you need more than 30 verses when requesting a version covered by copyright, formulate the request as multiple quotes split up into no more than 30 verses each, for example “Gen1:1-30;1:31”.
 
 = What happens if I add a Google Fonts API key? =
 If you add a Google Fonts API key, the BibleGet plugin will immediately test it's validity.

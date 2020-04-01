@@ -319,7 +319,7 @@ function bibleGetQueryServer($finalquery) {
 				$errs = get_option ( 'bibleget_error_admin_notices', array () );
 				foreach ( $error_rows as $error_row ) {
 					$errormessage = bibleGetGetElementsByClass ( $error_row, 'td', 'errMessageVal' );
-					$errs [] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage [0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl () . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __ ( "If this error continues, please notify the BibleGet plugin creator at:" ) . " <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode ( "The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage [0]->nodeValue . "\n\nKind regards,\n\n" ) . "\">bibleget.io@gmail.com</a>" . "</span>";
+					$errs [] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage [0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl () . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __ ( "If this error continues, please notify the BibleGet plugin author at:" ) . " <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode ( "The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage [0]->nodeValue . "\n\nKind regards,\n\n" ) . "\">bibleget.io@gmail.com</a>" . "</span>";
 				}
 			}
 			$output = preg_replace ( "/<div class=\"errors\" id=\"errors\">.*?<\/div>/s", '', $output );
@@ -911,7 +911,7 @@ function bibleGetQueryClean($query) {
 	$query = str_replace ( ' ', '', $query );
 
 	if (strpos ( $query, ':' ) && strpos ( $query, '.' )) {
-		return __ ( "Mixed notations have been detected. Please use either english notation or european notation.", "bibleget-io" ) . '<' + $query + '>';
+		return __ ( "Mixed notations have been detected. Please use either english notation or european notation.", "bibleget-io" ) . '<' . $query . '>';
 	} else if (strpos ( $query, ':' )) { // if english notation is detected, translate it to european notation
 		if (strpos ( $query, ',' ) != - 1) {
 			$query = str_replace ( ',', '.', $query );

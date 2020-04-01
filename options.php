@@ -481,12 +481,15 @@ class BibleGetSettingsPage
                 ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
     			" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
     			" " . __("and if you restrict to specific IP addresses be sure to include any and all interface network addresses that your server may use","bibleget-io") .
-    			/* TRANSLATORS: do not change what seems like garbled characters (between &#x24; and &#x5D;), these are html special character codes */
-    			"; " . __("specifically the ip address found in the &#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D; variable (it may take a few minutes to be effective).","bibleget-io") .
+            	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+    			", " . sprintf(__("specifically the ip address found in the %s variable (it may take a few minutes to be effective).","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
                 " " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .
                 " " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
                 " " . __("If you notice that it becomes too sluggish, you had best leave this field empty.","bibleget-io") .
-                "</i>";
+            	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+                " " . sprintf(__("%s Press here %s to see the value of the %s variable on your server","bibleget-io"),"<button id=\"biblegetio_reveal_server_variable\">","</button>","&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
+    			"<span id=\"biblegetio_hidden_server_variable\">: [" . $_SERVER['SERVER_ADDR'] . "]</span>" .
+    			"</i>";
     }
 
     public function gfontsAPIkeyCheck(){
