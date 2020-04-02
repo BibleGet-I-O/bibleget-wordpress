@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
             currentRun: currentRun,
             startIdx : 0
         };
-        console.log(postdata);
+        //console.log(postdata);
         gfontsBatchRun(postdata);
         
         
@@ -214,44 +214,51 @@ jQuery(document).ready(function($) {
 	
 	jQuery('#biblegetForceRefreshGFapiResults').click(function(){
 		//send ajax request to the server to have the transient deleted
-		console.log('we should have an nonce for this action: '+bibleGetOptionsFromServer.gfontsRefreshNonce);
-		
-		var postProps = {
-				action : 'bibleget_refresh_gfonts',
-				security : bibleGetOptionsFromServer.gfontsRefreshNonce
-			};
-		jQuery.ajax({
-			type: 'POST',
-			url: bibleGetOptionsFromServer.ajax_url,
-			data: postProps,
-			beforeSend : function() {
-				jQuery('#bibleget_ajax_spinner').show();
-			},
-			complete : function() {
-				jQuery('#bibleget_ajax_spinner').hide();
-			},
-			success : function(retval){
-				switch(retval){
-					case "TRANSIENT_DELETED":
-						//we can now reload the page triggering a new download from the gfonts API server
-						location.reload(true);
-						break;
-					case "NOTHING_TO_DO":
-						//That's just it, we won't do anything
-						break;
-				}
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				jQuery("#bibleget-settings-notification")
-					.fadeIn("slow")
-					.append('Could not force refresh the list of fonts from the Google Fonts API... ERROR: ' + xhr.responseText);
-				jQuery(".bibleget-settings-notification-dismiss")
-					.click(function() {
-						jQuery("#bibleget-settings-notification").fadeOut("slow");
-					});
+		console.log('we should have an nonce for this action: '+gfontsBatch.gfontsRefreshNonce);
+		if(typeof gfontsBatch != 'undefined' && typeof gfontsBatch == 'object' && gfontsBatch.hasOwnProperty('job') && typeof gfontsBatch.job == 'object' && gfontsBatch.job.hasOwnProperty('gfontsRefreshNonce') && gfontsBatch.job.gfontsRefreshNonce != '' && gfontsBatch.job.hasOwnProperty('gfontsApiKey') && gfontsBatch.job.gfontsApiKey != '' ){
+			var postProps = {
+					action : 'bibleget_refresh_gfonts',
+					security : gfontsBatch.job.gfontsRefreshNonce,
+					gfontsApiKey: gfontsBatch.job.gfontsApiKey
+				};
+			jQuery.ajax({
+				type: 'POST',
+				url: gfontsBatch.job.ajax_url,
+				data: postProps,
+				beforeSend : function() {
+					jQuery('#bibleget_ajax_spinner').show();
+				},
+				complete : function() {
+					jQuery('#bibleget_ajax_spinner').hide();
+				},
+				success : function(retval){
+					switch(retval){
+						case "TRANSIENT_DELETED":
+							//we can now reload the page triggering a new download from the gfonts API server
+							location.reload(true);
+							break;
+						case "NOTHING_TO_DO":
+							//That's just it, we won't do anything
+							console.log('It sure seems like there is nothing to do here');
+							break;
+					}
+				},
+				error : function(xhr, ajaxOptions, thrownError) {
+					jQuery("#bibleget-settings-notification")
+						.fadeIn("slow")
+						.append('Could not force refresh the list of fonts from the Google Fonts API... ERROR: ' + xhr.responseText);
+					jQuery(".bibleget-settings-notification-dismiss")
+						.click(function() {
+							jQuery("#bibleget-settings-notification").fadeOut("slow");
+						});
 
-			}
-		});
+				}
+			});
+			
+		}
+		else{
+			console.log('cannot force refresh gfonts list, nonce not found');
+		}
 	});
 	
 });

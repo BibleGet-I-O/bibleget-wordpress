@@ -1,6 +1,5 @@
 <?php
 
-
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
 class BibleGetSettingsPage
 {
@@ -17,6 +16,7 @@ class BibleGetSettingsPage
     private $gfonts_weblist;
     private $gfonts_dir;
     private $gfontsAPIkey;
+    private $gfontsAPIkeyTimeOut;
     private $gfontsAPIresponseJSON;
     private $gfontsAPI_errors;
     private $gfontsAPIkeyCheckResult;
@@ -35,6 +35,7 @@ class BibleGetSettingsPage
         $this->gfonts_dir = "";
         $this->options = get_option( 'bibleget_settings' );
         $this->gfontsAPIkey = "";
+        $this->gfontsAPIkeyTimeOut = 0;
         $this->gfontsAPIkeyCheckResult = false;
         $this->gfontsAPIresponseJSON = new stdClass();
         $this->gfontsAPI_errors = array();
@@ -55,7 +56,8 @@ class BibleGetSettingsPage
                 //error_log(print_r($this->gfontsAPIresponseJSON,true));
                 //error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
                 add_action( "wp_ajax_store_gfonts_preview", array( $this, 'store_gfonts_preview' ) );
-                //enqueue and localize will be done in enqueue_scripts
+				add_action( "wp_ajax_bibleget_refresh_gfonts", array( $this, 'bibleGetForceRefreshGFontsResults' ) );
+				//enqueue and localize will be done in enqueue_scripts
 
                 // Include CSS minifier by matthiasmullie
                 $minifierpath = WP_PLUGIN_DIR."/bibleget-io/minifier";
@@ -206,7 +208,7 @@ class BibleGetSettingsPage
                 wp_enqueue_style('jquery-ui-css',
                                 '//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css');
             }
-            $storeGfontsArr = array("job" => array( "gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"),'ajax_url' => admin_url( 'admin-ajax.php' ), 'gfontsWeblist' => $this->gfonts_weblist));
+            $storeGfontsArr = array("job" => array( "gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"),'ajax_url' => admin_url( 'admin-ajax.php' ), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key']));
             wp_localize_script( 'admin-js', 'gfontsBatch', $storeGfontsArr);
         }
 
@@ -456,10 +458,29 @@ class BibleGetSettingsPage
     	if($this->gfontsAPIkeyCheckResult){
     		switch ($this->gfontsAPIkeyCheckResult){
     			case "SUCCESS":
+                    //Let's transform the transient timeout into a human readable format
+
+                    $d1=new DateTime(); //timestamp set to current time
+                    $d2=new DateTime();
+                    $d2->setTimestamp($this->gfontsAPIkeyTimeOut);
+                    $diff=$d2->diff($d1);
+                    $gfontsAPIkeyTimeLeft = $diff->m . "months, " . $diff->d . " days";
+
+                    $timeLeft = array();
+
+                    if($diff->m > 0) {
+                        $timeLeft[] = ($diff->m . " month" . (($diff->m > 1) ? "s" : ""));
+                    }
+                    if($diff->d > 0) {
+                        $timeLeft[] = ($diff->d . " day" . (($diff->d > 1) ? "s" : ""));
+                    }
+
+                    $gfontsAPIkeyTimeLeft = (count($timeLeft)>0) ? "[".implode(", ",$timeLeft)."]" : "";
+
     				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
     				echo '<span style="color:Green;font-weight:bold;margin-left:12px;">'.__("VALID","bibleget-io").'</span>';
-    				echo '<br /><i>';
-    				echo sprintf(__("%s Click here %s to force refresh the list of fonts from the Google Fonts API","bibleget-io"),'<span id="biblegetForceRefreshGFapiResults">','</span>');
+                    echo ' <i>' . sprintf(__("Google Fonts API refresh scheduled in: %s","bibleget-io"),$gfontsAPIkeyTimeLeft);
+    				echo ' ' . sprintf(__("OR %s Click here %s to force refresh the list of fonts from the Google Fonts API","bibleget-io"),'<span id="biblegetForceRefreshGFapiResults">','</span>');
     				echo '</i>';
     				break;
     			case "CURL_ERROR":
@@ -486,20 +507,23 @@ class BibleGetSettingsPage
     				break;
     		}
     	}
-    	echo "<br /><i>" . __("If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.", "bibleget-io") .
-                " " . __("If you do not yet have a Google Fonts API Key, you can get one here", "bibleget-io") .
-                ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
-    			" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
-    			" " . __("and if you restrict to specific IP addresses be sure to include any and all IP addresses that this server may use","bibleget-io") .
-            	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-    			", " . sprintf(__("specifically the ip address found in the %s variable (it may take a few minutes to be effective).","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
-                " " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .
-                " " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
-                " " . __("If you notice that it becomes too sluggish, you had best leave this field empty.","bibleget-io") .
-            	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-				"<br /> (" . sprintf(__("To see the value of the %s variable on your server %s Press here %s","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;","<span id=\"biblegetio_reveal_server_variable\" tabindex=\"0\">","</span>") .
-    			"<span id=\"biblegetio_hidden_server_variable\"> [" . $_SERVER['SERVER_ADDR'] . "] )</span>" .
-      			"</i>";
+    	else{
+    		echo "<br /><i>" . __("If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.", "bibleget-io") .
+    		" " . __("If you do not yet have a Google Fonts API Key, you can get one here", "bibleget-io") .
+    		': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
+    		" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
+    		" " . __("and if you restrict to specific IP addresses be sure to include any and all IP addresses that this server may use","bibleget-io") .
+    		/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+    		", " . sprintf(__("specifically the ip address found in the %s variable (it may take a few minutes to be effective).","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
+    		" " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .
+    		" " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
+    		" " . __("If you notice that it becomes too sluggish, you had best leave this field empty.","bibleget-io") .
+    		/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+    		"<br /> (" . sprintf(__("To see the value of the %s variable on your server %s Press here %s","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;","<span id=\"biblegetio_reveal_server_variable\" tabindex=\"0\">","</span>") .
+    		"<span id=\"biblegetio_hidden_server_variable\"> [" . $_SERVER['SERVER_ADDR'] . "] )</span>" .
+    		"</i>";
+
+    	}
     }
 
     public function gfontsAPIkeyCheck(){
@@ -508,7 +532,8 @@ class BibleGetSettingsPage
 
     	if(isset( $this->options['googlefontsapi_key'] ) && $this->options['googlefontsapi_key'] != ""){
     		$this->gfontsAPIkey = $this->options['googlefontsapi_key'];
-    		//has this key been tested in the past 3 months at least?
+
+            //has this key been tested in the past 3 months at least?
     		if(false === ($result = get_transient ( md5 ( $this->options['googlefontsapi_key'] ) )) ){
 
     			//We will make a secure connection to the Google Fonts API endpoint
@@ -576,6 +601,15 @@ class BibleGetSettingsPage
     		else{
     			//we have a previously saved api key which has been tested
     			//$result is not false
+                global $wpdb;
+                $transientKey = md5 ( $this->options['googlefontsapi_key'] );
+                $transient_timeout = $wpdb->get_col( "
+                  SELECT option_value
+                  FROM $wpdb->options
+                  WHERE option_name
+                  LIKE '%_transient_timeout_$transientKey%'
+                " );
+                $this->gfontsAPIkeyTimeOut = $transient_timeout[0];
     		}
     	}
     	else{
@@ -799,6 +833,21 @@ class BibleGetSettingsPage
         wp_die();
     }
 
+    /**
+     *
+     */
+    public function bibleGetForceRefreshGFontsResults(){
+    	check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', TRUE ); //no need for an "if", it will die if not valid
+		if(isset($_POST["gfontsApiKey"]) && $_POST["gfontsApiKey"] != ""){
+			if(get_transient ( md5 ( $_POST["gfontsApiKey"] ) )){
+				delete_transient(md5 ( $_POST["gfontsApiKey"] ));
+				echo 'TRANSIENT_DELETED';
+				wp_die();
+			}
+		}
+    	echo 'NOTHING_TO_DO';
+    	wp_die();
+    }
 
     public function bibleget_plugin_settings_save()
     {

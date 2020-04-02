@@ -1058,24 +1058,6 @@ function bibleGetSetOptions() {
 }
 add_action ( 'wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions' );
 
-/**
- *
- */
-function bibleGetForceRefreshGFontsResults(){
-    check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', TRUE ); //no need for an "if", it will die if not valid
-
-	$BibleGetOptions = get_option( 'bibleget_settings' );
-	if(isset( $BibleGetOptions['googlefontsapi_key'] ) && $BibleGetOptions['googlefontsapi_key'] != ""){
-		if(get_transient ( md5 ( $BibleGetOptions['googlefontsapi_key'] ) )){
-			delete_transient(md5 ( $BibleGetOptions['googlefontsapi_key'] ));
-			echo 'TRANSIENT_DELETED';
-			wp_die();
-		}
-	}
-	echo 'NOTHING_TO_DO';
-	wp_die();
-}
-add_action ( 'wp_ajax_bibleget_refresh_gfonts', 'bibleGetForceRefreshGFontsResults' );
 
 $bibleget_langcodes = array (
 		"af" => "Afrikaans",
