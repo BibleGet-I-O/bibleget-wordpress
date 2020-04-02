@@ -206,7 +206,7 @@ class BibleGetSettingsPage
                 wp_enqueue_style('jquery-ui-css',
                                 '//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css');
             }
-            $storeGfontsArr = array("job" => array( "gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"),'ajax_url' => admin_url( 'admin-ajax.php' ), 'gfontsWeblist' => $this->gfonts_weblist));
+            $storeGfontsArr = array("job" => array( "gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"),'ajax_url' => admin_url( 'admin-ajax.php' ), 'gfontsWeblist' => $this->gfonts_weblist));
             wp_localize_script( 'admin-js', 'gfontsBatch', $storeGfontsArr);
         }
 
@@ -457,7 +457,10 @@ class BibleGetSettingsPage
     		switch ($this->gfontsAPIkeyCheckResult){
     			case "SUCCESS":
     				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-    				echo '<span style="color:Green;font-weight:bold;margin-left:12px;">'.__("SUCCESS","bibleget-io").'</span>';
+    				echo '<span style="color:Green;font-weight:bold;margin-left:12px;">'.__("VALID","bibleget-io").'</span>';
+    				echo '<br /><i>';
+    				echo sprintf(__("%s Click here %s to force refresh the list of fonts from the Google Fonts API","bibleget-io"),'<span id="biblegetForceRefreshGFapiResults">','</span>');
+    				echo '</i>';
     				break;
     			case "CURL_ERROR":
     				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
@@ -487,7 +490,7 @@ class BibleGetSettingsPage
                 " " . __("If you do not yet have a Google Fonts API Key, you can get one here", "bibleget-io") .
                 ': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
     			" " . __("If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'","bibleget-io") .
-    			" " . __("and if you restrict to specific IP addresses be sure to include any and all interface network addresses that your server may use","bibleget-io") .
+    			" " . __("and if you restrict to specific IP addresses be sure to include any and all IP addresses that this server may use","bibleget-io") .
             	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
     			", " . sprintf(__("specifically the ip address found in the %s variable (it may take a few minutes to be effective).","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
                 " " . __("A successful key will be cached and retested every 3 months.","bibleget-io") .

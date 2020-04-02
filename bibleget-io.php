@@ -28,7 +28,6 @@
  */
 
 //TODO: better ui for the customizer, use sliders
-//TODO: give option to force refresh google fonts instead of having to rely on external transients manager
 //TODO: handle 504 gateway timeout during google fonts preview installation
 //TODO: make this become a gutenberg block enabled plugin
 
@@ -37,7 +36,7 @@ define ( "BIBLEGETPLUGINVERSION", "v5_2" );
 if (! defined ( 'ABSPATH' )) {
 	header ( 'Status: 403 Forbidden' );
 	header ( 'HTTP/1.1 403 Forbidden' );
-	exit ();
+	exit();
 }
 
 //error_reporting(E_ALL);
@@ -1058,6 +1057,25 @@ function bibleGetSetOptions() {
 	}
 }
 add_action ( 'wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions' );
+
+/**
+ *
+ */
+function bibleGetForceRefreshGFontsResults(){
+    check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', TRUE ); //no need for an "if", it will die if not valid
+
+	$BibleGetOptions = get_option( 'bibleget_settings' );
+	if(isset( $BibleGetOptions['googlefontsapi_key'] ) && $BibleGetOptions['googlefontsapi_key'] != ""){
+		if(get_transient ( md5 ( $BibleGetOptions['googlefontsapi_key'] ) )){
+			delete_transient(md5 ( $BibleGetOptions['googlefontsapi_key'] ));
+			echo 'TRANSIENT_DELETED';
+			wp_die();
+		}
+	}
+	echo 'NOTHING_TO_DO';
+	wp_die();
+}
+add_action ( 'wp_ajax_bibleget_refresh_gfonts', 'bibleGetForceRefreshGFontsResults' );
 
 $bibleget_langcodes = array (
 		"af" => "Afrikaans",

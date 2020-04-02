@@ -212,6 +212,48 @@ jQuery(document).ready(function($) {
 		location.reload(true);
 	});
 	
+	jQuery('#biblegetForceRefreshGFapiResults').click(function(){
+		//send ajax request to the server to have the transient deleted
+		console.log('we should have an nonce for this action: '+bibleGetOptionsFromServer.gfontsRefreshNonce);
+		
+		var postProps = {
+				action : 'bibleget_refresh_gfonts',
+				security : bibleGetOptionsFromServer.gfontsRefreshNonce
+			};
+		jQuery.ajax({
+			type: 'POST',
+			url: bibleGetOptionsFromServer.ajax_url,
+			data: postProps,
+			beforeSend : function() {
+				jQuery('#bibleget_ajax_spinner').show();
+			},
+			complete : function() {
+				jQuery('#bibleget_ajax_spinner').hide();
+			},
+			success : function(retval){
+				switch(retval){
+					case "TRANSIENT_DELETED":
+						//we can now reload the page triggering a new download from the gfonts API server
+						location.reload(true);
+						break;
+					case "NOTHING_TO_DO":
+						//That's just it, we won't do anything
+						break;
+				}
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				jQuery("#bibleget-settings-notification")
+					.fadeIn("slow")
+					.append('Could not force refresh the list of fonts from the Google Fonts API... ERROR: ' + xhr.responseText);
+				jQuery(".bibleget-settings-notification-dismiss")
+					.click(function() {
+						jQuery("#bibleget-settings-notification").fadeOut("slow");
+					});
+
+			}
+		});
+	});
+	
 });
 
 var myProgressInterval = null;

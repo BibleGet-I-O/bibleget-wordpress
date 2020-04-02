@@ -163,13 +163,13 @@ form input[type=color] {
     margin: 0px auto;
 }
 
-#biblegetio_reveal_server_variable {
+#biblegetio_reveal_server_variable,#biblegetForceRefreshGFapiResults,#biblegetGFapiKeyRetest {
 	cursor: pointer;
 	background-color: lightgray;
 	padding: 4px 6px;
     display: inline-block;
 }
-#biblegetio_reveal_server_variable:hover {
+#biblegetForceRefreshGFapiResults:hover,#biblegetGFapiKeyRetest:hover,#biblegetio_reveal_server_variable:hover {
 	background-color: white;
 }
 #biblegetio_hidden_server_variable {
@@ -179,14 +179,9 @@ form input[type=color] {
 	visibility: visible;
 }
 
-#biblegetGFapiKeyRetest {
-	cursor: pointer;
-	display: inline-block;
-	background-color: lightgray;
-	padding: 4px 6px;
+#biblegetForceRefreshGFapiResults,#biblegetGFapiKeyRetest {
 	color: blue;
 }
-#biblegetGFapiKeyRetest:hover {
+#biblegetForceRefreshGFapiResults:hover,#biblegetGFapiKeyRetest:hover {
 	text-decoration: underline;
-	background-color: white;
 }
