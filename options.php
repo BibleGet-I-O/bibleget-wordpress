@@ -487,8 +487,8 @@ class BibleGetSettingsPage
                 " " . __("Please note that this may have a little bit of an impact on the loading performance of your Wordpress Customizer.","bibleget-io") .
                 " " . __("If you notice that it becomes too sluggish, you had best leave this field empty.","bibleget-io") .
             	/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                " " . sprintf(__("%s Press here %s to see the value of the %s variable on your server","bibleget-io"),"<button id=\"biblegetio_reveal_server_variable\">","</button>","&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;") .
-    			"<span id=\"biblegetio_hidden_server_variable\">: [" . $_SERVER['SERVER_ADDR'] . "]</span>" .
+                "<br /> (" . sprintf(__("To see the value of the %s variable on your server %s Press here %s","bibleget-io"),"&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;","<button id=\"biblegetio_reveal_server_variable\">","</button>") .
+    			"<span id=\"biblegetio_hidden_server_variable\">: [" . $_SERVER['SERVER_ADDR'] . "] )</span>" .
     			"</i>";
     }
 

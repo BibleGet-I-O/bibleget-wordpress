@@ -3,8 +3,8 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
-Tested up to: 5.3.2
-Stable tag: 5.0
+Tested up to: 5.4
+Stable tag: 5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,11 @@ and become available in the customizer interface for the BibleGet plugin.
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 5.1 =
+* verified compatibility with Wordpress 5.4
+* Bugfix: uninstall was not taking into account the newer ajax requests and could have prevented the plugin from being uninstalled
+* Updated translations
 
 = 5.0 =
 * verified compatibility with Wordpress 5.3.2
@@ -256,6 +261,9 @@ and become available in the customizer interface for the BibleGet plugin.
 
 
 == Upgrade Notice ==
+
+= 5.1 =
+Versions prior to 3.6 must be updated. v5.1 verifies compatibility with Wordpress 5.4 and fixes a bug that was preventing a correct uninstallation of the plugin
 
 = 5.0 =
 Versions prior to 3.6 must be updated. v5.0 verifies compatibility with Wordpress 5.3.2 and adds Google Fonts API option

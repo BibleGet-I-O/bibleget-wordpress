@@ -63,7 +63,7 @@ function BibleGet_on_activation() {
 	}
 	// we have renamed the image files, so these will be left over...
 	array_map('wp_delete_file', glob(plugin_dir_path( __FILE__ ) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
-
+	register_uninstall_hook ( __FILE__, 'BibleGet_on_uninstall' );
 }
 
 /**
@@ -88,18 +88,24 @@ function BibleGet_on_deactivation() {
  * Will remove any options that have been set
  */
 function BibleGet_on_uninstall() {
-	if (! current_user_can ( 'activate_plugins' ))
+	if (! current_user_can ( 'activate_plugins' )){
 		return;
-	check_admin_referer ( 'bulk-plugins' );
+	}
+
+	if(!wp_doing_ajax()){
+		check_admin_referer ( 'bulk-plugins' );
+	}
 
 	// Important: Check if the file is the one
 	// that was registered during the uninstall hook.
-	if (__FILE__ != WP_UNINSTALL_PLUGIN)
+	if (!wp_doing_ajax() && __FILE__ != WP_UNINSTALL_PLUGIN){
 		return;
+	}
 
-	// Uncomment the following line to see the function in action
+    // Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
-	bibleGetDeleteOptions();
+
+    bibleGetDeleteOptions();
 
 	//does this need to be outside of bibleGetDeleteOptions?
 	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here...
@@ -107,9 +113,9 @@ function BibleGet_on_uninstall() {
 
 }
 
+
 register_activation_hook ( __FILE__, 'BibleGet_on_activation' );
 register_deactivation_hook ( __FILE__, 'BibleGet_on_deactivation' );
-register_uninstall_hook ( __FILE__, 'BibleGet_on_uninstall' );
 
 /**
  * Load plugin textdomain.
@@ -164,7 +170,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 
 	if (count ( $versions ) < 1) {
 		/* translators: do NOT translate the parameter names "version" or "versions" !!! */
-		$output = '<span style="color:Red;font-weight:bold;">' . __ ( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
+		$output = '<span style="color:Red;font-weight:bold;">' . __( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
 		return '<div class="bibleget-quote-div">' . $output . '</div>';
 	}
 
@@ -180,7 +186,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			if (! in_array ( $version, $validversions )) {
 				$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 				/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
-				$output = '<span style="color:Red;font-weight:bold;">' . sprintf ( __ ( 'The requested version "%s" is not valid, please check the list of valid versions in the <a href="%s">settings page</a>', "bibleget-io" ), $version, $optionsurl ) . '</span>';
+				$output = '<span style="color:Red;font-weight:bold;">' . sprintf ( __( 'The requested version "%s" is not valid, please check the list of valid versions in the <a href="%s">settings page</a>', "bibleget-io" ), $version, $optionsurl ) . '</span>';
 				return '<div class="bibleget-quote-div">' . $output . '</div>';
 			}
 		}
@@ -199,7 +205,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 		// bibleGetWriteLog($goodqueries);
 		if ($goodqueries === false) {
 			/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
-			$output = __ ( "Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
+			$output = __( "Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
 			return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
 		}
 
@@ -225,7 +231,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 					set_transient ( md5 ( $finalquery ), $output, 7 * 24 * HOUR_IN_SECONDS );
 				} else {
 					/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
-					$output = '<span style="color:Red;font-weight:bold;">' . __ ( "Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
+					$output = '<span style="color:Red;font-weight:bold;">' . __( "Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
 				}
 			}
 
@@ -254,7 +260,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 		}
 	} else {
 		/* translators: do not translate "shortcode" unless the version of wordpress in your language uses a translated term to refer to shortcodes */
-		$output = '<span style="color:Red;font-weight:bold;">' . __ ( "There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io" ) . ' &lt;' . $a ['query'] . '&gt;<br />' . $queries . '</span>';
+		$output = '<span style="color:Red;font-weight:bold;">' . __( "There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io" ) . ' &lt;' . $a ['query'] . '&gt;<br />' . $queries . '</span>';
 		return '<div class="bibleget-quote-div">' . $output . '</div>';
 	}
 }
@@ -319,13 +325,13 @@ function bibleGetQueryServer($finalquery) {
 				$errs = get_option ( 'bibleget_error_admin_notices', array () );
 				foreach ( $error_rows as $error_row ) {
 					$errormessage = bibleGetGetElementsByClass ( $error_row, 'td', 'errMessageVal' );
-					$errs [] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage [0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl () . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __ ( "If this error continues, please notify the BibleGet plugin author at:" ) . " <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode ( "The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage [0]->nodeValue . "\n\nKind regards,\n\n" ) . "\">bibleget.io@gmail.com</a>" . "</span>";
+					$errs [] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage [0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl () . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __( "If this error continues, please notify the BibleGet plugin author at" ) . ": <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode ( "The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage [0]->nodeValue . "\n\nKind regards,\n\n" ) . "\">bibleget.io@gmail.com</a>" . "</span>";
 				}
 			}
 			$output = preg_replace ( "/<div class=\"errors\" id=\"errors\">.*?<\/div>/s", '', $output );
 		}
 	} else {
-		$errs [] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' . __ ( "There was an error communicating with the BibleGet server, please wait a few minutes and try again: ", "bibleget-io" ) . ' &apos;' . curl_error ( $ch ) . '&apos;: ' . $finalquery . '</span>';
+		$errs [] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' . __( "There was an error communicating with the BibleGet server, please wait a few minutes and try again", "bibleget-io" ) . ': &apos;' . curl_error ( $ch ) . '&apos;: ' . $finalquery . '</span>';
 		$output = false;
 	}
 	curl_close ( $ch );
@@ -391,7 +397,7 @@ function bibleGetProcessQueries($queries, $versions) {
 		if ($key === 0) {
 			if (! preg_match ( "/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery )) {
 				/* translators: do not change the placeholders <%s> */
-				$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "The first query <%s> in the querystring <%s> must start with a valid book indicator!", "bibleget-io" ), $thisquery, implode ( ";", $queries ) ) . " (" . bibleGetCurrentPageUrl () . ")";
+				$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "The first query <%s> in the querystring <%s> must start with a valid book indicator!", "bibleget-io" ), $thisquery, implode ( ";", $queries ) ) . " (" . bibleGetCurrentPageUrl () . ")";
 				continue;
 			}
 		}
@@ -426,22 +432,22 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 	// bibleGetWriteLog("value of thisquery = ".$thisquery);
 	$errorMessages = array ();
 	/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-	$errorMessages [0] = __ ( "There cannot be more commas than there are dots.", "bibleget-io" );
-	$errorMessages [1] = __ ( "You must have a valid chapter following the book indicator!", "bibleget-io" );
-	$errorMessages [2] = __ ( "The book indicator is not valid. Please check the documentation for a list of valid book indicators.", "bibleget-io" );
+	$errorMessages [0] = __( "There cannot be more commas than there are dots.", "bibleget-io" );
+	$errorMessages [1] = __( "You must have a valid chapter following the book indicator!", "bibleget-io" );
+	$errorMessages [2] = __( "The book indicator is not valid. Please check the documentation for a list of valid book indicators.", "bibleget-io" );
 	/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-	$errorMessages [3] = __ ( "You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.", "bibleget-io" );
+	$errorMessages [3] = __( "You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.", "bibleget-io" );
 	/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-	$errorMessages [4] = __ ( "A dot must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
+	$errorMessages [4] = __( "A dot must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
 	/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-	$errorMessages [5] = __ ( "A comma must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
-	$errorMessages [6] = __ ( "A dash must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
-	$errorMessages [7] = __ ( "If there is a chapter-verse construct following a dash, there must also be a chapter-verse construct preceding the same dash.", "bibleget-io" );
+	$errorMessages [5] = __( "A comma must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
+	$errorMessages [6] = __( "A dash must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io" );
+	$errorMessages [7] = __( "If there is a chapter-verse construct following a dash, there must also be a chapter-verse construct preceding the same dash.", "bibleget-io" );
 	/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-	$errorMessages [8] = __ ( "There are multiple dashes in the query, but there are not enough dots. There can only be one more dash than dots.", "bibleget-io" );
+	$errorMessages [8] = __( "There are multiple dashes in the query, but there are not enough dots. There can only be one more dash than dots.", "bibleget-io" );
 	/* translators: the expressions %1$d, %2$d, and %3$s must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-	$errorMessages [9] = __ ( 'The values concatenated by the dot must be consecutive, instead %1$d >= %2$d in the expression <%3$s>', "bibleget-io" );
-	$errorMessages [10] = __ ( "A query that doesn't start with a book indicator must however start with a valid chapter indicator!", "bibleget-io" );
+	$errorMessages [9] = __( 'The values concatenated by the dot must be consecutive, instead %1$d >= %2$d in the expression <%3$s>', "bibleget-io" );
+	$errorMessages [10] = __( "A query that doesn't start with a book indicator must however start with a valid chapter indicator!", "bibleget-io" );
 
 	$errs = get_option ( 'bibleget_error_admin_notices', array () );
 	$dummy = array (); // to avoid error messages on systems with PHP < 5.4 which required third parameter in preg_match_all
@@ -519,7 +525,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 								// bibleGetWriteLog( "match for " . $jkey . " = " . $match );
 								if ($match > $chapter_limit) {
 									/* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-									$msg = __ ( 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io" );
+									$msg = __( 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io" );
 									$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $match, $thisbook, $jkey, $chapter_limit ) . " (" . bibleGetCurrentPageUrl () . ")";
 									update_option ( 'bibleget_error_admin_notices', $errs );
 									return false;
@@ -532,13 +538,13 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 						if ($commacount > 1) {
 							if (! strpos ( $thisquery, '-' )) {
 								/* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-								$errs [] = "BIBLEGET ERROR: " . __ ( "You cannot have more than one comma and not have a dash!", "bibleget-io" ) . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl () . ")";
+								$errs [] = "BIBLEGET ERROR: " . __( "You cannot have more than one comma and not have a dash!", "bibleget-io" ) . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl () . ")";
 								update_option ( 'bibleget_error_admin_notices', $errs );
 								return false;
 							}
 							$parts = explode ( "-", $thisquery );
 							if (count ( $parts ) != 2) {
-								$errs [] = "BIBLEGET ERROR: " . __ ( "You seem to have a malformed querystring, there should be only one dash.", "bibleget-io" ) . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl () . ")";
+								$errs [] = "BIBLEGET ERROR: " . __( "You seem to have a malformed querystring, there should be only one dash.", "bibleget-io" ) . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl () . ")";
 								update_option ( 'bibleget_error_admin_notices', $errs );
 								return false;
 							}
@@ -550,7 +556,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 									$verselimit = intval ( $chapters_verselimit [$pp [0] - 1] );
 									if ($pp [1] > $verselimit) {
 										/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-										$msg = __ ( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
+										$msg = __( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
 										$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $pp [1], $thisbook, $pp [0], $jkey, $verselimit ) . " (" . bibleGetCurrentPageUrl () . ")";
 										update_option ( 'bibleget_error_admin_notices', $errs );
 										return false;
@@ -579,7 +585,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 										// bibleGetWriteLog("verselimit for ".$jkey." = ".$verselimit);
 										if ($highverse > $verselimit) {
 											/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-											$msg = __ ( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
+											$msg = __( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
 											$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $highverse, $thisbook, $parts [0], $jkey, $verselimit ) . " (" . bibleGetCurrentPageUrl () . ")";
 											update_option ( 'bibleget_error_admin_notices', $errs );
 											return false;
@@ -597,7 +603,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 										$verselimit = intval ( $chapters_verselimit [intval ( $parts [0] ) - 1] );
 										if ($highverse > $verselimit) {
 											/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-											$msg = __ ( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
+											$msg = __( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
 											$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $highverse, $thisbook, $parts [0], $jkey, $verselimit ) . " (" . bibleGetCurrentPageUrl () . ")";
 											update_option ( 'bibleget_error_admin_notices', $errs );
 											return false;
@@ -619,7 +625,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 									$verselimit = intval ( $chapters_verselimit [intval ( $parts [0] ) - 1] );
 									if ($highverse > $verselimit) {
 										/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-										$msg = __ ( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
+										$msg = __( 'A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io" );
 										$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $highverse, $thisbook, $parts [0], $jkey, $verselimit ) . " (" . bibleGetCurrentPageUrl () . ")";
 										update_option ( 'bibleget_error_admin_notices', $errs );
 										return false;
@@ -638,7 +644,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 						$chapter_limit = $jindex ["chapter_limit"] [$bookidx];
 						if (intval ( $zchapter ) > $chapter_limit) {
 							/* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-							$msg = __ ( 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io" );
+							$msg = __( 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io" );
 							$errs [] = "BIBLEGET ERROR: " . sprintf ( $msg, $zchapter, $thisbook, $jkey, $chapter_limit ) . " (" . bibleGetCurrentPageUrl () . ")";
 							update_option ( 'bibleget_error_admin_notices', $errs );
 							return false;
@@ -678,7 +684,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 						$matchesB_RIGHT = explode ( ",", $matchesB [1] );
 						if ($matchesB_LEFT [0] >= $matchesB_RIGHT [0]) {
 							/* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __ ( "Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>" ), $matchesB_LEFT [0], $matchesB_RIGHT [0], $matchB [1] ) . " (" . bibleGetCurrentPageUrl () . ")";
+							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __( "Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>" ), $matchesB_LEFT [0], $matchesB_RIGHT [0], $matchB [1] ) . " (" . bibleGetCurrentPageUrl () . ")";
 							update_option ( 'bibleget_error_admin_notices', $errs );
 							return false;
 						}
@@ -688,7 +694,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 						$matchesA = explode ( "-", $matchesA_temp [1] );
 						if ($matchesA [0] >= $matchesA [1]) {
 							/* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __ ( "Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>" ), $matchesA [0], $matchesA [1], $matchA [1] ) . " (" . bibleGetCurrentPageUrl () . ")";
+							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __( "Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>" ), $matchesA [0], $matchesA [1], $matchA [1] ) . " (" . bibleGetCurrentPageUrl () . ")";
 							update_option ( 'bibleget_error_admin_notices', $errs );
 							return false;
 						}
@@ -699,7 +705,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "") {
 						$ints = explode ( "-", $match );
 						if ($ints [0] >= $ints [1]) {
 							/* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __ ( "Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>" ), $ints [0], $ints [1], $match ) . " (" . bibleGetCurrentPageUrl () . ")";
+							$errs [] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf ( __( "Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>" ), $ints [0], $ints [1], $match ) . " (" . bibleGetCurrentPageUrl () . ")";
 							update_option ( 'bibleget_error_admin_notices', $errs );
 							return false;
 						}
@@ -846,7 +852,7 @@ function bibleGetGetMetaData($request) {
 		if (curl_errno ( $ch )) {
 			$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 			/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-			$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+			$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 			update_option ( 'bibleget_error_admin_notices', $notices );
 			return false;
 		}
@@ -856,7 +862,7 @@ function bibleGetGetMetaData($request) {
 			if ($info ["http_code"] != 200) {
 				$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 				/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-				$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+				$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 				update_option ( 'bibleget_error_admin_notices', $notices );
 				return false;
 			}
@@ -865,7 +871,7 @@ function bibleGetGetMetaData($request) {
 	elseif (curl_errno ( $ch )){
 		$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 		/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-		$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+		$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 		update_option ( 'bibleget_error_admin_notices', $notices );
 		return false;
 	}
@@ -875,7 +881,7 @@ function bibleGetGetMetaData($request) {
 		if ($info ["http_code"] != 200) {
 			$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 			/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-			$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+			$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 			update_option ( 'bibleget_error_admin_notices', $notices );
 			return false;
 		}
@@ -889,7 +895,7 @@ function bibleGetGetMetaData($request) {
 	} else {
 		$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
 		/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-		$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __ ( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
+		$notices [] = "BIBLEGET PLUGIN ERROR: " . sprintf ( __( "There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>." ), $optionsurl ) . " (" . bibleGetCurrentPageUrl () . ")";
 		update_option ( 'bibleget_error_admin_notices', $notices );
 		return false;
 	}
@@ -904,14 +910,14 @@ function bibleGetGetMetaData($request) {
 function bibleGetQueryClean($query) {
 	// enforce query rules
 	if ($query === '') {
-		return __ ( "You cannot send an empty query.", "bibleget-io" );
+		return __( "You cannot send an empty query.", "bibleget-io" );
 	}
 	$query = trim ( $query );
 	$query = preg_replace ( '/\s+/', '', $query );
 	$query = str_replace ( ' ', '', $query );
 
 	if (strpos ( $query, ':' ) && strpos ( $query, '.' )) {
-		return __ ( "Mixed notations have been detected. Please use either english notation or european notation.", "bibleget-io" ) . '<' . $query . '>';
+		return __( "Mixed notations have been detected. Please use either english notation or european notation.", "bibleget-io" ) . '<' . $query . '>';
 	} else if (strpos ( $query, ':' )) { // if english notation is detected, translate it to european notation
 		if (strpos ( $query, ',' ) != - 1) {
 			$query = str_replace ( ',', '.', $query );
@@ -1420,7 +1426,7 @@ add_filter ( 'plugin_action_links_' . plugin_basename ( __FILE__ ), 'bibleGetAdd
  */
 function bibleGetAddActionLinks($links) {
 	$mylinks = array (
-			'<a href="' . admin_url ( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __ ( 'Settings' ) . '</a>'
+			'<a href="' . admin_url ( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __( 'Settings' ) . '</a>'
 	);
 	return array_merge ( $links, $mylinks );
 }

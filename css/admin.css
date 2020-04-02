@@ -163,15 +163,6 @@ form input[type=color] {
     margin: 0px auto;
 }
 
-#biblegetio_reveal_server_variable {
-	background: lightgray;
-	padding: 4px 6px;
-	cursor: pointer;
-}
-#biblegetio_reveal_server_variable:hover {
-	background: white;
-	padding: 4px 6px;
-}
 #biblegetio_hidden_server_variable {
 	visibility: hidden;
 }
