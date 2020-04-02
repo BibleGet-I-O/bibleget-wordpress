@@ -463,6 +463,13 @@ class BibleGetSettingsPage
     				/* translators: refers to the outcome of the validity check of the Google Fonts API key */
     				echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">'.__("CURL ERROR WHEN SENDING REQUEST","bibleget-io").'</span>';
     				foreach($this->gfontsAPI_errors as $er){
+    					if($er == 403){
+    						echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
+    						echo __("This server's IP address has not been given access to the Google Fonts API using this key.","bibleget-io");
+    						echo " " . __("Please verify that access has been given to the correct IP addresses.","bibleget-io");
+    						echo " " . sprintf( __("Once you are sure that this has been fixed you may %s click here %s to retest the key (you may need to wait a few minutes for the settings to take effect in the Google Cloud Console).","bibleget-io"),'<span id="biblegetGFapiKeyRetest">','</span>');
+    						echo '</i>';
+    					}
     					echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . $er . '</i>';
     				}
     				break;
@@ -544,8 +551,13 @@ class BibleGetSettingsPage
 							$this->gfontsAPI_errors[] = curl_error($ch);
 						}
 						if($status != 200){
-    						/* translators: refers to the status of the http response during communication with the Google Fonts API */
-							$this->gfontsAPI_errors[] = __("Status","bibleget-io"). " = " . $status;
+    						if($status == 403){
+    							$this->gfontsAPI_errors[] = $status;
+    						}
+    						else{
+	    						/* translators: refers to the status of the http response during communication with the Google Fonts API */
+								$this->gfontsAPI_errors[] = __("Status","bibleget-io"). " = " . $status;
+    						}
 						}
 						$result = "CURL_ERROR";
 					}

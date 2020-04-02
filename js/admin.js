@@ -208,6 +208,10 @@ jQuery(document).ready(function($) {
     }
         
 
+	jQuery('#biblegetGFapiKeyRetest').click(function(){
+		location.reload(true);
+	});
+	
 });
 
 var myProgressInterval = null;

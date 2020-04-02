@@ -178,3 +178,15 @@ form input[type=color] {
 #biblegetio_reveal_server_variable:active ~ #biblegetio_hidden_server_variable {
 	visibility: visible;
 }
+
+#biblegetGFapiKeyRetest {
+	cursor: pointer;
+	display: inline-block;
+	background-color: lightgray;
+	padding: 4px 6px;
+	color: blue;
+}
+#biblegetGFapiKeyRetest:hover {
+	text-decoration: underline;
+	background-color: white;
+}

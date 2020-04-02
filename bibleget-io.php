@@ -29,10 +29,7 @@
 
 //TODO: better ui for the customizer, use sliders
 //TODO: give option to force refresh google fonts instead of having to rely on external transients manager
-//TODO: delete google fonts transient on plugin deletion
 //TODO: handle 504 gateway timeout during google fonts preview installation
-//TODO: give better messages for Google Fonts API key validation, for example "Status 403" means the correct server ip address was not enabled and given access to the Google Fonts API
-//TODO: add a "retry" button when there has been a "Status 403" instead of relying on the user refreshing the page (they probably don't know what to do)
 //TODO: make this become a gutenberg block enabled plugin
 
 define ( "BIBLEGETPLUGINVERSION", "v5_2" );
