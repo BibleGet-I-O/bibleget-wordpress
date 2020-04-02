@@ -452,7 +452,7 @@ class BibleGetSettingsPage
 
     public function googlefontsapikey_callback(){
 
-    	echo '<label for="googlefontsapi_key">Google Fonts API Key <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="'.$this->gfontsAPIkey.'" style="width:100%;" /></label>';
+    	echo '<label for="googlefontsapi_key">'.__("Google Fonts API Key","bibleget-io").' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="'.$this->gfontsAPIkey.'" style="width:100%;" /></label>';
     	if($this->gfontsAPIkeyCheckResult){
     		switch ($this->gfontsAPIkeyCheckResult){
     			case "SUCCESS":

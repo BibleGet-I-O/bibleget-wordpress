@@ -28,6 +28,12 @@
  */
 
 //TODO: better ui for the customizer, use sliders
+//TODO: give option to force refresh google fonts instead of having to rely on external transients manager
+//TODO: delete google fonts transient on plugin deletion
+//TODO: handle 504 gateway timeout during google fonts preview installation
+//TODO: give better messages for Google Fonts API key validation, for example "Status 403" means the correct server ip address was not enabled and given access to the Google Fonts API
+//TODO: add a "retry" button when there has been a "Status 403" instead of relying on the user refreshing the page (they probably don't know what to do)
+//TODO: make this become a gutenberg block enabled plugin
 
 define ( "BIBLEGETPLUGINVERSION", "v5_2" );
 
@@ -105,10 +111,16 @@ function BibleGet_on_uninstall() {
     // Uncomment the following line to see the function in action
 	// exit( var_dump( $_GET ) );
 
+	//Check if we have a Google Fonts API key transient, if so remove it
+	$BibleGetOptions = get_option( 'bibleget_settings' );
+	if(isset( $BibleGetOptions['googlefontsapi_key'] ) && $BibleGetOptions['googlefontsapi_key'] != ""){
+		if(get_transient ( md5 ( $BibleGetOptions['googlefontsapi_key'] ) )){
+			delete_transient(md5 ( $BibleGetOptions['googlefontsapi_key'] ));
+		}
+	}
+
     bibleGetDeleteOptions();
 
-	//does this need to be outside of bibleGetDeleteOptions?
-	//maybe check when exactly it is that I'm calling bibleGetDeleteOptions besides here...
 	delete_option ( "bibleget_settings" );
 
 }
