@@ -98,14 +98,14 @@ jQuery(document).ready(function($) {
         //  but hey let's be precise on each side, why not
         if(gfontsCount % batchLimit == 0){
             numRuns = (gfontsCount / batchLimit);
-            console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
+            //console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
         }
         else if((gfontsCount % batchLimit) > 0){
             numRuns = Math.floor(gfontsCount / batchLimit) + 1;
             lastBatchLimit = (gfontsCount % batchLimit);
-            console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
-            console.log('gfontsCount = '+gfontsCount);
-            console.log('batchLimit = '+batchLimit);
+            //console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
+            //console.log('gfontsCount = '+gfontsCount);
+            //console.log('batchLimit = '+batchLimit);
         }
 
         //$gfontsBatchRunProgressbarOverlay, $gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global variables so don't use "var" here
@@ -212,54 +212,7 @@ jQuery(document).ready(function($) {
 		location.reload(true);
 	});
 	
-	jQuery('#biblegetForceRefreshGFapiResults').click(function(){
-		//send ajax request to the server to have the transient deleted
-		console.log('we should have an nonce for this action: '+gfontsBatch.gfontsRefreshNonce);
-		if(typeof gfontsBatch != 'undefined' && typeof gfontsBatch == 'object' && gfontsBatch.hasOwnProperty('job') && typeof gfontsBatch.job == 'object' && gfontsBatch.job.hasOwnProperty('gfontsRefreshNonce') && gfontsBatch.job.gfontsRefreshNonce != '' && gfontsBatch.job.hasOwnProperty('gfontsApiKey') && gfontsBatch.job.gfontsApiKey != '' ){
-			var postProps = {
-					action : 'bibleget_refresh_gfonts',
-					security : gfontsBatch.job.gfontsRefreshNonce,
-					gfontsApiKey: gfontsBatch.job.gfontsApiKey
-				};
-			jQuery.ajax({
-				type: 'POST',
-				url: gfontsBatch.job.ajax_url,
-				data: postProps,
-				beforeSend : function() {
-					jQuery('#bibleget_ajax_spinner').show();
-				},
-				complete : function() {
-					jQuery('#bibleget_ajax_spinner').hide();
-				},
-				success : function(retval){
-					switch(retval){
-						case "TRANSIENT_DELETED":
-							//we can now reload the page triggering a new download from the gfonts API server
-							location.reload(true);
-							break;
-						case "NOTHING_TO_DO":
-							//That's just it, we won't do anything
-							console.log('It sure seems like there is nothing to do here');
-							break;
-					}
-				},
-				error : function(xhr, ajaxOptions, thrownError) {
-					jQuery("#bibleget-settings-notification")
-						.fadeIn("slow")
-						.append('Could not force refresh the list of fonts from the Google Fonts API... ERROR: ' + xhr.responseText);
-					jQuery(".bibleget-settings-notification-dismiss")
-						.click(function() {
-							jQuery("#bibleget-settings-notification").fadeOut("slow");
-						});
-
-				}
-			});
-			
-		}
-		else{
-			console.log('cannot force refresh gfonts list, nonce not found');
-		}
-	});
+	jQuery('#biblegetForceRefreshGFapiResults').on('click',bibleGetForceRefreshGFapiResults);
 	
 });
 
@@ -286,13 +239,18 @@ var gfontsBatchRun= function(postdata){
     			success : function(returndata) {
                     clearInterval(myProgressInterval);
                     var returndataJSON = (typeof returndata !== 'object') ? JSON.parse(returndata) : returndata;
-                    console.log('gfontsBatchRun success, returndataJSON:');
-                    console.log(returndataJSON);
+                    //console.log('gfontsBatchRun success, returndataJSON:');
+                    //console.log(returndataJSON);
                     if(returndataJSON !== null && typeof returndataJSON === 'object'){
                         var thisRun = returndataJSON.hasOwnProperty('run') ? returndataJSON.run : false;
                         if(returndataJSON.hasOwnProperty('errorinfo') && returndataJSON.errorinfo !== false && returndataJSON.errorinfo.length > 0){
-                            console.log('Some errors were returned from ajax process run '+thisRun);
-                            console.log(returndataJSON.errorinfo);
+                            //console.log('Some errors were returned from ajax process run '+thisRun);
+                            //console.log(returndataJSON.errorinfo);
+                        	if((returndataJSON.hasOwnProperty('httpStatus2') && returndataJSON.httpStatus2 == 504) || (returndataJSON.hasOwnProperty('httpStatus3') && returndataJSON.httpStatus3 == 504) ){
+                        		//there was a timeout at some point during the communication with the Google Fonts server
+                        		//we haven't finished yet, but let's try not to get stuck
+                        		bibleGetForceRefreshGFapiResults();
+                        	}
                         }
                         if(returndataJSON.hasOwnProperty('state')){
                             switch(returndataJSON.state){
@@ -320,10 +278,10 @@ var gfontsBatchRun= function(postdata){
                                     $gfontsBatchRunProgressbar.progressbar("value",100);
 
                                     if(thisRun == postdata.numRuns){
-                                        console.log('gfontsBatchRun has finished the job!');                                
+                                        //console.log('gfontsBatchRun has finished the job!');                                
                                     }
                                     else{
-                                        console.log('gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
+                                        //console.log('gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
                                     }
                                     break;
                             }
@@ -348,7 +306,7 @@ var gfontsBatchRun= function(postdata){
     
     			}
     	});
-}
+};
 
 var updateGfontsBatchRunProgressbarProgress = function(currentRun,numRuns){
     //console.log('half second tick and $gfontsBatchRunProgressbar.progressbar("value") = '+$gfontsBatchRunProgressbar.progressbar("value"));
@@ -359,4 +317,54 @@ var updateGfontsBatchRunProgressbarProgress = function(currentRun,numRuns){
         var currentProgressBarValue = parseInt($gfontsBatchRunProgressbar.progressbar("value"));
         $gfontsBatchRunProgressbar.progressbar("value",++currentProgressBarValue);
     }
-}
+};
+
+var bibleGetForceRefreshGFapiResults = function(){
+	//send ajax request to the server to have the transient deleted
+	//console.log('we should have an nonce for this action: '+gfontsBatch.gfontsRefreshNonce);
+	if(typeof gfontsBatch != 'undefined' && typeof gfontsBatch == 'object' && gfontsBatch.hasOwnProperty('job') && typeof gfontsBatch.job == 'object' && gfontsBatch.job.hasOwnProperty('gfontsRefreshNonce') && gfontsBatch.job.gfontsRefreshNonce != '' && gfontsBatch.job.hasOwnProperty('gfontsApiKey') && gfontsBatch.job.gfontsApiKey != '' ){
+		var postProps = {
+				action : 'bibleget_refresh_gfonts',
+				security : gfontsBatch.job.gfontsRefreshNonce,
+				gfontsApiKey: gfontsBatch.job.gfontsApiKey
+			};
+		jQuery.ajax({
+			type: 'POST',
+			url: gfontsBatch.job.ajax_url,
+			data: postProps,
+			beforeSend : function() {
+				jQuery('#bibleget_ajax_spinner').show();
+			},
+			complete : function() {
+				jQuery('#bibleget_ajax_spinner').hide();
+			},
+			success : function(retval){
+				switch(retval){
+					case "TRANSIENT_DELETED":
+						//we can now reload the page triggering a new download from the gfonts API server
+						location.reload(true);
+						break;
+					case "NOTHING_TO_DO":
+						//That's just it, we won't do anything
+						console.log('It sure seems like there is nothing to do here');
+						break;
+				}
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				jQuery("#bibleget-settings-notification")
+					.fadeIn("slow")
+					.append('Could not force refresh the list of fonts from the Google Fonts API... ERROR: ' + xhr.responseText);
+				jQuery(".bibleget-settings-notification-dismiss")
+					.click(function() {
+						jQuery("#bibleget-settings-notification").fadeOut("slow");
+					});
+
+			}
+		});
+		
+	}
+	else{
+		//console.log('cannot force refresh gfonts list, nonce not found');
+	}
+	
+};

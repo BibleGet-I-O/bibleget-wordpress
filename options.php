@@ -688,7 +688,8 @@ class BibleGetSettingsPage
                   			}
                   			$response2 = curl_exec ( $ch2 );
                   			$status2 = (int) curl_getinfo($ch2, CURLINFO_HTTP_CODE);
-                              if ($response2 && ! curl_errno ( $ch2 ) && $status2 == 200) {
+							$returnInfo->httpStatus2 = $status2;
+							if ($response2 && ! curl_errno ( $ch2 ) && $status2 == 200) {
                                   if (preg_match('/url\((.*?)\)/', $response2, $match) == 1) {
                                       $thisfonturl = $match[1];
                                       $errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
@@ -721,6 +722,7 @@ class BibleGetSettingsPage
                   	    			$response3 = curl_exec ( $ch3 );
               //                         $errorinfo[] = print_r($ch3_headers,TRUE);
                   	    			$status3 = (int) curl_getinfo($ch3, CURLINFO_HTTP_CODE);
+                  	    			$returnInfo->httpStatus3 = $status3;
                                       if ($response3 && ! curl_errno ( $ch3 ) && $status3 == 200) {
                                           if($wp_filesystem){
               //                                 if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
