@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BibleGet I/O\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
-"POT-Creation-Date: 2020-04-02 01:41+0200\n"
-"PO-Revision-Date: 2020-04-02 01:42+0200\n"
+"POT-Creation-Date: 2020-04-02 18:51+0200\n"
+"PO-Revision-Date: 2020-04-02 18:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
 #. translators: do NOT translate the parameter names "version" or "versions" !!!
-#: bibleget-io.php:174
+#: bibleget-io.php:180
 msgid ""
 "You must indicate the desired version with the parameter \"version\" (or the "
 "desired versions as a comma separated list with the parameter \"versions\")"
@@ -32,7 +32,7 @@ msgstr ""
 "desired versions as a comma separated list with the parameter \"versions\")"
 
 #. translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a>
-#: bibleget-io.php:190
+#: bibleget-io.php:196
 #, php-format
 msgid ""
 "The requested version \"%s\" is not valid, please check the list of valid "
@@ -42,14 +42,14 @@ msgstr ""
 "versions in the <a href=\"%s\">settings page</a>"
 
 #. translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server
-#: bibleget-io.php:209
+#: bibleget-io.php:215
 msgid ""
 "Bible Quote placeholder... (error processing query, please check syntax)"
 msgstr ""
 "Bible Quote placeholder... (error processing query, please check syntax)"
 
 #. translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server
-#: bibleget-io.php:235
+#: bibleget-io.php:241
 msgid ""
 "Bible Quote placeholder... (temporary error from the BibleGet server. Please "
 "try again in a few minutes...)"
@@ -58,22 +58,17 @@ msgstr ""
 "try again in a few minutes...)"
 
 #. translators: do not translate "shortcode" unless the version of wordpress in your language uses a translated term to refer to shortcodes
-#: bibleget-io.php:264
+#: bibleget-io.php:270
 msgid ""
 "There are errors in the shortcode, please check carefully your query syntax:"
 msgstr ""
 "There are errors in the shortcode, please check carefully your query syntax:"
 
-#: bibleget-io.php:329
-#| msgid ""
-#| "If this error continues, please notify the BibleGet plugin creator at:"
+#: bibleget-io.php:335
 msgid "If this error continues, please notify the BibleGet plugin author at"
 msgstr "If this error continues, please notify the BibleGet plugin author at"
 
-#: bibleget-io.php:335
-#| msgid ""
-#| "There was an error communicating with the BibleGet server, please wait a "
-#| "few minutes and try again: "
+#: bibleget-io.php:341
 msgid ""
 "There was an error communicating with the BibleGet server, please wait a few "
 "minutes and try again"
@@ -82,7 +77,7 @@ msgstr ""
 "minutes and try again"
 
 #. translators: do not change the placeholders <%s>
-#: bibleget-io.php:401
+#: bibleget-io.php:407
 #, php-format
 msgid ""
 "The first query <%s> in the querystring <%s> must start with a valid book "
@@ -92,67 +87,67 @@ msgstr ""
 "indicator!"
 
 #. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
-#: bibleget-io.php:436
+#: bibleget-io.php:442
 msgid "There cannot be more commas than there are dots."
 msgstr "There cannot be more commas than there are dots."
 
-#: bibleget-io.php:437
+#: bibleget-io.php:443
 msgid "You must have a valid chapter following the book indicator!"
 msgstr "You must have a valid chapter following the book indicator!"
 
-#: bibleget-io.php:438
-msgid ""
-"The book indicator is not valid. Please check the documentation for a list "
-"of valid book indicators."
-msgstr ""
-"The book indicator is not valid. Please check the documentation for a list "
-"of valid book indicators."
-
-#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
-#: bibleget-io.php:440
-msgid ""
-"You cannot use a dot without first using a comma. A dot is a liason between "
-"verses, which are separated from the chapter by a comma."
-msgstr ""
-"You cannot use a dot without first using a comma. A dot is a liason between "
-"verses, which are separated from the chapter by a comma."
-
-#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
-#: bibleget-io.php:442
-msgid ""
-"A dot must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
-msgstr ""
-"A dot must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
-
-#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
 #: bibleget-io.php:444
 msgid ""
-"A comma must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
+"The book indicator is not valid. Please check the documentation for a list "
+"of valid book indicators."
 msgstr ""
-"A comma must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
+"The book indicator is not valid. Please check the documentation for a list "
+"of valid book indicators."
 
-#: bibleget-io.php:445
-msgid ""
-"A dash must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
-msgstr ""
-"A dash must be preceded and followed by 1 to 3 digits of which the first "
-"digit cannot be zero."
-
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
 #: bibleget-io.php:446
 msgid ""
-"If there is a chapter-verse construct following a dash, there must also be a "
-"chapter-verse construct preceding the same dash."
+"You cannot use a dot without first using a comma. A dot is a liason between "
+"verses, which are separated from the chapter by a comma."
 msgstr ""
-"If there is a chapter-verse construct following a dash, there must also be a "
-"chapter-verse construct preceding the same dash."
+"You cannot use a dot without first using a comma. A dot is a liason between "
+"verses, which are separated from the chapter by a comma."
 
 #. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
 #: bibleget-io.php:448
+msgid ""
+"A dot must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr ""
+"A dot must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
+#: bibleget-io.php:450
+msgid ""
+"A comma must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr ""
+"A comma must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+
+#: bibleget-io.php:451
+msgid ""
+"A dash must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+msgstr ""
+"A dash must be preceded and followed by 1 to 3 digits of which the first "
+"digit cannot be zero."
+
+#: bibleget-io.php:452
+msgid ""
+"If there is a chapter-verse construct following a dash, there must also be a "
+"chapter-verse construct preceding the same dash."
+msgstr ""
+"If there is a chapter-verse construct following a dash, there must also be a "
+"chapter-verse construct preceding the same dash."
+
+#. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
+#: bibleget-io.php:454
 msgid ""
 "There are multiple dashes in the query, but there are not enough dots. There "
 "can only be one more dash than dots."
@@ -161,7 +156,7 @@ msgstr ""
 "can only be one more dash than dots."
 
 #. translators: the expressions %1$d, %2$d, and %3$s must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:450
+#: bibleget-io.php:456
 #, php-format
 msgid ""
 "The values concatenated by the dot must be consecutive, instead %1$d >= %2$d "
@@ -170,7 +165,7 @@ msgstr ""
 "The values concatenated by the dot must be consecutive, instead %1$d >= %2$d "
 "in the expression <%3$s>"
 
-#: bibleget-io.php:451
+#: bibleget-io.php:457
 msgid ""
 "A query that doesn't start with a book indicator must however start with a "
 "valid chapter indicator!"
@@ -179,7 +174,7 @@ msgstr ""
 "valid chapter indicator!"
 
 #. translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:529 bibleget-io.php:648
+#: bibleget-io.php:535 bibleget-io.php:654
 #, php-format
 msgid ""
 "A chapter in the query is out of bounds: there is no chapter <%1$d> in the "
@@ -191,19 +186,19 @@ msgstr ""
 "%4$d>"
 
 #. translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots
-#: bibleget-io.php:542
+#: bibleget-io.php:548
 msgid "You cannot have more than one comma and not have a dash!"
 msgstr "You cannot have more than one comma and not have a dash!"
 
-#: bibleget-io.php:548
+#: bibleget-io.php:554
 msgid ""
 "You seem to have a malformed querystring, there should be only one dash."
 msgstr ""
 "You seem to have a malformed querystring, there should be only one dash."
 
 #. translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:560 bibleget-io.php:589 bibleget-io.php:607
-#: bibleget-io.php:629
+#: bibleget-io.php:566 bibleget-io.php:595 bibleget-io.php:613
+#: bibleget-io.php:635
 #, php-format
 msgid ""
 "A verse in the query is out of bounds: there is no verse <%1$d> in the book <"
@@ -215,7 +210,7 @@ msgstr ""
 "verse is <%5$d>"
 
 #. translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:688
+#: bibleget-io.php:694
 #, php-format
 msgid ""
 "Chapters must be consecutive. Instead the first chapter indicator <%s> is "
@@ -227,7 +222,7 @@ msgstr ""
 "<%s>"
 
 #. translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:698
+#: bibleget-io.php:704
 #, php-format
 msgid ""
 "Verses in the same chapter must be consecutive. Instead verse <%s> is "
@@ -237,7 +232,7 @@ msgstr ""
 "greater than verse <%s> in the expression <%s>"
 
 #. translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: bibleget-io.php:709
+#: bibleget-io.php:715
 #, php-format
 msgid ""
 "Verses concatenated by a dash must be consecutive, instead <%s> is greater "
@@ -247,7 +242,7 @@ msgstr ""
 "than or equal to <%s> in the expression <%s>"
 
 #. translators: do not change the placeholders or the html markup, though you can translate the anchor title
-#: bibleget-io.php:856 bibleget-io.php:875
+#: bibleget-io.php:862 bibleget-io.php:881
 #, php-format
 msgid ""
 "There was a problem communicating with the BibleGet server. <a href=\"%s\" "
@@ -257,7 +252,7 @@ msgstr ""
 "title=\"update metadata now\">Metadata needs to be manually updated</a>."
 
 #. translators: do not change the placeholders or the html markup, though you can translate the anchor title
-#: bibleget-io.php:866 bibleget-io.php:885 bibleget-io.php:899
+#: bibleget-io.php:872 bibleget-io.php:891 bibleget-io.php:905
 #, php-format
 msgid ""
 "There may have been a problem communicating with the BibleGet server. <a "
@@ -268,11 +263,11 @@ msgstr ""
 "href=\"%s\" title=\"update metadata now\">Metadata needs to be manually "
 "updated</a>."
 
-#: bibleget-io.php:914
+#: bibleget-io.php:920
 msgid "You cannot send an empty query."
 msgstr "You cannot send an empty query."
 
-#: bibleget-io.php:921
+#: bibleget-io.php:927
 msgid ""
 "Mixed notations have been detected. Please use either english notation or "
 "european notation."
@@ -280,36 +275,36 @@ msgstr ""
 "Mixed notations have been detected. Please use either english notation or "
 "european notation."
 
-#: bibleget-io.php:1046
+#: bibleget-io.php:1052
 msgid "BibleGet Server data has been successfully renewed."
 msgstr "BibleGet Server data has been successfully renewed."
 
-#: bibleget-io.php:1430
+#: bibleget-io.php:1437
 msgid "Settings"
 msgstr "Settings"
 
-#: options.php:93 options.php:229
+#: options.php:95 options.php:231
 msgid "BibleGet I/O Settings"
 msgstr "BibleGet I/O Settings"
 
-#: options.php:115
+#: options.php:117
 msgid "Preferences Settings"
 msgstr "Preferences Settings"
 
-#: options.php:122
+#: options.php:124
 msgid "Preferred version or versions (when not indicated in shortcode)"
 msgstr "Preferred version or versions (when not indicated in shortcode)"
 
-#: options.php:130
+#: options.php:132
 msgid "Google Fonts API key (for updated font list)"
 msgstr "Google Fonts API key (for updated font list)"
 
-#: options.php:245
+#: options.php:247
 msgid "Current BibleGet I/O engine information:"
 msgstr "Current BibleGet I/O engine information:"
 
 #. translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf.
-#: options.php:257
+#: options.php:259
 #, php-format
 msgid ""
 "The BibleGet I/O engine currently supports %s versions of the Bible in %s "
@@ -318,14 +313,14 @@ msgstr ""
 "The BibleGet I/O engine currently supports %s versions of the Bible in %s "
 "different languages."
 
-#: options.php:259
+#: options.php:261
 msgid ""
 "Here is the list of currently supported versions, subdivided by language:"
 msgstr ""
 "Here is the list of currently supported versions, subdivided by language:"
 
 #. translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf.
-#: options.php:274
+#: options.php:276
 #, php-format
 msgid ""
 "The BibleGet I/O engine currently recognizes the names of the books of the "
@@ -334,7 +329,7 @@ msgstr ""
 "The BibleGet I/O engine currently recognizes the names of the books of the "
 "Bible in %s different languages:"
 
-#: options.php:279
+#: options.php:281
 msgid ""
 "This information from the BibleGet server is cached locally to improve "
 "performance. If new versions have been added to the BibleGet server or new "
@@ -346,35 +341,70 @@ msgstr ""
 "languages are supported, this information might be outdated. In that case "
 "you can click on the button below to renew the information."
 
-#: options.php:280
+#: options.php:282
 msgid "RENEW INFORMATION FROM BIBLEGET SERVER"
 msgstr "RENEW INFORMATION FROM BIBLEGET SERVER"
 
-#: options.php:335
+#: options.php:337
 msgid "Choose your preferences to facilitate the usage of the shortcode:"
 msgstr "Choose your preferences to facilitate the usage of the shortcode:"
 
-#. translators: refers to the outcome of the validity check of the Google Fonts API key
-#: options.php:460
-msgid "SUCCESS"
-msgstr "SUCCESS"
+#: options.php:457
+msgid "Google Fonts API Key"
+msgstr ""
 
 #. translators: refers to the outcome of the validity check of the Google Fonts API key
-#: options.php:464
+#: options.php:481
+msgid "VALID"
+msgstr ""
+
+#: options.php:482
+#, fuzzy, php-format
+#| msgid "Google Fonts API key (for updated font list)"
+msgid "Google Fonts API refresh scheduled in: %s"
+msgstr "Google Fonts API key (for updated font list)"
+
+#: options.php:483
+#, php-format
+msgid ""
+"OR %s Click here %s to force refresh the list of fonts from the Google Fonts "
+"API"
+msgstr ""
+
+#. translators: refers to the outcome of the validity check of the Google Fonts API key
+#: options.php:488
 msgid "CURL ERROR WHEN SENDING REQUEST"
 msgstr "CURL ERROR WHEN SENDING REQUEST"
 
+#: options.php:492
+msgid ""
+"This server's IP address has not been given access to the Google Fonts API "
+"using this key."
+msgstr ""
+
+#: options.php:493
+msgid "Please verify that access has been given to the correct IP addresses."
+msgstr ""
+
+#: options.php:494
+#, php-format
+msgid ""
+"Once you are sure that this has been fixed you may %s click here %s to "
+"retest the key (you may need to wait a few minutes for the settings to take "
+"effect in the Google Cloud Console)."
+msgstr ""
+
 #. translators: refers to the outcome of the validity check of the Google Fonts API key
-#: options.php:471
+#: options.php:502
 msgid "NO VALID JSON RESPONSE"
 msgstr "NO VALID JSON RESPONSE"
 
 #. translators: refers to the outcome of the validity check of the Google Fonts API key
-#: options.php:475
+#: options.php:506
 msgid "SERVER UNABLE TO MAKE REQUESTS"
 msgstr "SERVER UNABLE TO MAKE REQUESTS"
 
-#: options.php:479
+#: options.php:511
 msgid ""
 "If you would like to use a Google Font that is not already included in the "
 "list of available fonts, you should use a Google Fonts API key."
@@ -382,11 +412,11 @@ msgstr ""
 "If you would like to use a Google Font that is not already included in the "
 "list of available fonts, you should use a Google Fonts API key."
 
-#: options.php:480
+#: options.php:512
 msgid "If you do not yet have a Google Fonts API Key, you can get one here"
 msgstr "If you do not yet have a Google Fonts API Key, you can get one here"
 
-#: options.php:482
+#: options.php:514
 msgid ""
 "If you choose to apply restrictions to your api key, choose 'IP Addresses "
 "(web servers, cron jobs etc)'"
@@ -394,16 +424,20 @@ msgstr ""
 "If you choose to apply restrictions to your api key, choose 'IP Addresses "
 "(web servers, cron jobs etc)'"
 
-#: options.php:483
+#: options.php:515
+#, fuzzy
+#| msgid ""
+#| "and if you restrict to specific IP addresses be sure to include any and "
+#| "all interface network addresses that your server may use"
 msgid ""
 "and if you restrict to specific IP addresses be sure to include any and all "
-"interface network addresses that your server may use"
+"IP addresses that this server may use"
 msgstr ""
 "and if you restrict to specific IP addresses be sure to include any and all "
 "interface network addresses that your server may use"
 
 #. translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: options.php:485
+#: options.php:517
 #, php-format
 msgid ""
 "specifically the ip address found in the %s variable (it may take a few "
@@ -412,11 +446,11 @@ msgstr ""
 "specifically the ip address found in the %s variable (it may take a few "
 "minutes to be effective)."
 
-#: options.php:486
+#: options.php:518
 msgid "A successful key will be cached and retested every 3 months."
 msgstr "A successful key will be cached and retested every 3 months."
 
-#: options.php:487
+#: options.php:519
 msgid ""
 "Please note that this may have a little bit of an impact on the loading "
 "performance of your Wordpress Customizer."
@@ -424,7 +458,7 @@ msgstr ""
 "Please note that this may have a little bit of an impact on the loading "
 "performance of your Wordpress Customizer."
 
-#: options.php:488
+#: options.php:520
 msgid ""
 "If you notice that it becomes too sluggish, you had best leave this field "
 "empty."
@@ -433,156 +467,156 @@ msgstr ""
 "empty."
 
 #. translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf.
-#: options.php:490
+#: options.php:522
 #, php-format
 msgid "To see the value of the %s variable on your server %s Press here %s"
 msgstr "To see the value of the %s variable on your server %s Press here %s"
 
 #. translators: refers to the outcome of the communication with the Google Fonts API as a boolean value
-#: options.php:541
+#: options.php:576
 msgid "Response from curl request is false"
 msgstr "Response from curl request is false"
 
 #. translators: refers to the status of the http response during communication with the Google Fonts API
-#: options.php:548
+#: options.php:587
 msgid "Status"
 msgstr "Status"
 
-#: options.php:824
+#: options.php:890
 msgid "Font Family for Biblical Quotes"
 msgstr "Font Family for Biblical Quotes"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:832
+#: options.php:898
 msgid "Border-width for Biblical Quotes (in px)"
 msgstr "Border-width for Biblical Quotes (in px)"
 
-#: options.php:839
+#: options.php:905
 msgid "Border-style for Biblical Quotes"
 msgstr "Border-style for Biblical Quotes"
 
-#: options.php:861
+#: options.php:927
 msgid "Border-color for Biblical Quotes"
 msgstr "Border-color for Biblical Quotes"
 
-#: options.php:869
+#: options.php:935
 msgid "Background color for Biblical Quotes"
 msgstr "Background color for Biblical Quotes"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:878
+#: options.php:944
 msgid "Border-radius for Biblical Quotes (in px)"
 msgstr "Border-radius for Biblical Quotes (in px)"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:908
+#: options.php:974
 msgid "Margin top/bottom for Biblical Quotes (in px)"
 msgstr "Margin top/bottom for Biblical Quotes (in px)"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:918
+#: options.php:984
 msgid "Margin left/right for Biblical Quotes (in px)"
 msgstr "Margin left/right for Biblical Quotes (in px)"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:928
+#: options.php:994
 msgid "Padding top/bottom for Biblical Quotes (in px)"
 msgstr "Padding top/bottom for Biblical Quotes (in px)"
 
 #. translators: "px" refers to pixels as used in CSS rules, do not translate
-#: options.php:938
+#: options.php:1004
 msgid "Padding left/right for Biblical Quotes (in px)"
 msgstr "Padding left/right for Biblical Quotes (in px)"
 
 #. translators: "%" refers to percentage as used in CSS rules (width: 100%), do not translate
-#: options.php:948
+#: options.php:1014
 msgid "Width for Biblical Quotes (in %)"
 msgstr "Width for Biblical Quotes (in %)"
 
-#: options.php:956
+#: options.php:1022
 msgid "Text-align for Biblical Quotes"
 msgstr "Text-align for Biblical Quotes"
 
 #. translators: "pt" refers to points as used in CSS rules, do not translate
-#: options.php:969
+#: options.php:1035
 msgid "Font Size (in pt)"
 msgstr "Font Size (in pt)"
 
-#: options.php:970
+#: options.php:1036
 msgid "Font Style"
 msgstr "Font Style"
 
-#: options.php:971
+#: options.php:1037
 msgid "Font Color"
 msgstr "Font Color"
 
 #. translators: "B" refers to "bold style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group
-#: options.php:980
+#: options.php:1046
 msgid "B"
 msgstr "B"
 
 #. translators: "I" refers to "italic style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group
-#: options.php:982
+#: options.php:1048
 msgid "I"
 msgstr "I"
 
 #. translators: "U" refers to "underline style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group
-#: options.php:984
+#: options.php:1050
 msgid "U"
 msgstr "U"
 
 #. translators: "S" refers to "strikethrough style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group
-#: options.php:986
+#: options.php:1052
 msgid "S"
 msgstr "S"
 
 #. translators: "SUP" refers to "superscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group
-#: options.php:988
+#: options.php:1054
 msgid "SUP"
 msgstr "SUP"
 
 #. translators: "SUB" refers to "subscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group
-#: options.php:990
+#: options.php:1056
 msgid "SUB"
 msgstr "SUB"
 
 #. translators: in reference to Font Size, Style and Color (e.g. 'style for version indicator')
-#: options.php:999
+#: options.php:1065
 msgid "for Version Indicator"
 msgstr "for Version Indicator"
 
 #. translators: in reference to Font Size, Style and Color (e.g. 'style for books and chapters')
-#: options.php:1011
+#: options.php:1077
 msgid "for Books and Chapters"
 msgstr "for Books and Chapters"
 
 #. translators: in reference to Font Size, Style and Color (e.g. 'style for verse numbers')
-#: options.php:1023
+#: options.php:1089
 msgid "for Verse Numbers"
 msgstr "for Verse Numbers"
 
 #. translators: in reference to Font Size, Style and Color (e.g. 'style for text of verses')
-#: options.php:1035
+#: options.php:1101
 msgid "for Text of Verses"
 msgstr "for Text of Verses"
 
-#: options.php:1063
+#: options.php:1129
 msgid "Line-spacing for Verses Paragraphs"
 msgstr "Line-spacing for Verses Paragraphs"
 
-#: options.php:1115
+#: options.php:1181
 msgid "BibleGet Plugin Styles"
 msgstr "BibleGet Plugin Styles"
 
-#: options.php:1116
+#: options.php:1182
 msgid "Custom styles that apply to the text formatting of the biblical quotes"
 msgstr "Custom styles that apply to the text formatting of the biblical quotes"
 
-#: options.php:1125
+#: options.php:1191
 msgid "General Paragraph Styles"
 msgstr "General Paragraph Styles"
 
-#: options.php:1126
+#: options.php:1192
 msgid ""
 "Custom styles that apply to the general paragraph and to the box model of "
 "the biblical quotes"
@@ -590,21 +624,21 @@ msgstr ""
 "Custom styles that apply to the general paragraph and to the box model of "
 "the biblical quotes"
 
-#: options.php:1136
+#: options.php:1202
 msgid "Bible Version Styles"
 msgstr "Bible Version Styles"
 
-#: options.php:1137
+#: options.php:1203
 msgid ""
 "Custom styles that apply to the version indicator of the biblical quotes"
 msgstr ""
 "Custom styles that apply to the version indicator of the biblical quotes"
 
-#: options.php:1147
+#: options.php:1213
 msgid "Book / Chapter Styles"
 msgstr "Book / Chapter Styles"
 
-#: options.php:1148
+#: options.php:1214
 msgid ""
 "Custom styles that apply to the book and chapter indicators of the biblical "
 "quotes"
@@ -612,19 +646,19 @@ msgstr ""
 "Custom styles that apply to the book and chapter indicators of the biblical "
 "quotes"
 
-#: options.php:1158
+#: options.php:1224
 msgid "Verse Number Styles"
 msgstr "Verse Number Styles"
 
-#: options.php:1159
+#: options.php:1225
 msgid "Custom styles that apply to the verse numbers of the biblical quotes"
 msgstr "Custom styles that apply to the verse numbers of the biblical quotes"
 
-#: options.php:1169
+#: options.php:1235
 msgid "Verse Text Styles"
 msgstr "Verse Text Styles"
 
-#: options.php:1170
+#: options.php:1236
 msgid "Custom styles that apply to the verse text of the biblical quotes"
 msgstr "Custom styles that apply to the verse text of the biblical quotes"
 
@@ -651,6 +685,9 @@ msgstr "John Romano D'Orazio"
 #. Author URI of the plugin/theme
 msgid "https://www.johnromanodorazio.com/"
 msgstr "https://www.johnromanodorazio.com/"
+
+#~ msgid "SUCCESS"
+#~ msgstr "SUCCESS"
 
 #~ msgid "https://www.cappellaniauniroma3.org/"
 #~ msgstr "https://www.cappellaniauniroma3.org/"

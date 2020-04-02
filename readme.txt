@@ -1,10 +1,10 @@
 ﻿=== BibleGet I/O ===
 Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
-Tags: bible,shortcode,quote,citation,verses
+Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
 Requires at least: 3.3
 Tested up to: 5.4
-Stable tag: 5.2
+Stable tag: 5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,36 +71,18 @@ At least the first query (of a series of queries chained by a semi-colon) must i
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
 
 = I am requesting a long Bible quote but I'm only getting 30 verses =
-If you are using a version of the Bible that is covered by copyright, you will not be able to quote more than 30 verses at once.
-So if you request for example “Gen1” using the NABRE version, you might expect to get back Gen1:1-31 but instead you will only get back Gen1:1-30.
-This is a limit imposed by the legal agreements for usage of these versions, it's not a bug, it's by design. 
-If you need more than 30 verses when requesting a version covered by copyright, formulate the request as multiple quotes split up into no more than 30 verses each, for example “Gen1:1-30;1:31”.
+If you are using a version of the Bible that is covered by copyright, you will not be able to quote more than 30 verses at once. So if you request for example “Gen1” using the NABRE version, you might expect to get back Gen1:1-31 but instead you will only get back Gen1:1-30. This is a limit imposed by the legal agreements for usage of these versions, it's not a bug, it's by design. If you need more than 30 verses when requesting a version covered by copyright, formulate the request as multiple quotes split up into no more than 30 verses each, for example “Gen1:1-30;1:31”.
 
 = What happens if I add a Google Fonts API key? =
-If you add a Google Fonts API key, the BibleGet plugin will immediately test it's validity.
-If valid, it will remember that you have a key and that it's valid for 3 months.
-Every three months starting from this moment the BibleGet plugin will talk with the Google Fonts API
-to get the latest list of available Google Fonts, and will download to the plugin folders a local compressed
-copy of each of those fonts for the purpose of previewing them in the customizer interface.
-You will need to be a bit patient the first time as it will take a couple minutes to complete the download process.
-A progress bar will let you know how the download is progressing. If you have a slow connection,
-the progress might stall for a few seconds every now an then (around 25%, 50%, and 75%), 
-just be patient and it should continue to progress to the end. In the future, whenever the plugin
-talks with the Google Fonts API, the process should go a lot faster as it will only need to download new fonts. 
-It will also generate a css file that will load the preview of the fonts when you open the customizer interface.
-This does have a bit of a performance impact, and especially the first time you open the customizer it might take a minute to load.
-After this it should go a little faster as the fonts previews should be cached by the browser.
-If you are not happy with the performance impact, I would suggest to delete the Google Fonts API key.
+If you add a Google Fonts API key, the BibleGet plugin will immediately test it's validity. If valid, it will remember that you have a key and that it's valid for 3 months. Every three months starting from this moment the BibleGet plugin will talk with the Google Fonts API to get the latest list of available Google Fonts, and will download to the plugin folders a local compressed copy of each of those fonts for the purpose of previewing them in the customizer interface.  
+You will need to be a bit patient the first time as it will take a couple minutes to complete the download process. A progress bar will let you know how the download is progressing. If you have a slow connection, the progress might stall for a few seconds every now an then (around 25%, 50%, and 75%), just be patient and it should continue to progress to the end. In the future, whenever the plugin talks with the Google Fonts API, the process should go a lot faster as it will only need to download new fonts. 
+It will also generate a css file that will load the preview of the fonts when you open the customizer interface. This does have a bit of a performance impact, and especially the first time you open the customizer it might take a minute to load. After this it should go a little faster as the fonts previews should be cached by the browser. If you are not happy with the performance impact, I would suggest to delete the Google Fonts API key.
 
 = I have added the Google Fonts API key but the list of available fonts isn't updated =
-The BibleGet plugin will remember that your key is valid for 3 months. 
-This means that it will not fetch the list of fonts from the Google Fonts API until the relative transient expires.
-If a new font has come out that you would like to see and use in the customizer interface for the BibleGet plugin,
-and you don't want to have to wait until the transient expires in that 3 month time slot, then you could use a transient manager
-to look for a transient which has a value of "SUCCESS" and a long key of seemingly random characters;
-this is most probably the one you need to delete. Once the transient is deleted, go back to the admin interface for the BibleGet plugin
-and it will automatically start talking with the Google Fonts API again. The newer fonts previews should be downloaded locally
-and become available in the customizer interface for the BibleGet plugin.
+The BibleGet plugin will remember that your key is valid for 3 months. This means that it will not fetch the list of fonts from the Google Fonts API until the relative transient expires. If a new font has come out that you would like to see and use in the customizer interface for the BibleGet plugin, and you don't want to have to wait until the transient expires in that 3 month time slot, then you can click on the "force refresh" option below your API key. 
+
+= I added the Google Fonts API key but while it was processing the download it stopped with a 504 http status error =
+If you receive a 504 http status error it means that the connection with the Google Fonts API timed out for some reason. The BibleGet plugin tries to handle this situation by forcing the process to start again, but if instead the process comes to a halt please let the plugin author know at admin@bibleget.io in order to look further into the handling of this situation. In any case you can reload the page and use the "force refresh" option below your API key and the process will pick up where it left off.
 
 == Screenshots ==
 
@@ -110,6 +92,9 @@ and become available in the customizer interface for the BibleGet plugin.
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 5.3 =
+* Cleaner interface for the Google Fonts API key and better handling of different scenarios with more control in the admin interface
 
 = 5.2 =
 * Small bugfix where a stray javascript debugging line was throwing an error
@@ -265,6 +250,9 @@ and become available in the customizer interface for the BibleGet plugin.
 
 
 == Upgrade Notice ==
+
+= 5.3 =
+Versions prior to 5.1 must be updated. v5.3 brings a better interface and admin controls for the Google Fonts API
 
 = 5.2 =
 Versions prior to 3.6 must be updated. v5.2 verifies compatibility with Wordpress 5.4 and fixes a bug that was preventing a correct uninstallation of the plugin
