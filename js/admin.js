@@ -192,19 +192,19 @@ jQuery(document).ready(function($) {
         
     }
     else{
-        console.log('We do not seem to have a gfontsPreviewJob');
-        console.log(typeof gfontsBatch);
-        console.log(gfontsBatch);
-        console.log('TEST CONDITION 1: typeof gfontsBatch !== \'undefined\'');
-        console.log(typeof gfontsBatch !== 'undefined');
-        console.log('TEST CONDITION 2: typeof gfontsBatch === \'object\'');
-        console.log(typeof gfontsBatch === 'object');
-        console.log('TEST CONDITION 3: gfontsBatch.hasOwnProperty(\'job\')');
-        console.log(gfontsBatch.hasOwnProperty('job'));
-        console.log('TEST CONDITION 4: gfontsBatch.job.hasOwnProperty(\'gfontsPreviewJob\')');
-        console.log(gfontsBatch.job.hasOwnProperty('job'));
-        console.log('TEST CONDITION 5: gfontsBatch.job.gfontsPreviewJob === true (an actual boolean value)');
-        console.log(gfontsBatch.job.gfontsPreviewJob === true);
+//        console.log('We do not seem to have a gfontsPreviewJob');
+//        console.log(typeof gfontsBatch);
+//        console.log(gfontsBatch);
+//        console.log('TEST CONDITION 1: typeof gfontsBatch !== \'undefined\'');
+//        console.log(typeof gfontsBatch !== 'undefined');
+//        console.log('TEST CONDITION 2: typeof gfontsBatch === \'object\'');
+//        console.log(typeof gfontsBatch === 'object');
+//        console.log('TEST CONDITION 3: gfontsBatch.hasOwnProperty(\'job\')');
+//        console.log(gfontsBatch.hasOwnProperty('job'));
+//        console.log('TEST CONDITION 4: gfontsBatch.job.hasOwnProperty(\'gfontsPreviewJob\')');
+//        console.log(gfontsBatch.job.hasOwnProperty('job'));
+//        console.log('TEST CONDITION 5: gfontsBatch.job.gfontsPreviewJob === true (an actual boolean value)');
+//        console.log(gfontsBatch.job.gfontsPreviewJob === true);
     }
         
 

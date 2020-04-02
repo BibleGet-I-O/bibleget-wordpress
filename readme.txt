@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses
 Requires at least: 3.3
 Tested up to: 5.4
-Stable tag: 5.1
+Stable tag: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,10 @@ and become available in the customizer interface for the BibleGet plugin.
 4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
 
 == Changelog ==
+
+= 5.2 =
+* Small bugfix where a stray javascript debugging line was throwing an error
+* Small fix to new html elements and their styling on the page
 
 = 5.1 =
 * verified compatibility with Wordpress 5.4
@@ -261,6 +265,9 @@ and become available in the customizer interface for the BibleGet plugin.
 
 
 == Upgrade Notice ==
+
+= 5.2 =
+Versions prior to 3.6 must be updated. v5.2 verifies compatibility with Wordpress 5.4 and fixes a bug that was preventing a correct uninstallation of the plugin
 
 = 5.1 =
 Versions prior to 3.6 must be updated. v5.1 verifies compatibility with Wordpress 5.4 and fixes a bug that was preventing a correct uninstallation of the plugin

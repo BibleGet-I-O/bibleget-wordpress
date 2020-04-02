@@ -163,9 +163,18 @@ form input[type=color] {
     margin: 0px auto;
 }
 
+#biblegetio_reveal_server_variable {
+	cursor: pointer;
+	background-color: lightgray;
+	padding: 4px 6px;
+    display: inline-block;
+}
+#biblegetio_reveal_server_variable:hover {
+	background-color: white;
+}
 #biblegetio_hidden_server_variable {
 	visibility: hidden;
 }
-#biblegetio_reveal_server_variable:focus ~ #biblegetio_hidden_server_variable {
+#biblegetio_reveal_server_variable:active ~ #biblegetio_hidden_server_variable {
 	visibility: visible;
 }
