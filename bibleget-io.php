@@ -29,6 +29,7 @@
 
 //TODO: better ui for the customizer, use sliders
 //TODO: make this become a gutenberg block enabled plugin
+//TODO: allow for templates so that the version, book and chapter indicators can be placed differently
 
 define ( "BIBLEGETPLUGINVERSION", "v5_3" );
 
@@ -237,8 +238,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 					$output = str_replace ( PHP_EOL, '', $output );
 					set_transient ( md5 ( $finalquery ), $output, 7 * 24 * HOUR_IN_SECONDS );
 				} else {
-					/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
-					$output = '<span style="color:Red;font-weight:bold;">' . __( "Bible Quote placeholder... (temporary error from the BibleGet server. Please try again in a few minutes...)", "bibleget-io" ) . '</span>';
+					$output = '<span style="color:Red;font-weight:bold;">' . __( "Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io" ) . '</span>';
 				}
 			}
 
@@ -266,7 +266,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 			}
 		}
 	} else {
-		/* translators: do not translate "shortcode" unless the version of wordpress in your language uses a translated term to refer to shortcodes */
+		/* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
 		$output = '<span style="color:Red;font-weight:bold;">' . __( "There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io" ) . ' &lt;' . $a ['query'] . '&gt;<br />' . $queries . '</span>';
 		return '<div class="bibleget-quote-div">' . $output . '</div>';
 	}
@@ -274,6 +274,145 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 add_shortcode ( 'bibleget', 'bibleget_shortcode' );
 
 
+/**
+ * BibleGet Gutenberg Block!
+ * Transforming the shortcode into a block
+ *
+ */
+function bibleget_gutenberg(){
+	// Skip block registration if Gutenberg is not enabled/merged.
+	if (!function_exists('register_block_type')) {
+		return;
+	}
+	$dir = dirname(__FILE__);
+
+	$gutenberg_js = 'js/gutenberg.js';
+	wp_register_script('bibleget-gutenberg-block',
+			plugins_url($gutenberg_js, __FILE__),
+			array(
+					'wp-blocks',
+					'wp-i18n',
+					'wp-element',
+					'wp-components',
+					'wp-editor'
+			),
+			filemtime("$dir/$gutenberg_js")
+			);
+
+	register_block_type('bibleget/bible-quote', array(
+			'editor_script' => 'bibleget-gutenberg-block',
+			'render_callback' => 'bibleGet_renderGutenbergBlock',
+			'attributes' => [
+					'query' => [ 'default' => "Matthew1:1-5" ],
+					'version' => [ 'default' => "NABRE" ],
+					'popup' => [ 'default' => false ]
+			]
+	));
+
+}
+add_action('init', 'bibleget_gutenberg');
+
+
+function bibleGetGutenbergScripts($hook){
+	if($hook != "post.php"){
+		return;
+	}
+	wp_enqueue_script ( 'jquery-ui-dialog' );
+	wp_enqueue_style ( 'wp-jquery-ui-dialog' );
+	wp_enqueue_style ( 'bibleget-popup', plugins_url ( 'css/popup.css', __FILE__ ) );
+	//wp_enqueue_script ( 'bibleget-script', plugins_url ( 'js/shortcode.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
+	wp_enqueue_script ( 'htmlentities-script', plugins_url ( 'js/he.min.js', __FILE__ ), array ( 'jquery' ), '1.0', true );
+}
+
+add_action('admin_enqueue_scripts','bibleGetGutenbergScripts');
+
+/**
+ * Gutenberg Render callback
+ */
+function bibleGet_renderGutenbergBlock($atts){
+	// Determine bible version(s)
+	$versions = array ();
+	if ($atts["version"] === "") {
+		$options = get_option ( 'bibleget_settings', array () );
+		$versions = isset ( $options ["favorite_version"] ) ? explode ( ",", $options ["favorite_version"] ) : array ();
+	} else {
+		$versions = explode ( ",", $atts["version"] );
+	}
+
+	if (count ( $versions ) < 1) {
+		/* translators: do NOT translate the parameter names "version" or "versions" !!! */
+		$output = '<span style="color:Red;font-weight:bold;">' . __( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', "bibleget-io" ) . '</span>';
+		return '<div class="bibleget-quote-div">' . $output . '</div>';
+	}
+
+	$vversions = get_option ( "bibleget_versions", array () );
+	if (count ( $vversions ) < 1) {
+		bibleGetSetOptions ();
+		$vversions = get_option ( "bibleget_versions", array () );
+	}
+	$validversions = array_keys ( $vversions );
+	// echo "<div style=\"border:10px solid Blue;\">".print_r($validversions)."</div>";
+	if ($atts['forceversion'] !== "true") {
+		foreach ( $versions as $version ) {
+			if (! in_array ( $version, $validversions )) {
+				$optionsurl = admin_url ( "options-general.php?page=bibleget-settings-admin" );
+				/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
+				$output = '<span style="color:Red;font-weight:bold;">' . sprintf ( __( 'The requested version "%s" is not valid, please check the list of valid versions in the <a href="%s">settings page</a>', "bibleget-io" ), $version, $optionsurl ) . '</span>';
+				return '<div class="bibleget-quote-div">' . $output . '</div>';
+			}
+		}
+	}
+
+	$queries = bibleGetQueryClean ( $atts['query'] );
+
+	if (is_array ( $queries )) {
+		$goodqueries = bibleGetProcessQueries ( $queries, $versions );
+		// bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
+		// bibleGetWriteLog($goodqueries);
+		if ($goodqueries === false) {
+			/* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
+			$output = __( "Bible Quote placeholder... (error processing query, please check syntax)", "bibleget-io" );
+			return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
+		}
+
+		$finalquery = "query=";
+		$finalquery .= implode ( ";", $goodqueries );
+		$finalquery .= "&version=";
+		$finalquery .= implode ( ",", $versions );
+		if ($atts['forceversion'] == "true") {
+			$finalquery .= "&forceversion=true";
+		}
+		if ($atts['forcecopyright'] == "true") {
+			$finalquery .= "&forcecopyright=true";
+		}
+		// bibleGetWriteLog("value of finalquery = ".$finalquery);
+		if ($finalquery != "") {
+
+			if (false === ($output = get_transient ( md5 ( $finalquery ) ))) {
+				// $output = $finalquery;
+				// return '<div class="bibleget-quote-div">' . $output . '</div>';
+				$output = bibleGetQueryServer ( $finalquery );
+				if ($output) {
+					$output = str_replace ( PHP_EOL, '', $output );
+					set_transient ( md5 ( $finalquery ), $output, 7 * 24 * HOUR_IN_SECONDS );
+				} else {
+					$output = '<span style="color:Red;font-weight:bold;">' . __( "Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io" ) . '</span>';
+				}
+			}
+
+			if($atts['popup'] == "true"){
+				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars($output) . '">' . $atts ['query'] . '</a>';
+			}
+			else {
+				return '<div class="bibleget-quote-div">' . $output . '</div>';
+			}
+		}
+	} else {
+		/* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
+		$output = '<span style="color:Red;font-weight:bold;">' . __( "There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io" ) . ' &lt;' . $a ['query'] . '&gt;<br />' . $queries . '</span>';
+		return '<div class="bibleget-quote-div">' . $output . '</div>';
+	}
+}
 
 /**
  * BibleGet Query Server Function
@@ -1393,6 +1532,13 @@ add_action ( 'wp_head', array (
 		'BibleGet_Customize',
 		'header_output'
 ) );
+
+// Output custom CSS to admin area for gutenberg previews
+add_action ( 'admin_head', array (
+		'BibleGet_Customize',
+		'header_output'
+) );
+
 
 // Enqueue live preview javascript in Theme Customizer admin screen
 add_action ( 'customize_preview_init', array (

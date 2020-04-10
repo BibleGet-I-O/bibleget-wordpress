@@ -29,14 +29,9 @@ Once the preferred version is set you can simply use:
 
 The style settings are customizable using the Wordpress Customizer, 
 so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
+
+https://youtu.be/zqJqU_5UZ5M
 _________
-THE AUTHOR WOULD LIKE TO THANK THE FOLLOWING USERS FOR CONTRIBUTED TRANSLATIONS:
-
-SERBIAN TRANSLATION: Ogi Djuraskovic <ognjend@firstsiteguide.com> WEBSITE: [firstsiteguide](http://firstsiteguide.com "firstsiteguide")
-
-POLISH TRANSLATION: Ula Gnatowska <ula.gnatowska@gmail.com> WEBSITE: [comunità delle beatitudini](http://beatitudini.it/ "comunità delle beatitudini")
-
-GREEK TRANSLATION: anonymous user contribution
 
 [BibleGet Project Website](https://www.bibleget.io/ "BibleGet Project Website")
 [BibleGet Project Facebook Page](https://www.facebook.com/BibleGetIO/ "BibleGet Project Facebook Page")
