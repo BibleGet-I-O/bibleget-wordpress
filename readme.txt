@@ -20,15 +20,12 @@ The text of the Bible quotes are retrieved from the BibleGet service endpoint *[
 It is also possible to place the desired Bible verse quote in the contents of the shortcode, like so:
 **USAGE:** [bibleget version="NABRE"]John 3:16;1 John 4:7-8[/bibleget] 
 
-The Plugin also has a settings page “BibleGet I/O” under the “Settings” area in the Dashboard, 
-where you can choose your preferred Bible versions from those available on the BibleGet server
-so that you don’t have to use the “version” or “versions” option every time. 
-After you have made your choices in the settings area, remember to click on “Save”!
+The Plugin also has a settings page “BibleGet I/O” under the “Settings” area in the Dashboard, where you can choose your preferred Bible versions from those available on the BibleGet server so that you don’t have to use the “version” or “versions” option every time. 
+After you have made your choices in the settings area, remember to click on “Save”! 
 Once the preferred version is set you can simply use:
 **USAGE:** [bibleget query=“1 Cor 13”] 
 
-The style settings are customizable using the Wordpress Customizer, 
-so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
+The style settings are customizable using the Wordpress Customizer, so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
 
 https://youtu.be/zqJqU_5UZ5M
 _________
@@ -46,7 +43,7 @@ _________
 == Frequently Asked Questions ==
 
 = How do I formulate a Bible citation? =
-The query parameter must contain a citation that is formulated following the standard notation for Bible citations (see [Bible citation notation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation")):
+The “query” parameter must contain a citation that is formulated following the standard notation for Bible citations (see [Bible citation notation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation")):
    * “:”: is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
 
    * “-”: is the from – to separator, and it can be used in one of three ways:
@@ -61,7 +58,7 @@ The query parameter must contain a citation that is formulated following the sta
 
 At least the first query (of a series of queries chained by a semi-colon) must indicate the name of the book upon which to make the request;
  the name of the book can be written in full in more than 20 different languages, or written using the abbreviated form.
- See the page [Lista di Abbreviazioni di Libri](https://www.bibleget.io/come-funziona/lista-abbreviazioni-libri/ "Lista di Abbreviazioni di Libri").
+ See the page [List of Book Abbreviations](https://www.bibleget.io/how-it-works/list-of-book-abbreviations/ "List of Book Abbreviations").
  When a query following a semi-colon does not indicate the book name, it is intended that the request be made upon the same book as the previous query.
  So “Gen1:7-9;4:4-5;Ex3:19” means “Genesis chapter 1, verses 7 to 9; then again Genesis chapter 4, verses 4 to 5; then Exodus chapter 3, verse 19”.
 

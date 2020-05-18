@@ -8,81 +8,295 @@ class BibleGetSettingsPage
      */
     private $options;
     private $options_page_hook;
+    private $locale;
     private $versionsbylang;
-    private $versionlangs;
-    private $countversionsbylang;
-    private $countversionlangs;
+    private $versionsbylangcount;
+    private $versionlangscount;
     private $biblebookslangs;
     private $gfonts_weblist;
-    private $gfonts_dir;
     private $gfontsAPIkey;
     private $gfontsAPIkeyTimeOut;
-    private $gfontsAPIresponseJSON;
     private $gfontsAPI_errors;
     private $gfontsAPIkeyCheckResult;
+    private $bibleget_langcodes;
 
     /**
      * Start up
      */
     public function __construct()
     {
-        $this->versionsbylang = array();
-        $this->versionlangs = array();
-        $this->countversionsbylang = 0;
-        $this->countversionlangs = 0;
-        $this->biblebookslangs = array();
+        $this->locale = substr(apply_filters('plugin_locale', get_locale(), 'bibleget-io'),0,2);
         $this->gfonts_weblist = new stdClass();
-        $this->gfonts_dir = "";
         $this->options = get_option( 'bibleget_settings' );
         $this->gfontsAPIkey = "";
         $this->gfontsAPIkeyTimeOut = 0;
         $this->gfontsAPIkeyCheckResult = false;
-        $this->gfontsAPIresponseJSON = new stdClass();
         $this->gfontsAPI_errors = array();
-        add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
-        add_action( 'admin_init', array( $this, 'register_settings' ) );
+        $this->bibleget_langcodes = array (
+				"af" => "Afrikaans",
+				"ak" => "Akan",
+				"sq" => "Albanian",
+				"am" => "Amharic",
+				"ar" => "Arabic",
+				"hy" => "Armenian",
+				"az" => "Azerbaijani",
+				"eu" => "Basque",
+				"be" => "Belarusian",
+				"bn" => "Bengali",
+				"bh" => "Bihari",
+				"bs" => "Bosnian",
+				"br" => "Breton",
+				"bg" => "Bulgarian",
+				"km" => "Cambodian",
+				"ca" => "Catalan",
+				"ny" => "Chichewa",
+				"zh" => "Chinese",
+				"co" => "Corsican",
+				"hr" => "Croatian",
+				"cs" => "Czech",
+				"da" => "Danish",
+				"nl" => "Dutch",
+				"en" => "English",
+				"eo" => "Esperanto",
+				"et" => "Estonian",
+				"fo" => "Faroese",
+				"tl" => "Filipino",
+				"fi" => "Finnish",
+				"fr" => "French",
+				"fy" => "Frisian",
+				"gl" => "Galician",
+				"ka" => "Georgian",
+				"de" => "German",
+				"el" => "Greek",
+				"gn" => "Guarani",
+				"gu" => "Gujarati",
+				"ht" => "Haitian Creole",
+				"ha" => "Hausa",
+				"iw" => "Hebrew",
+				"hi" => "Hindi",
+				"hu" => "Hungarian",
+				"is" => "Icelandic",
+				"ig" => "Igbo",
+				"id" => "Indonesian",
+				"ia" => "Interlingua",
+				"ga" => "Irish",
+				"it" => "Italian",
+				"ja" => "Japanese",
+				"jw" => "Javanese",
+				"kn" => "Kannada",
+				"kk" => "Kazakh",
+				"rw" => "Kinyarwanda",
+				"rn" => "Kirundi",
+				"kg" => "Kongo",
+				"ko" => "Korean",
+				"ku" => "Kurdish",
+				"ky" => "Kyrgyz",
+				"lo" => "Laothian",
+				"la" => "Latin",
+				"lv" => "Latvian",
+				"ln" => "Lingala",
+				"lt" => "Lithuanian",
+				"lg" => "Luganda",
+				"mk" => "Macedonian",
+				"mg" => "Malagasy",
+				"ms" => "Malay",
+				"ml" => "Malayalam",
+				"mt" => "Maltese",
+				"mi" => "Maori",
+				"mr" => "Marathi",
+				"mo" => "Moldavian",
+				"mn" => "Mongolian",
+				"ne" => "Nepali",
+				"no" => "Norwegian",
+				"oc" => "Occitan",
+				"or" => "Oriya",
+				"om" => "Oromo",
+				"ps" => "Pashto",
+				"fa" => "Persian",
+				"pl" => "Polish",
+				"pt" => "Portuguese",
+				"pa" => "Punjabi",
+				"qu" => "Quechua",
+				"ro" => "Romanian",
+				"rm" => "Romansh",
+				"ru" => "Russian",
+				"gd" => "Scots Gaelic",
+				"sr" => "Serbian",
+				"sh" => "Serbo-Croatian",
+				"st" => "Sesotho",
+				"tn" => "Setswana",
+				"sn" => "Shona",
+				"sd" => "Sindhi",
+				"si" => "Sinhalese",
+				"sk" => "Slovak",
+				"sl" => "Slovenian",
+				"so" => "Somali",
+				"es" => "Spanish",
+				"su" => "Sundanese",
+				"sw" => "Swahili",
+				"sv" => "Swedish",
+				"tg" => "Tajik",
+				"ta" => "Tamil",
+				"tt" => "Tatar",
+				"te" => "Telugu",
+				"th" => "Thai",
+				"ti" => "Tigrinya",
+				"to" => "Tonga",
+				"tr" => "Turkish",
+				"tk" => "Turkmen",
+				"tw" => "Twi",
+				"ug" => "Uighur",
+				"uk" => "Ukrainian",
+				"ur" => "Urdu",
+				"uz" => "Uzbek",
+				"vi" => "Vietnamese",
+				"cy" => "Welsh",
+				"wo" => "Wolof",
+				"xh" => "Xhosa",
+				"yi" => "Yiddish",
+				"yo" => "Yoruba",
+				"zu" => "Zulu"
+		);
+        $this->versionsbylang = $this->prepareVersionsByLang(); //will now be an array with both versions and langs properties
+        $this->versionlangscount = count($this->versionsbylang["versions"]);
+        $this->versionsbylangcount = $this->countVersionsByLang();
+        $this->biblebookslangs = $this->prepareBibleBooksLangs();
+    }
 
-        //if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
-        //so let't pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
-        //this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
-        //we will have to leave the transient set to admin_print_scripts
-        switch($this->gfontsAPIkeyCheck()){ //can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult
-            case false:
-                //the gfontsAPIkey is not set, so let's just not do anything, ok
-                break;
-            case "SUCCESS":
-                //the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
-                //error_log('CURRENT VALUE OF $this->gfontsAPIresponseJSON:');
-                //error_log(print_r($this->gfontsAPIresponseJSON,true));
-                //error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
-                add_action( "wp_ajax_store_gfonts_preview", array( $this, 'store_gfonts_preview' ) );
-				add_action( "wp_ajax_bibleget_refresh_gfonts", array( $this, 'bibleGetForceRefreshGFontsResults' ) );
-				//enqueue and localize will be done in enqueue_scripts
+    public function Init(){
+    	add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
+    	add_action( 'admin_init', array( $this, 'register_settings' ) );
 
-                // Include CSS minifier by matthiasmullie
-                $minifierpath = WP_PLUGIN_DIR."/bibleget-io/minifier";
-                require_once $minifierpath . '/minify/src/Minify.php';
-                require_once $minifierpath . '/minify/src/CSS.php';
-                require_once $minifierpath . '/minify/src/JS.php';
-                require_once $minifierpath . '/minify/src/Exception.php';
-                require_once $minifierpath . '/minify/src/Exceptions/BasicException.php';
-                require_once $minifierpath . '/minify/src/Exceptions/FileImportException.php';
-                require_once $minifierpath . '/minify/src/Exceptions/IOException.php';
-                require_once $minifierpath . '/path-converter/src/ConverterInterface.php';
-                require_once $minifierpath . '/path-converter/src/Converter.php';
-                break;
-            case "CURL_ERROR":
-                break;
-            case "JSON_ERROR":
-                break;
-            case "REQUEST_NOT_SENT":
-                break;
-        }
+    	//if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
+    	//so let't pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
+    	//this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
+    	//we will have to leave the transient set to admin_print_scripts
+    	switch($this->gfontsAPIkeyCheck()){ //can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult
+    		case false:
+    			//the gfontsAPIkey is not set, so let's just not do anything, ok
+    			break;
+    		case "SUCCESS":
+    			//the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
+    			//error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
+    			add_action( "wp_ajax_store_gfonts_preview", array( $this, 'store_gfonts_preview' ) );
+    			add_action( "wp_ajax_bibleget_refresh_gfonts", array( $this, 'bibleGetForceRefreshGFontsResults' ) );
+    			//enqueue and localize will be done in enqueue_scripts
 
-        add_action('admin_enqueue_scripts', array( $this, 'admin_print_styles') );
-        add_action('admin_enqueue_scripts', array( $this, 'admin_print_scripts') );
-        add_action('load-'.$this->options_page_hook, array( $this, 'bibleget_plugin_settings_save') );
+    			// Include CSS minifier by matthiasmullie
+    			$minifierpath = WP_PLUGIN_DIR."/bibleget-io/minifier";
+    			require_once $minifierpath . '/minify/src/Minify.php';
+    			require_once $minifierpath . '/minify/src/CSS.php';
+    			require_once $minifierpath . '/minify/src/JS.php';
+    			require_once $minifierpath . '/minify/src/Exception.php';
+    			require_once $minifierpath . '/minify/src/Exceptions/BasicException.php';
+    			require_once $minifierpath . '/minify/src/Exceptions/FileImportException.php';
+    			require_once $minifierpath . '/minify/src/Exceptions/IOException.php';
+    			require_once $minifierpath . '/path-converter/src/ConverterInterface.php';
+    			require_once $minifierpath . '/path-converter/src/Converter.php';
+    			break;
+    		case "CURL_ERROR":
+    			break;
+    		case "JSON_ERROR":
+    			break;
+    		case "REQUEST_NOT_SENT":
+    			break;
+    	}
 
+    	add_action('admin_enqueue_scripts', array( $this, 'admin_print_styles') );
+    	add_action('admin_enqueue_scripts', array( $this, 'admin_print_scripts') );
+    	add_action('load-'.$this->options_page_hook, array( $this, 'bibleget_plugin_settings_save') );
+    }
+
+    public function getBibleGetLangCodes(){
+    	return $this->bibleget_langcodes;
+    }
+
+    public function getVersionsByLang(){
+    	return $this->versionsbylang;
+    }
+
+    public function prepareBibleBooksLangs(){
+    	$biblebookslangsArr = array();
+    	$biblebookslangs = get_option("bibleget_languages");
+    	if($biblebookslangs === false || !is_array($biblebookslangs) || count($biblebookslangs) < 1 ){
+    		bibleGetSetOptions(); //TODO: these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
+    		$biblebookslangs = get_option("bibleget_languages");
+    	}
+
+    	foreach($biblebookslangs as $key => $biblebookslang){
+	    	if(extension_loaded('intl') === true){ //try to translate the language names if you can
+	    		$biblebooksLocale = array_search($biblebookslang,$this->bibleget_langcodes);
+	    		$lang = Locale::getDisplayLanguage($biblebooksLocale, $this->locale);
+	    		array_push($biblebookslangsArr,$lang);
+	    	}
+	    	else{ //and if you can't, just use the english version we have
+	    		array_push($biblebookslangsArr,$biblebookslang);
+	    	}
+    	}
+
+
+    	if(extension_loaded('intl') === true){
+    		collator_asort(collator_create('root'), $biblebookslangsArr);
+    	}else{
+    		array_multisort(array_map('self::Sortify', $biblebookslangsArr), $biblebookslangsArr);
+    	}
+    	return $biblebookslangsArr;
+    }
+
+    public function prepareVersionsByLang()
+    {
+    	$versions = get_option("bibleget_versions",array()); //theoretically should be an array
+    	$versionsbylang = array();
+    	$langs = array();
+    	if(count($versions)<1){
+    		bibleGetSetOptions(); //global function defined in bibleget-io.php
+    		$versions = get_option("bibleget_versions",array());
+    	}
+    	foreach($versions as $abbr => $versioninfo){
+    		$info = explode("|",$versioninfo);
+    		$fullname = $info[0];
+    		$year = $info[1];
+    		if(extension_loaded('intl') === true){ //do our best to translate the language name
+    			$lang = Locale::getDisplayLanguage($info[2], $this->locale);
+    		}
+    		else{ //but if we can't, just use the english version that we have
+    			$lang = $this->bibleget_langcodes[$info[2]]; //this gives the english correspondent of the two letter ISO code
+    		}
+
+    		if(isset($versionsbylang[$lang])){
+    			if(isset($versionsbylang[$lang][$abbr])){
+    				//how can that be?
+    			}
+    			else{
+    				$versionsbylang[$lang][$abbr] = array("fullname"=>$fullname,"year"=>$year);
+    			}
+    		}
+    		else{
+    			$versionsbylang[$lang] = array();
+    			array_push($langs,$lang);
+    			$versionsbylang[$lang][$abbr] = array("fullname"=>$fullname,"year"=>$year);
+    		}
+    	}
+
+    	if(extension_loaded('intl') === true){
+    		collator_asort(collator_create('root'), $langs);
+    	}else{
+    		array_multisort(array_map('self::Sortify', $langs), $langs);
+    	}
+
+    	return array("versions" => $versionsbylang, "langs" => $langs);
+
+    }
+
+    public function countVersionsByLang(){
+    	//count total languages and total versions
+
+    	$counter = 0;
+    	foreach($this->versionsbylang["versions"] as $lang => $versionbylang){
+    		ksort($this->versionsbylang["versions"][$lang]);
+    		$counter+=count($this->versionsbylang["versions"][$lang]);
+    	}
+    	return $counter;
     }
 
     /**
@@ -168,39 +382,36 @@ class BibleGetSettingsPage
             // instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
             set_transient ( md5 ( $this->options['googlefontsapi_key'] ), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS ); // 90 giorni
 
-            $this->gfonts_dir = WP_PLUGIN_DIR."/bibleget-io/gfonts_preview/";
-
-            $access_type = get_filesystem_method();
             $plugin_path = "";
-            if($access_type === 'direct'){
-                $creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
-              	/* initialize the API */
-              	if ( WP_Filesystem($creds) ) {
-                      global $wp_filesystem;
-                      $plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path( __FILE__ ));
-                      if(!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')){
-                      	/* directory didn't exist, so let's create it */
-                      	$wp_filesystem->mkdir($plugin_path . 'gfonts_preview/');
-                      }
-                      if(!$wp_filesystem->is_dir($plugin_path . 'css/gfonts_preview/')){
-                      	/* directory didn't exist, so let's create it */
-                      	$wp_filesystem->mkdir($plugin_path . 'css/gfonts_preview/');
-                      }
+            // bibleGetWriteLog("about to initialize creation of admin page...");
+            if(get_filesystem_method() === 'direct'){
+            	$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
+            	/* initialize the API */
+            	if ( WP_Filesystem($creds) ) {
+					global $wp_filesystem;
+					$plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path( __FILE__ ));
+	                if(!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')){
+	                   	/* directory didn't exist, so let's create it */
+	                   	$wp_filesystem->mkdir($plugin_path . 'gfonts_preview/');
+	                }
+	                if(!$wp_filesystem->is_dir($plugin_path . 'css/gfonts_preview/')){
+	                  	/* directory didn't exist, so let's create it */
+	                   	$wp_filesystem->mkdir($plugin_path . 'css/gfonts_preview/');
+	                }
 
-                      //let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
-                      $wp_filesystem->put_contents(
-                        $plugin_path . 'gfonts_preview/gfontsWeblist.json',
-                        json_encode($this->gfonts_weblist),
-                        FS_CHMOD_FILE // predefined mode settings for WP files
-                      );
-
-                }
-                else{
-                    $this->gfontsAPI_errors[] = "Could not initialize wordpress filesystem with these credentials";
-                }
+	                 //let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
+	                 $wp_filesystem->put_contents(
+	                    $plugin_path . 'gfonts_preview/gfontsWeblist.json',
+	                    json_encode($this->gfonts_weblist),
+	                    FS_CHMOD_FILE // predefined mode settings for WP files
+	                 );
+            	}
+            	else{
+            		$this->gfontsAPI_errors[] = "Could not initialize wordpress filesystem with these credentials";
+            	}
             }
             else{
-                $this->gfontsAPI_errors[] = "You do not have direct access permissions to the wordpress filesystem";
+                 $this->gfontsAPI_errors[] = "You do not have direct access permissions to the wordpress filesystem";
             }
 
             wp_enqueue_script( 'jquery-ui-progressbar' );
@@ -220,9 +431,9 @@ class BibleGetSettingsPage
     public function create_admin_page()
     {
 
-        //populate $this->biblebookslangs and $this->versionsbylang and $this->countversionsbylang
+        //populate $this->biblebookslangs and $this->versionsbylang and $this->versionsbylangcount
         //based on current WordPress locale
-        $this->getVersionsByLang();
+        //$this->versionsbylang = $this->getVersionsByLang(); //already done in constructor?
 
         //HTML of the main section of the options page
         ?>
@@ -254,23 +465,23 @@ class BibleGetSettingsPage
             		<ol type="A">
             			<li><?php
                 			// This if condition should be superfluous, but just to be sure nothing goes awry...
-                			if($this->countversionsbylang<1 || $this->countversionlangs<1){
+                			if($this->versionsbylangcount<1 || $this->versionlangscount<1){
             					echo "Seems like the version info was not yet initialized. Now attempting to initialize...";
-    							$this->getVersionsByLang();
+    							$this->versionsbylang = $this->getVersionsByLang();
             				}
             				$b1 = '<b class="bibleget-dynamic-data">';
             				$b2 = '</b>';
-            				$string1 = $b1.$this->countversionsbylang.$b2;
-            				$string2 = $b1.$this->countversionlangs.$b2;
+            				$string1 = $b1.$this->versionsbylangcount.$b2;
+            				$string2 = $b1.$this->versionlangscount.$b2;
             				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
             				printf(__("The BibleGet I/O engine currently supports %s versions of the Bible in %s different languages.","bibleget-io"),$string1,$string2);
             				echo "<br />";
             				_e("List of currently supported Bible versions, subdivided by language:","bibleget-io");
             				echo "<div class=\"bibleget-dynamic-data-wrapper\"><ol id=\"versionlangs-ol\">";
             				$cc=0;
-            				foreach($this->versionlangs as $lang){
+            				foreach($this->versionsbylang["langs"] as $lang){
             					echo '<li>-'.$lang.'-<ul>';
-            					foreach($this->versionsbylang[$lang] as $abbr => $value){
+            					foreach($this->versionsbylang["versions"][$lang] as $abbr => $value){
             						echo '<li>'.(++$cc).') '.$abbr.' — '.$value["fullname"].' ('.$value["year"].')</li>';
             					}
             					echo '</ul></li>';
@@ -345,91 +556,14 @@ class BibleGetSettingsPage
     }
 
 
-    public function getVersionsByLang()
-    {
-    	global $bibleget_langcodes;
-    	global $bibleget_worldlanguages;
-    	$domain = 'bibleget-io';
-    	$locale = substr(apply_filters('plugin_locale', get_locale(), $domain),0,2);
-    	$biblebookslangs = get_option("bibleget_languages");
-    	if($biblebookslangs === false || !is_array($biblebookslangs) || count($biblebookslangs) < 1 ){
-    		bibleGetSetOptions();
-    		$biblebookslangs = get_option("bibleget_languages");
-    	}
-
-    	$this->biblebookslangs = array();
-    	foreach($biblebookslangs as $key => $lang){
-    		if(isset($bibleget_worldlanguages[$lang][$locale])){
-    			$lang = $bibleget_worldlanguages[$lang][$locale];
-    		}
-    		array_push($this->biblebookslangs,$lang);
-    	}
-
-
-    	if(extension_loaded('intl') === true){
-    		collator_asort(collator_create('root'), $this->biblebookslangs);
-    	}else{
-    		array_multisort(array_map('bibleGetSortify', $this->biblebookslangs), $this->biblebookslangs);
-    	}
-
-    	$versions = get_option("bibleget_versions",array()); //theoretically should be an array
-    	$versionsbylang = array();
-    	$langs = array();
-    	if(count($versions)<1){
-    		bibleGetSetOptions(); //global function defined in bibleget-io.php
-    		$versions = get_option("bibleget_versions",array());
-    	}
-    	foreach($versions as $abbr => $versioninfo){
-    		$info = explode("|",$versioninfo);
-    		$fullname = $info[0];
-    		$year = $info[1];
-    		$lang = $bibleget_langcodes[$info[2]]; //this gives the english correspondent of the two letter ISO code
-    		if(isset($bibleget_worldlanguages[$lang][$locale])){
-    			$lang = $bibleget_worldlanguages[$lang][$locale]; //this will translate the English form into the localized form if available
-    		}
-    		if(isset($versionsbylang[$lang])){
-    			if(isset($versionsbylang[$lang][$abbr])){
-    				//how can that be?
-    			}
-    			else{
-    				$versionsbylang[$lang][$abbr] = array("fullname"=>$fullname,"year"=>$year);
-    			}
-    		}
-    		else{
-    			$versionsbylang[$lang] = array();
-    			array_push($langs,$lang);
-    			$versionsbylang[$lang][$abbr] = array("fullname"=>$fullname,"year"=>$year);
-    		}
-    	}
-    	$this->versionsbylang = $versionsbylang;
-
-    	//count total languages and total versions
-    	$this->countversionlangs = count($versionsbylang);
-    	$counter = 0;
-    	foreach($versionsbylang as $lang => $versionbylang){
-    		ksort($versionsbylang[$lang]);
-    		$counter+=count($versionsbylang[$lang]);
-    	}
-    	$this->countversionsbylang = $counter;
-
-    	if(extension_loaded('intl') === true){
-    		collator_asort(collator_create('root'), $langs);
-    	}else{
-    		array_multisort(array_map('bibleGetSortify', $langs), $langs);
-    	}
-
-    	$this->versionlangs = $langs;
-
-    }
-
     public function favorite_version_callback()
     {
 		//double check to see if the values have been set
-    	if($this->countversionsbylang<1 || $this->countversionlangs<1){
-			$this->getVersionsByLang();
+    	if($this->versionsbylangcount<1 || $this->versionlangscount<1){
+			$this->versionsbylang = $this->getVersionsByLang();
 		}
 
-		$counter = ($this->countversionsbylang + $this->countversionlangs);
+		$counter = ($this->versionsbylangcount + $this->versionlangscount);
 
 		$selected = array();
 		if(isset( $this->options['favorite_version'] ) && $this->options['favorite_version']){
@@ -438,8 +572,8 @@ class BibleGetSettingsPage
     	$size = $counter<10 ? $counter : 10;
 		echo '<select id="versionselect" size='.$size.' multiple>';
 
-    	$langs = $this->versionlangs;
-    	$versionsbylang = $this->versionsbylang;
+    	$langs = $this->versionsbylang["langs"];
+    	$versionsbylang = $this->versionsbylang["versions"];
 
     	foreach($langs as $lang){
     		echo '<optgroup label="-'.$lang.'-">';
@@ -561,8 +695,6 @@ class BibleGetSettingsPage
 	    				//let's see what was returned, and if it's what we're looking for
 	    				$json_response = json_decode($response);
 	    				if ($json_response !== null && json_last_error() === JSON_ERROR_NONE) {
-	    					//So far so good, let's keep these results for other functions to access
-                            $this->gfontsAPIresponseJSON = $json_response;
 
                             if(property_exists($json_response,"kind") && $json_response->kind == "webfonts#webfontList" && property_exists($json_response,"items") ){
 	    						$this->gfonts_weblist = $json_response;
@@ -644,10 +776,6 @@ class BibleGetSettingsPage
             $lastBatchLimit = intval($_POST["lastBatchLimit"]);
             $numRuns = intval($_POST["numRuns"]);
             $currentRun = intval($_POST["currentRun"]);
-            //$errorinfo[] = "POST data received: ".print_r($_POST,true);
-            //$gfontsWeblist = (is_object($_POST["gfontsWeblist"])) ? $_POST["gfontsWeblist"] : ( is_array($_POST["gfontsWeblist"]) ? (object)$_POST["gfontsWeblist"] : ( is_string($_POST["gfontsWeblist"]) ? json_decode($_POST["gfontsWeblist"]) : false ) );
-            //$errorinfo[] = "gfontsWeblist = ".print_r($gfontsWeblist,true);
-            //$errorinfo[] = "gfontsWeblist->items = ".print_r($gfontsWeblist->items,true);
             $totalFonts = (count($gfontsWeblist->items) > 0) ? count($gfontsWeblist->items) : false;
             $errorinfo[] = "totalFonts according to the server script = ".$totalFonts;
         }
@@ -658,149 +786,128 @@ class BibleGetSettingsPage
 
         }
 
-        $access_type = get_filesystem_method();
         $plugin_path = "";
-        if($access_type === 'direct'){
-            $creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
-          	/* initialize the API */
-          	if ( WP_Filesystem($creds) ) {
-                  global $wp_filesystem;
-                  $plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path( __FILE__ ));
+        if(get_filesystem_method() === 'direct'){
+        	$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
+            /* initialize the API */
+            if ( WP_Filesystem($creds) ) {
+				global $wp_filesystem;
+	        	$plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path( __FILE__ ));
 
-                  foreach($gfontsWeblist->items as $idx => $googlefont){
-                      if($idx >= $startIdx && $idx < ($startIdx + $batchLimit)){
-                          $thisfamily = $googlefont->family;
-                          $familyurlname = preg_replace('/\s+/', '+', $thisfamily);
-                          $familyfilename = preg_replace('/\s+/', '', $thisfamily);
-                          $errorinfo[] = "Now dealing with font-family " . $thisfamily;
-                          $fnttype = 'ttf'; //'woff', 'woff2', 'ttf'
+	            foreach($gfontsWeblist->items as $idx => $googlefont){
+	            	if($idx >= $startIdx && $idx < ($startIdx + $batchLimit)){
+	                	$thisfamily = $googlefont->family;
+	                    $familyurlname = preg_replace('/\s+/', '+', $thisfamily);
+	                    $familyfilename = preg_replace('/\s+/', '', $thisfamily);
+	                    $errorinfo[] = "Now dealing with font-family " . $thisfamily;
+	                    $fnttype = 'ttf'; //'woff', 'woff2', 'ttf'
 
-                          if(!file_exists($gfontsDir."{$familyfilename}.{$fnttype}") ){ //$idx < $idxlimit &&
-                            $ch2 = curl_init("https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}");
-                  			curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, TRUE);
-                  			curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 2);
-                  			curl_setopt($ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-                  			curl_setopt($ch2, CURLOPT_RETURNTRANSFER, TRUE );
-                            curl_setopt($ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
-                  			if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
-                  				// safe mode is on, we can't use some settings
-                  			} else {
-                  				curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, TRUE );
-                  				curl_setopt($ch2, CURLOPT_AUTOREFERER, TRUE );
-                  			}
-                  			$response2 = curl_exec ( $ch2 );
-                  			$status2 = (int) curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+	                    if(!file_exists($gfontsDir."{$familyfilename}.{$fnttype}") ){ //$idx < $idxlimit &&
+	                    	$ch2 = curl_init("https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}");
+	                  		curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, TRUE);
+	                  		curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 2);
+	                  		curl_setopt($ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
+	                  		curl_setopt($ch2, CURLOPT_RETURNTRANSFER, TRUE );
+	                        curl_setopt($ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+	                  		if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
+	                  			// safe mode is on, we can't use some settings
+	                  		} else {
+	                  			curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, TRUE );
+	                  			curl_setopt($ch2, CURLOPT_AUTOREFERER, TRUE );
+	                  		}
+	                  		$response2 = curl_exec ( $ch2 );
+	                  		$status2 = (int) curl_getinfo($ch2, CURLINFO_HTTP_CODE);
 							$returnInfo->httpStatus2 = $status2;
 							if ($response2 && ! curl_errno ( $ch2 ) && $status2 == 200) {
-                                  if (preg_match('/url\((.*?)\)/', $response2, $match) == 1) {
-                                      $thisfonturl = $match[1];
-                                      $errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
+	                        	if (preg_match('/url\((.*?)\)/', $response2, $match) == 1) {
+	                            	$thisfonturl = $match[1];
+	                                $errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
 
-              //                         $ch3_headers = [];
-                                      $ch3 = curl_init($thisfonturl);
-                                      curl_setopt($ch3, CURLOPT_SSL_VERIFYPEER, TRUE);
-                                      curl_setopt($ch3, CURLOPT_SSL_VERIFYHOST, 2);
-                                      curl_setopt($ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-                                      curl_setopt($ch3, CURLOPT_RETURNTRANSFER, TRUE );
-                                      curl_setopt($ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
-                                      //declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
-                                      //however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
-                                      curl_setopt($ch3, CURLOPT_HTTPHEADER, array("Accept: font/woff2","Content-type: font/ttf"));
-              //                         curl_setopt($ch3, CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$ch3_headers){
-              //                             $len = strlen($header);
-              //                             $header = explode(':', $header, 2);
-              //                             if (count($header) < 2) // ignore invalid headers
-              //                               return $len;
-              //                             $ch3_headers[strtolower(trim($header[0]))][] = trim($header[1]);
-              //                             return $len;
-              //                           }
-              //                         );
-                  	    			if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
-                  	    				// safe mode is on, we can't use some settings
-                  	    			} else {
-                  	    				curl_setopt($ch3, CURLOPT_FOLLOWLOCATION, TRUE );
-                  	    				curl_setopt($ch3, CURLOPT_AUTOREFERER, TRUE );
-                  	    			}
-                  	    			$response3 = curl_exec ( $ch3 );
-              //                         $errorinfo[] = print_r($ch3_headers,TRUE);
-                  	    			$status3 = (int) curl_getinfo($ch3, CURLINFO_HTTP_CODE);
-                  	    			$returnInfo->httpStatus3 = $status3;
-                                      if ($response3 && ! curl_errno ( $ch3 ) && $status3 == 200) {
-                                          if($wp_filesystem){
-              //                                 if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
-                                                  if(!$wp_filesystem->put_contents(
-                                                    $gfontsDir."{$familyfilename}.{$fnttype}",
-                                                    $response3,
-                                                    FS_CHMOD_FILE
-                                                  )){
-                                                      $errorinfo[] = "Cannot write file ".$plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
-                                                  }
-                                                  else{
-                                                      $gfont_stylesheet = preg_replace('/url\((.*?)\)/','url('.esc_url(plugins_url( "gfonts_preview/{$familyfilename}.{$fnttype}", __FILE__ )).')', $response2);
-                                                      if(!file_exists($plugin_path . "css/gfonts_preview/{$familyfilename}.css") ){
-                                                          if(!$wp_filesystem->put_contents(
-                                                            $plugin_path . "css/gfonts_preview/{$familyfilename}.css",
-                                                            $gfont_stylesheet,
-                                                            FS_CHMOD_FILE
-                                                          )){
-                                                              $errorinfo[] = "Cannot write file ".$plugin_path . "css/gfonts_preview/{$familyfilename}.css with wordpress filesystem api, sorry";
-                                                          }
-                                                      }
+	              //                         $ch3_headers = [];
+	                                $ch3 = curl_init($thisfonturl);
+	                                curl_setopt($ch3, CURLOPT_SSL_VERIFYPEER, TRUE);
+	                                curl_setopt($ch3, CURLOPT_SSL_VERIFYHOST, 2);
+	                                curl_setopt($ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
+	                                curl_setopt($ch3, CURLOPT_RETURNTRANSFER, TRUE );
+	                                curl_setopt($ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+	                                //declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
+	                                //however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
+	                                curl_setopt($ch3, CURLOPT_HTTPHEADER, array("Accept: font/woff2","Content-type: font/ttf"));
+	                  	    		if (ini_get ( 'safe_mode' ) || ini_get ( 'open_basedir' )) {
+	                  	    				// safe mode is on, we can't use some settings
+	                  	    		} else {
+	                  	    			curl_setopt($ch3, CURLOPT_FOLLOWLOCATION, TRUE );
+	                  	    			curl_setopt($ch3, CURLOPT_AUTOREFERER, TRUE );
+	                  	    		}
+	                  	    		$response3 = curl_exec ( $ch3 );
+	              //                $errorinfo[] = print_r($ch3_headers,TRUE);
+	                  	    		$status3 = (int) curl_getinfo($ch3, CURLINFO_HTTP_CODE);
+	                  	    		$returnInfo->httpStatus3 = $status3;
+	                                if ($response3 && ! curl_errno ( $ch3 ) && $status3 == 200) {
+	                                	if($wp_filesystem){
+	              //                                 if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
+	                                    	if(!$wp_filesystem->put_contents(
+	                                        	$gfontsDir."{$familyfilename}.{$fnttype}",
+	                                            $response3,
+	                                            FS_CHMOD_FILE
+	                                            )){
+	                                        	$errorinfo[] = "Cannot write file ".$plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
+	                                        }
+	                                        else{
+	                                            $gfont_stylesheet = preg_replace('/url\((.*?)\)/','url('.esc_url(plugins_url( "gfonts_preview/{$familyfilename}.{$fnttype}", __FILE__ )).')', $response2);
+	                                            if(!file_exists($plugin_path . "css/gfonts_preview/{$familyfilename}.css") ){
+	                                            	if(!$wp_filesystem->put_contents(
+	                                                	$plugin_path . "css/gfonts_preview/{$familyfilename}.css",
+	                                                    $gfont_stylesheet,
+	                                                    FS_CHMOD_FILE
+	                                                    )){
+	                                                    $errorinfo[] = "Cannot write file ".$plugin_path . "css/gfonts_preview/{$familyfilename}.css with wordpress filesystem api, sorry";
+	                                                }
+	                                            }
 
-                                                  }
-              //                                 }
-              //                                 else{
-              //                                     $errorinfo[] = "File " . $plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype} already exists, skipping...";
-              //                                 }
-                                          }
-                                      }
-                                      else{
-                  						if(!$response3){
-                  							$errorinfo[] = "Response from curl request 3 is false for font-family {$thisfamily}";
-                  						}
-                  						if(curl_errno($ch3)){
-                  							$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error($ch);
-                  						}
-                  						if($status3 != 200){
-                  							$errorinfo[] = "Status on curl request 3 for font-family {$thisfamily}: " . $status;
-                  						}
-                                      }
+	                                        }
+	                                    }
+	                                }
+	                                else{
+	                  					if(!$response3){
+	                  						$errorinfo[] = "Response from curl request 3 is false for font-family {$thisfamily}";
+	                  					}
+	                  					if(curl_errno($ch3)){
+	                  						$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error($ch);
+	                  					}
+	                  					if($status3 != 200){
+	                  						$errorinfo[] = "Status on curl request 3 for font-family {$thisfamily}: " . $status3;
+	                  					}
+	                                }
 
-                                  }
-                              }
-                              else{
-                      			if(!$response2){
-                      				$errorinfo[] = "Response from curl request 2 is false for font-family {$thisfamily}";
-                      			}
-                      			if(curl_errno($ch2)){
-                      				$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error($ch);
-                      			}
-                      			if($status2 != 200){
-                      				$errorinfo[] = "Status on curl request 2 for font-family {$thisfamily}: " . $status;
-                      			}
-                              }
-                          }
-                          else{
-              //                 if($idx >= $idxlimit){
-              //                     $errorinfo[] = "You have reached the established index limit";
-              //                     break;
-              //                 }
-              //                 else {
-                                  $errorinfo[] = "File ".$familyfilename.".{$fnttype} already exists";
-              //                 }
-                          }
-                      }
+	                            }
+	                        }
+	                        else{
+	                      		if(!$response2){
+	                      			$errorinfo[] = "Response from curl request 2 is false for font-family {$thisfamily}";
+	                      		}
+	                      		if(curl_errno($ch2)){
+	                      			$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error($ch);
+	                      		}
+	                      		if($status2 != 200){
+	                      			$errorinfo[] = "Status on curl request 2 for font-family {$thisfamily}: " . $status2;
+	                      		}
+	                        }
+	                    }
+	                    else{
+	                    	$errorinfo[] = "File ".$familyfilename.".{$fnttype} already exists";
+	                    }
+	                }
 
-                  }
-
-
+	            }
             }
             else{
-                $errorinfo[] = "Could not initialize wordpress filesystem with these credentials";
+            	$errorinfo[] = "Could not initialize wordpress filesystem with these credentials";
             }
+
         }
         else{
-            $errorinfo[] = "You do not have direct access permissions to the wordpress filesystem";
+        	$errorinfo[] = "You do not have direct access permissions to the wordpress filesystem";
         }
 
 
@@ -865,6 +972,10 @@ class BibleGetSettingsPage
           }
 
        }
+    }
+
+    public static function Sortify($string) {
+    	return preg_replace ( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i', '$1' . chr ( 255 ) . '$2', htmlentities ( $string, ENT_QUOTES, 'UTF-8' ) );
     }
 
 }
