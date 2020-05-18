@@ -7,26 +7,28 @@
 (function (blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const bbGetShCdAttributes = {
-		query: 				{ default: 'Matthew1:1-5',	type: 'string' },
-		version: 			{ default: ['NABRE'], 		type: 'array', items: { type: 'string' } },
-		popup: 				{ default: false, 			type: 'boolean' },
-		forceversion: 		{ default: false, 			type: 'boolean' },	//effectively not used for Gutenberg block
-		forcecopyright: 	{ default: false, 			type: 'boolean' },	//effectively not used for Gutenberg block
-		hidebibleversion: 	{ default: false, 			type: 'boolean' },	//if true, bible version will be hidden
-		bibleversionalign: 	{ default: 'left', 			type: 'string' },
-		bibleversionpos: 	{ default: 'top', 			type: 'string' },
-		bibleversionwrap:	{ default: 'none', 			type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		bookchapteralign: 	{ default: 'left', 			type: 'string' },
-		bookchapterpos: 	{ default: 'top', 			type: 'string' }, 	//can be 'top', 'bottom', or 'bottominline'
-		bookchapterwrap: 	{ default: 'none',			type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		showfullreference: 	{ default: false, 			type: 'boolean' },
-		hideversenumber: 	{ default: false, 			type: 'boolean' }
+		query: { default: 'Matthew1:1-5', type: 'string' },
+		version: { default: ['NABRE'], type: 'array', items: { type: 'string' } },
+		popup: { default: false, type: 'boolean' },
+		forceversion: { default: 'false', type: 'string' },
+		forcecopyright: { default: 'false', type: 'string' },
+		hidebibleversion: { default: false, type: 'boolean' },	//if true, bible version will be hidden
+		bibleversionalign: { default: 'left', type: 'string' },
+		bibleversionpos: { default: 'top', type: 'string' },
+		bibleversionwrap: { default: 'none', type: 'string' },	//can be 'none', 'parentheses', 'brackets'
+		bookchapteralign: { default: 'left', type: 'string' },
+		bookchapterpos: { default: 'top', type: 'string' }, 	//can be 'top', 'bottom', or 'bottominline'
+		bookchapterwrap: { default: 'none', type: 'string' },	//can be 'none', 'parentheses', 'brackets'
+		showfullreference: { default: false, type: 'boolean' },
+		usebookabbreviation: { default: false, type: 'boolean' },
+		booknameusewplang: { default: false, type: 'boolean' },
+		hideversenumber: { default: false, type: 'boolean' }
 	};
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
-	const { TextControl, SelectControl, RadioControl, CheckboxControl, ToggleControl, Panel, PanelBody, PanelRow, Button, ButtonGroup, /*Radio, RadioGroup,*/ BaseControl } = components; //WordPress form inputs and server-side renderer
+	const { TextControl, SelectControl, Modal, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl } = components; //WordPress form inputs and server-side renderer
 
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
@@ -59,12 +61,10 @@
 
 			function changeBibleVersionAlign(ev){
 				let bibleversionalign = ev.currentTarget.value;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + bibleversionalign+'; }'));
 				setAttributes({ bibleversionalign });
 			}
-
-			/*function changeBibleVersionAlignRG(bibleversionalign){
-				setAttributes({ bibleversionalign });
-			}*/
 
 			function changeBibleVersionPos(ev){
 				let bibleversionpos = ev.currentTarget.value;
@@ -78,6 +78,8 @@
 
 			function changeBookChapterAlign(ev) {
 				let bookchapteralign = ev.currentTarget.value;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ text-align: (?:.*?); \}/, 'div.results .bookChapter { text-align: ' + bookchapteralign + '; }'));
 				setAttributes({ bookchapteralign });
 			}
 
@@ -95,8 +97,91 @@
 				setAttributes({ showfullreference });
 			}
 
+			function changeUseBookAbbreviation(usebookabbreviation){
+				setAttributes({ usebookabbreviation });
+			}
+
+			function changeBookNameUseWpLang(booknameusewplang){
+				setAttributes({ booknameusewplang });
+			}
+
 			function changeVerseNumberVisibility(hideversenumber){
 				setAttributes({ hideversenumber });
+			}
+
+			function doKeywordSearch(keyword){
+				//perhaps an ajax call to the endpoint?
+				console.log($('.bibleGetSearch input').val());
+				console.log(attributes.version);
+				if(attributes.version.length > 1){
+					let dlg = jQuery('<div>', { html: __('You cannot select more than one Bible version when doing a keyword search', 'bibleget-io') }).appendTo('body').dialog({
+						close: function(){
+							$(this).dialog('destroy').remove();
+						},
+						dialogClass: 'bibleGetSearchDlg'
+					});
+					dlg.data("uiDialog")._title = function (title) {
+						title.html(this.options.title);
+					};
+					dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
+				}
+				else if(attributes.version.length === 0){
+					let dlg = jQuery('<div>', { html: __('You must select at least one Bible version in order to do a keyword search', 'bibleget-io') }).appendTo('body').dialog({
+						close: function () {
+							$(this).dialog('destroy').remove();
+						},
+						dialogClass: 'bibleGetSearchDlg'
+					});
+					dlg.data("uiDialog")._title = function (title) {
+						title.html(this.options.title);
+					};
+					dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
+				}
+				else{
+					console.log('making ajax call');
+					$.ajax({
+						type: 'post',
+						url: 'https://query.bibleget.io/search.php',
+						data: { keyword: keyword, version: attributes.version[0], return: 'json' },
+						success: function(results){
+							console.log('successful ajax call, search results:');
+							console.log(results);
+							/*
+							let BOOK = __('BOOK', 'bibleget-io');
+							let CHAPTER = __('CHAPTER', 'bibleget-io');
+							let VERSE = __('VERSE', 'bibleget-io');
+							let VERSETEXT = __('VERSE TEXT', 'bibleget-io');
+							let searchResultsHtmlMarkup = `
+							<div id="tableContainer" id="bibleGetSearchResultsTableContainer">
+								<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable" id="SearchResultsTable">
+									<thead class="fixedHeader">
+										<tr class="alternateRow"><th>${BOOK}</th><th>${CHAPTER}</th><th>${VERSE}</th><th>${VERSETEXT}</th></tr>
+									</thead>
+									<tbody class="scrollContent">
+									</tbody>
+      							</table>
+    						</div>`;
+							let dlg = jQuery('<div>', { html: searchResultsHtmlMarkup }).appendTo('body').dialog({
+								open: function(){
+									populateSearchResultsTable();
+								},
+								close: function () {
+									$(this).dialog('destroy').remove();
+								},
+								dialogClass: 'bibleGetSearchDlg'
+							});
+							dlg.data("uiDialog")._title = function (title) {
+								title.html(this.options.title);
+							};
+							dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
+							*/
+						}
+					});
+				}
+			}
+
+			function doNothing(value){
+				//do nothing
 			}
 
 			var bibleVersionsSelectOptions = [];
@@ -144,6 +229,24 @@
 									help: __('When activated, only the reference to the Bible quote will be shown in the document, and clicking on it will show the text of the Bible quote in a popup window.','bibleget-io'),
 									onChange: changePopup,
 								})
+							),
+							createElement(PanelRow, {},
+								//A simple text control for bible quote search
+								createElement(TextControl, {
+									type: 'text',
+									//value: '',
+									placeholder: __('e.g. Creation', 'bibleget-io'),
+									help: __('You can not choose more than one Bible version when searching by keyword.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
+									label: __('Search for Bible quotes by keyword', 'bibleget-io'),
+									className: 'bibleGetSearch',
+									onChange: doNothing
+								}),
+								createElement(Button, {
+									icon: 'search',
+									isPrimary: true,
+									onClick: doKeywordSearch,
+									className: 'bibleGetSearchBtn'
+								})
 							)
 						),
 						createElement(PanelBody, { title: __('Layout Bible version', 'bibleget-io'), initialOpen: false, icon: 'layout' },
@@ -162,8 +265,6 @@
 											value: 'left',
 											isPrimary: (attributes.bibleversionalign === 'left'),
 											isSecondary: (attributes.bibleversionalign !== 'left'),
-											//isSecondary: true,
-											//isPressed: (attributes.bibleversionalign === 'left'),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align left', 'bibleget-io')
 										}),
@@ -172,8 +273,6 @@
 											value: 'center',
 											isPrimary: (attributes.bibleversionalign === 'center'),
 											isSecondary: (attributes.bibleversionalign !== 'center'),
-											//isSecondary: true,
-											//isPressed: (attributes.bibleversionalign === 'center'),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align center', 'bibleget-io')
 										}),
@@ -182,8 +281,6 @@
 											value: 'right',
 											isPrimary: (attributes.bibleversionalign === 'right'),
 											isSecondary: (attributes.bibleversionalign !== 'right'),
-											//isSecondary: true,
-											//isPressed: (attributes.bibleversionalign === 'right'),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align right', 'bibleget-io')
 										})
@@ -338,7 +435,23 @@
 									help: __('When activated, the full reference including verses quoted will be shown with the book and chapter','bibleget-io'),
 									onChange: changeShowFullReference,
 								})
-							)							
+							),
+							createElement(PanelRow, {},
+								createElement(ToggleControl, {
+									checked: attributes.usebookabbreviation, //default false
+									label: __('Use book abbreviation', 'bibleget-io'),
+									help: __('When activated, the book names will be shown in the abbreviated form', 'bibleget-io'),
+									onChange: changeUseBookAbbreviation,
+								})
+							),
+							createElement(PanelRow, {},
+								createElement(ToggleControl, {
+									checked: attributes.booknameusewplang, //default false
+									label: __('Use WP language','bibleget-io'),
+									help: __('By default the book names are in the language of the Bible version being quoted. If activated, book names will be shown in the language of the WordPress interface','bibleget-io'),
+									onChange: changeBookNameUseWpLang
+								})
+							)
 						),
 						createElement(PanelBody, { title: __('Layout Verses', 'bibleget-io'), initialOpen: false, icon: 'layout' },
 							createElement(PanelRow, {},
@@ -379,6 +492,24 @@
 		return false;
 	});
 
+	/* Someone might say this is the wrong way to do this, but hey I don't care, as long as it works */
+	$(document).on('click', '[data-type="bibleget/bible-quote"]',function(){
+		//if we find a bibleGetSearchBtn element 
+		//and it's still an immediate sibling of a ".bibleGetSearch" element
+		//rather than it's input child, then we move it
+		if ($('.bibleGetSearchBtn').length > 0 && $('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch') ){
+			$('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
+			$('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
+			console.log('we moved the bibleGetSearchBtn');
+		}
+		$('.bibleGetSearch input').on('focus',function(){
+			$('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
+		});
+		$('.bibleGetSearch input').on('blur', function () {
+			$('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color":"#006395" });
+		});
+	});
+
 }(
 	wp.blocks,
 	wp.element,
@@ -406,4 +537,16 @@ String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 		}
 
 		return str;
+	};
+
+var addMark = function (text, keyword) {
+	return text.replace(new RegExp(keyword), '<mark>' + keyword + '</mark>');
+},
+	populateSearchResultsTable = function (searchresults) {
+		let $searchresults = JSON.parse(searchresults);
+		if ($searchresults.hasOwnProperty("results") && typeof $searchresults.results === 'object') {
+			for (let $result of $searchresults.results) {
+				jQuery("#SearchResultsTable tbody").append('<tr><td>' + BibleGetGlobal.biblebooks.fullname[parseInt($result.book) - 1].split('|')[0] + '</td><td>' + $result.chapter + '</td><td>' + $result.verse + '</td><td>' + addMark($result.text, $searchresults.info.keyword) + '</td></tr>');
+			}
+		}
 	};

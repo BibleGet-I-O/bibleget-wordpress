@@ -310,7 +310,8 @@ function bibleget_gutenberg()
 			'wp-i18n',
 			'wp-element',
 			'wp-components',
-			'wp-editor'
+			'wp-editor',
+			'jquery-ui-dialog'
 		),
 		filemtime("$dir/$gutenberg_js")
 	);
@@ -319,7 +320,7 @@ function bibleget_gutenberg()
 	wp_register_style(
 		'bibleget-gutenberg-editor',
 		plugins_url($gutenberg_css, __FILE__),
-		null,
+		array('wp-jquery-ui-dialog'),
 		filemtime("$dir/$gutenberg_css")
 	);
 
@@ -328,7 +329,8 @@ function bibleget_gutenberg()
 	$optionsInfo = new BibleGetSettingsPage();
 	$langCodes = $optionsInfo->getBibleGetLangCodes();
 	$versionsByLang = $optionsInfo->getVersionsByLang();
-	wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'langCodes' => $langCodes, 'versionsByLang' => $versionsByLang));
+	$bibleGetBooksInLang = $optionsInfo->getBibleBookNamesInLang();
+	wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'langCodes' => $langCodes, 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang));
 
 	register_block_type('bibleget/bible-quote', array(
 		'editor_script'		=> 'bibleget-gutenberg-block',
@@ -348,6 +350,8 @@ function bibleget_gutenberg()
 			'bookchapterpos' => ['default' => 'top', 'type' => 'string'],	    //can be 'top', 'bottom', 'bottominline'
 			'bookchapterwrap' => ['default' => 'none', 'type' => 'string' ],    //can be 'none', 'parentheses', 'brackets'
 			'showfullreference' => [ 'default' => false, 'type' => 'boolean' ],
+			'usebookabbreviation' => [ 'default' => false, 'type' => 'boolean' ],
+			'booknameusewplang' => [ 'default' => false, 'type' => 'boolean' ],
 			'hideversenumber' => ['default' => false, 'type' => 'boolean']
 		]
 	));
@@ -513,6 +517,82 @@ function bibleGet_renderGutenbergBlock($atts)
 					}
 				}
 
+
+				if(($atts['usebookabbreviation'] === true || $atts['booknameusewplang'] === true) && $results !== null){
+					$nonDefaultLayout = true;
+					$bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
+					switch($atts['booknameusewplang']){
+						case true:
+							$locale = substr(get_locale(), 0, 2);
+							$languageName = Locale::getDisplayLanguage($locale, 'en');
+							foreach ($bookChapterEls as $bookChapterEl) {
+								$bookNum = (int) $xPath->query('following-sibling::input[@class="bookNum"]', $bookChapterEl)->item(0)->getAttribute("value");
+								$usrprop = "bibleget_biblebooks" . $bookNum;
+								$jsbook = json_decode(get_option($usrprop), true);
+								//get the index of the current language from the available languages
+								$biblebookslangs = get_option("bibleget_languages");
+								$currentLangIdx = array_search($languageName, $biblebookslangs);
+								if ($currentLangIdx === false) {
+									$currentLangIdx = array_search("English", $biblebookslangs);
+								}
+								$lclabbrev = $jsbook[$currentLangIdx][1];
+								$lclbook = $jsbook[$currentLangIdx][0];
+								$bookChapterText = $bookChapterEl->textContent;
+								if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/u", $bookChapterText, $res)) {
+									$bookChapterText = str_replace($res[0], "", $bookChapterText);
+								}
+
+								if($atts['usebookabbreviation'] === true){
+									//use abbreviated form in wp lang
+									$bookChapterEl->textContent = $lclabbrev . $bookChapterText;
+								}
+								else{
+									//use full form in wp lang
+									$bookChapterEl->textContent = $lclbook . $bookChapterText;
+								}
+							}
+						break;
+						case false:
+							if ($atts['usebookabbreviation'] === true) {
+								//use abbreviated form in bible version lang
+								foreach ($bookChapterEls as $bookChapterEl) {
+									$bookAbbrev = $xPath->query('following-sibling::input[@class="bookAbbrev"]', $bookChapterEl)->item(0)->getAttribute("value");
+									$bookChapterText = $bookChapterEl->textContent;
+									if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/u", $bookChapterText, $res)) {
+										$bookChapterText = str_replace($res[0], "", $bookChapterText);
+									}
+									$bookChapterEl->textContent = $bookAbbrev . $bookChapterText;
+								}
+							}
+							else{
+								//this case will never verify here, we wouldn't have to do anything anyway
+								//book name is already full and in bible version lang
+							}
+						break;
+					}
+				}
+
+				/* Make sure to deal with fullreference before you deal with pos or wrap
+				   => if pos is bottominline it will change the p to a span and then we won't know what to look for
+				   => if we have already wrapped then the fullreference will be appended to the parentheses or the brackets!
+				*/
+				if ($atts['showfullreference'] === true && $results !== null) {
+					$nonDefaultLayout = true;
+					$bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
+					foreach ($bookChapterEls as $bookChapterEl) {
+						$text = $bookChapterEl->textContent;
+						$originalQuery = $xPath->query('following-sibling::input[@class="originalQuery"]', $bookChapterEl)->item(0)->getAttribute("value");
+						//remove book from the original query
+						if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2})/u", $originalQuery, $res)) {
+							$originalQuery = str_replace($res[0], "", $originalQuery);
+						}
+						/*if (preg_match("/^/u", $originalQuery, $res)) {
+							$originalQuery = str_replace($res[0], "", $originalQuery);
+						}*/
+						$bookChapterEl->textContent = $text . $originalQuery;
+					}
+				}
+
 				/* Make sure to deal with wrap before you deal with pos, because if pos is bottominline it will change the p to a span and then we won't know what to look for */
 				if ($atts['bookchapterwrap'] !== 'none' && $results !== null) {
 					$nonDefaultLayout = true;
@@ -556,11 +636,18 @@ function bibleGet_renderGutenbergBlock($atts)
 
 				if($atts['hideversenumber'] === true && $results !== null ){
 					$nonDefaultLayout = true;
-					$xPath2 = new DOMXPath($domDocument);
-					$verseNumberEls = $xPath2->query('//span[contains(@class,"verseNum")]');
+					$verseNumberEls = $xPath->query('//span[contains(@class,"verseNum")]');
 					foreach($verseNumberEls as $verseNumberEl){
 						$verseNumberEl->setAttribute("style","display:none;");
 					}
+				}
+
+				if($atts['bibleversionalign'] !== 'left'){
+					set_theme_mod('bibleversionalign', $atts['bibleversionalign']);
+				}
+
+				if ($atts['bookchapteralign'] !== 'left') {
+					set_theme_mod('bookchapteralign', $atts['bookchapteralign']);
 				}
 
 				//If any of the Layout options were not the default options, then we need to update our $output with the new html layout

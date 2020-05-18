@@ -41,11 +41,11 @@ form input[type=color] {
 	color: Blue;
 	margin: 6px;
 }
-
+/*
 #versionlangs-ol {
 	
 }
-
+*/
 #versionlangs-ol>li {
 	font-weight: bold;
 }
