@@ -169,7 +169,7 @@ class BibleGetSettingsPage
 		add_action('admin_init', array($this, 'register_settings'));
 
 		//if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
-		//so let't pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
+		//so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
 		//this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
 		//we will have to leave the transient set to admin_print_scripts
 		switch ($this->gfontsAPIkeyCheck()) { //can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult

@@ -82,8 +82,8 @@ jQuery(document).ready(function($) {
 	});
     
 	if(typeof gfontsBatch !== 'undefined' && typeof gfontsBatch === 'object' && gfontsBatch.hasOwnProperty('job') && gfontsBatch.job.hasOwnProperty('gfontsPreviewJob') && gfontsBatch.job.gfontsPreviewJob === true && gfontsBatch.job.hasOwnProperty('gfontsWeblist') && typeof gfontsBatch.job.gfontsWeblist == 'object' && gfontsBatch.job.gfontsWeblist.hasOwnProperty('items') ){
-        console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
-        console.log(gfontsBatch);
+        //console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
+        //console.log(gfontsBatch);
         
         var startIdx = 0;       //starting index for this batch run
         var gfontsCount = gfontsBatch.job.gfontsWeblist.items.length;
@@ -142,54 +142,6 @@ jQuery(document).ready(function($) {
         //console.log(postdata);
         gfontsBatchRun(postdata);
         
-        
-        /*
-        if(typeof bibleGetOptionsFromServer !== 'undefined' && bibleGetOptionsFromServer.hasOwnProperty('options') && typeof bibleGetOptionsFromServer.options === 'object' && bibleGetOptionsFromServer.options.hasOwnProperty('googlefontsapi_key') && bibleGetOptionsFromServer.options.googlefontsapi_key != ''){
-            //it's not possible to reuse the server side response from the google fonts API because it comes in late, after the localization of admin.js
-            //so we'll just have to do the job ourselves, given that we at least know our api key
-            jQuery.ajax({
-    			type: 'GET',
-    			url: 'https://www.googleapis.com/webfonts/v1/webfonts',
-    			data: {key: bibleGetOptionsFromServer.options.googlefontsapi_key },
-                crossDomain: true,
-                headers: {
-                  "accept": "application/json",
-                  "Access-Control-Allow-Origin":"*"                
-                },
-    			beforeSend: function() {
-    				jQuery('#bibleget_ajax_spinner').show();
-    			},
-    			complete: function() {
-    				jQuery('#bibleget_ajax_spinner').hide();
-    			},
-                success: function(apiJSON){
-                    console.log('response received from Google Fonts API in admin.js ajax call, data returned: ');
-                    console.log(apiJSON);
-                    
-                    gfontsBatch.job.gfontsJSON = apiJSON;
-                    
-                    
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    jQuery("#bibleget-settings-notification")
-    					.fadeIn("slow")
-    					.append('Communication with the Google Fonts API was not successful... ' + thrownError + ' ' + xhr.responseText);
-    				jQuery(".bibleget-settings-notification-dismiss")
-    					.click(function() {
-    						jQuery("#bibleget-settings-notification").fadeOut("slow");
-    					});
-                }
-            });
-        }
-        else{
-            console.log('we at least need the Google Fonts API key from the server, otherwise we can\'t do a thing');
-            console.log('bibleGetOptionsFromServer:');
-            console.log(bibleGetOptionsFromServer);
-        }
-        */
-        
-        
-        
     }
     else{
 //        console.log('We do not seem to have a gfontsPreviewJob');
@@ -224,87 +176,87 @@ var $gfontsBatchRunProgressbarWrapper;
 
 var gfontsBatchRun= function(postdata){
         jQuery.ajax({
-    			type : 'POST',
-    			url : gfontsBatch.job.ajax_url,
-    			data : postdata,
-                dataType: 'json',
-    			beforeSend : function() {
-    				jQuery('#bibleget_ajax_spinner').show();
-                    $gfontsBatchRunProgressbar.progressbar("value");
-                    myProgressInterval = setInterval(updateGfontsBatchRunProgressbarProgress, 1500, postdata.currentRun, postdata.numRuns);
-    			},
-    			complete : function() {
-    				jQuery('#bibleget_ajax_spinner').hide();
-    			},
-    			success : function(returndata) {
-                    clearInterval(myProgressInterval);
-                    var returndataJSON = (typeof returndata !== 'object') ? JSON.parse(returndata) : returndata;
-                    //console.log('gfontsBatchRun success, returndataJSON:');
-                    //console.log(returndataJSON);
-                    if(returndataJSON !== null && typeof returndataJSON === 'object'){
-                        var thisRun = returndataJSON.hasOwnProperty('run') ? returndataJSON.run : false;
-                        if(returndataJSON.hasOwnProperty('errorinfo') && returndataJSON.errorinfo !== false && returndataJSON.errorinfo.length > 0){
-                            //console.log('Some errors were returned from ajax process run '+thisRun);
-                            //console.log(returndataJSON.errorinfo);
-                        	if((returndataJSON.hasOwnProperty('httpStatus2') && returndataJSON.httpStatus2 == 504) || (returndataJSON.hasOwnProperty('httpStatus3') && returndataJSON.httpStatus3 == 504) ){
-                        		//there was a timeout at some point during the communication with the Google Fonts server
-                        		//we haven't finished yet, but let's try not to get stuck
-                        		bibleGetForceRefreshGFapiResults();
-                        	}
-                        }
-                        if(returndataJSON.hasOwnProperty('state')){
-                            switch(returndataJSON.state){
-                                case 'RUN_PROCESSED':
-                                    var maxUpdatePerRun = 100 / postdata.numRuns;
-                                    var maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
-                                    $gfontsBatchRunProgressbar.progressbar("value",maxedOutUpdateThisRun);
+			type : 'POST',
+			url : gfontsBatch.job.ajax_url,
+			data : postdata,
+            dataType: 'json',
+			beforeSend : function() {
+				jQuery('#bibleget_ajax_spinner').show();
+                $gfontsBatchRunProgressbar.progressbar("value");
+                myProgressInterval = setInterval(updateGfontsBatchRunProgressbarProgress, 1500, postdata.currentRun, postdata.numRuns);
+			},
+			complete : function() {
+				jQuery('#bibleget_ajax_spinner').hide();
+			},
+			success : function(returndata) {
+                clearInterval(myProgressInterval);
+                var returndataJSON = (typeof returndata !== 'object') ? JSON.parse(returndata) : returndata;
+                //console.log('gfontsBatchRun success, returndataJSON:');
+                //console.log(returndataJSON);
+                if(returndataJSON !== null && typeof returndataJSON === 'object'){
+                    var thisRun = returndataJSON.hasOwnProperty('run') ? returndataJSON.run : false;
+                    if(returndataJSON.hasOwnProperty('errorinfo') && returndataJSON.errorinfo !== false && returndataJSON.errorinfo.length > 0){
+                        //console.log('Some errors were returned from ajax process run '+thisRun);
+                        //console.log(returndataJSON.errorinfo);
+                    	if((returndataJSON.hasOwnProperty('httpStatus2') && returndataJSON.httpStatus2 == 504) || (returndataJSON.hasOwnProperty('httpStatus3') && returndataJSON.httpStatus3 == 504) ){
+                    		//there was a timeout at some point during the communication with the Google Fonts server
+                    		//we haven't finished yet, but let's try not to get stuck
+                    		bibleGetForceRefreshGFapiResults();
+                    	}
+                    }
+                    if(returndataJSON.hasOwnProperty('state')){
+                        switch(returndataJSON.state){
+                            case 'RUN_PROCESSED':
+                                var maxUpdatePerRun = 100 / postdata.numRuns;
+                                var maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
+                                $gfontsBatchRunProgressbar.progressbar("value",maxedOutUpdateThisRun);
+                                
+                                if(thisRun && thisRun < postdata.numRuns){
+                                    //console.log('gfontsBatchRun was asked to do run '+postdata.currentRun+', and has let us know that it has in fact completed run '+thisRun+', now starting the next run');
+                                    //check if we're doing the last run or not
+                                    if(++postdata.currentRun == postdata.numRuns){
+                                        postdata.batchLimit == postdata.lastBatchLimit;
+                                    }
+                                    postdata.startIdx = postdata.startIdx + postdata.batchLimit;
                                     
-                                    if(thisRun && thisRun < postdata.numRuns){
-                                        console.log('gfontsBatchRun was asked to do run '+postdata.currentRun+', and has let us know that it has in fact completed run '+thisRun+', now starting the next run');
-                                        //check if we're doing the last run or not
-                                        if(++postdata.currentRun == postdata.numRuns){
-                                            postdata.batchLimit == postdata.lastBatchLimit;
-                                        }
-                                        postdata.startIdx = postdata.startIdx + postdata.batchLimit;
-                                        
-                                        //Let's go for another round!
-                                        gfontsBatchRun(postdata);
-                                    }
-                                    else{
-                                        console.log('We seem to have finished our job ahead of time? Please double check: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
-                                    }
-                                    break;
-                                case 'COMPLETE':
-                                    $gfontsBatchRunProgressbar.progressbar("value",100);
+                                    //Let's go for another round!
+                                    gfontsBatchRun(postdata);
+                                }
+                                else{
+                                    //console.log('We seem to have finished our job ahead of time? Please double check: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
+                                }
+                                break;
+                            case 'COMPLETE':
+                                $gfontsBatchRunProgressbar.progressbar("value",100);
 
-                                    if(thisRun == postdata.numRuns){
-                                        //console.log('gfontsBatchRun has finished the job!');                                
-                                    }
-                                    else{
-                                        //console.log('gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
-                                    }
-                                    break;
-                            }
+                                if(thisRun == postdata.numRuns){
+                                    //console.log('gfontsBatchRun has finished the job!');                                
+                                }
+                                else{
+                                    //console.log('gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= '+postdata.numRuns+', thisRun = '+thisRun);
+                                }
+                                break;
                         }
-                        else{
-                            console.log('gfontsBatchRun: Now why do we not have any stateful info?');
-                        }
-                     }
-                     else{
-                        console.log('gfontsBatchRun: Now why do we not have any kind of feedback from the server side script?')
-                     }
-                },
-    			error : function(xhr, ajaxOptions, thrownError) {
-                    clearInterval(myProgressInterval);
-                    jQuery("#bibleget-settings-notification")
-    					.fadeIn("slow")
-    					.append('Communication with the Google Fonts server was not successful... ERROR: ' + thrownError + ' ' + xhr.responseText);
-    				jQuery(".bibleget-settings-notification-dismiss")
-    					.click(function() {
-    						jQuery("#bibleget-settings-notification").fadeOut("slow");
-    					});
-    
-    			}
+                    }
+                    else{
+                        //console.log('gfontsBatchRun: Now why do we not have any stateful info?');
+                    }
+                 }
+                 else{
+                    //console.log('gfontsBatchRun: Now why do we not have any kind of feedback from the server side script?')
+                 }
+            },
+			error : function(xhr, ajaxOptions, thrownError) {
+                clearInterval(myProgressInterval);
+                jQuery("#bibleget-settings-notification")
+					.fadeIn("slow")
+					.append('Communication with the Google Fonts server was not successful... ERROR: ' + thrownError + ' ' + xhr.responseText);
+				jQuery(".bibleget-settings-notification-dismiss")
+					.click(function() {
+						jQuery("#bibleget-settings-notification").fadeOut("slow");
+					});
+
+			}
     	});
 };
 
@@ -346,7 +298,7 @@ var bibleGetForceRefreshGFapiResults = function(){
 						break;
 					case "NOTHING_TO_DO":
 						//That's just it, we won't do anything
-						console.log('It sure seems like there is nothing to do here');
+						//console.log('It sure seems like there is nothing to do here');
 						break;
 				}
 			},

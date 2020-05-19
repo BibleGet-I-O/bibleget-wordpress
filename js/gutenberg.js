@@ -7,22 +7,22 @@
 (function (blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const bbGetShCdAttributes = {
-		query: { default: 'Matthew1:1-5', type: 'string' },
-		version: { default: ['NABRE'], type: 'array', items: { type: 'string' } },
-		popup: { default: false, type: 'boolean' },
-		forceversion: { default: 'false', type: 'string' },
-		forcecopyright: { default: 'false', type: 'string' },
-		hidebibleversion: { default: false, type: 'boolean' },	//if true, bible version will be hidden
-		bibleversionalign: { default: 'left', type: 'string' },
-		bibleversionpos: { default: 'top', type: 'string' },
-		bibleversionwrap: { default: 'none', type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		bookchapteralign: { default: 'left', type: 'string' },
-		bookchapterpos: { default: 'top', type: 'string' }, 	//can be 'top', 'bottom', or 'bottominline'
-		bookchapterwrap: { default: 'none', type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		showfullreference: { default: false, type: 'boolean' },
-		usebookabbreviation: { default: false, type: 'boolean' },
-		booknameusewplang: { default: false, type: 'boolean' },
-		hideversenumber: { default: false, type: 'boolean' }
+		query: 				{ default: 'Matthew1:1-5', type: 'string' },
+		version: 			{ default: ['NABRE'],type: 'array', items: { type: 'string' } },
+		popup: 				{ default: false,	type: 'boolean' },
+		forceversion: 		{ default: false,	type: 'boolean' }, 	//not currently used
+		forcecopyright: 	{ default: false,	type: 'boolean' },	//not currently used
+		hidebibleversion: 	{ default: false,	type: 'boolean' },	//if true, bible version will be hidden
+		bibleversionalign: 	{ default: 'left',	type: 'string' },
+		bibleversionpos: 	{ default: 'top',	type: 'string' },
+		bibleversionwrap: 	{ default: 'none',	type: 'string' },	//can be 'none', 'parentheses', 'brackets'
+		bookchapteralign: 	{ default: 'left',	type: 'string' },
+		bookchapterpos: 	{ default: 'top',	type: 'string' }, 	//can be 'top', 'bottom', or 'bottominline'
+		bookchapterwrap: 	{ default: 'none',	type: 'string' },	//can be 'none', 'parentheses', 'brackets'
+		showfullreference: 	{ default: false,	type: 'boolean' },
+		usebookabbreviation:{ default: false,	type: 'boolean' },
+		booknameusewplang: 	{ default: false,	type: 'boolean' },
+		hideversenumber: 	{ default: false,	type: 'boolean' }
 	};
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment } = element; //React.createElement
@@ -109,10 +109,16 @@
 				setAttributes({ hideversenumber });
 			}
 
-			function doKeywordSearch(keyword){
-				//perhaps an ajax call to the endpoint?
-				console.log($('.bibleGetSearch input').val());
-				console.log(attributes.version);
+			function doKeywordSearch(notused){
+				
+				let keyword = $('.bibleGetSearch input').val().replace(/\W/g, ''); //remove non-word characters from keyword
+				
+				if(keyword.length < 3){
+					alert(__('You cannot perform a search using less than three letters.','bibleget-io') );
+					return false;
+				}
+				//console.log($('.bibleGetSearch input').val());
+				//console.log(attributes.version);
 				if(attributes.version.length > 1){
 					let dlg = jQuery('<div>', { html: __('You cannot select more than one Bible version when doing a keyword search', 'bibleget-io') }).appendTo('body').dialog({
 						close: function(){
@@ -138,43 +144,69 @@
 					dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
 				}
 				else{
-					console.log('making ajax call');
+					//console.log('making ajax call');
 					$.ajax({
 						type: 'post',
-						url: 'https://query.bibleget.io/search.php',
-						data: { keyword: keyword, version: attributes.version[0], return: 'json' },
-						success: function(results){
-							console.log('successful ajax call, search results:');
-							console.log(results);
-							/*
-							let BOOK = __('BOOK', 'bibleget-io');
-							let CHAPTER = __('CHAPTER', 'bibleget-io');
-							let VERSE = __('VERSE', 'bibleget-io');
-							let VERSETEXT = __('VERSE TEXT', 'bibleget-io');
-							let searchResultsHtmlMarkup = `
-							<div id="tableContainer" id="bibleGetSearchResultsTableContainer">
-								<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable" id="SearchResultsTable">
-									<thead class="fixedHeader">
-										<tr class="alternateRow"><th>${BOOK}</th><th>${CHAPTER}</th><th>${VERSE}</th><th>${VERSETEXT}</th></tr>
-									</thead>
-									<tbody class="scrollContent">
-									</tbody>
-      							</table>
-    						</div>`;
-							let dlg = jQuery('<div>', { html: searchResultsHtmlMarkup }).appendTo('body').dialog({
-								open: function(){
-									populateSearchResultsTable();
-								},
-								close: function () {
-									$(this).dialog('destroy').remove();
-								},
-								dialogClass: 'bibleGetSearchDlg'
-							});
-							dlg.data("uiDialog")._title = function (title) {
-								title.html(this.options.title);
-							};
-							dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
-							*/
+						url: BibleGetGlobal.ajax_url,
+						data: { action: 'searchByKeyword', keyword: keyword, version: attributes.version[0] },
+						dataType: 'json',
+						success: function(response){
+							//console.log('successful ajax call, search results:');
+							//console.log(results);
+							if (response.hasOwnProperty("results") && typeof response.results === 'object') {							
+								if(response.results.length === 0){
+									
+									let dlgNoResults = jQuery('<div>', { html: '<h3>'+__('There are no search results for {k} in the version {v}','bibleget-io').formatUnicorn({k:('&lt;'+response.info.keyword+'&gt;'),v:response.info.version}) +'</h3>' }).appendTo('body').dialog({
+										close: function () {
+											$(this).dialog('destroy').remove();
+										},
+										dialogClass: 'bibleGetSearchDlg',
+										//position: { my: 'center', at: 'center' },
+									});
+									dlgNoResults.data("uiDialog")._title = function (title) {
+										title.html(this.options.title);
+									};
+									dlgNoResults.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Search results', 'bibleget-io'));
+									
+								}
+								else{
+									let BOOK = __('BOOK', 'bibleget-io');
+									let CHAPTER = __('CHAPTER', 'bibleget-io');
+									let VERSE = __('VERSE', 'bibleget-io');
+									let VERSETEXT = __('VERSE TEXT', 'bibleget-io');
+									let searchResultsHtmlMarkup = `
+									<div>${response.results.length > 1 ? __('There are {n} results', 'bibleget-io').formatUnicorn({n: response.results.length}) : __('There is 1 result','bibleget-io') }:</div>
+									<div id="bibleGetSearchResultsTableContainer">
+										<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable" id="SearchResultsTable">
+											<thead class="fixedHeader">
+												<tr class="alternateRow"><th>${BOOK}</th><th>${CHAPTER}</th><th>${VERSE}</th><th>${VERSETEXT}</th></tr>
+											</thead>
+											<tbody class="scrollContent">
+											</tbody>
+										</table>
+									</div>`;
+									let dlg = jQuery('<div>', { html: searchResultsHtmlMarkup }).appendTo('body').dialog({
+										open: function(){
+												for (let $result of response.results) {
+													jQuery("#SearchResultsTable tbody").append('<tr><td>' + BibleGetGlobal.biblebooks.fullname[parseInt($result.book) - 1].split('|')[0] + '</td><td>' + $result.chapter + '</td><td>' + $result.verse + '</td><td>' + addMark($result.text, response.info.keyword) + '</td></tr>');
+												}
+										},
+										close: function () {
+											$(this).dialog('destroy').remove();
+										},
+										dialogClass: 'bibleGetSearchDlg',
+										position: {my:'center top',at:'center top'},
+										width: '80%'//,
+									});
+									dlg.data("uiDialog")._title = function (title) {
+										title.html(this.options.title);
+									};
+									dlg.dialog('option', 'title', '<span class="dashicons dashicons-code-standards"></span>' + __('Search results', 'bibleget-io'));
+								}
+							}
+						},
+						error: function (jqXHR, textStatus, errorThrown ){
+							console.log('there has been an error: '+textStatus+' :: '+errorThrown);
 						}
 					});
 				}
@@ -500,7 +532,7 @@
 		if ($('.bibleGetSearchBtn').length > 0 && $('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch') ){
 			$('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
 			$('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
-			console.log('we moved the bibleGetSearchBtn');
+			//console.log('we moved the bibleGetSearchBtn');
 		}
 		$('.bibleGetSearch input').on('focus',function(){
 			$('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
@@ -539,14 +571,6 @@ String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 		return str;
 	};
 
-var addMark = function (text, keyword) {
-	return text.replace(new RegExp(keyword), '<mark>' + keyword + '</mark>');
-},
-	populateSearchResultsTable = function (searchresults) {
-		let $searchresults = JSON.parse(searchresults);
-		if ($searchresults.hasOwnProperty("results") && typeof $searchresults.results === 'object') {
-			for (let $result of $searchresults.results) {
-				jQuery("#SearchResultsTable tbody").append('<tr><td>' + BibleGetGlobal.biblebooks.fullname[parseInt($result.book) - 1].split('|')[0] + '</td><td>' + $result.chapter + '</td><td>' + $result.verse + '</td><td>' + addMark($result.text, $searchresults.info.keyword) + '</td></tr>');
-			}
-		}
-	};
+let addMark = function (text, keyword) {
+	return text.replace(new RegExp("("+keyword+")", "gi"), '<mark>$1</mark>');
+};

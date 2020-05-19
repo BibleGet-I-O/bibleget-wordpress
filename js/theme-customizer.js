@@ -70,7 +70,7 @@
 
 	wp.customize( 'bibleget_textalign', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses').css('text-align', newval );
+			$('div.results .versesParagraph').css('text-align', newval );
 		} );
 	} );
 
@@ -128,79 +128,79 @@
 
 	wp.customize( 'version_fontcolor', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.version').css('color', newval );
+			$('div.results .bibleVersion').css('color', newval );
 		} );
 	} );
 
 	wp.customize( 'bookchapter_fontcolor', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.book').css('color', newval );
+			$('div.results .bookChapter').css('color', newval );
 		} );
 	} );
 
 	wp.customize( 'versenumber_fontcolor', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses span.sup').css('color', newval );
+			$('div.results .versesParagraph .verseNum').css('color', newval );
 		} );
 	} );
 
 	wp.customize( 'versetext_fontcolor', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses').css('color', newval );
+			$('div.results .versesParagraph').css('color', newval );
 		} );
 	} );
 
 	wp.customize( 'version_fontsize', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.version').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
+			$('div.results .bibleVersion').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
 		} );
 	} );
 
 	wp.customize( 'bookchapter_fontsize', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.book').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
+			$('div.results .bookChapter').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
 		} );
 	} );
 
 	wp.customize( 'versenumber_fontsize', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses span.sup').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
+			$('div.results .versesParagraph .verseNum').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
 		} );
 	} );
 
 	wp.customize( 'versetext_fontsize', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
+			$('div.results .versesParagraph').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
 		} );
 	} );
 
 	wp.customize( 'version_fontstyle', function( value ) {
 		value.bind( function( newval ) {
-			dosetstyles($('div.results p.version'),newval.split(','));
+			dosetstyles($('div.results .bibleVersion'),newval.split(','));
 		} );
 	} );
 
 	wp.customize( 'bookchapter_fontstyle', function( value ) {
 		value.bind( function( newval ) {
-			dosetstyles($('div.results p.book'),newval.split(','));
+			dosetstyles($('div.results .bookChapter'),newval.split(','));
 		} );
 	} );
 
 	wp.customize( 'versenumber_fontstyle', function( value ) {
 		value.bind( function( newval ) {
-			dosetstyles($('div.results p.verses span.sup'),newval.split(','));
+			dosetstyles($('div.results .versesParagraph .verseNum'),newval.split(','));
 		} );
 	} );
 
 	wp.customize( 'versetext_fontstyle', function( value ) {
 		value.bind( function( newval ) {
-			dosetstyles($('div.results p.verses'),newval.split(','));
+			dosetstyles($('div.results .versesParagraph'),newval.split(','));
 		} );
 	} );
 
 	wp.customize( 'linespacing_verses', function( value ) {
 		value.bind( function( newval ) {
-			$('div.results p.verses').css('line-height', newval.toString()+'%' );
+			$('div.results .versesParagraph').css('line-height', newval.toString()+'%' );
 		} );
 	} );
 

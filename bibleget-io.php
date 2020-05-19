@@ -340,8 +340,8 @@ function bibleget_gutenberg()
 			'query' => ['default' => "Matthew1:1-5", 'type' => 'string'],
 			'version' => ['default' => ["NABRE"], 'type' => 'array', 'items' => ['type' => 'string']],
 			'popup' => ['default' => false, 'type' => 'boolean'],
-			'forceversion' => ['default' => 'false', 'type' => 'string'],
-			'forcecopyright' => ['default' => 'false', 'type' => 'string'],
+			'forceversion' => ['default' => false, 'type' => 'boolean'], //not currently used
+			'forcecopyright' => ['default' => false, 'type' => 'boolean'], //not currently used
 			'hidebibleversion' => ['default' => false, 'type' => 'boolean'],
 			'bibleversionalign' => [ 'default' => 'left', 'type' => 'string' ], //can be 'left', 'center', 'right'
 			'bibleversionpos' => [ 'default' => 'top', 'type' => 'string' ],	//can be 'top', 'bottom'
@@ -478,6 +478,7 @@ function bibleGet_renderGutenbergBlock($atts)
 						break;
 						case 1:
 							$bibleVersionEl = $bibleVersionEls->item(0);
+							$results->appendChild($bibleVersionEl);
 						break;
 						default:
 							foreach ($bibleVersionEls as $bibleVersionEl) {
@@ -1461,6 +1462,45 @@ function bibleGetSetOptions()
 	}
 }
 add_action('wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions');
+
+function searchByKeyword(){
+	$keyword = $_POST['keyword'];
+	$version = $_POST['version'];
+	$request = "query=keywordsearch&return=json&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION . "&version=" . $version . "&keyword=" . $keyword;
+	$ch = curl_init("https://query.bibleget.io/search.php");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS,$request);
+	if (ini_get('safe_mode') || ini_get('open_basedir')) {
+		// safe mode is on, we can't use some settings
+	} else {
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+	}
+	$output = curl_exec($ch);
+	$info = curl_getinfo($ch);
+
+	if(curl_errno($ch)){
+		$error = new stdClass();
+		$error->errno = curl_errno($ch);
+		$error->message = curl_error($ch);
+		$error->request = $request;
+		echo json_encode($error);
+	}
+	// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
+	else if ($info["http_code"] != 200) {
+		echo json_encode($info);
+	}
+	else if ($output) {
+		echo $output;
+	}
+	curl_close($ch);
+	wp_die();
+}
+add_action("wp_ajax_searchByKeyword", "searchByKeyword");
 
 if (is_admin()) {
 	$bibleget_settings_page = new BibleGetSettingsPage();

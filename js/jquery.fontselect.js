@@ -314,7 +314,7 @@
 				} // END IF FONT
 				this.$original.data('fonttype',fontType); 
                 this.$original.attr('data-fonttype',fontType);
-				console.log('>>>> setting this.$original.data("fonttype") to:' +fontType);
+				//console.log('>>>> setting this.$original.data("fonttype") to:' +fontType);
 				this.updateSelected(); //this will download the full font set for google fonts, which is useful so that preview text will be shown in this font
 				this.getVisibleFonts();
 				this.bindEvents();
@@ -354,7 +354,7 @@
 				var fontType = $('li.active', this.$results).data('fonttype');
 				this.$original.data('fonttype',fontType);
                 this.$original.attr('data-fonttype',fontType);
-				console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
+				//console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
 				this.$original.val(font).change();
 				this.updateSelected();
 				this.toggleDrop();
@@ -363,17 +363,17 @@
 			Fontselect.prototype.moveToSelected = function(){
 
 				var $li, font = this.$original.val();
-				console.log("value of font: " + font);
+				//console.log("value of font: " + font);
 				if (font){
-					console.log("now finding the corresponding li element...");
+					//console.log("now finding the corresponding li element...");
 					$li = $("li[data-value='"+ font +"']", this.$results);
-					console.log($li);
+					//console.log($li);
 				} else {
 					$li = $("li", this.$results).first();
 				}
 				$li.addClass('active');
 				var pos = $li.position().top;
-				console.log("this li's position is: " + pos);
+				//console.log("this li's position is: " + pos);
 				if(pos > 100) this.$results.scrollTop($li.position().top);
 			};
 
@@ -391,7 +391,7 @@
 
 				var font = this.$original.val();
 				var fontType = this.$original.data('fonttype');
-				console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
+				//console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
 				if(fontType == 'googlefont'){
 					$('span', this.$element).text(this.toReadable(font)).css(this.toStyle(font));
 					var link = this.options.api + font;
@@ -567,7 +567,7 @@
                             return new Fontselect($ths, settings, $.fontselect.google_fonts);
                         },
                         error: function(jqXHR, textStatus, errorThrown){
-                            console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
+                            //console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
                         }
                     });
                 }
