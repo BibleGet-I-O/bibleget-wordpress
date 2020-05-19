@@ -3,16 +3,18 @@ Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
 Requires at least: 3.3
-Tested up to: 5.4
-Stable tag: 5.3
+Tested up to: 5.4.1
+Stable tag: 5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages; uses the BibleGet I/O Service endpoint.
+A shortcode [bibleget] and a Gutenberg block for inserting Bible quotes in articles or pages; uses the BibleGet I/O Service endpoint.
 
 == Description ==
 
-Creates a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages from different versions of the Bible in different languages.
+Once the plugin is installed, you will find the "BibleGet" Gutenberg block in the "widgets" section of the block editor. 
+Also available is a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages from different versions of the Bible in different languages.
+
 The text of the Bible quotes are retrieved from the BibleGet service endpoint *[https://query.bibleget.io](https://query.bibleget.io "BibleGet Service endpoint")*.
 **USAGE:** [bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"] 
 **USAGE:** [bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"] 
@@ -26,6 +28,8 @@ Once the preferred version is set you can simply use:
 **USAGE:** [bibleget query=“1 Cor 13”] 
 
 The style settings are customizable using the Wordpress Customizer, so that the injected Bible quotes may fit into the style of your own blog / WordPress website.
+
+The Gutenberg block has a number of customizable options for the layout of the elements that make up the Bible quote.
 
 https://youtu.be/zqJqU_5UZ5M
 _________
@@ -76,14 +80,20 @@ The BibleGet plugin will remember that your key is valid for 3 months. This mean
 = I added the Google Fonts API key but while it was processing the download it stopped with a 504 http status error =
 If you receive a 504 http status error it means that the connection with the Google Fonts API timed out for some reason. The BibleGet plugin tries to handle this situation by forcing the process to start again, but if instead the process comes to a halt please let the plugin author know at admin@bibleget.io in order to look further into the handling of this situation. In any case you can reload the page and use the "force refresh" option below your API key and the process will pick up where it left off.
 
+
 == Screenshots ==
 
-1. A Bible Quote produced from usage of the shortcode in an article (screenshot-1.png).
-2. Options page - font and style settings (screenshot-2.png).
-3. Options page - edit the CSS stylesheet directly (screenshot-3.png).
-4. Options page - information from the BibleGet server about available versions and supported languages (screenshot-4.png).
+1. Inserting a Bible quote block into an article or page (Screenshot-1.jpg)
+2. Bible quote block: choose Bible version and insert Bible reference (Screenshot-2.jpg)
+3. Search results for search verses by keyword(Screenshot-3.jpg)
+4. Layout options for Bible version, Book and chapter reference... (Screenshot-4.jpg)
+5. Styling options with the WordPress Customizer (Screenshot-5.jpg)
+6. Settings page: Google Fonts API key (Screenshot-6.jpg)
 
 == Changelog ==
+
+= 5.4 =
+* created Gutenberg block
 
 = 5.3 =
 * Cleaner interface for the Google Fonts API key and better handling of different scenarios with more control in the admin interface
@@ -242,6 +252,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 
 == Upgrade Notice ==
+
+= 5.4 =
+Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
 
 = 5.3 =
 Versions prior to 5.1 must be updated. v5.3 brings a better interface and admin controls for the Google Fonts API
