@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
 Requires at least: 3.3
 Tested up to: 5.4.1
-Stable tag: 5.5
+Stable tag: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ The style settings are customizable using the Wordpress Customizer, so that the 
 
 The Gutenberg block has a number of customizable options for the layout of the elements that make up the Bible quote.
 
+https://youtu.be/KWd_q6e8A2w
 https://youtu.be/zqJqU_5UZ5M
 _________
 
@@ -83,14 +84,17 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 == Screenshots ==
 
-1. Inserting a Bible quote block into an article or page (Screenshot-1.png)
-2. Bible quote block: choose Bible version and insert Bible reference (Screenshot-2.png)
-3. Search results for search verses by keyword(Screenshot-3.png)
-4. Layout options for Bible version, Book and chapter reference... (Screenshot-4.png)
-5. Styling options with the WordPress Customizer (Screenshot-5.png)
-6. Settings page: Google Fonts API key (Screenshot-6.png)
+1. Inserting a Bible quote block into an article or page (screenshot-1.png)
+2. Bible quote block: choose Bible version and insert Bible reference (screenshot-2.png)
+3. Search results for search verses by keyword (screenshot-3.png)
+4. Layout options for Bible version, Book and chapter reference... (screenshot-4.png)
+5. Styling options with the WordPress Customizer (screenshot-5.png)
+6. Settings page: Google Fonts API key (screenshot-6.png)
 
 == Changelog ==
+
+= 5.6 =
+* turn off PHP error reporting!
 
 = 5.5 =
 * Bugfix: fixed a cleanup error on removal of the plugin
@@ -255,6 +259,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 
 == Upgrade Notice ==
+
+= 5.6 =
+Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
 
 = 5.5 =
 Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
