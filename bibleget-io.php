@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 5.4
+ * Version: 5.5
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -29,7 +29,7 @@
 
 //TODO: better ui for the customizer, use sliders
 
-define("BIBLEGETPLUGINVERSION", "v5_4");
+define("BIBLEGETPLUGINVERSION", "v5_5");
 
 if (!defined('ABSPATH')) {
 	header('Status: 403 Forbidden');
@@ -1375,15 +1375,16 @@ function bibleGetDeleteOptions()
 	// DELETE BIBLEGET_LANGUAGES CACHED INFO
 	delete_option("bibleget_languages");
 
-	// DELETE BIBLEGET_VERSIONS CACHED INFO
-	$bibleversions = json_decode(get_option("bibleget_versions"));
-	delete_option("bibleget_versions");
 
 	// DELETE BIBLEGET_VERSIONINDEX CACHED INFO
-	$bibleversionsabbrev = get_object_vars($bibleversions);
+	$bibleversionsabbrev = array_keys(get_option("bibleget_versions",array()));
 	foreach ($bibleversionsabbrev as $abbrev) {
 		delete_option("bibleget_" . $abbrev . "IDX");
 	}
+
+	// DELETE BIBLEGET_VERSIONS CACHED INFO
+	delete_option("bibleget_versions");
+
 }
 
 

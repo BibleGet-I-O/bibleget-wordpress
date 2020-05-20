@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
 Requires at least: 3.3
 Tested up to: 5.4.1
-Stable tag: 5.4
+Stable tag: 5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,14 +83,17 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 == Screenshots ==
 
-1. Inserting a Bible quote block into an article or page (Screenshot-1.jpg)
-2. Bible quote block: choose Bible version and insert Bible reference (Screenshot-2.jpg)
-3. Search results for search verses by keyword(Screenshot-3.jpg)
-4. Layout options for Bible version, Book and chapter reference... (Screenshot-4.jpg)
-5. Styling options with the WordPress Customizer (Screenshot-5.jpg)
-6. Settings page: Google Fonts API key (Screenshot-6.jpg)
+1. Inserting a Bible quote block into an article or page (Screenshot-1.png)
+2. Bible quote block: choose Bible version and insert Bible reference (Screenshot-2.png)
+3. Search results for search verses by keyword(Screenshot-3.png)
+4. Layout options for Bible version, Book and chapter reference... (Screenshot-4.png)
+5. Styling options with the WordPress Customizer (Screenshot-5.png)
+6. Settings page: Google Fonts API key (Screenshot-6.png)
 
 == Changelog ==
+
+= 5.5 =
+* Bugfix: fixed a cleanup error on removal of the plugin
 
 = 5.4 =
 * created Gutenberg block
@@ -252,6 +255,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 
 == Upgrade Notice ==
+
+= 5.5 =
+Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
 
 = 5.4 =
 Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
