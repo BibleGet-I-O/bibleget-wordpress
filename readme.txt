@@ -84,12 +84,13 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 == Screenshots ==
 
-1. Inserting a Bible quote block into an article or page (screenshot-1.png)
-2. Bible quote block: choose Bible version and insert Bible reference (screenshot-2.png)
-3. Search results for search verses by keyword (screenshot-3.png)
-4. Layout options for Bible version, Book and chapter reference... (screenshot-4.png)
-5. Styling options with the WordPress Customizer (screenshot-5.png)
-6. Settings page: Google Fonts API key (screenshot-6.png)
+1. Inserting a Bible quote block into an article or page
+2. Bible quote block: choose Bible version and insert Bible reference
+3. Search results for search verses by keyword
+4. Layout options for Bible version, Book and chapter reference...
+5. Styling options with the WordPress Customizer
+# REMEMBER: screenshots are stored in the project assets folder. The extension doesn't matter, what matters is the file name
+# must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
 
