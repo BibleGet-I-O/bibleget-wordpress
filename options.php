@@ -428,7 +428,7 @@ class BibleGetSettingsPage
 		if ($this->gfontsAPIkeyCheckResult == "SUCCESS") {
 			//We only want the transient to be set from the bibleget settings page, so we wait until now
 			// instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
-			set_transient(md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
+			set_transient(TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
 
 			$plugin_path = "";
 			// bibleGetWriteLog("about to initialize creation of admin page...");
@@ -638,7 +638,7 @@ class BibleGetSettingsPage
 	public function googlefontsapikey_callback()
 	{
 
-		echo '<label for="googlefontsapi_key">' . __("Google Fonts API Key", "bibleget-io") . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfontsAPIkey . '" style="width:100%;" /></label>';
+		echo '<label for="googlefontsapi_key">' . __("Google Fonts API Key", "bibleget-io") . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfontsAPIkey . '" size="50" /></label>';
 		if ($this->gfontsAPIkeyCheckResult) {
 			switch ($this->gfontsAPIkeyCheckResult) {
 				case "SUCCESS":
@@ -717,7 +717,7 @@ class BibleGetSettingsPage
 			$this->gfontsAPIkey = $this->options['googlefontsapi_key'];
 
 			//has this key been tested in the past 3 months at least?
-			if (false === ($result = get_transient(md5($this->options['googlefontsapi_key'])))) {
+			if (false === ($result = get_transient(TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key'])))) {
 
 				//We will make a secure connection to the Google Fonts API endpoint
 				$curl_version = curl_version();
@@ -778,7 +778,7 @@ class BibleGetSettingsPage
 				//we have a previously saved api key which has been tested
 				//$result is not false
 				global $wpdb;
-				$transientKey = md5($this->options['googlefontsapi_key']);
+				$transientKey = TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key']);
 				$transient_timeout = $wpdb->get_col("
                   SELECT option_value
                   FROM $wpdb->options
@@ -979,8 +979,8 @@ class BibleGetSettingsPage
 	{
 		check_ajax_referer('refresh_gfonts_results_nonce', 'security', TRUE); //no need for an "if", it will die if not valid
 		if (isset($_POST["gfontsApiKey"]) && $_POST["gfontsApiKey"] != "") {
-			if (get_transient(md5($_POST["gfontsApiKey"]))) {
-				delete_transient(md5($_POST["gfontsApiKey"]));
+			if (get_transient(TRANSIENT_PREFIX.md5($_POST["gfontsApiKey"]))) {
+				delete_transient(TRANSIENT_PREFIX.md5($_POST["gfontsApiKey"]));
 				echo 'TRANSIENT_DELETED';
 				wp_die();
 			}

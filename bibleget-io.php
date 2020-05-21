@@ -3,7 +3,7 @@
  * Plugin Name: BibleGet I/O
  * Version: 5.6
  * Plugin URI: https://www.bibleget.io/
- * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the shortcode [bibleget].
+ * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
  * Author URI: https://www.johnromanodorazio.com/
  * Text Domain: bibleget-io
@@ -36,6 +36,8 @@ if (!defined('ABSPATH')) {
 	header('HTTP/1.1 403 Forbidden');
 	exit();
 }
+
+define("TRANSIENT_PREFIX","bibleget_");
 
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
@@ -112,8 +114,8 @@ function BibleGet_on_uninstall()
 	//Check if we have a Google Fonts API key transient, if so remove it
 	$BibleGetOptions = get_option('bibleget_settings');
 	if (isset($BibleGetOptions['googlefontsapi_key']) && $BibleGetOptions['googlefontsapi_key'] != "") {
-		if (get_transient(md5($BibleGetOptions['googlefontsapi_key']))) {
-			delete_transient(md5($BibleGetOptions['googlefontsapi_key']));
+		if (get_transient(TRANSIENT_PREFIX.md5($BibleGetOptions['googlefontsapi_key']))) {
+			delete_transient(TRANSIENT_PREFIX.md5($BibleGetOptions['googlefontsapi_key']));
 		}
 	}
 
@@ -244,13 +246,13 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
 		// bibleGetWriteLog("value of finalquery = ".$finalquery);
 		if ($finalquery != "") {
 
-			if (false === ($output = get_transient(md5($finalquery)))) {
+			if (false === ($output = get_transient(TRANSIENT_PREFIX.md5($finalquery)))) {
 				// $output = $finalquery;
 				// return '<div class="bibleget-quote-div">' . $output . '</div>';
 				$output = bibleGetQueryServer($finalquery);
 				if ($output) {
 					$output = str_replace(PHP_EOL, '', $output);
-					set_transient(md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
+					set_transient(TRANSIENT_PREFIX.md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
 				} else {
 					$output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
 				}
@@ -427,13 +429,13 @@ function bibleGet_renderGutenbergBlock($atts)
 		// bibleGetWriteLog("value of finalquery = ".$finalquery);
 		if ($finalquery != "") {
 
-			if (false === ($output = get_transient(md5($finalquery)))) {
+			if (false === ($output = get_transient(TRANSIENT_PREFIX.md5($finalquery)))) {
 				// $output = $finalquery;
 				// return '<div class="bibleget-quote-div">' . $output . '</div>';
 				$output = bibleGetQueryServer($finalquery);
 				if ($output) {
 					$output = str_replace(PHP_EOL, '', $output);
-					set_transient(md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
+					set_transient(TRANSIENT_PREFIX.md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
 				} else {
 					$output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
 				}
@@ -534,16 +536,17 @@ function bibleGet_renderGutenbergBlock($atts)
 								if ($currentLangIdx === false) {
 									$currentLangIdx = array_search("English", $biblebookslangs);
 								}
-								$lclabbrev = $jsbook[$currentLangIdx][1];
 								$lclbook = $jsbook[$currentLangIdx][0];
+								$lclabbrev = $jsbook[$currentLangIdx][1];
 								$bookChapterText = $bookChapterEl->textContent;
-								if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/u", $bookChapterText, $res)) {
+								//Remove book name from the string (check includes any possible spaces in the book name)
+								if (preg_match('/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $bookChapterText, $res)) {
 									$bookChapterText = str_replace($res[0], "", $bookChapterText);
 								}
 
 								if($atts['usebookabbreviation'] === true){
 									//use abbreviated form in wp lang
-									$bookChapterEl->textContent = $lclabbrev . $bookChapterText;
+									$bookChapterEl->textContent = $lclabbrev  . $bookChapterText;
 								}
 								else{
 									//use full form in wp lang
@@ -557,7 +560,7 @@ function bibleGet_renderGutenbergBlock($atts)
 								foreach ($bookChapterEls as $bookChapterEl) {
 									$bookAbbrev = $xPath->query('following-sibling::input[@class="bookAbbrev"]', $bookChapterEl)->item(0)->getAttribute("value");
 									$bookChapterText = $bookChapterEl->textContent;
-									if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/u", $bookChapterText, $res)) {
+									if (preg_match('/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $bookChapterText, $res)) {
 										$bookChapterText = str_replace($res[0], "", $bookChapterText);
 									}
 									$bookChapterEl->textContent = $bookAbbrev . $bookChapterText;

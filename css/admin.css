@@ -7,11 +7,6 @@ h2#bibleget-h2:before {
 	margin-right: 0.3em;
 }
 
-#page-wrap>div.leftfloat {
-	float: left;
-	width: 45%;
-}
-
 .page-clear {
 	clear: both;
 }
