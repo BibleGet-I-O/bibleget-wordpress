@@ -4,6 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
 Requires at least: 5.0
 Tested up to: 5.4.1
+Requires PHP: 5.4
 Stable tag: 5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,7 +13,7 @@ A shortcode [bibleget] and a Gutenberg block for inserting Bible quotes in artic
 
 == Description ==
 
-Once the plugin is installed, you will find the "BibleGet" Gutenberg block in the "widgets" section of the block editor. 
+Once the plugin is installed, you will find the "Bible quote" Gutenberg block in the "widgets" section of the block editor. 
 Also available is a shortcode [bibleget] that you can use to insert Bible quotes in articles or pages from different versions of the Bible in different languages.
 
 The text of the Bible quotes are retrieved from the BibleGet service endpoint *[https://query.bibleget.io](https://query.bibleget.io "BibleGet Service endpoint")*.
@@ -32,6 +33,7 @@ The style settings are customizable using the Wordpress Customizer, so that the 
 The Gutenberg block has a number of customizable options for the layout of the elements that make up the Bible quote.
 
 https://youtu.be/KWd_q6e8A2w
+
 https://youtu.be/zqJqU_5UZ5M
 _________
 
