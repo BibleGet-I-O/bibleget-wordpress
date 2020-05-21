@@ -72,6 +72,30 @@ form input[type=color] {
 	left: 0;
 }
 
+#bibleget-settings-contents .flexcontainer {
+	display: flex;
+	justify-content: space-evenly;
+	padding: 15px;
+	margin: 15px;
+	border: 1px solid lightgray;
+	border-radius: 6px;
+}
+
+#bibleget-settings-contents .flexcontainer .flexitem {
+	flex-grow: 1;
+	margin: 15px;
+	border-right: 1px solid gray;
+}
+
+#bibleget-settings-contents .flexcontainer .flexitem:last-child {
+	border-right: 0px;
+}
+
+#bibleget-settings-contents .flexcontainer .flexitem button {
+	display: block;
+	margin: 0px auto;
+}
+
 #bibleget_ajax_spinner {
 	position: absolute;
 	background-color: rgba(0, 0, 0, 0.7);
@@ -179,4 +203,10 @@ form input[type=color] {
 }
 #biblegetForceRefreshGFapiResults:hover,#biblegetGFapiKeyRetest:hover {
 	text-decoration: underline;
+}
+
+#versionselect {
+	overflow-y: hidden;
+	max-width: 100%;
+	width: 30em;
 }

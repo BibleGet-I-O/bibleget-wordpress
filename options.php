@@ -428,7 +428,7 @@ class BibleGetSettingsPage
 		if ($this->gfontsAPIkeyCheckResult == "SUCCESS") {
 			//We only want the transient to be set from the bibleget settings page, so we wait until now
 			// instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
-			set_transient(TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
+			set_transient(md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
 
 			$plugin_path = "";
 			// bibleGetWriteLog("about to initialize creation of admin page...");
@@ -543,8 +543,16 @@ class BibleGetSettingsPage
 							echo "<div class=\"bibleget-dynamic-data-wrapper\">" . implode(", ", $this->biblebookslangs) . "</div>";
 							?></li>
 					</ol>
-					<p><?php _e("This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.", "bibleget-io"); ?></p>
-					<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e("RENEW INFORMATION FROM BIBLEGET SERVER", "bibleget-io") ?></button>
+					<div class="flexcontainer">
+						<div class="flexitem">
+							<p><?php _e("This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.", "bibleget-io"); ?></p>
+							<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e("RENEW INFORMATION FROM BIBLEGET SERVER", "bibleget-io") ?></button>
+						</div>
+						<div class="flexitem">
+							<p><?php _e("If there has been a recent update to the plugin with new functionality, or a recent update to the BibleGet endpoint engine, you may have to flush the cached Bible quotes in order for any new functionalities to work correctly. The cached Bible quotes will be emptied within a week, click here to flush them immediately.", "bibleget-io"); ?></p>
+							<button id="bibleget-cache-flush-btn" class="button button-secondary"><?php _e("FLUSH CACHED BIBLE QUOTES", "bibleget-io") ?></button>
+						</div>
+					</div>
 				</div>
 				<div id="bibleget_ajax_spinner"><img src="<?php echo admin_url(); ?>images/wpspin_light-2x.gif" /></div>
 			</div>
@@ -632,6 +640,7 @@ class BibleGetSettingsPage
 			echo '</optgroup>';
 		}
 		echo '</select>';
+		echo '<br /><i>'.__("In order to select multiple items, hold down CTRL key (Command key on Mac) while clicking items.","bibleget-io").'</i>';
 		echo '<input type="hidden" id="favorite_version" name="bibleget_settings[favorite_version]" value="" />';
 	}
 
@@ -662,14 +671,14 @@ class BibleGetSettingsPage
 					$gfontsAPIkeyTimeLeft = (count($timeLeft) > 0) ? "[" . implode(", ", $timeLeft) . "]" : "";
 
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">' . __("VALID", "bibleget-io") . '</span>';
+					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">' . __("VALID", "bibleget-io") . '</span><br />';
 					echo ' <i>' . sprintf(__("Google Fonts API refresh scheduled in: %s", "bibleget-io"), $gfontsAPIkeyTimeLeft);
 					echo ' ' . sprintf(__("OR %s Click here %s to force refresh the list of fonts from the Google Fonts API", "bibleget-io"), '<span id="biblegetForceRefreshGFapiResults">', '</span>');
 					echo '</i>';
 					break;
 				case "CURL_ERROR":
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __("CURL ERROR WHEN SENDING REQUEST", "bibleget-io") . '</span>';
+					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __("CURL ERROR WHEN SENDING REQUEST", "bibleget-io") . '</span><br />';
 					foreach ($this->gfontsAPI_errors as $er) {
 						if ($er == 403) {
 							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
@@ -683,11 +692,11 @@ class BibleGetSettingsPage
 					break;
 				case "JSON_ERROR":
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">' . __("NO VALID JSON RESPONSE", "bibleget-io") . '</span>';
+					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">' . __("NO VALID JSON RESPONSE", "bibleget-io") . '</span><br />';
 					break;
 				case "REQUEST_NOT_SENT":
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">' . __("SERVER UNABLE TO MAKE REQUESTS", "bibleget-io") . '</span>';
+					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">' . __("SERVER UNABLE TO MAKE REQUESTS", "bibleget-io") . '</span><br />';
 					break;
 			}
 		} else {
@@ -717,7 +726,7 @@ class BibleGetSettingsPage
 			$this->gfontsAPIkey = $this->options['googlefontsapi_key'];
 
 			//has this key been tested in the past 3 months at least?
-			if (false === ($result = get_transient(TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key'])))) {
+			if (false === ($result = get_transient(md5($this->options['googlefontsapi_key'])))) {
 
 				//We will make a secure connection to the Google Fonts API endpoint
 				$curl_version = curl_version();
@@ -778,7 +787,7 @@ class BibleGetSettingsPage
 				//we have a previously saved api key which has been tested
 				//$result is not false
 				global $wpdb;
-				$transientKey = TRANSIENT_PREFIX.md5($this->options['googlefontsapi_key']);
+				$transientKey = md5($this->options['googlefontsapi_key']);
 				$transient_timeout = $wpdb->get_col("
                   SELECT option_value
                   FROM $wpdb->options
@@ -979,8 +988,8 @@ class BibleGetSettingsPage
 	{
 		check_ajax_referer('refresh_gfonts_results_nonce', 'security', TRUE); //no need for an "if", it will die if not valid
 		if (isset($_POST["gfontsApiKey"]) && $_POST["gfontsApiKey"] != "") {
-			if (get_transient(TRANSIENT_PREFIX.md5($_POST["gfontsApiKey"]))) {
-				delete_transient(TRANSIENT_PREFIX.md5($_POST["gfontsApiKey"]));
+			if (get_transient(md5($_POST["gfontsApiKey"]))) {
+				delete_transient(md5($_POST["gfontsApiKey"]));
 				echo 'TRANSIENT_DELETED';
 				wp_die();
 			}

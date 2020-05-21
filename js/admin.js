@@ -81,6 +81,48 @@ jQuery(document).ready(function($) {
 		});
 	});
     
+	jQuery('#bibleget-cache-flush-btn').on('click', function(){
+		jQuery.ajax({
+			type: 'POST',
+			url: bibleGetOptionsFromServer.ajax_url,
+			data: { action: 'flush_bible_quotes_cache' },
+			beforeSend : function() {
+				jQuery('#bibleget_ajax_spinner').show();
+			},
+			complete : function() {
+				jQuery('#bibleget_ajax_spinner').hide();
+			},
+			success : function(returndata) {
+				if (returndata == 'cacheflushed') {
+					jQuery(
+					"#bibleget-settings-notification")
+					.append(
+					'Bible quotes cache emptied successfully')
+					.fadeIn("slow");
+				} else {
+					jQuery("#bibleget-settings-notification").append(
+							'There was an error while attempting to flush the Bible quotes cache... Perhaps try again?')
+							.fadeIn("slow");
+				}
+				jQuery(".bibleget-settings-notification-dismiss")
+					.click(function() {
+						jQuery("#bibleget-settings-notification").fadeOut("slow");
+					});
+
+			},
+			error: function(xhr, ajaxOptions, thrownError){
+				jQuery("#bibleget-settings-notification")
+				.fadeIn("slow")
+				.append('Emptying of Bible quotes cache was not successful... ERROR: ' + xhr.responseText);
+			jQuery(".bibleget-settings-notification-dismiss")
+				.click(function() {
+					jQuery("#bibleget-settings-notification").fadeOut("slow");
+				});
+				
+			}
+		});
+	});
+	
 	if(typeof gfontsBatch !== 'undefined' && typeof gfontsBatch === 'object' && gfontsBatch.hasOwnProperty('job') && gfontsBatch.job.hasOwnProperty('gfontsPreviewJob') && gfontsBatch.job.gfontsPreviewJob === true && gfontsBatch.job.hasOwnProperty('gfontsWeblist') && typeof gfontsBatch.job.gfontsWeblist == 'object' && gfontsBatch.job.gfontsWeblist.hasOwnProperty('items') ){
         //console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
         //console.log(gfontsBatch);

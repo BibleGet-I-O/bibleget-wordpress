@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 5.6
+ * Version: 5.7
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -29,7 +29,7 @@
 
 //TODO: better ui for the customizer, use sliders
 
-define("BIBLEGETPLUGINVERSION", "v5_6");
+define("BIBLEGETPLUGINVERSION", "v5_7");
 
 if (!defined('ABSPATH')) {
 	header('Status: 403 Forbidden');
@@ -1464,6 +1464,28 @@ function bibleGetSetOptions()
 	}
 }
 add_action('wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions');
+
+function flushBibleQuotesCache(){
+    global $wpdb;
+    //The following SELECT should select both the transient and the transient_timeout
+    //This will also remove the Google Fonts API key transient if it uses the same prefix...
+    //I guess we'll just have to not use our defined prefix on the Google Fonts API key transient
+    //in order avoid this
+    $sql = "DELETE
+            FROM  $wpdb->options
+            WHERE `option_name` LIKE '%transient_%".TRANSIENT_PREFIX."%'
+            ";
+    //We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
+    if($wpdb->query( $sql ) !== false){
+        echo 'cacheflushed';
+    }
+    else{
+        echo 'cacheNotFlushed';
+    }
+    wp_die();
+}
+
+add_action('wp_ajax_flush_bible_quotes_cache', 'flushBibleQuotesCache');
 
 function searchByKeyword(){
 	$keyword = $_POST['keyword'];

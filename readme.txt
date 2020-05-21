@@ -2,9 +2,9 @@
 Contributors: Lwangaman
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cita,versiculos,versets,citation
-Requires at least: 3.3
+Requires at least: 5.0
 Tested up to: 5.4.1
-Stable tag: 5.6
+Stable tag: 5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,10 @@ If you receive a 504 http status error it means that the connection with the Goo
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 5.7 =
+* better handling of bible quotes cache by prefixing the transients
+* added option to flush bible quotes cache from settings page
 
 = 5.6 =
 * turn off PHP error reporting!
@@ -260,6 +264,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 
 == Upgrade Notice ==
+
+= 5.7 =
+Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
 
 = 5.6 =
 Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
