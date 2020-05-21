@@ -486,7 +486,7 @@ class BibleGetSettingsPage
 ?>
 		<div id="page-wrap">
 			<h2 id="bibleget-h2"><?php _e("BibleGet I/O Settings", "bibleget-io") ?></h2>
-			<div id="form-wrapper" class="leftfloat">
+			<div id="form-wrapper">
 				<form method="post" action="options.php">
 					<?php
 					// This prints out all hidden settings fields
