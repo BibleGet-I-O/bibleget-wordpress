@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 5.7
+ * Version: 5.8
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -29,7 +29,7 @@
 
 //TODO: better ui for the customizer, use sliders
 
-define("BIBLEGETPLUGINVERSION", "v5_7");
+define("BIBLEGETPLUGINVERSION", "v5_8");
 
 if (!defined('ABSPATH')) {
 	header('Status: 403 Forbidden');
@@ -114,14 +114,35 @@ function BibleGet_on_uninstall()
 	//Check if we have a Google Fonts API key transient, if so remove it
 	$BibleGetOptions = get_option('bibleget_settings');
 	if (isset($BibleGetOptions['googlefontsapi_key']) && $BibleGetOptions['googlefontsapi_key'] != "") {
-		if (get_transient(TRANSIENT_PREFIX.md5($BibleGetOptions['googlefontsapi_key']))) {
-			delete_transient(TRANSIENT_PREFIX.md5($BibleGetOptions['googlefontsapi_key']));
+		if (get_transient(md5($BibleGetOptions['googlefontsapi_key']))) {
+			delete_transient(md5($BibleGetOptions['googlefontsapi_key']));
 		}
 	}
 
 	bibleGetDeleteOptions();
 
 	delete_option("bibleget_settings");
+
+	//remove all leftover transients that cache the Bible quotes
+	//not really all that necessary because they will clear within 7 days,
+	//but just for sake of completeness and neatness
+	global $wpdb;
+	//The following SELECT should select both the transient and the transient_timeout
+	//This will also remove the Google Fonts API key transient if it uses the same prefix...
+	//I guess we'll just have to not use our defined prefix on the Google Fonts API key transient
+	//in order avoid this
+	$sql = "DELETE
+            FROM  $wpdb->options
+            WHERE `option_name` LIKE '%transient_%".TRANSIENT_PREFIX."%'
+            ";
+	//We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
+	if($wpdb->query( $sql ) !== false){
+	    //echo 'cacheflushed';
+	}
+	else{
+	    //echo 'cacheNotFlushed';
+	}
+
 }
 
 
@@ -170,7 +191,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
 	// override default attributes with user attributes
 	$a = shortcode_atts(array(
 		'query' 		=> "Matthew1:1-5",
-		'version' 		=> "",
+		'version' 		=> "NABRE",
 		'versions' 		=> "",
 		'forceversion' 	=> false,
 		'forcecopyright' => false,

@@ -5,7 +5,7 @@ Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cit
 Requires at least: 5.0
 Tested up to: 5.4.1
 Requires PHP: 5.4
-Stable tag: 5.7
+Stable tag: 5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,7 @@ The Gutenberg block has a number of customizable options for the layout of the e
 https://youtu.be/KWd_q6e8A2w
 
 https://youtu.be/zqJqU_5UZ5M
+
 _________
 
 [BibleGet Project Website](https://www.bibleget.io/ "BibleGet Project Website")
@@ -44,8 +45,9 @@ _________
 
 == Installation ==
 
-1. Upload the `bibleget-io` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. For streamlined installation: go to WP backend -> 'Plugins' -> 'Add new' and search for 'bibleget'. Click on 'Install Now'.
+2. For manual installation: download the zip file upload the `bibleget-io` folder to the `/wp-content/plugins/` directory
+3. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
 
@@ -83,6 +85,11 @@ The BibleGet plugin will remember that your key is valid for 3 months. This mean
 = I added the Google Fonts API key but while it was processing the download it stopped with a 504 http status error =
 If you receive a 504 http status error it means that the connection with the Google Fonts API timed out for some reason. The BibleGet plugin tries to handle this situation by forcing the process to start again, but if instead the process comes to a halt please let the plugin author know at admin@bibleget.io in order to look further into the handling of this situation. In any case you can reload the page and use the "force refresh" option below your API key and the process will pick up where it left off.
 
+= I updated the plugin to version 5.4 or later, but the new 'Bible quote' block doesn't seem to be cooperating =
+In order to allow for new layout options, the BibleGet service endpoint itself was slightly updated, and there is a little more information in the response from the server.
+However Bible quotes are cached by the BibleGet plugin for a seven day period, which means that from the time of the update until about a week later the cached Bible quotes will not have the necessary information for them to work with the 'Bible quote' block.
+If you do not want to wait seven days or until the cache expires, there is a new option in the BibleGet Settings page since version 5.7 which allows to flush the cache.
+A word of caution however: the more recent updates to the BibleGet service endpoint have started imposing hard limits on the number of requests that can be issued from any given domain, IP address or referer. No more than 30 requests for one same Bible quote can be issued in a two day period, and no more than 100 requests for different Bible quotes can be issued in a two day period. If you have many Bible quotes on your website and you risk hitting the limit, it may be best not to flush the cache all at once but rather wait out the seven days until the cache expires.  
 
 == Screenshots ==
 
@@ -95,6 +102,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 5.8 =
+* once a traditional shortcode is transformed into a block shortcode, allow transforming the block shortcode into a 'Bible quote' block 
 
 = 5.7 =
 * better handling of bible quotes cache by prefixing the transients
@@ -266,6 +276,9 @@ If you receive a 504 http status error it means that the connection with the Goo
 
 
 == Upgrade Notice ==
+
+= 5.8 =
+Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block
 
 = 5.7 =
 Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block

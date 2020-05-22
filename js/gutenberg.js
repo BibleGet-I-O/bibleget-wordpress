@@ -35,6 +35,35 @@
 		category: 'widgets',
 		icon: 'book-alt',
 		attributes: bbGetShCdAttributes,
+		transforms: {
+			from: [
+				{
+					type: 'block',
+					blocks: ['core/shortcode'],
+					isMatch: function ({ text }) {
+						return /^\[bibleget/.test(text);
+					},
+					transform: ({ text }) => {
+
+						let query = getInnerContent('bibleget', text);
+						if(query==''){
+							query = getAttributeValue('bibleget', 'query', text);
+						}
+
+						let version = getAttributeValue('bibleget', 'versions', text) || getAttributeValue('bibleget', 'versions', text) || "NABRE";
+
+						let popup = getAttributeValue('bibleget', 'popup', text);
+
+						return wp.blocks.createBlock('bibleget/bible-quote', {
+							query: query,
+							version: version.split(','),
+							popup: JSON.parse(popup)
+						});
+					},
+				},
+				
+			]
+		},		
 		//display the edit interface + preview
 		edit(props) {
 			const attributes = props.attributes;
@@ -573,4 +602,47 @@ String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 
 let addMark = function (text, keyword) {
 	return text.replace(new RegExp("("+keyword+")", "gi"), '<mark>$1</mark>');
+};
+
+
+const getAttributeValue = function (tag, att, content) {
+	// In string literals, slashes need to be double escaped
+	// 
+	//    Match  attribute="value"
+	//    \[tag[^\]]*      matches opening of shortcode tag 
+	//    att="([^"]*)"    captures value inside " and "
+	var re = new RegExp(`\\[${tag}[^\\]]* ${att}="([^"]*)"`, 'im');
+	var result = content.match(re);
+	if (result != null && result.length > 0)
+		return result[1];
+
+	//    Match  attribute='value'
+	//    \[tag[^\]]*      matches opening of shortcode tag 
+	//    att="([^"]*)"    captures value inside ' and ''
+	re = new RegExp(`\\[${tag}[^\\]]* ${att}='([^']*)'`, 'im');
+	result = content.match(re);
+	if (result != null && result.length > 0)
+		return result[1];
+
+	//    Match  attribute=value
+	//    \[tag[^\]]*      matches opening of shortcode tag 
+	//    att="([^"]*)"    captures a shortcode value provided without 
+	//                     quotes, as in [me color=green]
+	re = new RegExp(`\\[${tag}[^\\]]* ${att}=([^\\s]*)\\s`, 'im');
+	result = content.match(re);
+	if (result != null && result.length > 0)
+		return result[1];
+	return false;
+};
+
+const getInnerContent = function (tag, content) {
+	//   \[tag[^\]]*?]    matches opening shortcode tag with or without attributes, (not greedy)
+	//   ([\S\s]*?)       matches anything in between shortcodes tags, including line breaks and other shortcodes
+	//   \[\/tag]         matches end shortcode tag
+	// remember, double escaping for string literals inside RegExp
+	const re = new RegExp(`\\[${tag}[^\\]]*?]([\\S\\s]*?)\\[\\/${tag}]`, 'i');
+	let result = content.match(re);
+	if (result == null || result.length < 1)
+		return '';
+	return result[1];
 };
