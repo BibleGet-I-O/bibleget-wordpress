@@ -1791,3 +1791,276 @@ class BibleGet_Customize
 		return $returnval;
 	}
 }
+
+
+class BGET
+{
+    const ALIGN = [
+        "LEFT" 				=> 1,
+        "CENTER" 			=> 2,
+        "RIGHT" 			=> 3,
+        "JUSTIFY" 			=> 4
+    ],
+    VALIGN = [
+        "SUPERSCRIPT" 		=> 1,
+        "SUBSCRIPT" 		=> 2,
+        "NORMAL" 			=> 3
+    ],
+    WRAP = [
+        "NONE" 				=> 1,
+        "PARENTHESES" 		=> 2,
+        "BRACKETS" 			=> 3
+    ],
+    POS = [
+        "TOP" 				=> 1,
+        "BOTTOM" 			=> 2,
+        "BOTTOMINLINE" 		=> 3
+    ],
+    FORMAT = [
+        "USERLANG" 			=> 1, // if Google Docs is used in chinese, the names of the books of the bible will be given in chinese
+        "BIBLELANG" 		=> 2, // if Google Docs is used in chinese, the abbreviated names of the books of the bible in chinese will be given
+        "USERLANGABBREV" 	=> 3, // if you are quoting from a Latin Bible, the names of the books of the bible will be given in latin
+        "BIBLELANGABBREV" 	=> 4  // if you are quoting from a Latin Bible, the abbreviated names of the books of the bible in latin will be given
+    ],
+    VISIBILITY = [
+        "SHOW" 				=> true,
+        "HIDE" 				=> false
+    ],
+    TEXTSTYLE = [
+        "BOLD" 				=> 1,
+        "ITALIC" 			=> 2,
+        "UNDERLINE" 		=> 3,
+        "STRIKETHROUGH" 	=> 4
+    ],
+    BORDERSTYLE = [
+        "SOLID"				=> 1,
+        "GROOVE"			=> 2,
+        "RIDGE"				=> 3,
+        "INSET"				=> 4,
+        "OUTSET"			=> 5
+    ];
+};
+
+class BGETPROPERTIES {
+    public $OPTIONS,$BGETOPTIONS;
+    public function __construct(){
+        $this->BGETOPTIONS = get_option("BGET",[]);
+        $this->OPTIONS = [
+            "PARAGRAPHSTYLES_LINEHEIGHT" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_LINEHEIGHT") ? floatval($this->BGETOPTIONS["PARAGRAPHSTYLES_LINEHEIGHT"]) : 1.5,
+                "type" => "float"
+            ],
+            "PARAGRAPHSTYLES_PADDINGTOPBOTTOM" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGTOPBOTTOM"]) : 12, //unit: px
+                "type" => "integer"
+            ],
+            "PARAGRAPHSTYLES_PADDINGLEFTRIGHT" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGLEFTRIGHT"]) : 10, //unit: px
+                "type" => "integer"
+            ],
+            "PARAGRAPHSTYLES_FONTFAMILY" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_FONTFAMILY") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_FONTFAMILY"] : "Times New Roman",
+                "type" => "string"
+            ],
+            "PARAGRAPHSTYLES_PARAGRAPHALIGN" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PARAGRAPHALIGN") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PARAGRAPHALIGN"]) : BGET::ALIGN["JUSTIFY"],
+                "type" => "integer"   //possible vals 'left','center','right', 'justify' (use ENUM, e.g. BGET::ALIGN->LEFT)
+            ],
+            "PARAGRAPHSTYLES_NOVERSIONFORMATTING" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_NOVERSIONFORMATTING") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_NOVERSIONFORMATTING"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "PARAGRAPHSTYLES_BORDERWIDTH" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERWIDTH") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERWIDTH"]) : 1, //unit: px
+                "type" => "integer"
+            ],
+            "PARAGRAPHSTYLES_BORDERCOLOR" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERCOLOR"] : "#00AA00",
+                "type" => "string"
+            ],
+            "PARAGRAPHSTYLES_BORDERSTYLE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERSTYLE") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERSTYLE"]) : BGET::BORDERSTYLE["SOLID"],
+                "type" => "integer"
+            ],
+            "PARAGRAPHSTYLES_BORDERRADIUS" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERRADIUS") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERRADIUS"]) : 12, //unit: px
+                "type" => "integer"
+            ],
+            "VERSIONSTYLES_BOLD" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_BOLD") ? $this->BGETOPTIONS["VERSIONSTYLES_BOLD"] === 'true' : true,
+                "type" => "boolean"
+            ],
+            "VERSIONSTYLES_ITALIC" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSIONSTYLES_ITALIC"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSIONSTYLES_UNDERLINE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSIONSTYLES_UNDERLINE"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSIONSTYLES_STRIKETHROUGH" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSIONSTYLES_STRIKETHROUGH"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSIONSTYLES_TEXTCOLOR" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSIONSTYLES_TEXTCOLOR"] : "#000044",
+                "type" => "string"
+            ],
+            "VERSIONSTYLES_FONTSIZE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 10,
+                "type" => "integer"
+            ],
+            "BOOKCHAPTERSTYLES_BOLD" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_BOLD") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_BOLD"] === 'true' : true,
+                "type" => "boolean"
+            ],
+            "BOOKCHAPTERSTYLES_ITALIC" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_ITALIC") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_ITALIC"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "BOOKCHAPTERSTYLES_UNDERLINE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_UNDERLINE"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "BOOKCHAPTERSTYLES_STRIKETHROUGH" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_STRIKETHROUGH"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "BOOKCHAPTERSTYLES_TEXTCOLOR" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_TEXTCOLOR"] : "#000044",
+                "type" => "string"
+            ],
+            "BOOKCHAPTERSTYLES_FONTSIZE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZE"]) : 10,
+                "type" => "integer"
+            ],
+            "BOOKCHAPTERSTYLES_VALIGN" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"], //resolves to integer
+                "type" => "integer"
+            ],
+            "VERSENUMBERSTYLES_BOLD" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_BOLD") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_BOLD"] === 'true' : true,
+                "type" => "boolean"
+            ],
+            "VERSENUMBERSTYLES_ITALIC" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_ITALIC"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSENUMBERSTYLES_UNDERLINE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_UNDERLINE"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSENUMBERSTYLES_STRIKETHROUGH" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_STRIKETHROUGH"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSENUMBERSTYLES_TEXTCOLOR" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_TEXTCOLOR"] : "#AA0000",
+                "type" => "string"
+            ],
+            "VERSENUMBERSTYLES_FONTSIZE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 10,
+                "type" => "integer"
+            ],
+            "VERSENUMBERSTYLES_VALIGN" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_VALIGN"]) : BGET::VALIGN["SUPERSCRIPT"], //resolves to INT
+                "type" => "integer"
+            ],
+            "VERSETEXTSTYLES_BOLD" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_BOLD") ? $this->BGETOPTIONS["VERSETEXTSTYLES_BOLD"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSETEXTSTYLES_ITALIC" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSETEXTSTYLES_ITALIC"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSETEXTSTYLES_UNDERLINE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSETEXTSTYLES_UNDERLINE"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSETEXTSTYLES_STRIKETHROUGH" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSETEXTSTYLES_STRIKETHROUGH"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "VERSETEXTSTYLES_TEXTCOLOR" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSETEXTSTYLES_TEXTCOLOR"] : "#666666",
+                "type" => "string"
+            ],
+            "VERSETEXTSTYLES_FONTSIZE" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZE"]) : 10,
+                "type" => "integer"
+            ],
+            "VERSETEXTSTYLES_VALIGN" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_SHOWBIBLEVERSION" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWBIBLEVERSION") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWBIBLEVERSION"] === 'true' : BGET::VISIBILITY["SHOW"],
+                "type" => "boolean"
+            ],
+            "LAYOUTPREFS_BIBLEVERSIONALIGNMENT" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONALIGNMENT"]) : BGET::ALIGN["LEFT"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BIBLEVERSIONPOSITION" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONPOSITION"]) :  BGET::POS["TOP"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BIBLEVERSIONWRAP" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONWRAP"]) : BGET::WRAP["NONE"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BOOKCHAPTERALIGNMENT" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERALIGNMENT"]) : BGET::ALIGN["LEFT"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BOOKCHAPTERPOSITION" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERPOSITION"]) : BGET::POS["TOP"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BOOKCHAPTERWRAP" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERWRAP"]) : BGET::WRAP["NONE"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BOOKCHAPTERFORMAT" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFORMAT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFORMAT"]) : BGET::FORMAT["BIBLELANG"],
+                "type" => "integer"
+            ],
+            "LAYOUTPREFS_BOOKCHAPTERFULLQUERY" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFULLQUERY") ? $this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFULLQUERY"] === 'true' : false,					//false: just the name of the book and the chapter will be shown (i.e. 1 John 4)
+                "type" => "boolean"					//true: the full reference including the verses will be shown (i.e. 1 John 4:7-8)
+            ],
+            "LAYOUTPREFS_SHOWVERSENUMBERS" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWVERSENUMBERS") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWVERSENUMBERS"] === 'true' : BGET::VISIBILITY["SHOW"],
+                "type" => "boolean"
+            ],
+            "VERSION" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSION") ? $this->BGETOPTIONS["VERSION"] : ["NABRE"], //Array of string values
+                "type" => "ARRAY",
+                "items" => ["type" => "string"]
+            ],
+            "QUERY" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"QUERY") ? $this->BGETOPTIONS["QUERY"] : "Matthew1:1-5",
+                "type" => "string"
+            ],
+            "POPUP" => [
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"POPUP") ? $this->BGETOPTIONS["POPUP"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "FORCEVERSION" => [ //not currently used
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCEVERSION") ? $this->BGETOPTIONS["FORCEVERSION"] === 'true' : false,
+                "type" => "boolean"
+            ],
+            "FORCECOPYRIGHT" => [ //not currently used
+                "default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCECOPYRIGHT") ? $this->BGETOPTIONS["FORCECOPYRIGHT"] === 'true' : false,
+                "type" => "boolean"
+            ]
+        ]; //end $this->OPTIONS
+    }
+    public static function setAndNotNothing($arr,$key){
+        return (isset($arr[$key]) && $arr[$key] != "");
+
+    }
+}
+
+//TODO: make sure we set default options on plugin install, and we remove them on plugin uninstall

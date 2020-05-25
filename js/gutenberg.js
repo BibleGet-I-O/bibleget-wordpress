@@ -6,35 +6,17 @@
 
 (function (blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
-	const bbGetShCdAttributes = {
-		query: 				{ default: 'Matthew1:1-5', type: 'string' },
-		version: 			{ default: ['NABRE'],type: 'array', items: { type: 'string' } },
-		popup: 				{ default: false,	type: 'boolean' },
-		forceversion: 		{ default: false,	type: 'boolean' }, 	//not currently used
-		forcecopyright: 	{ default: false,	type: 'boolean' },	//not currently used
-		hidebibleversion: 	{ default: false,	type: 'boolean' },	//if true, bible version will be hidden
-		bibleversionalign: 	{ default: 'left',	type: 'string' },
-		bibleversionpos: 	{ default: 'top',	type: 'string' },
-		bibleversionwrap: 	{ default: 'none',	type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		bookchapteralign: 	{ default: 'left',	type: 'string' },
-		bookchapterpos: 	{ default: 'top',	type: 'string' }, 	//can be 'top', 'bottom', or 'bottominline'
-		bookchapterwrap: 	{ default: 'none',	type: 'string' },	//can be 'none', 'parentheses', 'brackets'
-		showfullreference: 	{ default: false,	type: 'boolean' },
-		usebookabbreviation:{ default: false,	type: 'boolean' },
-		booknameusewplang: 	{ default: false,	type: 'boolean' },
-		hideversenumber: 	{ default: false,	type: 'boolean' }
-	};
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
-	const { TextControl, SelectControl, Modal, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl } = components; //WordPress form inputs and server-side renderer
+	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl } = components; //WordPress form inputs and server-side renderer
 
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
 		category: 'widgets',
 		icon: 'book-alt',
-		attributes: bbGetShCdAttributes,
+		attributes: BibleGetGlobal.BGETProperties,
 		transforms: {
 			from: [
 				{
@@ -55,9 +37,9 @@
 						let popup = getAttributeValue('bibleget', 'popup', text);
 
 						return wp.blocks.createBlock('bibleget/bible-quote', {
-							query: query,
-							version: version.split(','),
-							popup: JSON.parse(popup)
+							QUERY: query,
+							VERSION: version.split(','),
+							POPUP: JSON.parse(popup)
 						});
 					},
 				},
@@ -66,76 +48,122 @@
 		},		
 		//display the edit interface + preview
 		edit(props) {
-			const attributes = props.attributes;
-			const setAttributes = props.setAttributes;
+			const {attributes, setAttributes} = props;
 
 			//Function to update the query with Bible reference
-			function changeQuery(query) {
-				setAttributes({ query });
+			function changeQuery(QUERY) {
+				setAttributes({ QUERY });
 			}
 
 			//Function to update Bible version that will be used to retrieve the Bible quote
-			function changeVersion(version) {
-				setAttributes({ version });
+			function changeVersion(VERSION) {
+				if(VERSION.length < 1){
+					alert(__('You must indicate the desired version or versions','bibleget-io'));
+				}
+				setAttributes({ VERSION });
 			}
 
 			//Function to update whether the Bible quote will be showed in a popup or not
-			function changePopup(popup) {
-				setAttributes({ popup });
+			function changePopup(POPUP) {
+				setAttributes({ POPUP });
 			}
 
-			function changeBibleVersionVisibility(hidebibleversion){
-				setAttributes({ hidebibleversion });
+			function changeBibleVersionVisibility(LAYOUTPREFS_SHOWBIBLEVERSION){
+				setAttributes({ LAYOUTPREFS_SHOWBIBLEVERSION });
 			}
 
 			function changeBibleVersionAlign(ev){
-				let bibleversionalign = ev.currentTarget.value;
+				let LAYOUTPREFS_BIBLEVERSIONALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + bibleversionalign+'; }'));
-				setAttributes({ bibleversionalign });
+				let textalign;
+				switch(LAYOUTPREFS_BIBLEVERSIONALIGNMENT){
+					case BGET.ALIGN.LEFT:
+						textalign = 'left';
+						break;
+					case BGET.ALIGN.CENTER:
+						textalign = 'center';
+						break;
+					case BGET.ALIGN.RIGHT:
+						textalign = 'right';
+						break;
+					case BGET.ALIGN.JUSTIFY:
+						textalign = 'justify';
+						break;
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + textalign+'; }'));
+				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
 			}
 
 			function changeBibleVersionPos(ev){
-				let bibleversionpos = ev.currentTarget.value;
-				setAttributes({ bibleversionpos });
+				let LAYOUTPREFS_BIBLEVERSIONPOSITION = parseInt(ev.currentTarget.value);
+				setAttributes({ LAYOUTPREFS_BIBLEVERSIONPOSITION });
 			}
 
 			function changeBibleVersionWrap(ev){
-				let bibleversionwrap = ev.currentTarget.value;
-				setAttributes({ bibleversionwrap });
+				let LAYOUTPREFS_BIBLEVERSIONWRAP = parseInt(ev.currentTarget.value);
+				setAttributes({ LAYOUTPREFS_BIBLEVERSIONWRAP });
 			}
 
 			function changeBookChapterAlign(ev) {
-				let bookchapteralign = ev.currentTarget.value;
+				let LAYOUTPREFS_BOOKCHAPTERALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ text-align: (?:.*?); \}/, 'div.results .bookChapter { text-align: ' + bookchapteralign + '; }'));
-				setAttributes({ bookchapteralign });
+				let textalign;
+				switch(LAYOUTPREFS_BOOKCHAPTERALIGNMENT){
+					case BGET.ALIGN.LEFT:
+						textalign = 'left';
+						break;
+					case BGET.ALIGN.CENTER:
+						textalign = 'center';
+						break;
+					case BGET.ALIGN.RIGHT:
+						textalign = 'right';
+						break;
+					case BGET.ALIGN.JUSTIFY:
+						textalign = 'justify';
+						break;
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ text-align: (?:.*?); \}/, 'div.results .bookChapter { text-align: ' + textalign + '; }'));
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERALIGNMENT });
 			}
 
 			function changeBookChapterPos(ev) {
-				let bookchapterpos = ev.currentTarget.value;
-				setAttributes({ bookchapterpos });
+				let LAYOUTPREFS_BOOKCHAPTERPOSITION = parseInt(ev.currentTarget.value);
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERPOSITION });
 			}
 
 			function changeBookChapterWrap(ev) {
-				let bookchapterwrap = ev.currentTarget.value;
-				setAttributes({ bookchapterwrap });
+				let LAYOUTPREFS_BOOKCHAPTERWRAP = parseInt(ev.currentTarget.value);
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERWRAP });
 			}
 
-			function changeShowFullReference(showfullreference){
-				setAttributes({ showfullreference });
+			function changeShowFullReference(LAYOUTPREFS_BOOKCHAPTERFULLQUERY){
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFULLQUERY });
 			}
 
 			function changeUseBookAbbreviation(usebookabbreviation){
-				setAttributes({ usebookabbreviation });
+				let LAYOUTPREFS_BOOKCHAPTERFORMAT;
+				if(atttributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANG || atttributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANGABBREV ){
+					LAYOUTPREFS_BOOKCHAPTERFORMAT = (usebookabbreviation ? BGET.FORMAT.USERLANGABBREV : BGET.FORMAT.USERLANG);
+				}
+				else if(attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANG || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANGABBREV){
+					LAYOUTPREFS_BOOKCHAPTERFORMAT = (usebookabbreviation ? BGET.FORMAT.BIBLELANGABBREV : BGET.FORMAT.BIBLELANG);
+				}
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
 			}
 
 			function changeBookNameUseWpLang(booknameusewplang){
-				setAttributes({ booknameusewplang });
+				let LAYOUTPREFS_BOOKCHAPTERFORMAT;
+				if(attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANG || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANG){
+					LAYOUTPREFS_BOOKCHAPTERFORMAT = (booknameusewplang ? BGET.FORMAT.USERLANG : BGET.FORMAT.BIBLELANG);
+				}
+				else if(attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANGABBREV || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANGABBREV){
+					LAYOUTPREFS_BOOKCHAPTERFORMAT = (booknameusewplang ? BGET.FORMAT.USERLANGABBREV : BGET.FORMAT.BIBLELANGABBREV);
+				}
+				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
 			}
 
-			function changeVerseNumberVisibility(hideversenumber){
-				setAttributes({ hideversenumber });
+			function changeVerseNumberVisibility(LAYOUTPREFS_SHOWVERSENUMBERS){
+				setAttributes({ LAYOUTPREFS_SHOWVERSENUMBERS });
 			}
 
 			function doKeywordSearch(notused){
@@ -264,7 +292,7 @@
 							createElement(PanelRow, {},
 								//Select version to quote from
 								createElement(SelectControl, {
-									value: attributes.version,
+									value: attributes.VERSION,
 									label: __('Bible Version', 'bibleget-io'),
 									onChange: changeVersion,
 									multiple: true,
@@ -275,7 +303,7 @@
 							createElement(PanelRow, {},
 								//A simple text control for bible quote query
 								createElement(TextControl, {
-									value: attributes.query,
+									value: attributes.QUERY,
 									/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
 									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
 									label: __('Bible Reference', 'bibleget-io'), 
@@ -285,7 +313,7 @@
 							createElement(PanelRow, {},
 								//Select whether this will be a popup or not
 								createElement(ToggleControl, {
-									checked: attributes.popup,
+									checked: attributes.POPUP,
 									label: __('Display in Popup', 'bibleget-io'),
 									help: __('When activated, only the reference to the Bible quote will be shown in the document, and clicking on it will show the text of the Bible quote in a popup window.','bibleget-io'),
 									onChange: changePopup,
@@ -313,8 +341,8 @@
 						createElement(PanelBody, { title: __('Layout Bible version', 'bibleget-io'), initialOpen: false, icon: 'layout' },
 							createElement(PanelRow, {},
 								createElement(ToggleControl, {
-									checked: attributes.hidebibleversion, //default false
-									label: __('Hide Bible version','bibleget-io'),
+									checked: attributes.LAYOUTPREFS_SHOWBIBLEVERSION, //default BGET.VISIBILITY.SHOW
+									label: __('Show Bible version','bibleget-io'),
 									onChange: changeBibleVersionVisibility,
 								})
 							),
@@ -323,25 +351,25 @@
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
 											icon: 'editor-alignleft',
-											value: 'left',
-											isPrimary: (attributes.bibleversionalign === 'left'),
-											isSecondary: (attributes.bibleversionalign !== 'left'),
+											value: BGET.ALIGN.LEFT,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT === BGET.ALIGN.LEFT),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT !== BGET.ALIGN.LEFT),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align left', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'editor-aligncenter',
-											value: 'center',
-											isPrimary: (attributes.bibleversionalign === 'center'),
-											isSecondary: (attributes.bibleversionalign !== 'center'),
+											value: BGET.ALIGN.CENTER,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT === BGET.ALIGN.CENTER),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT !== BGET.ALIGN.CENTER),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align center', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'editor-alignright',
-											value: 'right',
-											isPrimary: (attributes.bibleversionalign === 'right'),
-											isSecondary: (attributes.bibleversionalign !== 'right'),
+											value: BGET.ALIGN.RIGHT,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT === BGET.ALIGN.RIGHT),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONALIGNMENT !== BGET.ALIGN.RIGHT),
 											onClick: changeBibleVersionAlign,
 											title: __('Bible Version align right', 'bibleget-io')
 										})
@@ -353,17 +381,17 @@
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
 											icon: 'arrow-up-alt',
-											value: 'top',
-											isPrimary: (attributes.bibleversionpos === 'top'),
-											isSecondary: (attributes.bibleversionpos !== 'top'),
+											value: BGET.POS.TOP,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONPOSITION === BGET.POS.TOP),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONPOSITION !== BGET.POS.TOP),
 											onClick: changeBibleVersionPos,
 											title: __('Bible Version position top', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'arrow-down-alt',
-											value: 'bottom',
-											isPrimary: (attributes.bibleversionpos === 'bottom'),
-											isSecondary: (attributes.bibleversionpos !== 'bottom'),
+											value: BGET.POS.BOTTOM,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONPOSITION === BGET.POS.BOTTOM),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONPOSITION !== BGET.POS.BOTTOM),
 											onClick: changeBibleVersionPos,
 											title: __('Bible Version position bottom', 'bibleget-io')
 										})
@@ -375,25 +403,25 @@
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
 											//label: __('none','bibleget-io'),
-											value: 'none',
-											isPrimary: (attributes.bibleversionwrap === 'none'),
-											isSecondary: (attributes.bibleversionwrap !== 'none'),
+											value: BGET.WRAP.NONE,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP === BGET.WRAP.NONE),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP !== BGET.WRAP.NONE),
 											onClick: changeBibleVersionWrap,
 											title: __('Wrap none', 'bibleget-io')
 										}, __('none', 'bibleget-io')),
 										createElement(Button, {
 											//label: __('parentheses', 'bibleget-io'),
-											value: 'parentheses',
-											isPrimary: (attributes.bibleversionwrap === 'parentheses'),
-											isSecondary: (attributes.bibleversionwrap !== 'parentheses'),
+											value: BGET.WRAP.PARENTHESES,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP === BGET.WRAP.PARENTHESES),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP !== BGET.WRAP.PARENTHESES),
 											onClick: changeBibleVersionWrap,
 											title: __('Wrap in parentheses', 'bibleget-io')
 										}, __('parentheses', 'bibleget-io')),
 										createElement(Button, {
 											//label: __('brackets', 'bibleget-io'),
-											value: 'brackets',
-											isPrimary: (attributes.bibleversionwrap === 'brackets'),
-											isSecondary: (attributes.bibleversionwrap !== 'brackets'),
+											value: BGET.WRAP.BRACKETS,
+											isPrimary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP === BGET.WRAP.BRACKETS),
+											isSecondary: (attributes.LAYOUTPREFS_BIBLEVERSIONWRAP !== BGET.WRAP.BRACKETS),
 											onClick: changeBibleVersionWrap,
 											title: __('Wrap in brackets', 'bibleget-io')
 										}, __('brackets', 'bibleget-io')),
@@ -407,25 +435,25 @@
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
 											icon: 'editor-alignleft',
-											value: 'left',
-											isPrimary: (attributes.bookchapteralign === 'left'),
-											isSecondary: (attributes.bookchapteralign !== 'left'),
+											value: BGET.ALIGN.LEFT,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT === BGET.ALIGN.LEFT),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT !== BGET.ALIGN.LEFT),
 											onClick: changeBookChapterAlign,
 											title: __('Book / Chapter align left', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'editor-aligncenter',
-											value: 'center',
-											isPrimary: (attributes.bookchapteralign === 'center'),
-											isSecondary: (attributes.bookchapteralign !== 'center'),
+											value: BGET.ALIGN.CENTER,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT === BGET.ALIGN.CENTER),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT !== BGET.ALIGN.CENTER),
 											onClick: changeBookChapterAlign,
 											title: __('Book / Chapter align center', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'editor-alignright',
-											value: 'right',
-											isPrimary: (attributes.bookchapteralign === 'right'),
-											isSecondary: (attributes.bookchapteralign !== 'right'),
+											value: BGET.ALIGN.RIGHT,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT === BGET.ALIGN.RIGHT),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERALIGNMENT !== BGET.ALIGN.RIGHT),
 											onClick: changeBookChapterAlign,
 											title: __('Book / Chapter align right', 'bibleget-io')
 										})
@@ -437,25 +465,25 @@
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
 											icon: 'arrow-up-alt',
-											value: 'top',
-											isPrimary: (attributes.bookchapterpos === 'top'),
-											isSecondary: (attributes.bookchapterpos !== 'top'),
+											value: BGET.POS.TOP,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION === BGET.POS.TOP),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION !== BGET.POS.TOP),
 											onClick: changeBookChapterPos,
 											title: __('Book / Chapter position top', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'arrow-down-alt',
-											value: 'bottom',
-											isPrimary: (attributes.bookchapterpos === 'bottom'),
-											isSecondary: (attributes.bookchapterpos !== 'bottom'),
+											value: BGET.POS.BOTTOM,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION === BGET.POS.BOTTOM),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION !== BGET.POS.BOTTOM),
 											onClick: changeBookChapterPos,
 											title: __('Book / Chapter position bottom', 'bibleget-io')
 										}),
 										createElement(Button, {
 											icon: 'arrow-left-alt',
-											value: 'bottominline',
-											isPrimary: (attributes.bookchapterpos === 'bottominline'),
-											isSecondary: (attributes.bookchapterpos !== 'bottominline'),
+											value: BGET.POS.BOTTOMINLINE,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION === BGET.POS.BOTTOMINLINE),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERPOSITION !== BGET.POS.BOTTOMINLINE),
 											onClick: changeBookChapterPos,
 											title: __('Book / Chapter position bottom inline', 'bibleget-io')
 										})
@@ -466,23 +494,23 @@
 								createElement(BaseControl, { label: __('Book / Chapter wrap', 'bibleget-io'), help: __('Wrap the book and chapter with parentheses or brackets', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetButtonGroup' },
 										createElement(Button, {
-											value: 'none',
-											isPrimary: (attributes.bookchapterwrap === 'none'),
-											isSecondary: (attributes.bookchapterwrap !== 'none'),
+											value: BGET.WRAP.NONE,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP === BGET.WRAP.NONE),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP !== BGET.WRAP.NONE),
 											onClick: changeBookChapterWrap,
 											title: __('Book / Chapter wrap none', 'bibleget-io')
 										}, __('none', 'bibleget-io')),
 										createElement(Button, {
-											value: 'parentheses',
-											isPrimary: (attributes.bookchapterwrap === 'parentheses'),
-											isSecondary: (attributes.bookchapterwrap !== 'parentheses'),
+											value: BGET.WRAP.PARENTHESES,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP === BGET.WRAP.PARENTHESES),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP !== BGET.WRAP.PARENTHESES),
 											onClick: changeBookChapterWrap,
 											title: __('Book / Chapter wrap parentheses', 'bibleget-io')
 										}, __('parentheses', 'bibleget-io')),
 										createElement(Button, {
-											value: 'brackets',
-											isPrimary: (attributes.bookchapterwrap === 'brackets'),
-											isSecondary: (attributes.bookchapterwrap !== 'brackets'),
+											value: BGET.WRAP.BRACKETS,
+											isPrimary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP === BGET.WRAP.BRACKETS),
+											isSecondary: (attributes.LAYOUTPREFS_BOOKCHAPTERWRAP !== BGET.WRAP.BRACKETS),
 											onClick: changeBookChapterWrap,
 											title: __('Book / Chapter wrap brackets', 'bibleget-io')
 										}, __('brackets', 'bibleget-io')),
@@ -491,7 +519,7 @@
 							),
 							createElement(PanelRow, {},
 								createElement(ToggleControl, {
-									checked: attributes.showfullreference, //default false
+									checked: attributes.LAYOUTPREFS_BOOKCHAPTERFULLQUERY, //default false
 									label: __('Show full reference', 'bibleget-io'),
 									help: __('When activated, the full reference including verses quoted will be shown with the book and chapter','bibleget-io'),
 									onChange: changeShowFullReference,
@@ -499,7 +527,7 @@
 							),
 							createElement(PanelRow, {},
 								createElement(ToggleControl, {
-									checked: attributes.usebookabbreviation, //default false
+									checked: (attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANGABBREV || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANGABBREV), //default false
 									label: __('Use book abbreviation', 'bibleget-io'),
 									help: __('When activated, the book names will be shown in the abbreviated form', 'bibleget-io'),
 									onChange: changeUseBookAbbreviation,
@@ -507,7 +535,7 @@
 							),
 							createElement(PanelRow, {},
 								createElement(ToggleControl, {
-									checked: attributes.booknameusewplang, //default false
+									checked: (attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANG || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT ===  BGET.FORMAT.USERLANGABBREV), //default false
 									label: __('Use WP language','bibleget-io'),
 									help: __('By default the book names are in the language of the Bible version being quoted. If activated, book names will be shown in the language of the WordPress interface','bibleget-io'),
 									onChange: changeBookNameUseWpLang
@@ -517,8 +545,8 @@
 						createElement(PanelBody, { title: __('Layout Verses', 'bibleget-io'), initialOpen: false, icon: 'layout' },
 							createElement(PanelRow, {},
 								createElement(ToggleControl, {
-									checked: attributes.hideversenumber, //default false
-									label: __('Hide verse number', 'bibleget-io'),
+									checked: attributes.LAYOUTPREFS_SHOWVERSENUMBERS, //default true
+									label: __('Show verse number', 'bibleget-io'),
 									onChange: changeVerseNumberVisibility,
 								})
 							)							
@@ -604,7 +632,6 @@ let addMark = function (text, keyword) {
 	return text.replace(new RegExp("("+keyword+")", "gi"), '<mark>$1</mark>');
 };
 
-
 const getAttributeValue = function (tag, att, content) {
 	// In string literals, slashes need to be double escaped
 	// 
@@ -646,3 +673,44 @@ const getInnerContent = function (tag, content) {
 		return '';
 	return result[1];
 };
+
+const BGET = {
+	ALIGN: {
+		LEFT: 1,       //make sure these are text values
+		CENTER: 2,      //that correspond to actual CSS properties for the for text-align rule
+		RIGHT: 3,     //
+		JUSTIFY: 4     //they will be used as is in the stylesheet definitions
+	},
+	VALIGN: {
+		SUPERSCRIPT: 1,
+		SUBSCRIPT: 2,
+		NORMAL: 3
+	},
+	WRAP: {
+		NONE: 1,
+		PARENTHESES: 2,
+		BRACKETS: 3
+	},
+	POS: {
+		TOP: 1,
+		BOTTOM: 2,
+		BOTTOMINLINE: 3
+	},
+	FORMAT: {
+		USERLANG: 1, // if Google Docs is used in chinese, the names of the books of the bible will be given in chinese 
+		BIBLELANG: 2, // if Google Docs is used in chinese, the abbreviated names of the books of the bible in chinese will be given
+		USERLANGABBREV: 3, // if you are quoting from a Latin Bible, the names of the books of the bible will be given in latin
+		BIBLELANGABBREV: 4  // if you are quoting from a Latin Bible, the abbreviated names of the books of the bible in latin will be given
+	},
+	VISIBILITY: {
+		SHOW: 1,
+		HIDE: 2
+	},
+	TEXTSTYLE: {
+		BOLD: 1,
+		ITALIC: 2,
+		UNDERLINE: 3,
+		STRIKETHROUGH: 4
+	}
+};
+
