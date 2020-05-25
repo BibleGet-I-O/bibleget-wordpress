@@ -353,7 +353,13 @@ function bibleget_gutenberg()
 	$versionsByLang = $optionsInfo->getVersionsByLang();
 	$bibleGetBooksInLang = $optionsInfo->getBibleBookNamesInLang();
 	$BGETPROPERTIES = new BGETPROPERTIES();
-	wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'langCodes' => $langCodes, 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS));
+	$BGETreflection = new ReflectionClass('BGET');
+	$BGETinstanceprops = $BGETreflection->getConstants();
+	$BGETConstants = array();
+	foreach($BGETinstanceprops as $key => $value) {
+	    $BGETConstants[$key] = $value;
+	}
+	wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'langCodes' => $langCodes, 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants));
 
 	register_block_type('bibleget/bible-quote', array(
 		'editor_script'		=> 'bibleget-gutenberg-block',
@@ -545,8 +551,8 @@ function bibleGet_renderGutenbergBlock($atts)
                             if ($currentLangIdx === false) {
                                 $currentLangIdx = array_search("English", $biblebookslangs);
                             }
-                            $lclbook = $jsbook[$currentLangIdx][0];
-                            $lclabbrev = $jsbook[$currentLangIdx][1];
+                            $lclbook = trim(explode('|',$jsbook[$currentLangIdx][0])[0]);
+                            $lclabbrev = trim(explode('|',$jsbook[$currentLangIdx][1])[0]);
                             $bookChapterText = $bookChapterEl->textContent;
                             //Remove book name from the string (check includes any possible spaces in the book name)
                             if (preg_match('/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $bookChapterText, $res)) {

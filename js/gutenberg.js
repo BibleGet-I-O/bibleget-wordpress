@@ -4,6 +4,8 @@
  * Author: John Romano D'Orazio priest@johnromanodorazio.com
  */
 
+const BGET = BibleGetGlobal.BGETConstants;
+
 (function (blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const { registerBlockType } = blocks; //Blocks API
@@ -59,6 +61,7 @@
 			function changeVersion(VERSION) {
 				if(VERSION.length < 1){
 					alert(__('You must indicate the desired version or versions','bibleget-io'));
+					return false;
 				}
 				setAttributes({ VERSION });
 			}
@@ -673,44 +676,3 @@ const getInnerContent = function (tag, content) {
 		return '';
 	return result[1];
 };
-
-const BGET = {
-	ALIGN: {
-		LEFT: 1,       //make sure these are text values
-		CENTER: 2,      //that correspond to actual CSS properties for the for text-align rule
-		RIGHT: 3,     //
-		JUSTIFY: 4     //they will be used as is in the stylesheet definitions
-	},
-	VALIGN: {
-		SUPERSCRIPT: 1,
-		SUBSCRIPT: 2,
-		NORMAL: 3
-	},
-	WRAP: {
-		NONE: 1,
-		PARENTHESES: 2,
-		BRACKETS: 3
-	},
-	POS: {
-		TOP: 1,
-		BOTTOM: 2,
-		BOTTOMINLINE: 3
-	},
-	FORMAT: {
-		USERLANG: 1, // if Google Docs is used in chinese, the names of the books of the bible will be given in chinese 
-		BIBLELANG: 2, // if Google Docs is used in chinese, the abbreviated names of the books of the bible in chinese will be given
-		USERLANGABBREV: 3, // if you are quoting from a Latin Bible, the names of the books of the bible will be given in latin
-		BIBLELANGABBREV: 4  // if you are quoting from a Latin Bible, the abbreviated names of the books of the bible in latin will be given
-	},
-	VISIBILITY: {
-		SHOW: 1,
-		HIDE: 2
-	},
-	TEXTSTYLE: {
-		BOLD: 1,
-		ITALIC: 2,
-		UNDERLINE: 3,
-		STRIKETHROUGH: 4
-	}
-};
-
