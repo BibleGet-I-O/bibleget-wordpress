@@ -1,5 +1,24 @@
-.bibleGetButtonGroup {
+.bibleGetButtonGroup,.bibleGetTextStyleButtonGroup {
     display: block;
+}
+
+.bibleGetTextStyleButtonGroup button {
+    width: 3em;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+}
+
+.bibleGetTextStyleButtonGroup .italic {
+    font-style: italic;
+}
+
+.bibleGetTextStyleButtonGroup .underline {
+    text-decoration: underline;
+}
+
+.bibleGetTextStyleButtonGroup .strikethrough {
+    text-decoration: line-through;
 }
 
 .bibleGetSearch input {

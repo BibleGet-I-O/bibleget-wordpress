@@ -3,487 +3,487 @@
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
 class BibleGetSettingsPage
 {
-	/**
-	 * Holds the values to be used in the fields callbacks
-	 */
-	private $options;
-	private $options_page_hook;
-	private $locale;
-	private $versionsbylang;
-	private $versionsbylangcount;
-	private $versionlangscount;
-	private $biblebookslangs;
-	private $gfonts_weblist;
-	private $gfontsAPIkey;
-	private $gfontsAPIkeyTimeOut;
-	private $gfontsAPI_errors;
-	private $gfontsAPIkeyCheckResult;
-	private $bibleget_langcodes;
+    /**
+     * Holds the values to be used in the fields callbacks
+     */
+    private $options;
+    private $options_page_hook;
+    private $locale;
+    private $versionsbylang;
+    private $versionsbylangcount;
+    private $versionlangscount;
+    private $biblebookslangs;
+    private $gfonts_weblist;
+    private $gfontsAPIkey;
+    private $gfontsAPIkeyTimeOut;
+    private $gfontsAPI_errors;
+    private $gfontsAPIkeyCheckResult;
+    private $bibleget_langcodes;
 
-	/**
-	 * Start up
-	 */
-	public function __construct()
-	{
-		$this->locale = substr(apply_filters('plugin_locale', get_locale(), 'bibleget-io'), 0, 2);
-		$this->gfonts_weblist = new stdClass();
-		$this->options = get_option('bibleget_settings');
-		$this->gfontsAPIkey = "";
-		$this->gfontsAPIkeyTimeOut = 0;
-		$this->gfontsAPIkeyCheckResult = false;
-		$this->gfontsAPI_errors = array();
-		$this->bibleget_langcodes = array(
-			"af" => "Afrikaans",
-			"ak" => "Akan",
-			"sq" => "Albanian",
-			"am" => "Amharic",
-			"ar" => "Arabic",
-			"hy" => "Armenian",
-			"az" => "Azerbaijani",
-			"eu" => "Basque",
-			"be" => "Belarusian",
-			"bn" => "Bengali",
-			"bh" => "Bihari",
-			"bs" => "Bosnian",
-			"br" => "Breton",
-			"bg" => "Bulgarian",
-			"km" => "Cambodian",
-			"ca" => "Catalan",
-			"ny" => "Chichewa",
-			"zh" => "Chinese",
-			"co" => "Corsican",
-			"hr" => "Croatian",
-			"cs" => "Czech",
-			"da" => "Danish",
-			"nl" => "Dutch",
-			"en" => "English",
-			"eo" => "Esperanto",
-			"et" => "Estonian",
-			"fo" => "Faroese",
-			"tl" => "Filipino",
-			"fi" => "Finnish",
-			"fr" => "French",
-			"fy" => "Frisian",
-			"gl" => "Galician",
-			"ka" => "Georgian",
-			"de" => "German",
-			"el" => "Greek",
-			"gn" => "Guarani",
-			"gu" => "Gujarati",
-			"ht" => "Haitian Creole",
-			"ha" => "Hausa",
-			"iw" => "Hebrew",
-			"hi" => "Hindi",
-			"hu" => "Hungarian",
-			"is" => "Icelandic",
-			"ig" => "Igbo",
-			"id" => "Indonesian",
-			"ia" => "Interlingua",
-			"ga" => "Irish",
-			"it" => "Italian",
-			"ja" => "Japanese",
-			"jw" => "Javanese",
-			"kn" => "Kannada",
-			"kk" => "Kazakh",
-			"rw" => "Kinyarwanda",
-			"rn" => "Kirundi",
-			"kg" => "Kongo",
-			"ko" => "Korean",
-			"ku" => "Kurdish",
-			"ky" => "Kyrgyz",
-			"lo" => "Laothian",
-			"la" => "Latin",
-			"lv" => "Latvian",
-			"ln" => "Lingala",
-			"lt" => "Lithuanian",
-			"lg" => "Luganda",
-			"mk" => "Macedonian",
-			"mg" => "Malagasy",
-			"ms" => "Malay",
-			"ml" => "Malayalam",
-			"mt" => "Maltese",
-			"mi" => "Maori",
-			"mr" => "Marathi",
-			"mo" => "Moldavian",
-			"mn" => "Mongolian",
-			"ne" => "Nepali",
-			"no" => "Norwegian",
-			"oc" => "Occitan",
-			"or" => "Oriya",
-			"om" => "Oromo",
-			"ps" => "Pashto",
-			"fa" => "Persian",
-			"pl" => "Polish",
-			"pt" => "Portuguese",
-			"pa" => "Punjabi",
-			"qu" => "Quechua",
-			"ro" => "Romanian",
-			"rm" => "Romansh",
-			"ru" => "Russian",
-			"gd" => "Scots Gaelic",
-			"sr" => "Serbian",
-			"sh" => "Serbo-Croatian",
-			"st" => "Sesotho",
-			"tn" => "Setswana",
-			"sn" => "Shona",
-			"sd" => "Sindhi",
-			"si" => "Sinhalese",
-			"sk" => "Slovak",
-			"sl" => "Slovenian",
-			"so" => "Somali",
-			"es" => "Spanish",
-			"su" => "Sundanese",
-			"sw" => "Swahili",
-			"sv" => "Swedish",
-			"tg" => "Tajik",
-			"ta" => "Tamil",
-			"tt" => "Tatar",
-			"te" => "Telugu",
-			"th" => "Thai",
-			"ti" => "Tigrinya",
-			"to" => "Tonga",
-			"tr" => "Turkish",
-			"tk" => "Turkmen",
-			"tw" => "Twi",
-			"ug" => "Uighur",
-			"uk" => "Ukrainian",
-			"ur" => "Urdu",
-			"uz" => "Uzbek",
-			"vi" => "Vietnamese",
-			"cy" => "Welsh",
-			"wo" => "Wolof",
-			"xh" => "Xhosa",
-			"yi" => "Yiddish",
-			"yo" => "Yoruba",
-			"zu" => "Zulu"
-		);
-		$this->versionsbylang = $this->prepareVersionsByLang(); //will now be an array with both versions and langs properties
-		$this->versionlangscount = count($this->versionsbylang["versions"]);
-		$this->versionsbylangcount = $this->countVersionsByLang();
-		$this->biblebookslangs = $this->prepareBibleBooksLangs();
-	}
+    /**
+     * Start up
+     */
+    public function __construct()
+    {
+        $this->locale = substr(apply_filters('plugin_locale', get_locale(), 'bibleget-io'), 0, 2);
+        $this->gfonts_weblist = new stdClass();
+        $this->options = get_option('bibleget_settings');
+        $this->gfontsAPIkey = "";
+        $this->gfontsAPIkeyTimeOut = 0;
+        $this->gfontsAPIkeyCheckResult = false;
+        $this->gfontsAPI_errors = array();
+        $this->bibleget_langcodes = array(
+            "af" => "Afrikaans",
+            "ak" => "Akan",
+            "sq" => "Albanian",
+            "am" => "Amharic",
+            "ar" => "Arabic",
+            "hy" => "Armenian",
+            "az" => "Azerbaijani",
+            "eu" => "Basque",
+            "be" => "Belarusian",
+            "bn" => "Bengali",
+            "bh" => "Bihari",
+            "bs" => "Bosnian",
+            "br" => "Breton",
+            "bg" => "Bulgarian",
+            "km" => "Cambodian",
+            "ca" => "Catalan",
+            "ny" => "Chichewa",
+            "zh" => "Chinese",
+            "co" => "Corsican",
+            "hr" => "Croatian",
+            "cs" => "Czech",
+            "da" => "Danish",
+            "nl" => "Dutch",
+            "en" => "English",
+            "eo" => "Esperanto",
+            "et" => "Estonian",
+            "fo" => "Faroese",
+            "tl" => "Filipino",
+            "fi" => "Finnish",
+            "fr" => "French",
+            "fy" => "Frisian",
+            "gl" => "Galician",
+            "ka" => "Georgian",
+            "de" => "German",
+            "el" => "Greek",
+            "gn" => "Guarani",
+            "gu" => "Gujarati",
+            "ht" => "Haitian Creole",
+            "ha" => "Hausa",
+            "iw" => "Hebrew",
+            "hi" => "Hindi",
+            "hu" => "Hungarian",
+            "is" => "Icelandic",
+            "ig" => "Igbo",
+            "id" => "Indonesian",
+            "ia" => "Interlingua",
+            "ga" => "Irish",
+            "it" => "Italian",
+            "ja" => "Japanese",
+            "jw" => "Javanese",
+            "kn" => "Kannada",
+            "kk" => "Kazakh",
+            "rw" => "Kinyarwanda",
+            "rn" => "Kirundi",
+            "kg" => "Kongo",
+            "ko" => "Korean",
+            "ku" => "Kurdish",
+            "ky" => "Kyrgyz",
+            "lo" => "Laothian",
+            "la" => "Latin",
+            "lv" => "Latvian",
+            "ln" => "Lingala",
+            "lt" => "Lithuanian",
+            "lg" => "Luganda",
+            "mk" => "Macedonian",
+            "mg" => "Malagasy",
+            "ms" => "Malay",
+            "ml" => "Malayalam",
+            "mt" => "Maltese",
+            "mi" => "Maori",
+            "mr" => "Marathi",
+            "mo" => "Moldavian",
+            "mn" => "Mongolian",
+            "ne" => "Nepali",
+            "no" => "Norwegian",
+            "oc" => "Occitan",
+            "or" => "Oriya",
+            "om" => "Oromo",
+            "ps" => "Pashto",
+            "fa" => "Persian",
+            "pl" => "Polish",
+            "pt" => "Portuguese",
+            "pa" => "Punjabi",
+            "qu" => "Quechua",
+            "ro" => "Romanian",
+            "rm" => "Romansh",
+            "ru" => "Russian",
+            "gd" => "Scots Gaelic",
+            "sr" => "Serbian",
+            "sh" => "Serbo-Croatian",
+            "st" => "Sesotho",
+            "tn" => "Setswana",
+            "sn" => "Shona",
+            "sd" => "Sindhi",
+            "si" => "Sinhalese",
+            "sk" => "Slovak",
+            "sl" => "Slovenian",
+            "so" => "Somali",
+            "es" => "Spanish",
+            "su" => "Sundanese",
+            "sw" => "Swahili",
+            "sv" => "Swedish",
+            "tg" => "Tajik",
+            "ta" => "Tamil",
+            "tt" => "Tatar",
+            "te" => "Telugu",
+            "th" => "Thai",
+            "ti" => "Tigrinya",
+            "to" => "Tonga",
+            "tr" => "Turkish",
+            "tk" => "Turkmen",
+            "tw" => "Twi",
+            "ug" => "Uighur",
+            "uk" => "Ukrainian",
+            "ur" => "Urdu",
+            "uz" => "Uzbek",
+            "vi" => "Vietnamese",
+            "cy" => "Welsh",
+            "wo" => "Wolof",
+            "xh" => "Xhosa",
+            "yi" => "Yiddish",
+            "yo" => "Yoruba",
+            "zu" => "Zulu"
+        );
+        $this->versionsbylang = $this->prepareVersionsByLang(); //will now be an array with both versions and langs properties
+        $this->versionlangscount = count($this->versionsbylang["versions"]);
+        $this->versionsbylangcount = $this->countVersionsByLang();
+        $this->biblebookslangs = $this->prepareBibleBooksLangs();
+    }
 
-	public function Init()
-	{
-		add_action('admin_menu', array($this, 'add_plugin_page'));
-		add_action('admin_init', array($this, 'register_settings'));
+    public function Init()
+    {
+        add_action('admin_menu', array($this, 'add_plugin_page'));
+        add_action('admin_init', array($this, 'register_settings'));
 
-		//if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
-		//so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
-		//this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
-		//we will have to leave the transient set to admin_print_scripts
-		switch ($this->gfontsAPIkeyCheck()) { //can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult
-			case false:
-				//the gfontsAPIkey is not set, so let's just not do anything, ok
-				break;
-			case "SUCCESS":
-				//the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
-				//error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
-				add_action("wp_ajax_store_gfonts_preview", array($this, 'store_gfonts_preview'));
-				add_action("wp_ajax_bibleget_refresh_gfonts", array($this, 'bibleGetForceRefreshGFontsResults'));
-				//enqueue and localize will be done in enqueue_scripts
+        //if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
+        //so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
+        //this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
+        //we will have to leave the transient set to admin_print_scripts
+        switch ($this->gfontsAPIkeyCheck()) { //can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult
+            case false:
+                //the gfontsAPIkey is not set, so let's just not do anything, ok
+                break;
+            case "SUCCESS":
+                //the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
+                //error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
+                add_action("wp_ajax_store_gfonts_preview", array($this, 'store_gfonts_preview'));
+                add_action("wp_ajax_bibleget_refresh_gfonts", array($this, 'bibleGetForceRefreshGFontsResults'));
+                //enqueue and localize will be done in enqueue_scripts
 
-				// Include CSS minifier by matthiasmullie
-				$minifierpath = WP_PLUGIN_DIR . "/bibleget-io/minifier";
-				require_once $minifierpath . '/minify/src/Minify.php';
-				require_once $minifierpath . '/minify/src/CSS.php';
-				require_once $minifierpath . '/minify/src/JS.php';
-				require_once $minifierpath . '/minify/src/Exception.php';
-				require_once $minifierpath . '/minify/src/Exceptions/BasicException.php';
-				require_once $minifierpath . '/minify/src/Exceptions/FileImportException.php';
-				require_once $minifierpath . '/minify/src/Exceptions/IOException.php';
-				require_once $minifierpath . '/path-converter/src/ConverterInterface.php';
-				require_once $minifierpath . '/path-converter/src/Converter.php';
-				break;
-			case "CURL_ERROR":
-				break;
-			case "JSON_ERROR":
-				break;
-			case "REQUEST_NOT_SENT":
-				break;
-		}
+                // Include CSS minifier by matthiasmullie
+                $minifierpath = WP_PLUGIN_DIR . "/bibleget-io/minifier";
+                require_once $minifierpath . '/minify/src/Minify.php';
+                require_once $minifierpath . '/minify/src/CSS.php';
+                require_once $minifierpath . '/minify/src/JS.php';
+                require_once $minifierpath . '/minify/src/Exception.php';
+                require_once $minifierpath . '/minify/src/Exceptions/BasicException.php';
+                require_once $minifierpath . '/minify/src/Exceptions/FileImportException.php';
+                require_once $minifierpath . '/minify/src/Exceptions/IOException.php';
+                require_once $minifierpath . '/path-converter/src/ConverterInterface.php';
+                require_once $minifierpath . '/path-converter/src/Converter.php';
+                break;
+            case "CURL_ERROR":
+                break;
+            case "JSON_ERROR":
+                break;
+            case "REQUEST_NOT_SENT":
+                break;
+        }
 
-		add_action('admin_enqueue_scripts', array($this, 'admin_print_styles'));
-		add_action('admin_enqueue_scripts', array($this, 'admin_print_scripts'));
-		add_action('load-' . $this->options_page_hook, array($this, 'bibleget_plugin_settings_save'));
-	}
+        add_action('admin_enqueue_scripts', array($this, 'admin_print_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_print_scripts'));
+        add_action('load-' . $this->options_page_hook, array($this, 'bibleget_plugin_settings_save'));
+    }
 
-	public function getBibleGetLangCodes()
-	{
-		return $this->bibleget_langcodes;
-	}
+    public function getBibleGetLangCodes()
+    {
+        return $this->bibleget_langcodes;
+    }
 
-	public function getVersionsByLang()
-	{
-		return $this->versionsbylang;
-	}
+    public function getVersionsByLang()
+    {
+        return $this->versionsbylang;
+    }
 
-	/**
-	 * Function prepareBibleBooksLangs
-	 *
-	 * returns the list of languages in which the BibleGet endpoint can understand the names of the books of the Bible
-	 * the language names are translated into the current locale
-	 * (For just the English names, use get_option("bibleget_languages") rather than this function )
-	 */
-	public function prepareBibleBooksLangs()
-	{
-		$biblebookslangsArr = array();
+    /**
+     * Function prepareBibleBooksLangs
+     *
+     * returns the list of languages in which the BibleGet endpoint can understand the names of the books of the Bible
+     * the language names are translated into the current locale
+     * (For just the English names, use get_option("bibleget_languages") rather than this function )
+     */
+    public function prepareBibleBooksLangs()
+    {
+        $biblebookslangsArr = array();
 
-		$biblebookslangs = get_option("bibleget_languages");
-		if ($biblebookslangs === false || !is_array($biblebookslangs) || count($biblebookslangs) < 1) {
-			bibleGetSetOptions(); //TODO: these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
-			$biblebookslangs = get_option("bibleget_languages");
-		}
+        $biblebookslangs = get_option("bibleget_languages");
+        if ($biblebookslangs === false || !is_array($biblebookslangs) || count($biblebookslangs) < 1) {
+            bibleGetSetOptions(); //TODO: these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
+            $biblebookslangs = get_option("bibleget_languages");
+        }
 
-		//we will try to translate each of the language names if possible
-		foreach ($biblebookslangs as $key => $biblebookslang) {
-			if (extension_loaded('intl') === true) {
-				//get two letter ISO code from the english language name
-				$biblebooksLocale = array_search($biblebookslang, $this->bibleget_langcodes);
-				//get the translated display name that corresponds to the two letter ISO code
-				$lang = Locale::getDisplayLanguage($biblebooksLocale, $this->locale);
-				array_push($biblebookslangsArr, $lang);
-			} else { //and if we can't get the two letter ISO code for this language, we will just use the english version we have
-				array_push($biblebookslangsArr, $biblebookslang);
-			}
-		}
+        //we will try to translate each of the language names if possible
+        foreach ($biblebookslangs as $key => $biblebookslang) {
+            if (extension_loaded('intl') === true) {
+                //get two letter ISO code from the english language name
+                $biblebooksLocale = array_search($biblebookslang, $this->bibleget_langcodes);
+                //get the translated display name that corresponds to the two letter ISO code
+                $lang = Locale::getDisplayLanguage($biblebooksLocale, $this->locale);
+                array_push($biblebookslangsArr, $lang);
+            } else { //and if we can't get the two letter ISO code for this language, we will just use the english version we have
+                array_push($biblebookslangsArr, $biblebookslang);
+            }
+        }
 
 
-		if (extension_loaded('intl') === true) {
-			collator_asort(collator_create('root'), $biblebookslangsArr);
-		} else {
-			array_multisort(array_map('self::Sortify', $biblebookslangsArr), $biblebookslangsArr);
-		}
-		return $biblebookslangsArr;
-	}
+        if (extension_loaded('intl') === true) {
+            collator_asort(collator_create('root'), $biblebookslangsArr);
+        } else {
+            array_multisort(array_map('self::Sortify', $biblebookslangsArr), $biblebookslangsArr);
+        }
+        return $biblebookslangsArr;
+    }
 
-	public function prepareVersionsByLang()
-	{
-		$versions = get_option("bibleget_versions", array()); //theoretically should be an array
-		$versionsbylang = array();
-		$langs = array();
-		if (count($versions) < 1) {
-			bibleGetSetOptions(); //global function defined in bibleget-io.php
-			$versions = get_option("bibleget_versions", array());
-		}
-		foreach ($versions as $abbr => $versioninfo) {
-			$info = explode("|", $versioninfo);
-			$fullname = $info[0];
-			$year = $info[1];
-			if (extension_loaded('intl') === true) { //do our best to translate the language name
-				$lang = Locale::getDisplayLanguage($info[2], $this->locale);
-			} else { //but if we can't, just use the english version that we have
-				$lang = $this->bibleget_langcodes[$info[2]]; //this gives the english correspondent of the two letter ISO code
-			}
+    public function prepareVersionsByLang()
+    {
+        $versions = get_option("bibleget_versions", array()); //theoretically should be an array
+        $versionsbylang = array();
+        $langs = array();
+        if (count($versions) < 1) {
+            bibleGetSetOptions(); //global function defined in bibleget-io.php
+            $versions = get_option("bibleget_versions", array());
+        }
+        foreach ($versions as $abbr => $versioninfo) {
+            $info = explode("|", $versioninfo);
+            $fullname = $info[0];
+            $year = $info[1];
+            if (extension_loaded('intl') === true) { //do our best to translate the language name
+                $lang = Locale::getDisplayLanguage($info[2], $this->locale);
+            } else { //but if we can't, just use the english version that we have
+                $lang = $this->bibleget_langcodes[$info[2]]; //this gives the english correspondent of the two letter ISO code
+            }
 
-			if (isset($versionsbylang[$lang])) {
-				if (isset($versionsbylang[$lang][$abbr])) {
-					//how can that be?
-				} else {
-					$versionsbylang[$lang][$abbr] = array("fullname" => $fullname, "year" => $year);
-				}
-			} else {
-				$versionsbylang[$lang] = array();
-				array_push($langs, $lang);
-				$versionsbylang[$lang][$abbr] = array("fullname" => $fullname, "year" => $year);
-			}
-		}
+            if (isset($versionsbylang[$lang])) {
+                if (isset($versionsbylang[$lang][$abbr])) {
+                    //how can that be?
+                } else {
+                    $versionsbylang[$lang][$abbr] = array("fullname" => $fullname, "year" => $year);
+                }
+            } else {
+                $versionsbylang[$lang] = array();
+                array_push($langs, $lang);
+                $versionsbylang[$lang][$abbr] = array("fullname" => $fullname, "year" => $year);
+            }
+        }
 
-		if (extension_loaded('intl') === true) {
-			collator_asort(collator_create('root'), $langs);
-		} else {
-			array_multisort(array_map('self::Sortify', $langs), $langs);
-		}
+        if (extension_loaded('intl') === true) {
+            collator_asort(collator_create('root'), $langs);
+        } else {
+            array_multisort(array_map('self::Sortify', $langs), $langs);
+        }
 
-		return array("versions" => $versionsbylang, "langs" => $langs);
-	}
+        return array("versions" => $versionsbylang, "langs" => $langs);
+    }
 
-	public function countVersionsByLang()
-	{
-		//count total languages and total versions
+    public function countVersionsByLang()
+    {
+        //count total languages and total versions
 
-		$counter = 0;
-		foreach ($this->versionsbylang["versions"] as $lang => $versionbylang) {
-			ksort($this->versionsbylang["versions"][$lang]);
-			$counter += count($this->versionsbylang["versions"][$lang]);
-		}
-		return $counter;
-	}
+        $counter = 0;
+        foreach ($this->versionsbylang["versions"] as $lang => $versionbylang) {
+            ksort($this->versionsbylang["versions"][$lang]);
+            $counter += count($this->versionsbylang["versions"][$lang]);
+        }
+        return $counter;
+    }
 
-	/**
-	 * Function getBibleBookNamesInLang
-	 * @string $lang will typically be the language of the WordPress interface,
-	 * can be two letter ISO code or full language name
-	 * Returns stdClass object
-	 */
-	public function getBibleBookNamesInLang($lang = null){
-		if($lang === null){ $lang = $this->locale; }
-		if(strlen($lang) == 2){
-			//we have a two-letter ISO code, we need to get the full language name in English
-			if (extension_loaded('intl') === true) {
-				$lang = Locale::getDisplayLanguage($lang, "en");
-			} else {
-				$lang = $this->bibleget_langcodes[$lang]; //this gives the english correspondent of the two letter ISO code
-			}
-		}
+    /**
+     * Function getBibleBookNamesInLang
+     * @string $lang will typically be the language of the WordPress interface,
+     * can be two letter ISO code or full language name
+     * Returns stdClass object
+     */
+    public function getBibleBookNamesInLang($lang = null){
+        if($lang === null){ $lang = $this->locale; }
+        if(strlen($lang) == 2){
+            //we have a two-letter ISO code, we need to get the full language name in English
+            if (extension_loaded('intl') === true) {
+                $lang = Locale::getDisplayLanguage($lang, "en");
+            } else {
+                $lang = $this->bibleget_langcodes[$lang]; //this gives the english correspondent of the two letter ISO code
+            }
+        }
 
-		//we probably have a full language name now if we didn't before, let's get the index from the supported languages
-		if(strlen($lang) > 2){
-			$biblebookslangs = get_option("bibleget_languages");
-			$idx = array_search($lang,$biblebookslangs);
-			if($idx === false){
-				$idx = array_search("English",$biblebookslangs);
-			}
-			//we can start getting our return info ready
-			$bibleBooks = new stdClass();
-			$bibleBooks->fullname = array();
-			$bibleBooks->abbrev = array();
-			for($i=0;$i<73;$i++){
-				$jsbook = json_decode(get_option("bibleget_biblebooks" . $i), true);
-				array_push($bibleBooks->fullname, $jsbook[$idx][0]);
-				array_push($bibleBooks->abbrev, $jsbook[$idx][1]);
-			}
-			return $bibleBooks;
-		}
-		return false;
-	}
+        //we probably have a full language name now if we didn't before, let's get the index from the supported languages
+        if(strlen($lang) > 2){
+            $biblebookslangs = get_option("bibleget_languages");
+            $idx = array_search($lang,$biblebookslangs);
+            if($idx === false){
+                $idx = array_search("English",$biblebookslangs);
+            }
+            //we can start getting our return info ready
+            $bibleBooks = new stdClass();
+            $bibleBooks->fullname = array();
+            $bibleBooks->abbrev = array();
+            for($i=0;$i<73;$i++){
+                $jsbook = json_decode(get_option("bibleget_biblebooks" . $i), true);
+                array_push($bibleBooks->fullname, $jsbook[$idx][0]);
+                array_push($bibleBooks->abbrev, $jsbook[$idx][1]);
+            }
+            return $bibleBooks;
+        }
+        return false;
+    }
 
-	/**
-	 * Add options page
-	 */
-	public function add_plugin_page()
-	{
-		// This page will be under "Settings"
-		$this->options_page_hook = add_options_page(
-			__('BibleGet I/O Settings', "bibleget-io"),	// $page_title
-			'BibleGet I/O',								// $menu_title
-			'manage_options',							// $capability
-			'bibleget-settings-admin',					// $menu_slug (Page ID)
-			array($this, 'create_admin_page')			// Callback Function
-		);
-	}
+    /**
+     * Add options page
+     */
+    public function add_plugin_page()
+    {
+        // This page will be under "Settings"
+        $this->options_page_hook = add_options_page(
+            __('BibleGet I/O Settings', "bibleget-io"),	// $page_title
+            'BibleGet I/O',								// $menu_title
+            'manage_options',							// $capability
+            'bibleget-settings-admin',					// $menu_slug (Page ID)
+            array($this, 'create_admin_page')			// Callback Function
+            );
+    }
 
-	/**
-	 * Register and add settings
-	 */
-	public function register_settings()
-	{
+    /**
+     * Register and add settings
+     */
+    public function register_settings()
+    {
 
-		register_setting(
-			'bibleget_settings_options', // Option group
-			'bibleget_settings', // Option name
-			array($this, 'sanitize') // Sanitize
-		);
+        register_setting(
+            'bibleget_settings_options', // Option group
+            'bibleget_settings', // Option name
+            array($this, 'sanitize') // Sanitize
+            );
 
-		add_settings_section(
-			'bibleget_settings_section2', // ID
-			__('Preferences Settings', "bibleget-io"), // Title
-			array($this, 'print_section_info2'), // Callback
-			'bibleget-settings-admin' // Page
-		);
+        add_settings_section(
+            'bibleget_settings_section2', // ID
+            __('Preferences Settings', "bibleget-io"), // Title
+            array($this, 'print_section_info2'), // Callback
+            'bibleget-settings-admin' // Page
+            );
 
-		add_settings_field(
-			'favorite_version',
-			__('Preferred version or versions (when not indicated in shortcode)', "bibleget-io"),
-			array($this, 'favorite_version_callback'),
-			'bibleget-settings-admin',
-			'bibleget_settings_section2'
-		);
+        add_settings_field(
+            'favorite_version',
+            __('Preferred version or versions (when not indicated in shortcode)', "bibleget-io"),
+            array($this, 'favorite_version_callback'),
+            'bibleget-settings-admin',
+            'bibleget_settings_section2'
+            );
 
-		add_settings_field(
-			'googlefontsapi_key',
-			__('Google Fonts API key (for updated font list)', "bibleget-io"),
-			array($this, 'googlefontsapikey_callback'),
-			'bibleget-settings-admin',
-			'bibleget_settings_section2'
-		);
-	}
+        add_settings_field(
+            'googlefontsapi_key',
+            __('Google Fonts API key (for updated font list)', "bibleget-io"),
+            array($this, 'googlefontsapikey_callback'),
+            'bibleget-settings-admin',
+            'bibleget_settings_section2'
+            );
+    }
 
-	public function admin_print_styles($hook)
-	{
-		if ($hook == 'settings_page_bibleget-settings-admin') {
-			wp_enqueue_style('admin-css', plugins_url('css/admin.css', __FILE__));
-		}
-	}
+    public function admin_print_styles($hook)
+    {
+        if ($hook == 'settings_page_bibleget-settings-admin') {
+            wp_enqueue_style('admin-css', plugins_url('css/admin.css', __FILE__));
+        }
+    }
 
-	public function admin_print_scripts($hook)
-	{
-		//echo "<div style=\"border:10px ridge Blue;\">$hook</div>";
-		if ($hook != 'settings_page_bibleget-settings-admin') {
-			return;
-		}
+    public function admin_print_scripts($hook)
+    {
+        //echo "<div style=\"border:10px ridge Blue;\">$hook</div>";
+        if ($hook != 'settings_page_bibleget-settings-admin') {
+            return;
+        }
 
-		wp_register_script('admin-js', plugins_url('js/admin.js', __FILE__), array('jquery'));
-		$thisoptions = get_option('bibleget_settings');
-		$myoptions = array();
-		if ($thisoptions) {
-			foreach ($thisoptions as $key => $option) {
-				$myoptions[$key] = esc_attr($option);
-			}
-		}
-		$obj = array("options" => $myoptions, 'ajax_url' => admin_url('admin-ajax.php'), 'ajax_nonce' => wp_create_nonce("bibleget-data"));
-		wp_localize_script('admin-js', 'bibleGetOptionsFromServer', $obj);
-		wp_enqueue_script('admin-js');
+        wp_register_script('admin-js', plugins_url('js/admin.js', __FILE__), array('jquery'));
+        $thisoptions = get_option('bibleget_settings');
+        $myoptions = array();
+        if ($thisoptions) {
+            foreach ($thisoptions as $key => $option) {
+                $myoptions[$key] = esc_attr($option);
+            }
+        }
+        $obj = array("options" => $myoptions, 'ajax_url' => admin_url('admin-ajax.php'), 'ajax_nonce' => wp_create_nonce("bibleget-data"));
+        wp_localize_script('admin-js', 'bibleGetOptionsFromServer', $obj);
+        wp_enqueue_script('admin-js');
 
-		if ($this->gfontsAPIkeyCheckResult == "SUCCESS") {
-			//We only want the transient to be set from the bibleget settings page, so we wait until now
-			// instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
-			set_transient(md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
+        if ($this->gfontsAPIkeyCheckResult == "SUCCESS") {
+            //We only want the transient to be set from the bibleget settings page, so we wait until now
+            // instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
+            set_transient(md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
 
-			$plugin_path = "";
-			// bibleGetWriteLog("about to initialize creation of admin page...");
-			if (get_filesystem_method() === 'direct') {
-				$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
-				/* initialize the API */
-				if (WP_Filesystem($creds)) {
-					global $wp_filesystem;
-					$plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path(__FILE__));
-					if (!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')) {
-						/* directory didn't exist, so let's create it */
-						$wp_filesystem->mkdir($plugin_path . 'gfonts_preview/');
-					}
-					if (!$wp_filesystem->is_dir($plugin_path . 'css/gfonts_preview/')) {
-						/* directory didn't exist, so let's create it */
-						$wp_filesystem->mkdir($plugin_path . 'css/gfonts_preview/');
-					}
+            $plugin_path = "";
+            // bibleGetWriteLog("about to initialize creation of admin page...");
+            if (get_filesystem_method() === 'direct') {
+                $creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
+                /* initialize the API */
+                if (WP_Filesystem($creds)) {
+                    global $wp_filesystem;
+                    $plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path(__FILE__));
+                    if (!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')) {
+                        /* directory didn't exist, so let's create it */
+                        $wp_filesystem->mkdir($plugin_path . 'gfonts_preview/');
+                    }
+                    if (!$wp_filesystem->is_dir($plugin_path . 'css/gfonts_preview/')) {
+                        /* directory didn't exist, so let's create it */
+                        $wp_filesystem->mkdir($plugin_path . 'css/gfonts_preview/');
+                    }
 
-					//let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
-					$wp_filesystem->put_contents(
-						$plugin_path . 'gfonts_preview/gfontsWeblist.json',
-						json_encode($this->gfonts_weblist),
-						FS_CHMOD_FILE // predefined mode settings for WP files
-					);
-				} else {
-					$this->gfontsAPI_errors[] = "Could not initialize wordpress filesystem with these credentials";
-				}
-			} else {
-				$this->gfontsAPI_errors[] = "You do not have direct access permissions to the wordpress filesystem";
-			}
+                    //let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
+                    $wp_filesystem->put_contents(
+                        $plugin_path . 'gfonts_preview/gfontsWeblist.json',
+                        json_encode($this->gfonts_weblist),
+                        FS_CHMOD_FILE // predefined mode settings for WP files
+                        );
+                } else {
+                    $this->gfontsAPI_errors[] = "Could not initialize wordpress filesystem with these credentials";
+                }
+            } else {
+                $this->gfontsAPI_errors[] = "You do not have direct access permissions to the wordpress filesystem";
+            }
 
-			wp_enqueue_script('jquery-ui-progressbar');
-			if (!wp_style_is('jquery-ui-css', 'registered') || !wp_style_is('jquery-ui-css', 'enqueued')) {
-				wp_enqueue_style(
-					'jquery-ui-css',
-					'//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css'
-				);
-			}
-			$storeGfontsArr = array("job" => array("gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"), 'ajax_url' => admin_url('admin-ajax.php'), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key']));
-			wp_localize_script('admin-js', 'gfontsBatch', $storeGfontsArr);
-		}
-	}
+            wp_enqueue_script('jquery-ui-progressbar');
+            if (!wp_style_is('jquery-ui-css', 'registered') || !wp_style_is('jquery-ui-css', 'enqueued')) {
+                wp_enqueue_style(
+                    'jquery-ui-css',
+                    '//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css'
+                    );
+            }
+            $storeGfontsArr = array("job" => array("gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"), 'ajax_url' => admin_url('admin-ajax.php'), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key']));
+            wp_localize_script('admin-js', 'gfontsBatch', $storeGfontsArr);
+        }
+    }
 
-	/**
-	 * Options page callback
-	 */
-	public function create_admin_page()
-	{
+    /**
+     * Options page callback
+     */
+    public function create_admin_page()
+    {
 
-		//populate $this->biblebookslangs and $this->versionsbylang and $this->versionsbylangcount
-		//based on current WordPress locale
-		//$this->versionsbylang = $this->getVersionsByLang(); //already done in constructor?
+        //populate $this->biblebookslangs and $this->versionsbylang and $this->versionsbylangcount
+        //based on current WordPress locale
+        //$this->versionsbylang = $this->getVersionsByLang(); //already done in constructor?
 
-		//HTML of the main section of the options page
-?>
+        //HTML of the main section of the options page
+        ?>
 		<div id="page-wrap">
 			<h2 id="bibleget-h2"><?php _e("BibleGet I/O Settings", "bibleget-io") ?></h2>
 			<div id="form-wrapper">
@@ -1495,6 +1495,7 @@ class BibleGet_Customize
 	?>
 		<!--Customizer CSS-->
 		<?php $is_googlefont = false;
+		$BGETOPTIONS = get_option("BGET",[]);
 		$mod = get_theme_mod('bibleget_fontfamily', self::$bibleget_style_settings->bibleget_fontfamily->dfault);
 		//echo '<!-- mod variable = '.$mod.' -->';
 		if (!empty($mod)) {
@@ -1518,96 +1519,51 @@ class BibleGet_Customize
 				self::generate_css('div.results', 'font-family',	'bibleget_fontfamily');
 			}
 			echo PHP_EOL;
-
+			echo 'div.results p { margin: 0; }';
+			echo PHP_EOL;
 			self::generate_css('div.results', 'border-width',		'bibleget_borderwidth', '', 'px');
+			echo PHP_EOL;
+			self::generate_css('div.results', 'border-radius',		'bibleget_borderradius', '', 'px');
+			echo PHP_EOL;
+			self::generate_css('div.results', 'border-color', 		'bibleget_bordercolor');
 			echo PHP_EOL;
 			self::generate_css('div.results', 'border-style',		'bibleget_borderstyle');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-color', 	'bibleget_bordercolor');
-			echo PHP_EOL;
 			self::generate_css('div.results', 'background-color',	'bibleget_bgcolor');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-radius',	'bibleget_borderradius', '', 'px');
+			self::generate_css('div.results', 'width',				'bibleget_width', '', '%');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'width',			'bibleget_width', '', '%');
-			echo PHP_EOL;
-			$mod = get_theme_mod('bibleget_margintopbottom', self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
+
+			$mod1 = get_theme_mod('bibleget_margintopbottom', self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
+			$mod2 = get_theme_mod('bibleget_marginleftright', self::$bibleget_style_settings->bibleget_marginleftright->dfault);
 			$cssrule = '';
-			if (!empty($mod)) {
+			if (!empty($mod1) && !empty($mod2)) {
 				$cssrule = sprintf(
-					'%s { %s:%s; }',
+					'%s { %s: %s %s; }',
 					'div.results',
-					'margin-top',
-					($mod == 'auto' ? $mod : $mod . 'px')
-					//number_format(($mod / 10),1,'.','').'em'
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-				$cssrule = sprintf(
-					'%s { %s:%s; }',
-					'div.results',
-					'margin-bottom',
-					($mod == 'auto' ? $mod : $mod . 'px')
-					//number_format(($mod / 10),1,'.','').'em'
+					'margin',
+					($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
+					($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
 				);
 				echo $cssrule;
 				echo PHP_EOL;
 			}
 
-			$mod = get_theme_mod('bibleget_marginleftright', self::$bibleget_style_settings->bibleget_marginleftright->dfault);
+			$mod1 = get_theme_mod('bibleget_paddingtopbottom', self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault);
+			$mod2 = get_theme_mod('bibleget_paddingleftright', self::$bibleget_style_settings->bibleget_paddingleftright->dfault);
 			$cssrule = '';
-			if (!empty($mod)) {
+			if (!empty($mod1) && !empty($mod2)) {
 				$cssrule = sprintf(
-					'%s { %s:%s; }',
+					'%s { %s: %s %s; }',
 					'div.results',
-					'margin-left',
-					($mod == 'auto' ? $mod : $mod . 'px')
-					//number_format(($mod / 10),1,'.','').'em'
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-				$cssrule = sprintf(
-					'%s { %s:%s; }',
-					'div.results',
-					'margin-right',
-					($mod == 'auto' ? $mod : $mod . 'px')
-					//number_format(($mod / 10),1,'.','').'em'
+					'padding',
+					($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
+					($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
 				);
 				echo $cssrule;
 				echo PHP_EOL;
 			}
 
-			$mod = get_theme_mod('bibleget_paddingtopbottom', self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault);
-			$cssrule = '';
-			if (!empty($mod)) {
-				$cssrule = sprintf(
-					'%s { %s:%s; }%s { %s:%s; }',
-					'div.results',
-					'padding-top',
-					($mod == 'auto' ? $mod : $mod . 'px'),
-					PHP_EOL . 'div.results',
-					'padding-bottom',
-					($mod == 'auto' ? $mod : $mod . 'px')
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-			}
-
-			$mod = get_theme_mod('bibleget_paddingleftright', self::$bibleget_style_settings->bibleget_paddingleftright->dfault);
-			$cssrule = '';
-			if (!empty($mod)) {
-				$cssrule = sprintf(
-					'%s { %s:%s; }%s { %s:%s; }',
-					'div.results',
-					'padding-left',
-					($mod == 'auto' ? $mod : $mod . 'px'),
-					PHP_EOL . 'div.results',
-					'padding-right',
-					($mod == 'auto' ? $mod : $mod . 'px')
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-			}
 			self::generate_css('div.results p.versesParagraph', 'text-align', 'bibleget_textalign');
 			echo PHP_EOL;
 			self::generate_css('div.results p.bibleVersion', 'color', 'version_fontcolor');
@@ -1657,31 +1613,31 @@ class BibleGet_Customize
 					$fval = explode(',', $mod);
 
 					if (in_array('bold', $fval)) {
-						$cssrule .= 'font-weight:bold;';
+						$cssrule .= 'font-weight: bold;';
 					} else {
-						$cssrule .= 'font-weight:normal;';
+						$cssrule .= 'font-weight: normal;';
 					}
 
 					if (in_array('italic', $fval)) {
-						$cssrule .= 'font-style:italic;';
+						$cssrule .= 'font-style: italic;';
 					} else {
-						$cssrule .= 'font-style:normal;';
+						$cssrule .= 'font-style: normal;';
 					}
 
 					if (in_array('underline', $fval)) {
-						$cssrule .= 'text-decoration:underline;';
+						$cssrule .= 'text-decoration: underline;';
 					} elseif (in_array('strikethrough', $fval)) {
-						$cssrule .= 'text-decoration:line-through;';
+						$cssrule .= 'text-decoration: line-through;';
 					} else {
-						$cssrule .= 'text-decoration:none;';
+						$cssrule .= 'text-decoration: none;';
 					}
 
 					if (in_array('superscript', $fval)) {
-						$cssrule .= 'vertical-align:baseline;position:relative;top:-0.6em;';
+						$cssrule .= 'vertical-align: baseline; position: relative; top: -0.6em;';
 					} elseif (in_array('subscript', $fval)) {
-						$cssrule .= 'vertical-align:baseline;position:relative;top:0.6em;';
+						$cssrule .= 'vertical-align:baseline; position: relative; top:0.6em;';
 					} else {
-						$cssrule .= 'vertical-align:baseline;position:static;';
+						$cssrule .= 'vertical-align:baseline; position: static;';
 					}
 
 					echo sprintf('%s { %s }', $css_selector, $cssrule);
@@ -1716,11 +1672,29 @@ class BibleGet_Customize
 			echo "div.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber" . "pt; }";
 			echo PHP_EOL;
 
-			$bibleversionalign = get_theme_mod('bibleversionalign', 'left');
+			//$bibleversionalign = get_theme_mod('bibleversionalign', 'left');
+			$bibleversionalign = 'left';
+			switch(intval($BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONALIGNMENT"])){
+				case BGET::ALIGN["CENTER"]:
+					$bibleversionalign = 'center';
+				break;
+				case BGET::ALIGN["RIGHT"]:
+					$bibleversionalign = 'right';
+				break;
+			}
 			echo "div.results p.bibleVersion { text-align: $bibleversionalign; }";
 			echo PHP_EOL;
 
-			$bookchapteralign = get_theme_mod('bookchapteralign', 'left');
+			//$bookchapteralign = get_theme_mod('bookchapteralign', 'left');
+			$bookchapteralign = 'left';
+			switch(intval($BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERALIGNMENT"])){
+				case BGET::ALIGN["CENTER"]:
+					$bookchapteralign = 'center';
+				break;
+				case BGET::ALIGN["RIGHT"]:
+					$bookchapteralign = 'right';
+				break;
+			}
 			echo "div.results .bookChapter { text-align: $bookchapteralign; }";
 			echo PHP_EOL;
 
@@ -1779,7 +1753,7 @@ class BibleGet_Customize
 		$mod = get_theme_mod($mod_name, self::$bibleget_style_settings->$mod_name->dfault);
 		if (!empty($mod)) {
 			$returnval = sprintf(
-				'%s { %s:%s; }',
+				'%s { %s: %s; }',
 				$selector,
 				$style,
 				$prefix . $mod . $postfix
@@ -1795,272 +1769,300 @@ class BibleGet_Customize
 
 class BGET
 {
-    const ALIGN = [
-        "LEFT" 				=> 1,
-        "CENTER" 			=> 2,
-        "RIGHT" 			=> 3,
-        "JUSTIFY" 			=> 4
-    ],
-    VALIGN = [
-        "SUPERSCRIPT" 		=> 1,
-        "SUBSCRIPT" 		=> 2,
-        "NORMAL" 			=> 3
-    ],
-    WRAP = [
-        "NONE" 				=> 1,
-        "PARENTHESES" 		=> 2,
-        "BRACKETS" 			=> 3
-    ],
-    POS = [
-        "TOP" 				=> 1,
-        "BOTTOM" 			=> 2,
-        "BOTTOMINLINE" 		=> 3
-    ],
-    FORMAT = [
-        "USERLANG" 			=> 1, // if Google Docs is used in chinese, the names of the books of the bible will be given in chinese
-        "BIBLELANG" 		=> 2, // if Google Docs is used in chinese, the abbreviated names of the books of the bible in chinese will be given
-        "USERLANGABBREV" 	=> 3, // if you are quoting from a Latin Bible, the names of the books of the bible will be given in latin
-        "BIBLELANGABBREV" 	=> 4  // if you are quoting from a Latin Bible, the abbreviated names of the books of the bible in latin will be given
-    ],
-    VISIBILITY = [
-        "SHOW" 				=> true,
-        "HIDE" 				=> false
-    ],
-    TEXTSTYLE = [
-        "BOLD" 				=> 1,
-        "ITALIC" 			=> 2,
-        "UNDERLINE" 		=> 3,
-        "STRIKETHROUGH" 	=> 4
-    ],
-    BORDERSTYLE = [
-        "SOLID"				=> 1,
-        "GROOVE"			=> 2,
-        "RIDGE"				=> 3,
-        "INSET"				=> 4,
-        "OUTSET"			=> 5
-    ];
+	const ALIGN = [
+		"LEFT" 				=> 1,
+		"CENTER" 			=> 2,
+		"RIGHT" 			=> 3,
+		"JUSTIFY" 			=> 4
+	],
+	VALIGN = [
+		"SUPERSCRIPT" 		=> 1,
+		"SUBSCRIPT" 		=> 2,
+		"NORMAL" 			=> 3
+	],
+	WRAP = [
+		"NONE" 				=> 1,
+		"PARENTHESES" 		=> 2,
+		"BRACKETS" 			=> 3
+	],
+	POS = [
+		"TOP" 				=> 1,
+		"BOTTOM" 			=> 2,
+		"BOTTOMINLINE" 		=> 3
+	],
+	FORMAT = [
+		"USERLANG" 			=> 1, // if Google Docs is used in chinese, the names of the books of the bible will be given in chinese
+		"BIBLELANG" 		=> 2, // if Google Docs is used in chinese, the abbreviated names of the books of the bible in chinese will be given
+		"USERLANGABBREV" 	=> 3, // if you are quoting from a Latin Bible, the names of the books of the bible will be given in latin
+		"BIBLELANGABBREV" 	=> 4  // if you are quoting from a Latin Bible, the abbreviated names of the books of the bible in latin will be given
+	],
+	VISIBILITY = [
+		"SHOW" 				=> true,
+		"HIDE" 				=> false
+	],
+	TEXTSTYLE = [
+		"BOLD" 				=> 1,
+		"ITALIC" 			=> 2,
+		"UNDERLINE" 		=> 3,
+		"STRIKETHROUGH" 	=> 4
+	],
+	BORDERSTYLE = [
+		"NONE"				=> 0,
+		"DOTTED"			=> 1,
+		"DASHED"			=> 2,
+		"SOLID"				=> 3,
+		"DOUBLE"			=> 4,
+		"GROOVE"			=> 5,
+		"RIDGE"				=> 6,
+		"INSET"				=> 7,
+		"OUTSET"			=> 8
+	],
+	CSSRULE = [
+		'ALIGN' => ['left','center','right','justify'],
+		'TEXTSTYLE' => ['bold','italic','underline','strikethrough'],
+		'BORDERSTYLE' => ['none','dotted','dashed','solid','double','groove','ridge','inset','outset']
+	];
 };
 
 class BGETPROPERTIES {
-    public $OPTIONS,$BGETOPTIONS;
-    public function __construct(){
-        $this->BGETOPTIONS = get_option("BGET",[]);
-        $this->OPTIONS = [
-            "PARAGRAPHSTYLES_LINEHEIGHT" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_LINEHEIGHT") ? floatval($this->BGETOPTIONS["PARAGRAPHSTYLES_LINEHEIGHT"]) : 1.5,
-                "type" => "float"
-            ],
-            "PARAGRAPHSTYLES_PADDINGTOPBOTTOM" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGTOPBOTTOM"]) : 12, //unit: px
-                "type" => "integer"
-            ],
-            "PARAGRAPHSTYLES_PADDINGLEFTRIGHT" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGLEFTRIGHT"]) : 10, //unit: px
-                "type" => "integer"
-            ],
-            "PARAGRAPHSTYLES_FONTFAMILY" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_FONTFAMILY") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_FONTFAMILY"] : "Times New Roman",
-                "type" => "string"
-            ],
-            "PARAGRAPHSTYLES_PARAGRAPHALIGN" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PARAGRAPHALIGN") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PARAGRAPHALIGN"]) : BGET::ALIGN["JUSTIFY"],
-                "type" => "integer"   //possible vals 'left','center','right', 'justify' (use ENUM, e.g. BGET::ALIGN->LEFT)
-            ],
-            "PARAGRAPHSTYLES_NOVERSIONFORMATTING" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_NOVERSIONFORMATTING") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_NOVERSIONFORMATTING"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "PARAGRAPHSTYLES_BORDERWIDTH" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERWIDTH") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERWIDTH"]) : 1, //unit: px
-                "type" => "integer"
-            ],
-            "PARAGRAPHSTYLES_BORDERCOLOR" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERCOLOR"] : "#00AA00",
-                "type" => "string"
-            ],
-            "PARAGRAPHSTYLES_BORDERSTYLE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERSTYLE") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERSTYLE"]) : BGET::BORDERSTYLE["SOLID"],
-                "type" => "integer"
-            ],
-            "PARAGRAPHSTYLES_BORDERRADIUS" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERRADIUS") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERRADIUS"]) : 12, //unit: px
-                "type" => "integer"
-            ],
-            "VERSIONSTYLES_BOLD" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_BOLD") ? $this->BGETOPTIONS["VERSIONSTYLES_BOLD"] === 'true' : true,
-                "type" => "boolean"
-            ],
-            "VERSIONSTYLES_ITALIC" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSIONSTYLES_ITALIC"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSIONSTYLES_UNDERLINE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSIONSTYLES_UNDERLINE"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSIONSTYLES_STRIKETHROUGH" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSIONSTYLES_STRIKETHROUGH"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSIONSTYLES_TEXTCOLOR" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSIONSTYLES_TEXTCOLOR"] : "#000044",
-                "type" => "string"
-            ],
-            "VERSIONSTYLES_FONTSIZE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 10,
-                "type" => "integer"
-            ],
-            "BOOKCHAPTERSTYLES_BOLD" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_BOLD") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_BOLD"] === 'true' : true,
-                "type" => "boolean"
-            ],
-            "BOOKCHAPTERSTYLES_ITALIC" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_ITALIC") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_ITALIC"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "BOOKCHAPTERSTYLES_UNDERLINE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_UNDERLINE"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "BOOKCHAPTERSTYLES_STRIKETHROUGH" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_STRIKETHROUGH"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "BOOKCHAPTERSTYLES_TEXTCOLOR" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_TEXTCOLOR"] : "#000044",
-                "type" => "string"
-            ],
-            "BOOKCHAPTERSTYLES_FONTSIZE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZE"]) : 10,
-                "type" => "integer"
-            ],
-            "BOOKCHAPTERSTYLES_VALIGN" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"], //resolves to integer
-                "type" => "integer"
-            ],
-            "VERSENUMBERSTYLES_BOLD" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_BOLD") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_BOLD"] === 'true' : true,
-                "type" => "boolean"
-            ],
-            "VERSENUMBERSTYLES_ITALIC" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_ITALIC"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSENUMBERSTYLES_UNDERLINE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_UNDERLINE"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSENUMBERSTYLES_STRIKETHROUGH" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_STRIKETHROUGH"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSENUMBERSTYLES_TEXTCOLOR" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_TEXTCOLOR"] : "#AA0000",
-                "type" => "string"
-            ],
-            "VERSENUMBERSTYLES_FONTSIZE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 10,
-                "type" => "integer"
-            ],
-            "VERSENUMBERSTYLES_VALIGN" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_VALIGN"]) : BGET::VALIGN["SUPERSCRIPT"], //resolves to INT
-                "type" => "integer"
-            ],
-            "VERSETEXTSTYLES_BOLD" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_BOLD") ? $this->BGETOPTIONS["VERSETEXTSTYLES_BOLD"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSETEXTSTYLES_ITALIC" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSETEXTSTYLES_ITALIC"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSETEXTSTYLES_UNDERLINE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSETEXTSTYLES_UNDERLINE"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSETEXTSTYLES_STRIKETHROUGH" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSETEXTSTYLES_STRIKETHROUGH"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "VERSETEXTSTYLES_TEXTCOLOR" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSETEXTSTYLES_TEXTCOLOR"] : "#666666",
-                "type" => "string"
-            ],
-            "VERSETEXTSTYLES_FONTSIZE" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZE"]) : 10,
-                "type" => "integer"
-            ],
-            "VERSETEXTSTYLES_VALIGN" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_SHOWBIBLEVERSION" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWBIBLEVERSION") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWBIBLEVERSION"] === 'true' : BGET::VISIBILITY["SHOW"],
-                "type" => "boolean"
-            ],
-            "LAYOUTPREFS_BIBLEVERSIONALIGNMENT" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONALIGNMENT"]) : BGET::ALIGN["LEFT"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BIBLEVERSIONPOSITION" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONPOSITION"]) :  BGET::POS["TOP"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BIBLEVERSIONWRAP" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONWRAP"]) : BGET::WRAP["NONE"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BOOKCHAPTERALIGNMENT" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERALIGNMENT"]) : BGET::ALIGN["LEFT"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BOOKCHAPTERPOSITION" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERPOSITION"]) : BGET::POS["TOP"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BOOKCHAPTERWRAP" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERWRAP"]) : BGET::WRAP["NONE"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BOOKCHAPTERFORMAT" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFORMAT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFORMAT"]) : BGET::FORMAT["BIBLELANG"],
-                "type" => "integer"
-            ],
-            "LAYOUTPREFS_BOOKCHAPTERFULLQUERY" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFULLQUERY") ? $this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFULLQUERY"] === 'true' : false,					//false: just the name of the book and the chapter will be shown (i.e. 1 John 4)
-                "type" => "boolean"					//true: the full reference including the verses will be shown (i.e. 1 John 4:7-8)
-            ],
-            "LAYOUTPREFS_SHOWVERSENUMBERS" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWVERSENUMBERS") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWVERSENUMBERS"] === 'true' : BGET::VISIBILITY["SHOW"],
-                "type" => "boolean"
-            ],
-            "VERSION" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSION") ? $this->BGETOPTIONS["VERSION"] : ["NABRE"], //Array of string values
-                "type" => "ARRAY",
-                "items" => ["type" => "string"]
-            ],
-            "QUERY" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"QUERY") ? $this->BGETOPTIONS["QUERY"] : "Matthew1:1-5",
-                "type" => "string"
-            ],
-            "POPUP" => [
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"POPUP") ? $this->BGETOPTIONS["POPUP"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "FORCEVERSION" => [ //not currently used
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCEVERSION") ? $this->BGETOPTIONS["FORCEVERSION"] === 'true' : false,
-                "type" => "boolean"
-            ],
-            "FORCECOPYRIGHT" => [ //not currently used
-                "default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCECOPYRIGHT") ? $this->BGETOPTIONS["FORCECOPYRIGHT"] === 'true' : false,
-                "type" => "boolean"
-            ]
-        ]; //end $this->OPTIONS
-    }
-    public static function setAndNotNothing($arr,$key){
-        return (isset($arr[$key]) && $arr[$key] != "");
-
-    }
+	public $OPTIONS,$BGETOPTIONS;
+	public function __construct(){
+		$this->BGETOPTIONS = get_option("BGET",[]);
+		$this->OPTIONS = [
+			"PARAGRAPHSTYLES_FONTFAMILY" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_FONTFAMILY") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_FONTFAMILY"] : "Times New Roman",
+				"type" => "string"
+			],
+			"PARAGRAPHSTYLES_LINEHEIGHT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_LINEHEIGHT") ? floatval($this->BGETOPTIONS["PARAGRAPHSTYLES_LINEHEIGHT"]) : 1.5,
+				"type" => "number"
+			],
+			"PARAGRAPHSTYLES_PADDINGTOPBOTTOM" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGTOPBOTTOM"]) : 12, //unit: px
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_MARGINTOPBOTTOM" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINTOPBOTTOM"]) : 12, //unit: px
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_MARGINLEFTRIGHT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINLEFTRIGHT"]) : 12, //unit: user choice of 'px', '%', or 'auto'
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT"]) : 'auto',
+				"type" => "string" //possible values 'px', '%', 'auto'
+			],
+			"PARAGRAPHSTYLES_PADDINGLEFTRIGHT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGLEFTRIGHT"]) : 10, //unit: px
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_PARAGRAPHALIGN" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PARAGRAPHALIGN") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PARAGRAPHALIGN"]) : BGET::ALIGN["JUSTIFY"],
+				"type" => "integer"   //possible vals 'left','center','right', 'justify' (use ENUM, e.g. BGET::ALIGN->LEFT)
+			],
+			"PARAGRAPHSTYLES_WIDTH" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_WIDTH") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_WIDTH"]) : 80,
+				"type" => "integer"   //unit: %
+			],
+			"PARAGRAPHSTYLES_NOVERSIONFORMATTING" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_NOVERSIONFORMATTING") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_NOVERSIONFORMATTING"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"PARAGRAPHSTYLES_BORDERWIDTH" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERWIDTH") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERWIDTH"]) : 1, //unit: px
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_BORDERCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERCOLOR"] : "#00AA00",
+				"type" => "string"
+			],
+			"PARAGRAPHSTYLES_BORDERSTYLE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERSTYLE") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERSTYLE"]) : BGET::BORDERSTYLE["SOLID"],
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_BORDERRADIUS" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERRADIUS") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERRADIUS"]) : 12, //unit: px
+				"type" => "integer"
+			],
+			"PARAGRAPHSTYLES_BACKGROUNDCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BACKGROUNDCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BACKGROUNDCOLOR"] : '#efe9d5', //unit: px
+				"type" => "string"
+			],
+			"VERSIONSTYLES_BOLD" => [
+				"default" => isset($this->BGETOPTIONS["VERSIONSTYLES_BOLD"]) ? $this->BGETOPTIONS["VERSIONSTYLES_BOLD"] : true,
+				"type" => "boolean"
+			],
+			"VERSIONSTYLES_ITALIC" => [
+				"default" => isset($this->BGETOPTIONS["VERSIONSTYLES_ITALIC"]) ? $this->BGETOPTIONS["VERSIONSTYLES_ITALIC"] : false,
+				"type" => "boolean"
+			],
+			"VERSIONSTYLES_UNDERLINE" => [
+				"default" => isset($this->BGETOPTIONS["VERSIONSTYLES_UNDERLINE"]) ? $this->BGETOPTIONS["VERSIONSTYLES_UNDERLINE"] : false,
+				"type" => "boolean"
+			],
+			"VERSIONSTYLES_STRIKETHROUGH" => [
+				"default" => isset($this->BGETOPTIONS["VERSIONSTYLES_STRIKETHROUGH"]) ? $this->BGETOPTIONS["VERSIONSTYLES_STRIKETHROUGH"] : false,
+				"type" => "boolean"
+			],
+			"VERSIONSTYLES_TEXTCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSIONSTYLES_TEXTCOLOR"] : "#000044",
+				"type" => "string"
+			],
+			"VERSIONSTYLES_FONTSIZE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 10,
+				"type" => "integer"
+			],
+			"BOOKCHAPTERSTYLES_BOLD" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_BOLD") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_BOLD"] === 'true' : true,
+				"type" => "boolean"
+			],
+			"BOOKCHAPTERSTYLES_ITALIC" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_ITALIC") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_ITALIC"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"BOOKCHAPTERSTYLES_UNDERLINE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_UNDERLINE"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"BOOKCHAPTERSTYLES_STRIKETHROUGH" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_STRIKETHROUGH"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"BOOKCHAPTERSTYLES_TEXTCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_TEXTCOLOR"] : "#000044",
+				"type" => "string"
+			],
+			"BOOKCHAPTERSTYLES_FONTSIZE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZE"]) : 10,
+				"type" => "integer"
+			],
+			"BOOKCHAPTERSTYLES_VALIGN" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"], //resolves to integer
+				"type" => "integer"
+			],
+			"VERSENUMBERSTYLES_BOLD" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_BOLD") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_BOLD"] === 'true' : true,
+				"type" => "boolean"
+			],
+			"VERSENUMBERSTYLES_ITALIC" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_ITALIC"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSENUMBERSTYLES_UNDERLINE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_UNDERLINE"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSENUMBERSTYLES_STRIKETHROUGH" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_STRIKETHROUGH"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSENUMBERSTYLES_TEXTCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_TEXTCOLOR"] : "#AA0000",
+				"type" => "string"
+			],
+			"VERSENUMBERSTYLES_FONTSIZE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 10,
+				"type" => "integer"
+			],
+			"VERSENUMBERSTYLES_VALIGN" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_VALIGN"]) : BGET::VALIGN["SUPERSCRIPT"], //resolves to INT
+				"type" => "integer"
+			],
+			"VERSETEXTSTYLES_BOLD" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_BOLD") ? $this->BGETOPTIONS["VERSETEXTSTYLES_BOLD"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSETEXTSTYLES_ITALIC" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_ITALIC") ? $this->BGETOPTIONS["VERSETEXTSTYLES_ITALIC"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSETEXTSTYLES_UNDERLINE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_UNDERLINE") ? $this->BGETOPTIONS["VERSETEXTSTYLES_UNDERLINE"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSETEXTSTYLES_STRIKETHROUGH" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_STRIKETHROUGH") ? $this->BGETOPTIONS["VERSETEXTSTYLES_STRIKETHROUGH"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"VERSETEXTSTYLES_TEXTCOLOR" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_TEXTCOLOR") ? $this->BGETOPTIONS["VERSETEXTSTYLES_TEXTCOLOR"] : "#666666",
+				"type" => "string"
+			],
+			"VERSETEXTSTYLES_FONTSIZE" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZE"]) : 10,
+				"type" => "integer"
+			],
+			"VERSETEXTSTYLES_VALIGN" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_SHOWBIBLEVERSION" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWBIBLEVERSION") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWBIBLEVERSION"] === 'true' : BGET::VISIBILITY["SHOW"],
+				"type" => "boolean"
+			],
+			"LAYOUTPREFS_BIBLEVERSIONALIGNMENT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONALIGNMENT"]) : BGET::ALIGN["LEFT"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BIBLEVERSIONPOSITION" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONPOSITION"]) :  BGET::POS["TOP"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BIBLEVERSIONWRAP" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BIBLEVERSIONWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BIBLEVERSIONWRAP"]) : BGET::WRAP["NONE"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BOOKCHAPTERALIGNMENT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERALIGNMENT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERALIGNMENT"]) : BGET::ALIGN["LEFT"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BOOKCHAPTERPOSITION" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERPOSITION") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERPOSITION"]) : BGET::POS["TOP"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BOOKCHAPTERWRAP" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERWRAP") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERWRAP"]) : BGET::WRAP["NONE"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BOOKCHAPTERFORMAT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFORMAT") ? intval($this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFORMAT"]) : BGET::FORMAT["BIBLELANG"],
+				"type" => "integer"
+			],
+			"LAYOUTPREFS_BOOKCHAPTERFULLQUERY" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_BOOKCHAPTERFULLQUERY") ? $this->BGETOPTIONS["LAYOUTPREFS_BOOKCHAPTERFULLQUERY"] === 'true' : false,					//false: just the name of the book and the chapter will be shown (i.e. 1 John 4)
+				"type" => "boolean"					//true: the full reference including the verses will be shown (i.e. 1 John 4:7-8)
+			],
+			"LAYOUTPREFS_SHOWVERSENUMBERS" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"LAYOUTPREFS_SHOWVERSENUMBERS") ? $this->BGETOPTIONS["LAYOUTPREFS_SHOWVERSENUMBERS"] === 'true' : BGET::VISIBILITY["SHOW"],
+				"type" => "boolean"
+			],
+			"VERSION" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSION") ? $this->BGETOPTIONS["VERSION"] : ["NABRE"], //Array of string values
+				"type" => "ARRAY",
+				"items" => ["type" => "string"]
+			],
+			"QUERY" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"QUERY") ? $this->BGETOPTIONS["QUERY"] : "Matthew1:1-5",
+				"type" => "string"
+			],
+			"POPUP" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"POPUP") ? $this->BGETOPTIONS["POPUP"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"FORCEVERSION" => [ //not currently used
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCEVERSION") ? $this->BGETOPTIONS["FORCEVERSION"] === 'true' : false,
+				"type" => "boolean"
+			],
+			"FORCECOPYRIGHT" => [ //not currently used
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"FORCECOPYRIGHT") ? $this->BGETOPTIONS["FORCECOPYRIGHT"] === 'true' : false,
+				"type" => "boolean"
+			]
+		]; //end $this->OPTIONS
+	}
+	public static function setAndNotNothing($arr,$key){
+		return (isset($arr[$key]) && $arr[$key] != "");
+	}
 }
 
 //TODO: make sure we set default options on plugin install, and we remove them on plugin uninstall

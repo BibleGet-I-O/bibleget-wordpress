@@ -12,7 +12,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 	const { createElement, Fragment } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
-	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl } = components; //WordPress form inputs and server-side renderer
+	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker } = components; //WordPress form inputs and server-side renderer
 
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
@@ -94,12 +94,14 @@ const BGET = BibleGetGlobal.BGETConstants;
 						break;
 				}
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + textalign+'; }'));
-				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
+				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT:LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
 			}
 
 			function changeBibleVersionPos(ev){
 				let LAYOUTPREFS_BIBLEVERSIONPOSITION = parseInt(ev.currentTarget.value);
+				console.log('setting LAYOUTPREFS_BIBLEVERSIONPOSITION to '+ev.currentTarget.value);
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONPOSITION });
+				console.log(attributes);
 			}
 
 			function changeBibleVersionWrap(ev){
@@ -167,6 +169,372 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 			function changeVerseNumberVisibility(LAYOUTPREFS_SHOWVERSENUMBERS){
 				setAttributes({ LAYOUTPREFS_SHOWVERSENUMBERS });
+			}
+
+			function changeParagraphStyleBorderWidth(PARAGRAPHSTYLES_BORDERWIDTH){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-width: (?:.*?); \}/, 'div.results { border-width: ' + PARAGRAPHSTYLES_BORDERWIDTH + 'px; }'));				
+				setAttributes({ PARAGRAPHSTYLES_BORDERWIDTH });
+			}
+
+			function changeParagraphStyleBorderRadius(PARAGRAPHSTYLES_BORDERRADIUS){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-radius: (?:.*?); \}/, 'div.results { border-width: ' + PARAGRAPHSTYLES_BORDERRADIUS + 'px; }'));
+				setAttributes({ PARAGRAPHSTYLES_BORDERRADIUS });
+			}
+
+			function changeParagraphStyleBorderStyle(PARAGRAPHSTYLES_BORDERSTYLE){
+				PARAGRAPHSTYLES_BORDERSTYLE = parseInt(PARAGRAPHSTYLES_BORDERSTYLE);
+				let borderstyle = BGET.CSSRULE.BORDERSTYLE[PARAGRAPHSTYLES_BORDERSTYLE];
+				console.log('borderstyle = '+borderstyle);
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-style: (?:.*?); \}/, 'div.results { border-style: ' + borderstyle + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_BORDERSTYLE });
+			}
+
+			function changeParagraphStyleBorderColor(bordercolor){
+				let PARAGRAPHSTYLES_BORDERCOLOR = bordercolor.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-color: (?:.*?); \}/, 'div.results { border-color: ' + PARAGRAPHSTYLES_BORDERCOLOR + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_BORDERCOLOR });
+			}
+
+			function changeParagraphStyleBackgroundColor(backgroundcolor){
+				let PARAGRAPHSTYLES_BACKGROUNDCOLOR = backgroundcolor.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ background-color: (?:.*?); \}/, 'div.results { background-color: ' + PARAGRAPHSTYLES_BACKGROUNDCOLOR + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_BACKGROUNDCOLOR });
+			}
+
+			function changeParagraphStyleMarginTopBottom(PARAGRAPHSTYLES_MARGINTOPBOTTOM){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let { PARAGRAPHSTYLES_MARGINLEFTRIGHT,PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT}  = attributes;
+				let margLR = '';
+				switch(PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT){
+					case 'px':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + 'px';
+						break;
+					case '%':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + '%';
+						break;
+					case 'auto':
+						margLR = 'auto';
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_MARGINTOPBOTTOM });
+			}
+
+			function changeParagraphStyleMarginLeftRight(PARAGRAPHSTYLES_MARGINLEFTRIGHT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let { PARAGRAPHSTYLES_MARGINTOPBOTTOM, PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT }  = attributes;
+				let margLR = '';
+				switch(PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT){
+					case 'px':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + 'px';
+						break;
+					case '%':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + '%';
+						break;
+					case 'auto':
+						margLR = 'auto';
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHT });
+			}
+
+			function changeParagraphStyleMarginLeftRightUnit(PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let { PARAGRAPHSTYLES_MARGINTOPBOTTOM, PARAGRAPHSTYLES_MARGINLEFTRIGHT }  = attributes;
+				let margLR = '';
+				switch(PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT){
+					case 'px':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + 'px';
+						break;
+					case '%':
+						margLR = PARAGRAPHSTYLES_MARGINLEFTRIGHT + '%';
+						break;
+					case 'auto':
+						margLR = 'auto';
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT });
+			}
+
+			function changeParagraphStylePaddingTopBottom(PARAGRAPHSTYLES_PADDINGTOPBOTTOM){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let { PARAGRAPHSTYLES_PADDINGLEFTRIGHT}  = attributes;
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ padding: (?:.*?); \}/, 'div.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				setAttributes({ PARAGRAPHSTYLES_PADDINGTOPBOTTOM });
+			}
+
+			function changeParagraphStylePaddingLeftRight(PARAGRAPHSTYLES_PADDINGLEFTRIGHT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let { PARAGRAPHSTYLES_PADDINGTOPBOTTOM}  = attributes;
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ padding: (?:.*?); \}/, 'div.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				setAttributes({ PARAGRAPHSTYLES_PADDINGLEFTRIGHT });
+			}
+
+			function changeParagraphStyleLineHeight(PARAGRAPHSTYLES_LINEHEIGHT){
+				console.log('('+(typeof PARAGRAPHSTYLES_LINEHEIGHT)+') PARAGRAPHSTYLES_LINEHEIGHT = '+PARAGRAPHSTYLES_LINEHEIGHT);
+				PARAGRAPHSTYLES_LINEHEIGHT = parseFloat(PARAGRAPHSTYLES_LINEHEIGHT);
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph \{ line-height: (?:.*?); \}/, 'div.results p.versesParagraph { line-height: ' + PARAGRAPHSTYLES_LINEHEIGHT + 'em; }'));
+				setAttributes({ PARAGRAPHSTYLES_LINEHEIGHT });
+			}
+
+			function changeParagraphStyleWidth(PARAGRAPHSTYLES_WIDTH){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ width: (?:.*?); \}/, 'div.results { width: ' + PARAGRAPHSTYLES_WIDTH + '%; }'));
+				setAttributes({ PARAGRAPHSTYLES_WIDTH });
+			}
+
+			function changeBibleVersionTextStyle(ev){
+				let target = parseInt(ev.currentTarget.value);
+				let {VERSIONSTYLES_BOLD,VERSIONSTYLES_ITALIC,VERSIONSTYLES_UNDERLINE,VERSIONSTYLES_STRIKETHROUGH} = attributes;
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						VERSIONSTYLES_BOLD = !VERSIONSTYLES_BOLD;
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						VERSIONSTYLES_ITALIC = !VERSIONSTYLES_ITALIC;
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						VERSIONSTYLES_UNDERLINE = !VERSIONSTYLES_UNDERLINE;
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						VERSIONSTYLES_STRIKETHROUGH = !VERSIONSTYLES_STRIKETHROUGH;
+						break;
+				}
+				
+				let boldrule = VERSIONSTYLES_BOLD ? 'bold' : 'normal';
+				let italicrule = VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
+				let decorationrule = '';
+				let decorations = [];
+				if(VERSIONSTYLES_UNDERLINE){ decorations.push('underline'); }
+				if(VERSIONSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+				if(decorations.length === 0){
+					decorationrule = 'none';
+				}
+				else{
+					decorationrule = decorations.join(' ');
+				}
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						setAttributes({ VERSIONSTYLES_BOLD });
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						setAttributes({ VERSIONSTYLES_ITALIC });
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						setAttributes({ VERSIONSTYLES_UNDERLINE });
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						setAttributes({ VERSIONSTYLES_STRIKETHROUGH });
+						break;
+				}
+			}
+
+			function changeBookChapterTextStyle(ev){
+				let target = parseInt(ev.currentTarget.value);
+				let {BOOKCHAPTERSTYLES_BOLD,BOOKCHAPTERSTYLES_ITALIC,BOOKCHAPTERSTYLES_UNDERLINE,BOOKCHAPTERSTYLES_STRIKETHROUGH} = attributes;
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						BOOKCHAPTERSTYLES_BOLD = !BOOKCHAPTERSTYLES_BOLD;
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						BOOKCHAPTERSTYLES_ITALIC = !BOOKCHAPTERSTYLES_ITALIC;
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						BOOKCHAPTERSTYLES_UNDERLINE = !BOOKCHAPTERSTYLES_UNDERLINE;
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						BOOKCHAPTERSTYLES_STRIKETHROUGH = !BOOKCHAPTERSTYLES_STRIKETHROUGH;
+						break;
+				}
+				
+				let boldrule = BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
+				let italicrule = BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
+				let decorationrule = '';
+				let decorations = [];
+				if(BOOKCHAPTERSTYLES_UNDERLINE){ decorations.push('underline'); }
+				if(BOOKCHAPTERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+				if(decorations.length === 0){
+					decorationrule = 'none';
+				}
+				else{
+					decorationrule = decorations.join(' ');
+				}
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						setAttributes({ BOOKCHAPTERSTYLES_BOLD });
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						setAttributes({ BOOKCHAPTERSTYLES_ITALIC });
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						setAttributes({ BOOKCHAPTERSTYLES_UNDERLINE });
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						setAttributes({ BOOKCHAPTERSTYLES_STRIKETHROUGH });
+						break;
+				}
+			}
+
+			function changeVerseNumberTextStyle(ev){
+				let target = parseInt(ev.currentTarget.value);
+				let {VERSENUMBERSTYLES_BOLD,VERSENUMBERSTYLES_ITALIC,VERSENUMBERSTYLES_UNDERLINE,VERSENUMBERSTYLES_STRIKETHROUGH} = attributes;
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						VERSENUMBERSTYLES_BOLD = !VERSENUMBERSTYLES_BOLD;
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						VERSENUMBERSTYLES_ITALIC = !VERSENUMBERSTYLES_ITALIC;
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						VERSENUMBERSTYLES_UNDERLINE = !VERSENUMBERSTYLES_UNDERLINE;
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						VERSENUMBERSTYLES_STRIKETHROUGH = !VERSENUMBERSTYLES_STRIKETHROUGH;
+						break;
+				}
+				
+				let boldrule = VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
+				let italicrule = VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
+				let decorationrule = '';
+				let decorations = [];
+				if(VERSENUMBERSTYLES_UNDERLINE){ decorations.push('underline'); }
+				if(VERSENUMBERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+				if(decorations.length === 0){
+					decorationrule = 'none';
+				}
+				else{
+					decorationrule = decorations.join(' ');
+				}
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						setAttributes({ VERSENUMBERSTYLES_BOLD });
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						setAttributes({ VERSENUMBERSTYLES_ITALIC });
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						setAttributes({ VERSENUMBERSTYLES_UNDERLINE });
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						setAttributes({ VERSENUMBERSTYLES_STRIKETHROUGH });
+						break;
+				}
+			}
+
+			function changeVerseTextTextStyle(ev){
+				let target = parseInt(ev.currentTarget.value);
+				let {VERSETEXTSTYLES_BOLD,VERSETEXTSTYLES_ITALIC,VERSETEXTSTYLES_UNDERLINE,VERSETEXTSTYLES_STRIKETHROUGH} = attributes;
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						VERSETEXTSTYLES_BOLD = !VERSETEXTSTYLES_BOLD;
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						VERSETEXTSTYLES_ITALIC = !VERSETEXTSTYLES_ITALIC;
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						VERSETEXTSTYLES_UNDERLINE = !VERSETEXTSTYLES_UNDERLINE;
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						VERSETEXTSTYLES_STRIKETHROUGH = !VERSETEXTSTYLES_STRIKETHROUGH;
+						break;
+				}
+				
+				let boldrule = VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
+				let italicrule = VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
+				let decorationrule = '';
+				let decorations = [];
+				if(VERSETEXTSTYLES_UNDERLINE){ decorations.push('underline'); }
+				if(VERSETEXTSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+				if(decorations.length === 0){
+					decorationrule = 'none';
+				}
+				else{
+					decorationrule = decorations.join(' ');
+				}
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				//if we find the selector and the corresponding rule then we change it
+				if( (/(div\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`);
+				}
+				else{ //if we can't find the rule to edit, then we create it
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1font-weight:${boldrule};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph { font-weight: ${boldrule}; }
+						`;
+					} 
+				}
+				//if we find the selector and the corresponding rule then we change it
+				if( (/(div\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				}
+				else{ //if we can't find the rule to edit, then we create it
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1font-style:${italicrule};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph { font-style: ${italicrule}; }
+						`;
+					} 
+				}
+				//if we find the selector and the corresponding rule then we change it
+				if( (/(div\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				}
+				else{ //if we can't find the rule to edit, then we create it
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1text-decoration:${decorationrule};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph { text-decoration: ${decorationrule}; }
+						`;
+					} 
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				switch(target){
+					case BGET.TEXTSTYLE.BOLD:
+						setAttributes({ VERSETEXTSTYLES_BOLD });
+						break;
+					case BGET.TEXTSTYLE.ITALIC:
+						setAttributes({ VERSETEXTSTYLES_ITALIC });
+						break;
+					case BGET.TEXTSTYLE.UNDERLINE:
+						setAttributes({ VERSETEXTSTYLES_UNDERLINE });
+						break;
+					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						setAttributes({ VERSETEXTSTYLES_STRIKETHROUGH });
+						break;
+				}
 			}
 
 			function doKeywordSearch(notused){
@@ -553,6 +921,298 @@ const BGET = BibleGetGlobal.BGETConstants;
 									onChange: changeVerseNumberVisibility,
 								})
 							)							
+						),
+						createElement(PanelBody, { title: __('General styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_BORDERWIDTH,
+								label: __('Border width', 'bibleget-io'),
+								min: 0,
+								max: 10,
+								onChange: changeParagraphStyleBorderWidth
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_BORDERRADIUS,
+								label: __('Border radius', 'bibleget-io'),
+								min: 0,
+								max: 20,
+								onChange: changeParagraphStyleBorderRadius
+							}),
+							createElement(SelectControl, {
+								value: attributes.PARAGRAPHSTYLES_BORDERSTYLE,
+								label: __('Border style', 'bibleget-io'),
+								onChange: changeParagraphStyleBorderStyle,
+								options: Object.keys(BGET.BORDERSTYLE).sort(function(a,b){return BGET.BORDERSTYLE[a]-BGET.BORDERSTYLE[b]}).map(
+									function(el){
+										return { value: BGET.BORDERSTYLE[el], label: BGET.CSSRULE.BORDERSTYLE[BGET.BORDERSTYLE[el]] }
+									}
+								)
+								/** the above is an automated way of producing the following result:
+								[
+									{value: BGET.BORDERSTYLE.NONE, 		label: 'none' },
+									{value: BGET.BORDERSTYLE.SOLID, 	label: 'solid' },
+									{value: BGET.BORDERSTYLE.DOTTED, 	label: 'dotted' },
+									{value: BGET.BORDERSTYLE.DASHED, 	label: 'dashed' },
+									{value: BGET.BORDERSTYLE.DOUBLE, 	label: 'double' },
+									{value: BGET.BORDERSTYLE.GROOVE, 	label: 'groove' },
+									{value: BGET.BORDERSTYLE.RIDGE, 	label: 'ridge' },
+									{value: BGET.BORDERSTYLE.INSET,		label: 'inset' },
+									{value: BGET.BORDERSTYLE.OUTSET, 	label: 'outset' }
+								] 
+								* Being automated means being able to control consistency. 
+								* Any change to the source ENUMS in PHP will be reflected here automatically, no manual intervention required
+								*/ 
+							}),
+							createElement(PanelBody, { title: __('Border color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.PARAGRAPHSTYLES_BORDERCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeParagraphStyleBorderColor
+								})
+							),
+							createElement(PanelBody, { title: __('Background color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.PARAGRAPHSTYLES_BACKGROUNDCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeParagraphStyleBackgroundColor
+								})
+							),
+							createElement(SelectControl, {
+								value: attributes.PARAGRAPHSTYLES_LINEHEIGHT,
+								label: __('Line height', 'bibleget-io'),
+								options: [
+									/*translators: context is label for line-height select control */
+									{ value: 1.0, label: __('single','bibleget-io') },
+									{ value: 1.15, label: '1.15' },
+									{ value: 1.5, label: '1.5' },
+									/*translators: context is label for line-height select control */
+									{ value: 2.0, label: __('double','bibleget-io') },
+								],
+								onChange: changeParagraphStyleLineHeight
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_WIDTH,
+								label: __('Width on the page', 'bibleget-io') + ' (%)',
+								min: 0,
+								max: 100,
+								onChange: changeParagraphStyleWidth
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_MARGINTOPBOTTOM,
+								label: __('Top / bottom margin', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								onChange: changeParagraphStyleMarginTopBottom
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHT,
+								label: __('Left / right margin', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								disabled: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT === 'auto',
+								className: 'PARAGRAPHSTYLES_MARGINLEFTRIGHT',
+								onChange: changeParagraphStyleMarginLeftRight
+							}),
+							createElement(SelectControl, {
+								value: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT,
+								label: __('Left / right margin unit','bibleget-io'),
+								options: [
+									{ value: 'px', label: 'px' },
+									{ value: '%', label: '%' },
+									{ value: 'auto', label: 'auto' }
+								],
+								onChange: changeParagraphStyleMarginLeftRightUnit,
+								help: __('When set to "auto" the Bible quote will be centered on the page and the numerical value will be ignored','bibleget-io')
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_PADDINGTOPBOTTOM,
+								label: __('Top / bottom padding', 'bibleget-io'),
+								min: 0,
+								max: 20,
+								onChange: changeParagraphStylePaddingTopBottom
+							}),
+							createElement(RangeControl, {
+								value: attributes.PARAGRAPHSTYLES_PADDINGLEFTRIGHT,
+								label: __('Left / right padding', 'bibleget-io'),
+								min: 0,
+								max: 20,
+								onChange: changeParagraphStylePaddingLeftRight
+							}),
+						),
+						createElement(PanelBody, { title: __('Bible version styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance', className: 'bibleGetInspectorControls' },
+							createElement(PanelRow, {},
+								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
+										createElement(Button, {
+											//icon: 'editor-alignleft',
+											value: BGET.TEXTSTYLE.BOLD,
+											isPrimary: attributes.VERSIONSTYLES_BOLD,
+											isSecondary: !attributes.VERSIONSTYLES_BOLD,
+											onClick: changeBibleVersionTextStyle,
+											title: __('Font style bold', 'bibleget-io'),
+											className: 'bold'
+										}, __('B','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-aligncenter',
+											value: BGET.TEXTSTYLE.ITALIC,
+											isPrimary: (attributes.VERSIONSTYLES_ITALIC === true),
+											isSecondary: (attributes.VERSIONSTYLES_ITALIC !== true),
+											onClick: changeBibleVersionTextStyle,
+											title: __('Font style italic', 'bibleget-io'),
+											className: 'italic'
+										}, __('I','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.UNDERLINE,
+											isPrimary: (attributes.VERSIONSTYLES_UNDERLINE === true),
+											isSecondary: (attributes.VERSIONSTYLES_UNDERLINE !== true),
+											onClick: changeBibleVersionTextStyle,
+											title: __('Font style underline', 'bibleget-io'),
+											className: 'underline'
+										}, __('U','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.STRIKETHROUGH,
+											isPrimary: (attributes.VERSIONSTYLES_STRIKETHROUGH === true),
+											isSecondary: (attributes.VERSIONSTYLES_STRIKETHROUGH !== true),
+											onClick: changeBibleVersionTextStyle,
+											title: __('Font style strikethrough', 'bibleget-io'),
+											className: 'strikethrough'
+										}, __('S','bibleget-io') )
+									)								
+								)
+							),
+						),
+						createElement(PanelBody, { title: __('Book / Chapter styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+							createElement(PanelRow, {},
+								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
+										createElement(Button, {
+											//icon: 'editor-alignleft',
+											value: BGET.TEXTSTYLE.BOLD,
+											isPrimary: attributes.BOOKCHAPTERSTYLES_BOLD,
+											isSecondary: !attributes.BOOKCHAPTERSTYLES_BOLD,
+											onClick: changeBookChapterTextStyle,
+											title: __('Font style bold', 'bibleget-io'),
+											className: 'bold'
+										}, __('B','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-aligncenter',
+											value: BGET.TEXTSTYLE.ITALIC,
+											isPrimary: (attributes.BOOKCHAPTERSTYLES_ITALIC === true),
+											isSecondary: (attributes.BOOKCHAPTERSTYLES_ITALIC !== true),
+											onClick: changeBookChapterTextStyle,
+											title: __('Font style italic', 'bibleget-io'),
+											className: 'italic'
+										}, __('I','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.UNDERLINE,
+											isPrimary: (attributes.BOOKCHAPTERSTYLES_UNDERLINE === true),
+											isSecondary: (attributes.BOOKCHAPTERSTYLES_UNDERLINE !== true),
+											onClick: changeBookChapterTextStyle,
+											title: __('Font style underline', 'bibleget-io'),
+											className: 'underline'
+										}, __('U','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.STRIKETHROUGH,
+											isPrimary: (attributes.BOOKCHAPTERSTYLES_STRIKETHROUGH === true),
+											isSecondary: (attributes.BOOKCHAPTERSTYLES_STRIKETHROUGH !== true),
+											onClick: changeBookChapterTextStyle,
+											title: __('Font style strikethrough', 'bibleget-io'),
+											className: 'strikethrough'
+										}, __('S','bibleget-io') )
+									)								
+								)
+							)
+						),
+						createElement(PanelBody, { title: __('Verse Number styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+							createElement(PanelRow, {},
+								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
+										createElement(Button, {
+											//icon: 'editor-alignleft',
+											value: BGET.TEXTSTYLE.BOLD,
+											isPrimary: attributes.VERSENUMBERSTYLES_BOLD,
+											isSecondary: !attributes.VERSENUMBERSTYLES_BOLD,
+											onClick: changeVerseNumberTextStyle,
+											title: __('Font style bold', 'bibleget-io'),
+											className: 'bold'
+										}, __('B','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-aligncenter',
+											value: BGET.TEXTSTYLE.ITALIC,
+											isPrimary: (attributes.VERSENUMBERSTYLES_ITALIC === true),
+											isSecondary: (attributes.VERSENUMBERSTYLES_ITALIC !== true),
+											onClick: changeVerseNumberTextStyle,
+											title: __('Font style italic', 'bibleget-io'),
+											className: 'italic'
+										}, __('I','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.UNDERLINE,
+											isPrimary: (attributes.VERSENUMBERSTYLES_UNDERLINE === true),
+											isSecondary: (attributes.VERSENUMBERSTYLES_UNDERLINE !== true),
+											onClick: changeVerseNumberTextStyle,
+											title: __('Font style underline', 'bibleget-io'),
+											className: 'underline'
+										}, __('U','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.STRIKETHROUGH,
+											isPrimary: (attributes.VERSENUMBERSTYLES_STRIKETHROUGH === true),
+											isSecondary: (attributes.VERSENUMBERSTYLES_STRIKETHROUGH !== true),
+											onClick: changeVerseNumberTextStyle,
+											title: __('Font style strikethrough', 'bibleget-io'),
+											className: 'strikethrough'
+										}, __('S','bibleget-io') )
+									)								
+								)
+							)
+						),
+						createElement(PanelBody, { title: __('Verse Text styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+							createElement(PanelRow, {},
+								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
+										createElement(Button, {
+											//icon: 'editor-alignleft',
+											value: BGET.TEXTSTYLE.BOLD,
+											isPrimary: attributes.VERSETEXTSTYLES_BOLD,
+											isSecondary: !attributes.VERSETEXTSTYLES_BOLD,
+											onClick: changeVerseTextTextStyle,
+											title: __('Font style bold', 'bibleget-io'),
+											className: 'bold'
+										}, __('B','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-aligncenter',
+											value: BGET.TEXTSTYLE.ITALIC,
+											isPrimary: (attributes.VERSETEXTSTYLES_ITALIC === true),
+											isSecondary: (attributes.VERSETEXTSTYLES_ITALIC !== true),
+											onClick: changeVerseTextTextStyle,
+											title: __('Font style italic', 'bibleget-io'),
+											className: 'italic'
+										}, __('I','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.UNDERLINE,
+											isPrimary: (attributes.VERSETEXTSTYLES_UNDERLINE === true),
+											isSecondary: (attributes.VERSETEXTSTYLES_UNDERLINE !== true),
+											onClick: changeVerseTextTextStyle,
+											title: __('Font style underline', 'bibleget-io'),
+											className: 'underline'
+										}, __('U','bibleget-io') ),
+										createElement(Button, {
+											//icon: 'editor-alignright',
+											value: BGET.TEXTSTYLE.STRIKETHROUGH,
+											isPrimary: (attributes.VERSETEXTSTYLES_STRIKETHROUGH === true),
+											isSecondary: (attributes.VERSETEXTSTYLES_STRIKETHROUGH !== true),
+											onClick: changeVerseTextTextStyle,
+											title: __('Font style strikethrough', 'bibleget-io'),
+											className: 'strikethrough'
+										}, __('S','bibleget-io') )
+									)								
+								)
+							)
 						)
 					)
 				)
@@ -676,3 +1336,4 @@ const getInnerContent = function (tag, content) {
 		return '';
 	return result[1];
 };
+
