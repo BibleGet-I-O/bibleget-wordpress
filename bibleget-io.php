@@ -1554,8 +1554,8 @@ if (is_admin()) {
 
 
 
-// //add_action( 'wp_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
-// add_action( 'admin_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
+add_action( 'wp_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
+add_action( 'admin_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
 
 // Setup the Theme Customizer settings and controls...
 add_action('customize_register', array(

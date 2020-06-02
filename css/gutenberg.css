@@ -1,5 +1,9 @@
 .bibleGetButtonGroup,.bibleGetTextStyleButtonGroup {
-    display: block;
+    margin-right: 3px;
+}
+
+.components-base-control__label {
+    display: block !important;
 }
 
 .bibleGetTextStyleButtonGroup button {
@@ -7,6 +11,10 @@
     font-weight: bold;
     text-align: center;
     justify-content: center;
+}
+
+.bibleGetTextStyleButtonGroup.verseNumberStyles button {
+    width: 2.4em;
 }
 
 .bibleGetTextStyleButtonGroup .italic {

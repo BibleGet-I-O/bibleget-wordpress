@@ -99,9 +99,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 			function changeBibleVersionPos(ev){
 				let LAYOUTPREFS_BIBLEVERSIONPOSITION = parseInt(ev.currentTarget.value);
-				console.log('setting LAYOUTPREFS_BIBLEVERSIONPOSITION to '+ev.currentTarget.value);
+				//console.log('setting LAYOUTPREFS_BIBLEVERSIONPOSITION to '+ev.currentTarget.value);
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONPOSITION });
-				console.log(attributes);
+				//console.log(attributes);
 			}
 
 			function changeBibleVersionWrap(ev){
@@ -186,7 +186,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeParagraphStyleBorderStyle(PARAGRAPHSTYLES_BORDERSTYLE){
 				PARAGRAPHSTYLES_BORDERSTYLE = parseInt(PARAGRAPHSTYLES_BORDERSTYLE);
 				let borderstyle = BGET.CSSRULE.BORDERSTYLE[PARAGRAPHSTYLES_BORDERSTYLE];
-				console.log('borderstyle = '+borderstyle);
+				//console.log('borderstyle = '+borderstyle);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-style: (?:.*?); \}/, 'div.results { border-style: ' + borderstyle + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_BORDERSTYLE });
@@ -275,7 +275,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			}
 
 			function changeParagraphStyleLineHeight(PARAGRAPHSTYLES_LINEHEIGHT){
-				console.log('('+(typeof PARAGRAPHSTYLES_LINEHEIGHT)+') PARAGRAPHSTYLES_LINEHEIGHT = '+PARAGRAPHSTYLES_LINEHEIGHT);
+				//console.log('('+(typeof PARAGRAPHSTYLES_LINEHEIGHT)+') PARAGRAPHSTYLES_LINEHEIGHT = '+PARAGRAPHSTYLES_LINEHEIGHT);
 				PARAGRAPHSTYLES_LINEHEIGHT = parseFloat(PARAGRAPHSTYLES_LINEHEIGHT);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph \{ line-height: (?:.*?); \}/, 'div.results p.versesParagraph { line-height: ' + PARAGRAPHSTYLES_LINEHEIGHT + 'em; }'));
@@ -339,6 +339,31 @@ const BGET = BibleGetGlobal.BGETConstants;
 				}
 			}
 
+			function changeBibleVersionFontSize(VERSIONSTYLES_FONTSIZE){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (attributes.VERSIONSTYLES_FONTSIZEUNIT == 'em') ? VERSIONSTYLES_FONTSIZE/10 : VERSIONSTYLES_FONTSIZE;
+				let fontsizerule = (attributes.VERSIONSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSIONSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSIONSTYLES_FONTSIZE });
+			}
+
+			function changeBibleVersionFontSizeUnit(VERSIONSTYLES_FONTSIZEUNIT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (VERSIONSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSIONSTYLES_FONTSIZE/10 : attributes.VERSIONSTYLES_FONTSIZE;
+				let fontsizerule = (VERSIONSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSIONSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSIONSTYLES_FONTSIZEUNIT });
+			}
+
+			function changeBibleVersionStyleFontColor(color){
+				let VERSIONSTYLES_TEXTCOLOR = color.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ color: (?:.*?); \}/, 'div.results p\.bibleVersion { color: ' + VERSIONSTYLES_TEXTCOLOR + '; }'));
+				setAttributes({ VERSIONSTYLES_TEXTCOLOR });
+			}
+
 			function changeBookChapterTextStyle(ev){
 				let target = parseInt(ev.currentTarget.value);
 				let {BOOKCHAPTERSTYLES_BOLD,BOOKCHAPTERSTYLES_ITALIC,BOOKCHAPTERSTYLES_UNDERLINE,BOOKCHAPTERSTYLES_STRIKETHROUGH} = attributes;
@@ -390,6 +415,31 @@ const BGET = BibleGetGlobal.BGETConstants;
 				}
 			}
 
+			function changeBookChapterFontSize(BOOKCHAPTERSTYLES_FONTSIZE){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em') ? BOOKCHAPTERSTYLES_FONTSIZE/10 : BOOKCHAPTERSTYLES_FONTSIZE;
+				let fontsizerule = (attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZE });
+			}
+
+			function changeBookChapterFontSizeUnit(BOOKCHAPTERSTYLES_FONTSIZEUNIT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em') ? attributes.BOOKCHAPTERSTYLES_FONTSIZE/10 : attributes.BOOKCHAPTERSTYLES_FONTSIZE;
+				let fontsizerule = (BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+BOOKCHAPTERSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZEUNIT });
+			}
+
+			function changeBookChapterStyleFontColor(color){
+				let BOOKCHAPTERSTYLES_TEXTCOLOR = color.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ color: (?:.*?); \}/, 'div.results \.bookChapter { color: ' + BOOKCHAPTERSTYLES_TEXTCOLOR + '; }'));
+				setAttributes({ BOOKCHAPTERSTYLES_TEXTCOLOR });
+			}
+
 			function changeVerseNumberTextStyle(ev){
 				let target = parseInt(ev.currentTarget.value);
 				let {VERSENUMBERSTYLES_BOLD,VERSENUMBERSTYLES_ITALIC,VERSENUMBERSTYLES_UNDERLINE,VERSENUMBERSTYLES_STRIKETHROUGH} = attributes;
@@ -439,6 +489,120 @@ const BGET = BibleGetGlobal.BGETConstants;
 						setAttributes({ VERSENUMBERSTYLES_STRIKETHROUGH });
 						break;
 				}
+			}
+
+			function changeVerseNumberFontSize(VERSENUMBERSTYLES_FONTSIZE){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (attributes.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em') ? VERSENUMBERSTYLES_FONTSIZE/10 : VERSENUMBERSTYLES_FONTSIZE;
+				let fontsizerule = (attributes.VERSENUMBERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSENUMBERSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSENUMBERSTYLES_FONTSIZE });
+			}
+
+			function changeVerseNumberFontSizeUnit(VERSENUMBERSTYLES_FONTSIZEUNIT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (VERSENUMBERSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSENUMBERSTYLES_FONTSIZE/10 : attributes.VERSENUMBERSTYLES_FONTSIZE;
+				let fontsizerule = (VERSENUMBERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSENUMBERSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSENUMBERSTYLES_FONTSIZEUNIT });
+			}
+
+			function changeVerseNumberStyleFontColor(color){
+				let VERSENUMBERSTYLES_TEXTCOLOR = color.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph span\.verseNum \{ color: (?:.*?); \}/, 'div.results p\.versesParagraph span\.verseNum { color: ' + VERSENUMBERSTYLES_TEXTCOLOR + '; }'));
+				setAttributes({ VERSENUMBERSTYLES_TEXTCOLOR });
+			}
+
+			function changeVerseNumberValign(ev){
+				//console.log('('+(typeof ev.currentTarget.value)+') ev.currentTarget.value = ' + ev.currentTarget.value );
+				let VERSENUMBERSTYLES_VALIGN = parseInt(ev.currentTarget.value);
+				//console.log('('+(typeof VERSENUMBERSTYLES_VALIGN)+') VERSENUMBERSTYLES_VALIGN = '+VERSENUMBERSTYLES_VALIGN);
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let valignrule = { 'vertical-align' : 'baseline' };
+				switch(VERSENUMBERSTYLES_VALIGN){
+					case BGET.VALIGN.NORMAL:
+						valignrule.position = 'static';
+						break;
+					case BGET.VALIGN.SUPERSCRIPT:
+						valignrule.position = 'relative';
+						valignrule.top = '-0.6em';
+						break;
+					case BGET.VALIGN.SUBSCRIPT:
+						valignrule.position = 'relative'; 
+						valignrule.top = '0.6em;'
+						break;
+				}
+				
+				//console.log('valignrule =');
+				//console.log(valignrule);
+				//if we find the selector and the corresponding rule then we change it
+				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					//console.log('we have found a position rule to change');
+					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/,`$1${valignrule.position}$4`);
+				}
+				else{ //if we can't find the rule to edit, then we create it
+					//console.log('we have not found a position rule to change, we must create it');
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+						//console.log('we have not found at least the correct selector, we will add the rule to this selector');
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1position:${valignrule.position};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						//console.log('we have not found the correct selector, we will add the selector and the rule');
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph span.verseNum { position: ${valignrule.position}; }
+						`;
+					} 
+				}
+				//if we find the selector and the corresponding rule then we change it
+				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/,`$1${valignrule['vertical-align']}$4`);
+				}
+				else{ //if we can't find the rule to edit, then we create it
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1vertical-align:${valignrule['vertical-align']};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph span.verseNum { vertical-align: ${valignrule['vertical-align']}; }
+						`;
+					} 
+				}
+				//if we find the selector and the corresponding rule then we change it (if BGET.VALIGN.NORMAL we remove it)
+				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					//console.log('we have found a top rule to change');
+					if(VERSENUMBERSTYLES_VALIGN === BGET.VALIGN.NORMAL){
+						//console.log('VALIGN.NORMAL requires us to remove the top rule, now removing rule from selector');
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{.*?)top:.*?;(.*)/,`$1$2`);
+					}
+					else{
+						//console.log('now changing the rule we found in the selector');
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/,`$1${valignrule.top}$4`);
+					}
+				}
+				else if(VERSENUMBERSTYLES_VALIGN !== BGET.VALIGN.NORMAL){ //if we can't find the rule to edit, then we create it (except if BGET.VALIGN.NORMAL)
+					//console.log('we did not find a top rule to change and VALIGN!=NORMAL so we must add a top rule');
+					//if we can at least find the corresponding selector, add rule to selector
+					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+						//console.log('we did find the selector in any case, now adding a top rule to the selector');
+						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1top:${valignrule.top};$2`);
+					}
+					//otherwise create the rule ex-novo
+					else{
+						//console.log('we did not even find the selector so we will now add both the selector and the top rule');
+						bbGetDynSS = `${bbGetDynSS}
+						div.results p.versesParagraph span.verseNum { top: ${valignrule.top}; }
+						`;
+					} 
+				}
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSENUMBERSTYLES_VALIGN });
 			}
 
 			function changeVerseTextTextStyle(ev){
@@ -535,6 +699,31 @@ const BGET = BibleGetGlobal.BGETConstants;
 						setAttributes({ VERSETEXTSTYLES_STRIKETHROUGH });
 						break;
 				}
+			}
+
+			function changeVerseTextFontSize(VERSETEXTSTYLES_FONTSIZE){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (attributes.VERSETEXTSTYLES_FONTSIZEUNIT == 'em') ? VERSETEXTSTYLES_FONTSIZE/10 : VERSETEXTSTYLES_FONTSIZE;
+				let fontsizerule = (attributes.VERSETEXTSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSETEXTSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSETEXTSTYLES_FONTSIZE });
+			}
+
+			function changeVerseTextFontSizeUnit(VERSETEXTSTYLES_FONTSIZEUNIT){
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				let fontsize = (VERSETEXTSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSETEXTSTYLES_FONTSIZE/10 : attributes.VERSETEXTSTYLES_FONTSIZE;
+				let fontsizerule = (VERSETEXTSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSETEXTSTYLES_FONTSIZEUNIT;
+				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				setAttributes({ VERSETEXTSTYLES_FONTSIZEUNIT });
+			}
+
+			function changeVerseTextStyleFontColor(color){
+				let VERSETEXTSTYLES_TEXTCOLOR = color.hex;
+				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph \{ color: (?:.*?); \}/, 'div.results p\.versesParagraph { color: ' + VERSETEXTSTYLES_TEXTCOLOR + '; }'));
+				setAttributes({ VERSETEXTSTYLES_TEXTCOLOR });
 			}
 
 			function doKeywordSearch(notused){
@@ -1081,6 +1270,34 @@ const BGET = BibleGetGlobal.BGETConstants;
 									)								
 								)
 							),
+							createElement(RangeControl, {
+								value: attributes.VERSIONSTYLES_FONTSIZE,
+								label: __('Font size', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								disabled: attributes.VERSIONSTYLES_FONTSIZEUNIT === 'inherit',
+								//className: 'VERSIONSTYLES_FONTSIZEUNIT',
+								onChange: changeBibleVersionFontSize
+							}),
+							createElement(SelectControl, {
+								value: attributes.VERSIONSTYLES_FONTSIZEUNIT,
+								label: __('Font size unit','bibleget-io'),
+								options: [
+									{ value: 'px', label: 'px' },
+									{ value: 'em', label: 'em' },
+									{ value: 'pt', label: 'pt' },
+									{ value: 'inherit', label: 'inherit' }
+								],
+								onChange: changeBibleVersionFontSizeUnit,
+								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
+							}),
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.VERSIONSTYLES_TEXTCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeBibleVersionStyleFontColor
+								})
+							),
 						),
 						createElement(PanelBody, { title: __('Book / Chapter styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
 							createElement(PanelRow, {},
@@ -1124,12 +1341,40 @@ const BGET = BibleGetGlobal.BGETConstants;
 										}, __('S','bibleget-io') )
 									)								
 								)
-							)
+							),
+							createElement(RangeControl, {
+								value: attributes.BOOKCHAPTERSTYLES_FONTSIZE,
+								label: __('Font size', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								disabled: attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'inherit',
+								//className: 'BOOKCHAPTERSTYLES_FONTSIZEUNIT',
+								onChange: changeBookChapterFontSize
+							}),
+							createElement(SelectControl, {
+								value: attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT,
+								label: __('Font size unit','bibleget-io'),
+								options: [
+									{ value: 'px', label: 'px' },
+									{ value: 'em', label: 'em' },
+									{ value: 'pt', label: 'pt' },
+									{ value: 'inherit', label: 'inherit' }
+								],
+								onChange: changeBookChapterFontSizeUnit,
+								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
+							}),
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.BOOKCHAPTERSTYLES_TEXTCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeBookChapterStyleFontColor
+								})
+							),
 						),
 						createElement(PanelBody, { title: __('Verse Number styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
 							createElement(PanelRow, {},
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
-									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup verseNumberStyles' },
 										createElement(Button, {
 											//icon: 'editor-alignleft',
 											value: BGET.TEXTSTYLE.BOLD,
@@ -1166,9 +1411,63 @@ const BGET = BibleGetGlobal.BGETConstants;
 											title: __('Font style strikethrough', 'bibleget-io'),
 											className: 'strikethrough'
 										}, __('S','bibleget-io') )
-									)								
-								)
+									),
+									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup verseNumberStyles' },
+										createElement(Button, {
+											value: BGET.VALIGN.NORMAL,
+											isPrimary: (attributes.VERSENUMBERSTYLES_VALIGN === BGET.VALIGN.NORMAL),
+											isSecondary: (attributes.VERSENUMBERSTYLES_VALIGN !== BGET.VALIGN.NORMAL),
+											onClick: changeVerseNumberValign,
+											title: __('Normal','bibleget-io'),
+											className: 'valign-normal'
+										}, 'A' ),
+										createElement(Button, {
+											value: BGET.VALIGN.SUPERSCRIPT,
+											isPrimary: (attributes.VERSENUMBERSTYLES_VALIGN === BGET.VALIGN.SUPERSCRIPT),
+											isSecondary: (attributes.VERSENUMBERSTYLES_VALIGN !== BGET.VALIGN.SUPERSCRIPT),
+											onClick: changeVerseNumberValign,
+											title: __('Superscript','bibleget-io'),
+											className: 'valign-superscript'
+										}, 'A²' ),
+										createElement(Button, {
+											value: BGET.VALIGN.SUBSCRIPT,
+											isPrimary: (attributes.VERSENUMBERSTYLES_VALIGN === BGET.VALIGN.SUBSCRIPT),
+											isSecondary: (attributes.VERSENUMBERSTYLES_VALIGN !== BGET.VALIGN.SUBSCRIPT),
+											onClick: changeVerseNumberValign,
+											title: __('Subscript','bibleget-io'),
+											className: 'valign-subscript'
+										}, 'A₂' )
+									),
 							)
+							),
+							createElement(RangeControl, {
+								value: attributes.VERSENUMBERSTYLES_FONTSIZE,
+								label: __('Font size', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								disabled: attributes.VERSENUMBERSTYLES_FONTSIZEUNIT === 'inherit',
+								//className: 'VERSENUMBERSTYLES_FONTSIZEUNIT',
+								onChange: changeVerseNumberFontSize
+							}),
+							createElement(SelectControl, {
+								value: attributes.VERSENUMBERSTYLES_FONTSIZEUNIT,
+								label: __('Font size unit','bibleget-io'),
+								options: [
+									{ value: 'px', label: 'px' },
+									{ value: 'em', label: 'em' },
+									{ value: 'pt', label: 'pt' },
+									{ value: 'inherit', label: 'inherit' }
+								],
+								onChange: changeVerseNumberFontSizeUnit,
+								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
+							}),
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.VERSENUMBERSTYLES_TEXTCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeVerseNumberStyleFontColor
+								})
+							),
 						),
 						createElement(PanelBody, { title: __('Verse Text styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
 							createElement(PanelRow, {},
@@ -1212,7 +1511,35 @@ const BGET = BibleGetGlobal.BGETConstants;
 										}, __('S','bibleget-io') )
 									)								
 								)
-							)
+							),
+							createElement(RangeControl, {
+								value: attributes.VERSETEXTSTYLES_FONTSIZE,
+								label: __('Font size', 'bibleget-io'),
+								min: 0,
+								max: 30,
+								disabled: attributes.VERSETEXTSTYLES_FONTSIZEUNIT === 'inherit',
+								//className: 'VERSETEXTSTYLES_FONTSIZEUNIT',
+								onChange: changeVerseTextFontSize
+							}),
+							createElement(SelectControl, {
+								value: attributes.VERSETEXTSTYLES_FONTSIZEUNIT,
+								label: __('Font size unit','bibleget-io'),
+								options: [
+									{ value: 'px', label: 'px' },
+									{ value: 'em', label: 'em' },
+									{ value: 'pt', label: 'pt' },
+									{ value: 'inherit', label: 'inherit' }
+								],
+								onChange: changeVerseTextFontSizeUnit,
+								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
+							}),
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+								createElement(ColorPicker, {
+									color: attributes.VERSETEXTSTYLES_TEXTCOLOR,
+									disableAlpha: false,
+									onChangeComplete: changeVerseTextStyleFontColor
+								})
+							),
 						)
 					)
 				)

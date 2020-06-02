@@ -1031,170 +1031,145 @@ class BibleGet_Customize
 
 	public static $bibleget_style_settings;
 	private static $websafe_fonts;
+	public static $BGETPROPERTIES;
 
 	public static function init()
 	{
-
+		self::$BGETPROPERTIES = new BGETPROPERTIES();
 		/* Define object that will contain all the information for all settings and controls */
 		self::$bibleget_style_settings = new stdClass();
 
 		/* Define bibleget_fontfamily setting and control */
-		self::$bibleget_style_settings->bibleget_fontfamily = new stdClass();
-		self::$bibleget_style_settings->bibleget_fontfamily->dfault = 'Palatino Linotype';
-		self::$bibleget_style_settings->bibleget_fontfamily->title = __('Font', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_fontfamily->type = 'fontselect';
-		self::$bibleget_style_settings->bibleget_fontfamily->section = 'bibleget_paragraph_style_options';
-
-		/* Define bibleget_borderwidth setting and control */
-		self::$bibleget_style_settings->bibleget_borderwidth = new stdClass();
-		self::$bibleget_style_settings->bibleget_borderwidth->dfault = '2';
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_borderwidth->title = __('Border-width (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_borderwidth->type = 'number';
-		self::$bibleget_style_settings->bibleget_borderwidth->section = 'bibleget_paragraph_style_options';
-
-		/* Define bibleget_borderstyle setting and control */
-		self::$bibleget_style_settings->bibleget_borderstyle = new stdClass();
-		self::$bibleget_style_settings->bibleget_borderstyle->dfault = 'solid';
-		self::$bibleget_style_settings->bibleget_borderstyle->title = __('Border-style', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_borderstyle->type = 'select';
-		self::$bibleget_style_settings->bibleget_borderstyle->choices = array(
-			"none"		=> "none",
-			"hidden"	=> "hidden",
-			"dotted"	=> "dotted",
-			"dashed"	=> "dashed",
-			"solid"		=> "solid",
-			"double"	=> "double",
-			"groove"	=> "groove",
-			"ridge"		=> "ridge",
-			"inset"		=> "inset",
-			"outset"	=> "outset",
-			"initial"	=> "initial",
-			"inherit"	=> "inherit"
-		);
-		self::$bibleget_style_settings->bibleget_borderstyle->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_bordercolor setting and control */
-		self::$bibleget_style_settings->bibleget_bordercolor = new stdClass();
-		self::$bibleget_style_settings->bibleget_bordercolor->dfault = '#d3d3d3';
-		self::$bibleget_style_settings->bibleget_bordercolor->title = __('Border-color', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_bordercolor->type = 'color';
-		self::$bibleget_style_settings->bibleget_bordercolor->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_bgcolor setting and control */
-		self::$bibleget_style_settings->bibleget_bgcolor = new stdClass();
-		self::$bibleget_style_settings->bibleget_bgcolor->dfault = '#ffffff';
-		self::$bibleget_style_settings->bibleget_bgcolor->title = __('Background color', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_bgcolor->type = 'color';
-		self::$bibleget_style_settings->bibleget_bgcolor->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_borderradius setting and control */
-		self::$bibleget_style_settings->bibleget_borderradius = new stdClass();
-		self::$bibleget_style_settings->bibleget_borderradius->dfault = 6;
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_borderradius->title = __('Border-radius (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_borderradius->type = 'number';
-		self::$bibleget_style_settings->bibleget_borderradius->section = 'bibleget_paragraph_style_options';
-
-
-		$margin_padding_vals = array(
-			"auto"    => "auto",
-			0         => "0",
-			1         => "1",
-			2         => "2",
-			3         => "3",
-			4         => "4",
-			5         => "5",
-			6         => "6",
-			7         => "7",
-			8         => "8",
-			9         => "9",
-			10         => "10",
-			12         => "12",
-			14         => "14",
-			16         => "16",
-			18         => "18",
-			20         => "20"
-		);
-
-
-		/* Define bibleget_margintopbottom setting and control */
-		self::$bibleget_style_settings->bibleget_margintopbottom = new stdClass();
-		self::$bibleget_style_settings->bibleget_margintopbottom->dfault = 12;
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_margintopbottom->title = __('Margin top/bottom (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_margintopbottom->type = 'select';
-		self::$bibleget_style_settings->bibleget_margintopbottom->choices = $margin_padding_vals;
-		self::$bibleget_style_settings->bibleget_margintopbottom->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_marginleftright setting and control */
-		self::$bibleget_style_settings->bibleget_marginleftright = new stdClass();
-		self::$bibleget_style_settings->bibleget_marginleftright->dfault = 'auto';
-		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_marginleftright->title = __('Margin left/right (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_marginleftright->type = 'select';
-		self::$bibleget_style_settings->bibleget_marginleftright->choices = $margin_padding_vals;
-		self::$bibleget_style_settings->bibleget_marginleftright->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_paddingtopbottom setting and control */
-		self::$bibleget_style_settings->bibleget_paddingtopbottom = new stdClass();
-		self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault = 12;
-		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_paddingtopbottom->title = __('Padding top/bottom (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_paddingtopbottom->type = 'select';
-		self::$bibleget_style_settings->bibleget_paddingtopbottom->choices = $margin_padding_vals;
-		self::$bibleget_style_settings->bibleget_paddingtopbottom->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_paddingleftright setting and control */
-		self::$bibleget_style_settings->bibleget_paddingleftright = new stdClass();
-		self::$bibleget_style_settings->bibleget_paddingleftright->dfault = 12;
-		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->bibleget_paddingleftright->title = __('Padding left/right (in px)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_paddingleftright->type = 'select';
-		self::$bibleget_style_settings->bibleget_paddingleftright->choices = $margin_padding_vals;
-		self::$bibleget_style_settings->bibleget_paddingleftright->section = 'bibleget_paragraph_style_options';
-
-
-		/* Define bibleget_width setting and control */
-		self::$bibleget_style_settings->bibleget_width = new stdClass();
-		self::$bibleget_style_settings->bibleget_width->dfault = 85;
-		/* translators: "%" refers to "percentage" as used in CSS rules (e.g. "width: 100%"), do not change */
-		self::$bibleget_style_settings->bibleget_width->title = __('Width (in %)', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_width->type = 'number';
-		self::$bibleget_style_settings->bibleget_width->section = 'bibleget_paragraph_style_options';
-
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_FONTFAMILY]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_FONTFAMILY]'}->title = __('Font', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_FONTFAMILY]'}->controltype = 'fontselect';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_FONTFAMILY]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_textalign setting and control */
-		self::$bibleget_style_settings->bibleget_textalign = new stdClass();
-		self::$bibleget_style_settings->bibleget_textalign->dfault = 'justify';
-		self::$bibleget_style_settings->bibleget_textalign->title = __('Text-align', "bibleget-io");
-		self::$bibleget_style_settings->bibleget_textalign->type = 'select';
-		self::$bibleget_style_settings->bibleget_textalign->choices = array('left' => 'left', 'right' => 'right', 'center' => 'center', 'justify' => 'justify', 'inherit' => 'inherit', 'start' => 'start', 'end' => 'end');
-		self::$bibleget_style_settings->bibleget_textalign->section = 'bibleget_paragraph_style_options';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->title = __('Text align', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->controltype = 'textalign';
+		/*
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices = array();
+		foreach(BGET::ALIGN as $enum => $value){
+			self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices[$value] = BGET::CSSRULE["ALIGN"][$value-1];
+		}
+		*/
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->section = 'bibleget_paragraph_style_options';
 
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->title = __('Line height', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->controltype = 'select';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->choices = array('1.0' => 'single', '1.5' => '1½', '2.0' => 'double');
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_width setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'} = new stdClass();
+		/* translators: "%" refers to "percentage" as used in CSS rules (e.g. "width: 100%"), do not change */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->title = __('Width on the page', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->controltype = 'range';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->choices = array("min" => 10, "max" => 100, "step" => 1);
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_bgcolor setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BACKGROUNDCOLOR]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BACKGROUNDCOLOR]'}->title = __('Background color', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BACKGROUNDCOLOR]'}->controltype = 'color';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BACKGROUNDCOLOR]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_bordercolor setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERCOLOR]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERCOLOR]'}->title = __('Border color', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERCOLOR]'}->controltype = 'color';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERCOLOR]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_borderstyle setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->title = __('Border style', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->controltype = 'select';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->choices = array();
+		foreach(BGET::BORDERSTYLE as $enum => $value){
+			self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->choices[$value] = BGET::CSSRULE["BORDERSTYLE"][$value];
+		}
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_borderwidth setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'} = new stdClass();
+		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->title = __('Border width', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->controltype = 'range';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_borderradius setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'} = new stdClass();
+		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->title = __('Border radius', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->controltype = 'range';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_paddingtopbottom setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'} = new stdClass();
+		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->title = __('Padding top/bottom', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->controltype = 'range';
+		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->choices = $margin_padding_vals;
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_paddingleftright setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'} = new stdClass();
+		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->title = __('Padding left/right', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->controltype = 'range';
+		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->choices = $margin_padding_vals;
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_margintopbottom setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'} = new stdClass();
+		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->title = __('Margin top/bottom', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->controltype = 'range';
+		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->choices = $margin_padding_vals;
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_marginleftright setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->title = __('Margin left/right', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->controltype = 'range';
+		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->choices = $margin_padding_vals;
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->section = 'bibleget_paragraph_style_options';
+
+		/* Define bibleget_marginleftright setting and control */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'} = new stdClass();
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->title = __('Margin left/right unit', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->controltype = 'select';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->choices = array('px' => 'px', '%' => '%', 'auto' => 'auto');
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->section = 'bibleget_paragraph_style_options';
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->description = __('When set to "auto" the Bible quote will be centered on the page and the numerical value will be ignored','bibleget-io');
 
 
 		$bibleget_styles_general = new stdClass();
-		$bibleget_styles_general->font_size = new stdClass();
-		$bibleget_styles_general->font_style = new stdClass();
-		$bibleget_styles_general->font_color = new stdClass();
 
+		$bibleget_styles_general->FONT_SIZE = new stdClass();
 		/* translators: "pt" refers to points as used in CSS rules, do not translate */
-		$bibleget_styles_general->font_size->title = __("Font Size (in pt)", "bibleget-io");
-		$bibleget_styles_general->font_style->title = __("Font Style", "bibleget-io");
-		$bibleget_styles_general->font_color->title = __("Font Color", "bibleget-io");
+		$bibleget_styles_general->FONT_SIZE->title = __("Font size", "bibleget-io");
+		$bibleget_styles_general->FONT_SIZE->controltype = 'range';
 
-		$bibleget_styles_general->font_size->type = 'select';
-		$bibleget_styles_general->font_style->type = 'style';
-		$bibleget_styles_general->font_color->type = 'color';
+		$bibleget_styles_general->FONT_SIZE_UNIT = new stdClass();
+		$bibleget_styles_general->FONT_SIZE_UNIT->title = __("Font size unit", "bibleget-io");
+		$bibleget_styles_general->FONT_SIZE_UNIT->controltype = 'select';
+		$bibleget_styles_general->FONT_SIZE_UNIT->choices = array('px' => 'px', 'em' => 'em', 'pt' => 'pt', 'inherit' => 'inherit');
+		$bibleget_styles_general->FONT_SIZE_UNIT->description = __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io');
 
-		$bibleget_style_sizes_arr = array(4 => '4', 5 => '5', 6 => '6', 7 => '7', 8 => '8', 9 => '9', 10 => '10', 11 => '11', 12 => '12', 14 => '14', 16 => '16', 18 => '18', 20 => '20', 22 => '22', 24 => '24', 26 => '26', 28 => '28');
+		$bibleget_styles_general->TEXT_COLOR = new stdClass();
+		$bibleget_styles_general->TEXT_COLOR->title = __("Font color", "bibleget-io");
+		$bibleget_styles_general->TEXT_COLOR->controltype = 'color';
+
+		$bibleget_styles_general->FONT_STYLE = new stdClass();
+		$bibleget_styles_general->FONT_STYLE->title = __("Font style", "bibleget-io");
+		$bibleget_styles_general->FONT_STYLE->controltype = 'style';
+
+		//$bibleget_style_sizes_arr = array(4 => '4', 5 => '5', 6 => '6', 7 => '7', 8 => '8', 9 => '9', 10 => '10', 11 => '11', 12 => '12', 14 => '14', 16 => '16', 18 => '18', 20 => '20', 22 => '22', 24 => '24', 26 => '26', 28 => '28');
+		$bibleget_style_sizes_arr = array("min" => 4, "max" => 28, "step" => 1);
 		$bibleget_style_choices_arr = array(
 			/* translators: "B" refers to "bold style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
 			'bold'         => __("B", "bibleget-io"),
@@ -1205,81 +1180,99 @@ class BibleGet_Customize
 			/* translators: "S" refers to "strikethrough style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
 			'strikethrough' => __("S", "bibleget-io"),
 			/* translators: "SUP" refers to "superscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
-			'superscript'  => __("SUP", "bibleget-io"),
+			'superscript'  => "A²",
 			/* translators: "SUB" refers to "subscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
-			'subscript'    => __("SUB", "bibleget-io")
+			'subscript'    => "A₂"
 		);
+	//	$bibleget_styles_general->FONT_STYLE->settings = array('')
 
 		foreach ($bibleget_styles_general as $i => $styleobj) {
 			$o = str_replace("_", "", $i);
 
-			self::$bibleget_style_settings->{'version_' . $o} = new stdClass();
-			self::$bibleget_style_settings->{'version_' . $o}->section = 'bibleget_bibleversion_style_options';
+			self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'} = new stdClass();
+			self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->section = 'bibleget_bibleversion_style_options';
 			/* translators: in reference to font Size, style and color (e.g. 'font color for version indicator'). "Version" refers to the version of the Bible used for the Biblical quote. */
-			self::$bibleget_style_settings->{'version_' . $o}->title = $styleobj->title . " " . __('for version indicator', "bibleget-io");
-			self::$bibleget_style_settings->{'version_' . $o}->type = $styleobj->type;
-			if ($styleobj->type == 'select') {
-				self::$bibleget_style_settings->{'version_' . $o}->choices = $bibleget_style_sizes_arr;
-			} elseif ($styleobj->type == 'style') {
-				self::$bibleget_style_settings->{'version_' . $o}->choices = $bibleget_style_choices_arr;
+			self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->title = $styleobj->title;
+			self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->controltype = $styleobj->controltype;
+			if ($styleobj->controltype == 'range') {
+				self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->choices = $bibleget_style_sizes_arr;
+			} elseif ($styleobj->controltype == 'style') {
+				self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->choices = $bibleget_style_choices_arr;
+				self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->settings = array(
+					'bold_setting'			=> 'BGET[VERSIONSTYLES_BOLD]',
+					'italic_setting'		=> 'BGET[VERSIONSTYLES_ITALIC]',
+					'underline_setting'		=> 'BGET[VERSIONSTYLES_UNDERLINE]',
+					'strikethrough_setting'	=> 'BGET[VERSIONSTYLES_STRIKETHROUGH]',
+					'valign_setting'		=> 'BGET[VERSIONSTYLES_VALIGN]'
+				);
+			} elseif ($styleobj->controltype == 'select'){
+				self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->choices = $styleobj->choices;
+				self::$bibleget_style_settings->{'BGET[VERSIONSTYLES_' . $o.']'}->description = $styleobj->description;
 			}
 
-			self::$bibleget_style_settings->{'bookchapter_' . $o} = new stdClass();
-			self::$bibleget_style_settings->{'bookchapter_' . $o}->section = 'bibleget_bookchapter_style_options';
+			self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'} = new stdClass();
+			self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->section = 'bibleget_bookchapter_style_options';
 			/* translators: in reference to font size, style and color (e.g. 'color for books and chapters') */
-			self::$bibleget_style_settings->{'bookchapter_' . $o}->title = $styleobj->title . " " . __('for books and chapters', "bibleget-io");
-			self::$bibleget_style_settings->{'bookchapter_' . $o}->type = $styleobj->type;
-			if ($styleobj->type == 'select') {
-				self::$bibleget_style_settings->{'bookchapter_' . $o}->choices = $bibleget_style_sizes_arr;
-			} elseif ($styleobj->type == 'style') {
-				self::$bibleget_style_settings->{'bookchapter_' . $o}->choices = $bibleget_style_choices_arr;
+			self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->title = $styleobj->title;
+			self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->controltype = $styleobj->controltype;
+			if ($styleobj->controltype == 'range') {
+				self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->choices = $bibleget_style_sizes_arr;
+			} elseif ($styleobj->controltype == 'style') {
+				self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->choices = $bibleget_style_choices_arr;
+				self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->settings = array(
+					'bold_setting'			=> 'BGET[BOOKCHAPTERSTYLES_BOLD]',
+					'italic_setting'		=> 'BGET[BOOKCHAPTERSTYLES_ITALIC]',
+					'underline_setting'		=> 'BGET[BOOKCHAPTERSTYLES_UNDERLINE]',
+					'strikethrough_setting'	=> 'BGET[BOOKCHAPTERSTYLES_STRIKETHROUGH]',
+					'valign_setting'		=> 'BGET[BOOKCHAPTERSTYLES_VALIGN]'
+				);
+			} elseif ($styleobj->controltype == 'select'){
+				self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->choices = $styleobj->choices;
+				self::$bibleget_style_settings->{'BGET[BOOKCHAPTERSTYLES_' . $o.']'}->description = $styleobj->description;
 			}
 
-			self::$bibleget_style_settings->{'versenumber_' . $o} = new stdClass();
-			self::$bibleget_style_settings->{'versenumber_' . $o}->section = 'bibleget_versenumber_style_options';
+			self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'} = new stdClass();
+			self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->section = 'bibleget_versenumber_style_options';
 			/* translators: in reference to font Size, style and color (e.g. 'style for verse numbers') */
-			self::$bibleget_style_settings->{'versenumber_' . $o}->title = $styleobj->title . " " . __('for verse numbers', "bibleget-io");
-			self::$bibleget_style_settings->{'versenumber_' . $o}->type = $styleobj->type;
-			if ($styleobj->type == 'select') {
-				self::$bibleget_style_settings->{'versenumber_' . $o}->choices = $bibleget_style_sizes_arr;
-			} elseif ($styleobj->type == 'style') {
-				self::$bibleget_style_settings->{'versenumber_' . $o}->choices = $bibleget_style_choices_arr;
+			self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->title = $styleobj->title;
+			self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->controltype = $styleobj->controltype;
+			if ($styleobj->controltype == 'range') {
+				self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->choices = $bibleget_style_sizes_arr;
+			} elseif ($styleobj->controltype == 'style') {
+				self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->choices = $bibleget_style_choices_arr;
+				self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->settings = array(
+					'bold_setting'			=> 'BGET[VERSENUMBERSTYLES_BOLD]',
+					'italic_setting'		=> 'BGET[VERSENUMBERSTYLES_ITALIC]',
+					'underline_setting'		=> 'BGET[VERSENUMBERSTYLES_UNDERLINE]',
+					'strikethrough_setting'	=> 'BGET[VERSENUMBERSTYLES_STRIKETHROUGH]',
+					'valign_setting'		=> 'BGET[VERSENUMBERSTYLES_VALIGN]'
+				);
+			} elseif ($styleobj->controltype == 'select'){
+				self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->choices = $styleobj->choices;
+				self::$bibleget_style_settings->{'BGET[VERSENUMBERSTYLES_' . $o.']'}->description = $styleobj->description;
 			}
 
-			self::$bibleget_style_settings->{'versetext_' . $o} = new stdClass();
-			self::$bibleget_style_settings->{'versetext_' . $o}->section = 'bibleget_versetext_style_options';
+			self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'} = new stdClass();
+			self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->section = 'bibleget_versetext_style_options';
 			/* translators: in reference to font Size, style and color (e.g. 'style for text of verses') */
-			self::$bibleget_style_settings->{'versetext_' . $o}->title = $styleobj->title . " " . __('for text of verses', "bibleget-io");
-			self::$bibleget_style_settings->{'versetext_' . $o}->type = $styleobj->type;
-			if ($styleobj->type == 'select') {
-				self::$bibleget_style_settings->{'versetext_' . $o}->choices = $bibleget_style_sizes_arr;
-			} elseif ($styleobj->type == 'style') {
-				self::$bibleget_style_settings->{'versetext_' . $o}->choices = $bibleget_style_choices_arr;
+			self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->title = $styleobj->title;
+			self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->controltype = $styleobj->controltype;
+			if ($styleobj->controltype == 'range') {
+				self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->choices = $bibleget_style_sizes_arr;
+			} elseif ($styleobj->controltype == 'style') {
+				self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->choices = $bibleget_style_choices_arr;
+				self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->settings = array(
+					'bold_setting'			=> 'BGET[VERSETEXTSTYLES_BOLD]',
+					'italic_setting'		=> 'BGET[VERSETEXTSTYLES_ITALIC]',
+					'underline_setting'		=> 'BGET[VERSETEXTSTYLES_UNDERLINE]',
+					'strikethrough_setting'	=> 'BGET[VERSETEXTSTYLES_STRIKETHROUGH]',
+					'valign_setting'		=> 'BGET[VERSETEXTSTYLES_VALIGN]'
+				);
+			} elseif ($styleobj->controltype == 'select'){
+				self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->choices = $styleobj->choices;
+				self::$bibleget_style_settings->{'BGET[VERSETEXTSTYLES_' . $o.']'}->description = $styleobj->description;
 			}
 		}
-
-		self::$bibleget_style_settings->version_fontsize->dfault = 12;
-		self::$bibleget_style_settings->version_fontstyle->dfault = 'italic';
-		self::$bibleget_style_settings->version_fontcolor->dfault = '#000';
-
-		self::$bibleget_style_settings->bookchapter_fontsize->dfault = 14;
-		self::$bibleget_style_settings->bookchapter_fontstyle->dfault = 'bold';
-		self::$bibleget_style_settings->bookchapter_fontcolor->dfault = '#284f29';
-
-		self::$bibleget_style_settings->versenumber_fontsize->dfault = 7;
-		self::$bibleget_style_settings->versenumber_fontstyle->dfault = 'superscript';
-		self::$bibleget_style_settings->versenumber_fontcolor->dfault = '#c10005';
-
-		self::$bibleget_style_settings->versetext_fontsize->dfault = 10;
-		self::$bibleget_style_settings->versetext_fontstyle->dfault = '';
-		self::$bibleget_style_settings->versetext_fontcolor->dfault = '#646d73';
-
-		self::$bibleget_style_settings->linespacing_verses = new stdClass();
-		self::$bibleget_style_settings->linespacing_verses->dfault = 150;
-		self::$bibleget_style_settings->linespacing_verses->title = __('Line-spacing', "bibleget-io");
-		self::$bibleget_style_settings->linespacing_verses->type = 'select';
-		self::$bibleget_style_settings->linespacing_verses->choices = array(100 => 'single', 150 => '1½', 200 => 'double');
-		self::$bibleget_style_settings->linespacing_verses->section = 'bibleget_paragraph_style_options';
 
 		self::$websafe_fonts = array(
 			array("font-family" => "Arial", "fallback" => "Helvetica", "generic-family" => "sans-serif"),
@@ -1331,7 +1324,7 @@ class BibleGet_Customize
 			'bibleget_style_options',
 			array(
 				'priority'			=> 35,
-				'capability'		=> 'edit_theme_options',
+				'capability'		=> 'manage_options',
 				//'theme_supports'	=> '',
 				'title'				=> __('BibleGet plugin styles', 'bibleget-io'), //Visible title of section
 				'description'		=> __('Custom styles that apply to the text formatting of the biblical quotes', 'bibleget-io')
@@ -1342,10 +1335,10 @@ class BibleGet_Customize
 			'bibleget_paragraph_style_options',
 			array(
 				'priority'			=> 10, //Determines what order this appears in
-				'capability'		=> 'edit_theme_options', //Capability needed to tweak
+				'capability'		=> 'manage_options', //Capability needed to tweak
 				//'theme_supports'	=> '',
 				'title'				=> __('General styles', 'bibleget-io'), //Visible title of section
-				'description'		=> __('Custom styles that apply to the whole paragraphs of the biblical quotes', 'bibleget-io'),
+				'description'		=> __('Styles that apply to the Bible quote block as a whole', 'bibleget-io'),
 				'panel'				=> 'bibleget_style_options'
 			)
 		);
@@ -1354,10 +1347,10 @@ class BibleGet_Customize
 			'bibleget_bibleversion_style_options',
 			array(
 				'priority'			=> 20, //Determines what order this appears in
-				'capability'		=> 'edit_theme_options', //Capability needed to tweak
+				'capability'		=> 'manage_options', //Capability needed to tweak
 				//'theme_supports'	=> '',
-				'title'				=> __('Bible Version Styles', 'bibleget-io'), //Visible title of section
-				'description'		=> __('Custom styles that apply to the reference to the version of the Bible used for the biblical quotes (e.g. NABRE)', 'bibleget-io'),
+				'title'				=> __('Bible version styles', 'bibleget-io'), //Visible title of section
+				'description'		=> __('Styles that apply to the Bible version reference (e.g. NABRE)', 'bibleget-io'),
 				'panel'				=> 'bibleget_style_options'
 			)
 		);
@@ -1366,10 +1359,10 @@ class BibleGet_Customize
 			'bibleget_bookchapter_style_options',
 			array(
 				'priority'			=> 30, //Determines what order this appears in
-				'capability'		=> 'edit_theme_options', //Capability needed to tweak
+				'capability'		=> 'manage_options', //Capability needed to tweak
 				//'theme_supports'	=> '',
 				'title'				=> __('Book / Chapter styles', 'bibleget-io'), //Visible title of section
-				'description'		=> __('Custom styles that apply to books and chapters in the biblical quotes', 'bibleget-io'),
+				'description'		=> __('Styles that apply to the books and chapter reference', 'bibleget-io'),
 				'panel'				=> 'bibleget_style_options'
 			)
 		);
@@ -1378,10 +1371,10 @@ class BibleGet_Customize
 			'bibleget_versenumber_style_options',
 			array(
 				'priority'			=> 40, //Determines what order this appears in
-				'capability'		=> 'edit_theme_options', //Capability needed to tweak
+				'capability'		=> 'manage_options', //Capability needed to tweak
 				//'theme_supports'	=> '',
 				'title'				=> __('Verse number styles', 'bibleget-io'), //Visible title of section
-				'description'		=> __('Custom styles that apply to the numbers of the verses in the biblical quotes', 'bibleget-io'),
+				'description'		=> __('Styles that apply to verse numbers', 'bibleget-io'),
 				'panel'				=> 'bibleget_style_options'
 			)
 		);
@@ -1390,95 +1383,211 @@ class BibleGet_Customize
 			'bibleget_versetext_style_options',
 			array(
 				'priority'			=> 50, //Determines what order this appears in
-				'capability'		=> 'edit_theme_options', //Capability needed to tweak
+				'capability'		=> 'manage_options', //Capability needed to tweak
 				//'theme_supports'	=> '',
-				'title'				=> __('Verse Text Styles', 'bibleget-io'), //Visible title of section
-				'description'		=> __('Custom styles that apply to the text of the verses in the biblical quotes', 'bibleget-io'),
+				'title'				=> __('Verse text styles', 'bibleget-io'), //Visible title of section
+				'description'		=> __('Styles that apply to the text of the verses', 'bibleget-io'),
 				'panel'				=> 'bibleget_style_options'
 			)
 		);
 
 		$bibleget_style_settings_cc = 0;
 		foreach (self::$bibleget_style_settings as $style_setting => $style_setting_obj) {
-
-			//2. Register new settings to the WP database...
-			$wp_customize->add_setting(
-				$style_setting, //No need to use a SERIALIZED name, as `theme_mod` settings already live under one db record
-				array(
-					'default'    => $style_setting_obj->dfault, //Default setting/value to save
-					'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
-					'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
-					'transport'  => 'postMessage' //What triggers a refresh of the setting? 'refresh' or 'postMessage' (instant)?
-				)
-			);
-
-			//3. Finally, we define the control itself (which links a setting to a section and renders the HTML controls)...
-			if ($style_setting_obj->type == 'color') {
-				$wp_customize->add_control(
-					new WP_Customize_Color_Control( //Instantiate the color control class
-						$wp_customize, //Pass the $wp_customize object (required)
-						$style_setting . '_ctl', //Set a unique ID for the control
+			//separate case for FONT_STYLE !
+			if( strpos($style_setting,'FONTSTYLE') ){
+				foreach($style_setting_obj->settings as $name => $setting){
+					$settingID = str_replace('BGET[','',$setting);
+					$settingID = str_replace(']','',$settingID);
+					$casttype = self::$BGETPROPERTIES->OPTIONS[$settingID]['type'];
+					$sanitize_callback = '';
+					switch($casttype){
+						case 'boolean':
+							$sanitize_callback = 'BibleGet_Customize::sanitize_boolean';
+						break;
+						case 'integer':
+							$sanitize_callback = 'absint';
+						break;
+					}
+					$wp_customize->add_setting(
+						$setting,
 						array(
-							'label'      => $style_setting_obj->title, //Admin-visible name of the control
-							'settings'   => $style_setting, //Which setting to load and manipulate (serialized is okay)
-							'priority'   => $bibleget_style_settings_cc++, //Determines the order this control appears in for the specified section
-							'section'    => $style_setting_obj->section //ID of the section this control should render in (can be one of yours, or a WordPress default section)
+							'default'			=> self::$BGETPROPERTIES->OPTIONS[$settingID]['default'],
+							'type'				=> 'option',
+							'capability'		=> 'manage_options',
+							'transport'			=> 'postMessage',
+							'sanitize_callback'	=> $sanitize_callback
 						)
-					)
-				);
-			} elseif ($style_setting_obj->type == 'select') {
-				$wp_customize->add_control(
-					$style_setting . '_ctl',
-					array(
-						'label'	  	=> $style_setting_obj->title,
-						'settings'	=> $style_setting,
-						'priority'	=> $bibleget_style_settings_cc++,
-						'section' 	=> $style_setting_obj->section,
-						'type'	   	=> 'select',
-						'choices' 	=> $style_setting_obj->choices
-					)
-				);
-			} elseif ($style_setting_obj->type == 'fontselect') {
-				$wp_customize->add_control(
-					new BibleGet_Customize_FontSelect_Control(
-						$wp_customize,
-						$style_setting . '_ctl',
-						array(
-							'label'	  	=> $style_setting_obj->title,
-							'settings'	=> $style_setting,
-							'priority'	=> $bibleget_style_settings_cc++,
-							'section' 	=> $style_setting_obj->section
-							//'choices' 	=> $style_setting_obj->choices
-						)
-					)
-				);
-			} elseif ($style_setting_obj->type == 'style') {
+					);
+				};
+
 				$wp_customize->add_control(
 					new BibleGet_Customize_StyleBar_Control(
 						$wp_customize,
 						$style_setting . '_ctl',
 						array(
 							'label'	  	=> $style_setting_obj->title,
-							'settings'	=> $style_setting,
+							'settings'	=> $style_setting_obj->settings,
 							'priority'	=> $bibleget_style_settings_cc++,
 							'section' 	=> $style_setting_obj->section,
 							'choices'   => $style_setting_obj->choices
 						)
 					)
 				);
-			} elseif ($style_setting_obj->type == 'number') {
-				$wp_customize->add_control(
-					$style_setting . '_ctl',
+			}
+			else{
+				$settingID = str_replace('BGET[','',$style_setting);
+				$settingID = str_replace(']','',$settingID);
+				$casttype = self::$BGETPROPERTIES->OPTIONS[$settingID]['type'];
+				$sanitize_callback = '';
+				switch($casttype){
+					case 'integer':
+						$sanitize_callback = 'absint';
+					break;
+					case 'number':
+						$sanitize_callback = 'floatval';
+					break;
+					case 'boolean':
+						$sanitize_callback = 'BibleGet_Customize::sanitize_boolean';
+					break;
+					case 'string':
+						$sanitize_callback = 'esc_html';//'BibleGet_Customize::sanitize_string';
+					break;
+					case 'array':
+						$sanitize_callback = 'BibleGet_Customize::sanitize_array';
+					break;
+				}
+				//2. Register new settings to the WP database...
+				$wp_customize->add_setting(
+					$style_setting, //No need to use a SERIALIZED name, as `theme_mod` settings already live under one db record
 					array(
-						'label'       => $style_setting_obj->title,
-						'settings'    => $style_setting,
-						'priority'    => $bibleget_style_settings_cc++,
-						'section'     => $style_setting_obj->section,
-						'type'        => 'number'
+						'default'				=> self::$BGETPROPERTIES->OPTIONS[$settingID]['default'], //Default setting/value to save
+						'type'					=> 'option', //Is this an 'option' or a 'theme_mod'?
+						'capability'			=> 'manage_options', //Optional. Special permissions for accessing this setting.
+						'transport'				=> 'postMessage', //What triggers a refresh of the setting? 'refresh' or 'postMessage' (instant)?
+						'sanitize_callback'		=> $sanitize_callback
 					)
 				);
+
+				//3. Finally, we define the control itself (which links a setting to a section and renders the HTML controls)...
+				switch($style_setting_obj->controltype){
+					case 'color':
+						$wp_customize->add_control(
+							new WP_Customize_Color_Control( //Instantiate the color control class
+								$wp_customize, //Pass the $wp_customize object (required)
+								$style_setting . '_ctl', //Set a unique ID for the control
+								array(
+									'label'      => $style_setting_obj->title, //Admin-visible name of the control
+									'settings'   => $style_setting, //Which setting to load and manipulate (serialized is okay)
+									'priority'   => $bibleget_style_settings_cc++, //Determines the order this control appears in for the specified section
+									'section'    => $style_setting_obj->section //ID of the section this control should render in (can be one of yours, or a WordPress default section)
+								)
+							)
+						);
+					break;
+					case 'select':
+						$ctl_atts = array(
+							'label'	  	=> $style_setting_obj->title,
+							'settings'	=> $style_setting,
+							'priority'	=> $bibleget_style_settings_cc++,
+							'section' 	=> $style_setting_obj->section,
+							'type'	   	=> 'select',
+							'choices' 	=> $style_setting_obj->choices
+						);
+						if(property_exists($style_setting_obj,'description')){
+							$ctl_atts['description'] = $style_setting_obj->description;
+						}
+						$wp_customize->add_control(
+							$style_setting . '_ctl',
+							$ctl_atts
+						);
+					break;
+					case 'fontselect':
+						$wp_customize->add_control(
+							new BibleGet_Customize_FontSelect_Control(
+								$wp_customize,
+								$style_setting . '_ctl',
+								array(
+									'label'	  	=> $style_setting_obj->title,
+									'settings'	=> $style_setting,
+									'priority'	=> $bibleget_style_settings_cc++,
+									'section' 	=> $style_setting_obj->section
+									//'choices' 	=> $style_setting_obj->choices
+								)
+							)
+						);
+					break;
+					case 'number':
+						$wp_customize->add_control(
+							$style_setting . '_ctl',
+							array(
+								'label'       => $style_setting_obj->title,
+								'settings'    => $style_setting,
+								'priority'    => $bibleget_style_settings_cc++,
+								'section'     => $style_setting_obj->section,
+								'type'        => 'number'
+							)
+						);
+					break;
+					case 'range':
+						$wp_customize->add_control(
+							$style_setting . '_ctl',
+							array(
+								'label'       => $style_setting_obj->title,
+								'settings'    => $style_setting,
+								'priority'    => $bibleget_style_settings_cc++,
+								'section'     => $style_setting_obj->section,
+								'type'        => 'range',
+								'input_attrs' => array(
+									'min' => property_exists($style_setting_obj,'choices') ? $style_setting_obj->choices['min'] : 0,
+									'max' => property_exists($style_setting_obj,'choices') ? $style_setting_obj->choices['max'] : 30,
+									'step' => property_exists($style_setting_obj,'choices') ? $style_setting_obj->choices['step'] : 1,
+								)
+							)
+						);
+					break;
+					case 'textalign':
+						$wp_customize->add_control(
+							new BibleGet_Customize_TextAlign_Control(
+								$wp_customize,
+								$style_setting . '_ctl',
+								array(
+									'label'		=> $style_setting_obj->title,
+									'settings'	=> $style_setting,
+									'priority'	=> $bibleget_style_settings_cc++,
+									'section'	=> $style_setting_obj->section
+								)
+							)
+						);
+					break;
+				}
 			}
 		}
+	}
+
+	public static function sanitize_boolean($input){
+		if(!isset($input)){ return false; }
+		$retval = false;
+		if(is_string($input)){
+			if($input == 'true' || $input == '1' || $input == 'on' || $input == 'yes'){
+				$retval = true;
+			}
+		}elseif(is_numeric($input)){
+			if($input === 1){
+				$retval = true;
+			}
+		}elseif(is_bool($input) && $input === true){
+			$retval = true;
+		}
+		return $retval;
+	}
+
+	public static function sanitize_array($input){
+		$newArr = [];
+		foreach($input as $key => $value){
+			$value = wp_filter_nohtml_kses($value);
+			$newArray[$key] = $value;
+		}
+		return $newArray;
 	}
 
 	/**
@@ -1496,7 +1605,8 @@ class BibleGet_Customize
 		<!--Customizer CSS-->
 		<?php $is_googlefont = false;
 		$BGETOPTIONS = get_option("BGET",[]);
-		$mod = get_theme_mod('bibleget_fontfamily', self::$bibleget_style_settings->bibleget_fontfamily->dfault);
+		//$mod = get_theme_mod('bibleget_fontfamily', self::$bibleget_style_settings->bibleget_fontfamily->dfault);
+		$mod = $BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY'];
 		//echo '<!-- mod variable = '.$mod.' -->';
 		if (!empty($mod)) {
 			//let's check if it's a websafe font or a google font
@@ -1521,155 +1631,223 @@ class BibleGet_Customize
 			echo PHP_EOL;
 			echo 'div.results p { margin: 0; }';
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-width',		'bibleget_borderwidth', '', 'px');
+			//self::generate_css('div.results', 'border-width',		'bibleget_borderwidth', '', 'px');
+			self::generate_options_css('div.results', 'border-width', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERWIDTH'], '', 'px');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-radius',		'bibleget_borderradius', '', 'px');
+			//self::generate_css('div.results', 'border-radius',		'bibleget_borderradius', '', 'px');
+			self::generate_options_css('div.results', 'border-radius', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERRADIUS'], '', 'px');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-color', 		'bibleget_bordercolor');
+			//self::generate_css('div.results', 'border-color', 		'bibleget_bordercolor');
+			self::generate_options_css('div.results', 'border-color', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERCOLOR'], '', '');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'border-style',		'bibleget_borderstyle');
+			//self::generate_css('div.results', 'border-style',		'bibleget_borderstyle');
+			self::generate_options_css('div.results', 'border-style', BGET::CSSRULE["BORDERSTYLE"][$BGETOPTIONS['PARAGRAPHSTYLES_BORDERSTYLE']], '', '');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'background-color',	'bibleget_bgcolor');
+			//self::generate_css('div.results', 'background-color',	'bibleget_bgcolor');
+			self::generate_options_css('div.results', 'background-color', $BGETOPTIONS['PARAGRAPHSTYLES_BACKGROUNDCOLOR'], '', '');
 			echo PHP_EOL;
-			self::generate_css('div.results', 'width',				'bibleget_width', '', '%');
+			//self::generate_css('div.results', 'width',				'bibleget_width', '', '%');
+			self::generate_options_css('div.results', 'width', $BGETOPTIONS['PARAGRAPHSTYLES_WIDTH'], '', '%');
 			echo PHP_EOL;
 
-			$mod1 = get_theme_mod('bibleget_margintopbottom', self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
-			$mod2 = get_theme_mod('bibleget_marginleftright', self::$bibleget_style_settings->bibleget_marginleftright->dfault);
+			//$mod1 = get_theme_mod('bibleget_margintopbottom', self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
+			//$mod2 = get_theme_mod('bibleget_marginleftright', self::$bibleget_style_settings->bibleget_marginleftright->dfault);
+			$mod1 = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINTOPBOTTOM'];
+			$mod2 = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHT'];
+			$unit = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT'];
 			$cssrule = '';
-			if (!empty($mod1) && !empty($mod2)) {
-				$cssrule = sprintf(
-					'%s { %s: %s %s; }',
-					'div.results',
-					'margin',
-					($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
-					($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-			}
+			//if (!empty($mod1) && !empty($mod2)) {
+			$cssrule = sprintf(
+				'%s { %s: %s %s; }',
+				'div.results',
+				'margin',
+				$mod1 . 'px',
+				($unit == 'auto' ? $unit : $mod2 . $unit)
+			);
+			echo $cssrule;
+			echo PHP_EOL;
+			//}
 
-			$mod1 = get_theme_mod('bibleget_paddingtopbottom', self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault);
-			$mod2 = get_theme_mod('bibleget_paddingleftright', self::$bibleget_style_settings->bibleget_paddingleftright->dfault);
+			//$mod1 = get_theme_mod('bibleget_paddingtopbottom', self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault);
+			//$mod2 = get_theme_mod('bibleget_paddingleftright', self::$bibleget_style_settings->bibleget_paddingleftright->dfault);
+			$mod1 = $BGETOPTIONS['PARAGRAPHSTYLES_PADDINGTOPBOTTOM'];
+			$mod2 = $BGETOPTIONS['PARAGRAPHSTYLES_PADDINGLEFTRIGHT'];
 			$cssrule = '';
-			if (!empty($mod1) && !empty($mod2)) {
+			//if (!empty($mod1) && !empty($mod2)) {
 				$cssrule = sprintf(
 					'%s { %s: %s %s; }',
 					'div.results',
 					'padding',
-					($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
-					($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
+					//($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
+					//($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
+					$mod1 . 'px',
+					$mod2 . 'px'
 				);
 				echo $cssrule;
 				echo PHP_EOL;
-			}
+			//}
 
-			self::generate_css('div.results p.versesParagraph', 'text-align', 'bibleget_textalign');
+			//self::generate_css('div.results p.versesParagraph', 'text-align', 'bibleget_textalign');
+			self::generate_options_css('div.results p.versesParagraph', 'text-align', BGET::CSSRULE["ALIGN"][$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN']-1]);
 			echo PHP_EOL;
-			self::generate_css('div.results p.bibleVersion', 'color', 'version_fontcolor');
+			//self::generate_css('div.results p.bibleVersion', 'color', 'version_fontcolor');
+			self::generate_options_css('div.results p.bibleVersion', 'color', $BGETOPTIONS['VERSIONSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			self::generate_css('div.results .bookChapter', 'color', 'bookchapter_fontcolor');
+			//self::generate_css('div.results .bookChapter', 'color', 'bookchapter_fontcolor');
+			self::generate_options_css('div.results .bookChapter', 'color', $BGETOPTIONS['BOOKCHAPTERSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			self::generate_css('div.results p.versesParagraph', 'color', 'versetext_fontcolor');
+			//self::generate_css('div.results p.versesParagraph', 'color', 'versetext_fontcolor');
+			self::generate_options_css('div.results p.versesParagraph', 'color', $BGETOPTIONS['VERSETEXTSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			self::generate_css('div.results p.versesParagraph span.verseNum', 'color', 'versenumber_fontcolor');
+			//self::generate_css('div.results p.versesParagraph span.verseNum', 'color', 'versenumber_fontcolor');
+			self::generate_options_css('div.results p.versesParagraph span.verseNum', 'color', $BGETOPTIONS['VERSENUMBERSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
 			echo 'div.results p.versesParagraph span.verseNum { margin: 0px 3px; }';
 			echo PHP_EOL;
 			$fontsizerules = array(
-				'version_fontsize'		=> 'div.results p.bibleVersion',
-				'bookchapter_fontsize'	=> 'div.results .bookChapter',
-				'versetext_fontsize'	=> 'div.results p.versesParagraph',
-				'versenumber_fontsize'	=> 'div.results p.versesParagraph span.verseNum'
+				//'version_fontsize'		=> 'div.results p.bibleVersion',
+				//'bookchapter_fontsize'	=> 'div.results .bookChapter',
+				//'versetext_fontsize'	=> 'div.results p.versesParagraph',
+				//'versenumber_fontsize'	=> 'div.results p.versesParagraph span.verseNum'
+				'VERSIONSTYLES_FONTSIZE'		=> 'div.results p.bibleVersion',
+				'BOOKCHAPTERSTYLES_FONTSIZE'	=> 'div.results .bookChapter',
+				'VERSETEXTSTYLES_FONTSIZE'		=> 'div.results p.versesParagraph',
+				'VERSENUMBERSTYLES_FONTSIZE'	=> 'div.results p.versesParagraph span.verseNum',
 			);
+			$fontsizeunits = array(
+				'VERSIONSTYLES_FONTSIZEUNIT',
+				'BOOKCHAPTERSTYLES_FONTSIZEUNIT',
+				'VERSETEXTSTYLES_FONTSIZEUNIT',
+				'VERSENUMBERSTYLES_FONTSIZEUNIT'
+			);
+			$i= 0;
 			foreach ($fontsizerules as $fontsizerule => $css_selector) {
-				$mod = get_theme_mod($fontsizerule, self::$bibleget_style_settings->$fontsizerule->dfault);
+				//$mod = get_theme_mod($fontsizerule, self::$bibleget_style_settings->$fontsizerule->dfault);
+				$mod = $BGETOPTIONS[$fontsizerule];
+				$unit = $BGETOPTIONS[$fontsizeunits[$i++]];
+				if($unit == 'em'){ $mod /= 10; }
 				$cssrule = '';
-				if (!empty($mod)) {
-					$cssrule = sprintf(
-						'%s { %s:%s; }',
-						$css_selector,
-						'font-size',
-						$mod . 'pt'
-						//number_format(($mod / 10),1,'.','').'em'
-					);
-					echo $cssrule;
-					echo PHP_EOL;
-				}
+				//if (!empty($mod)) {
+				$cssrule = sprintf(
+					'%s { %s:%s; }',
+					$css_selector,
+					'font-size',
+					$mod . $unit
+					//number_format(($mod / 10),1,'.','').'em'
+				);
+				echo $cssrule;
+				echo PHP_EOL;
+				//}
 			}
 
 
 			$fontstylerules = array(
-				'version_fontstyle'		=> 'div.results p.bibleVersion',
-				'bookchapter_fontstyle' => 'div.results .bookChapter',
-				'versetext_fontstyle'	=> 'div.results p.versesParagraph',
-				'versenumber_fontstyle' => 'div.results p.versesParagraph span.verseNum'
+				// 'version_fontstyle'		=> 'div.results p.bibleVersion',
+				// 'bookchapter_fontstyle' => 'div.results .bookChapter',
+				// 'versetext_fontstyle'	=> 'div.results p.versesParagraph',
+				// 'versenumber_fontstyle' => 'div.results p.versesParagraph span.verseNum'
+				'VERSIONSTYLES_'		=> 'div.results p.bibleVersion',
+				'BOOKCHAPTERSTYLES_'	=> 'div.results .bookChapter',
+				'VERSETEXTSTYLES_'		=> 'div.results p.versesParagraph',
+				'VERSENUMBERSTYLES_' 	=> 'div.results p.versesParagraph span.verseNum'
 			);
 			foreach ($fontstylerules as $fontstylerule => $css_selector) {
 				$cssrule = '';
-				$mod = get_theme_mod($fontstylerule, self::$bibleget_style_settings->$fontstylerule->dfault);
-				$fval = array();
-				if (!empty($mod)) {
-					$fval = explode(',', $mod);
+				//$mod = get_theme_mod($fontstylerule, self::$bibleget_style_settings->$fontstylerule->dfault);
+				$bold 			= $BGETOPTIONS[$fontstylerule.'BOLD'];
+				$italic 		= $BGETOPTIONS[$fontstylerule.'ITALIC'];
+				$underline 		= $BGETOPTIONS[$fontstylerule.'UNDERLINE'];
+				$strikethrough 	= $BGETOPTIONS[$fontstylerule.'STRIKETHROUGH'];
+				//$fval = array();
+				//if (!empty($mod)) {
+					//$fval = explode(',', $mod);
 
-					if (in_array('bold', $fval)) {
+					if ($bold) { //(in_array('bold', $fval)) {
 						$cssrule .= 'font-weight: bold;';
 					} else {
 						$cssrule .= 'font-weight: normal;';
 					}
 
-					if (in_array('italic', $fval)) {
+					if ($italic) { //(in_array('italic', $fval)) {
 						$cssrule .= 'font-style: italic;';
 					} else {
 						$cssrule .= 'font-style: normal;';
 					}
 
-					if (in_array('underline', $fval)) {
-						$cssrule .= 'text-decoration: underline;';
-					} elseif (in_array('strikethrough', $fval)) {
-						$cssrule .= 'text-decoration: line-through;';
+					if ($underline || $strikethrough) { //(in_array('underline', $fval)) {
+						$rule = [];
+						if($underline){
+							array_push($rule,'underline');
+						}
+						if($strikethrough){
+							array_push($rule,'line-through');
+						}
+						$cssrule .= 'text-decoration: '.explode(' ',$rule).';';
+					/*} elseif ($strikethrough) { //(in_array('strikethrough', $fval)) {
+						$cssrule .= 'text-decoration: line-through;';*/
 					} else {
 						$cssrule .= 'text-decoration: none;';
 					}
 
+					if($fontstylerule == 'VERSENUMBERSTYLES_'){
+						switch($BGETOPTIONS['VERSENUMBERSTYLES_VALIGN']){
+							case BGET::VALIGN['SUPERSCRIPT'];
+								$cssrule .= 'vertical-align: baseline; position: relative; top: -0.6em;';
+								break;
+							case BGET::VALIGN['SUBSCRIPT'];
+								$cssrule .= 'vertical-align: baseline; position: relative; top: 0.6em;';
+								break;
+							case BGET::VALIGN['NORMAL'];
+								$cssrule .= 'vertical-align: baseline; position: static;';
+								break;
+						}
+					}
+					/*
 					if (in_array('superscript', $fval)) {
 						$cssrule .= 'vertical-align: baseline; position: relative; top: -0.6em;';
 					} elseif (in_array('subscript', $fval)) {
-						$cssrule .= 'vertical-align:baseline; position: relative; top:0.6em;';
+						$cssrule .= 'vertical-align: baseline; position: relative; top:0.6em;';
 					} else {
-						$cssrule .= 'vertical-align:baseline; position: static;';
+						$cssrule .= 'vertical-align: baseline; position: static;';
 					}
-
+					*/
 					echo sprintf('%s { %s }', $css_selector, $cssrule);
 					echo PHP_EOL;
-				}
-				unset($fval);
+				//}
+				//unset($fval);
 			}
 
-			self::generate_css('div.results p.versesParagraph', 'line-height', 'linespacing_verses', '', '%');
+			//self::generate_css('div.results p.versesParagraph', 'line-height', 'linespacing_verses', '', '%');
 			echo PHP_EOL;
 
-			$linespacing_verses = get_theme_mod('linespacing_verses', self::$bibleget_style_settings->linespacing_verses->dfault);
-			$fontsize_versenumber = get_theme_mod('versenumber_fontsize', self::$bibleget_style_settings->versenumber_fontsize->dfault);
+			//$linespacing_verses = get_theme_mod('linespacing_verses', self::$bibleget_style_settings->linespacing_verses->dfault);
+			self::generate_options_css('div.results p.versesParagraph', 'line-height', $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em');
+			$linespacing_verses = $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em';
+			$fontsize_versenumber = $BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZE'];
+			if($BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'] == 'em'){
+				$fontsize_versenumber /= 10;
+			}
+			$fontsize_versenumber .= $BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'];
+			//$fontsize_versenumber = get_theme_mod('versenumber_fontsize', self::$bibleget_style_settings->versenumber_fontsize->dfault);
 			echo "div.results p.versesParagraph span.sm { text-transform: lowercase; font-variant: small-caps; } ";
 			echo PHP_EOL;
 			echo '/* Senseline. A line that is broken to be reading aloud/public speaking. Poetry is included in this category. */';
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.po { display: block; margin-left:5%; margin-top:-1%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.po { display: block; margin-left:5%; margin-top:-1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses" . "%; }";
+			echo "div.results p.versesParagraph span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber" . "pt; }";
+			echo "div.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber; }";
 			echo PHP_EOL;
 
 			//$bibleversionalign = get_theme_mod('bibleversionalign', 'left');
@@ -1709,6 +1887,13 @@ class BibleGet_Customize
 	public static function bibleget_customizer_print_script($hook)
 	{
 		//can load custom scripts here...
+		wp_enqueue_script(
+			'bibleget-customizerpanel',
+			plugins_url('js/customizer-panel.js', __FILE__),
+			array('jquery'),
+			'',
+			true
+		);
 	}
 
 	/**
@@ -1725,8 +1910,8 @@ class BibleGet_Customize
 	public static function live_preview()
 	{
 		wp_enqueue_script(
-			'bibleget-pluginstylecustomizer', // Give the script a unique ID
-			plugins_url('js/theme-customizer.js', __FILE__), // Define the path to the JS file
+			'bibleget-customizerpreview', // Give the script a unique ID
+			plugins_url('js/customizer-preview.js', __FILE__), // Define the path to the JS file
 			array('jquery', 'customize-preview'), // Define dependencies
 			'', // Define a version (optional)
 			true // Specify whether to put in footer (leave this true)
@@ -1764,6 +1949,22 @@ class BibleGet_Customize
 		}
 		return $returnval;
 	}
+
+	public static function generate_options_css($selector, $style, $rulevalue, $prefix = '', $postfix = '', $echoback = true)
+	{
+		$returnval = '';
+		$returnval = sprintf(
+			'%s { %s: %s; }',
+			$selector,
+			$style,
+			$prefix . $rulevalue . $postfix
+		);
+		if ($echoback) {
+			echo $returnval;
+		}
+		return $returnval;
+	}
+
 }
 
 
@@ -1819,7 +2020,7 @@ class BGET
 	],
 	CSSRULE = [
 		'ALIGN' => ['left','center','right','justify'],
-		'TEXTSTYLE' => ['bold','italic','underline','strikethrough'],
+		'TEXTSTYLE' => ['bold','italic','underline','line-through'],
 		'BORDERSTYLE' => ['none','dotted','dashed','solid','double','groove','ridge','inset','outset']
 	];
 };
@@ -1841,6 +2042,10 @@ class BGETPROPERTIES {
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGTOPBOTTOM"]) : 12, //unit: px
 				"type" => "integer"
 			],
+			"PARAGRAPHSTYLES_PADDINGLEFTRIGHT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGLEFTRIGHT"]) : 10, //unit: px
+				"type" => "integer"
+			],
 			"PARAGRAPHSTYLES_MARGINTOPBOTTOM" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINTOPBOTTOM") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINTOPBOTTOM"]) : 12, //unit: px
 				"type" => "integer"
@@ -1850,12 +2055,8 @@ class BGETPROPERTIES {
 				"type" => "integer"
 			],
 			"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT"]) : 'auto',
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT"] : 'auto',
 				"type" => "string" //possible values 'px', '%', 'auto'
-			],
-			"PARAGRAPHSTYLES_PADDINGLEFTRIGHT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PADDINGLEFTRIGHT") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PADDINGLEFTRIGHT"]) : 10, //unit: px
-				"type" => "integer"
 			],
 			"PARAGRAPHSTYLES_PARAGRAPHALIGN" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_PARAGRAPHALIGN") ? intval($this->BGETOPTIONS["PARAGRAPHSTYLES_PARAGRAPHALIGN"]) : BGET::ALIGN["JUSTIFY"],
@@ -1913,6 +2114,14 @@ class BGETPROPERTIES {
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 10,
 				"type" => "integer"
 			],
+			"VERSIONSTYLES_FONTSIZEUNIT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSIONSTYLES_FONTSIZEUNIT"] : 'px',
+				"type" => "string"
+			],
+			"VERSIONSTYLES_VALIGN" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSIONSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"], //resolves to integer
+				"type" => "integer"
+			],
 			"BOOKCHAPTERSTYLES_BOLD" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_BOLD") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_BOLD"] === 'true' : true,
 				"type" => "boolean"
@@ -1936,6 +2145,10 @@ class BGETPROPERTIES {
 			"BOOKCHAPTERSTYLES_FONTSIZE" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZE"]) : 10,
 				"type" => "integer"
+			],
+			"BOOKCHAPTERSTYLES_FONTSIZEUNIT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZEUNIT"] : 'px',
+				"type" => "string"
 			],
 			"BOOKCHAPTERSTYLES_VALIGN" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["BOOKCHAPTERSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"], //resolves to integer
@@ -1965,6 +2178,10 @@ class BGETPROPERTIES {
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 10,
 				"type" => "integer"
 			],
+			"VERSENUMBERSTYLES_FONTSIZEUNIT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZEUNIT"] : 'px',
+				"type" => "string"
+			],
 			"VERSENUMBERSTYLES_VALIGN" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_VALIGN"]) : BGET::VALIGN["SUPERSCRIPT"], //resolves to INT
 				"type" => "integer"
@@ -1992,6 +2209,10 @@ class BGETPROPERTIES {
 			"VERSETEXTSTYLES_FONTSIZE" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZE"]) : 10,
 				"type" => "integer"
+			],
+			"VERSETEXTSTYLES_FONTSIZEUNIT" => [
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZEUNIT"] : 'px',
+				"type" => "string"
 			],
 			"VERSETEXTSTYLES_VALIGN" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_VALIGN") ? intval($this->BGETOPTIONS["VERSETEXTSTYLES_VALIGN"]) : BGET::VALIGN["NORMAL"],
@@ -2039,7 +2260,7 @@ class BGETPROPERTIES {
 			],
 			"VERSION" => [
 				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSION") ? $this->BGETOPTIONS["VERSION"] : ["NABRE"], //Array of string values
-				"type" => "ARRAY",
+				"type" => "array",
 				"items" => ["type" => "string"]
 			],
 			"QUERY" => [
