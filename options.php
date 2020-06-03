@@ -1052,7 +1052,7 @@ class BibleGet_Customize
 		/*
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices = array();
 		foreach(BGET::ALIGN as $enum => $value){
-			self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices[$value] = BGET::CSSRULE["ALIGN"][$value-1];
+			self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices[$value] = BGET::CSSRULE["ALIGN"][$value];
 		}
 		*/
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->section = 'bibleget_paragraph_style_options';
@@ -1179,9 +1179,7 @@ class BibleGet_Customize
 			'underline'    => __("U", "bibleget-io"),
 			/* translators: "S" refers to "strikethrough style text", use the corresponding single letter to refer to this text formatting in your language for use on a button in a button group */
 			'strikethrough' => __("S", "bibleget-io"),
-			/* translators: "SUP" refers to "superscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
 			'superscript'  => "A²",
-			/* translators: "SUB" refers to "subscript style text", use the corresponding abbreviation to refer to this text formatting in your language for use on a button in a button group */
 			'subscript'    => "A₂"
 		);
 	//	$bibleget_styles_general->FONT_STYLE->settings = array('')
@@ -1444,7 +1442,7 @@ class BibleGet_Customize
 						$sanitize_callback = 'absint';
 					break;
 					case 'number':
-						$sanitize_callback = 'floatval';
+						$sanitize_callback = 'BibleGet_Customize::sanitize_float';//'floatval'; floatval returns null?
 					break;
 					case 'boolean':
 						$sanitize_callback = 'BibleGet_Customize::sanitize_boolean';
@@ -1590,6 +1588,10 @@ class BibleGet_Customize
 		return $newArray;
 	}
 
+	public static function sanitize_float( $input ) {
+		return filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+	}
+
 	/**
 	 * This will output the custom WordPress settings to the live theme's WP head.
 	 *
@@ -1688,7 +1690,7 @@ class BibleGet_Customize
 			//}
 
 			//self::generate_css('div.results p.versesParagraph', 'text-align', 'bibleget_textalign');
-			self::generate_options_css('div.results p.versesParagraph', 'text-align', BGET::CSSRULE["ALIGN"][$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN']-1]);
+			self::generate_options_css('div.results p.versesParagraph', 'text-align', BGET::CSSRULE["ALIGN"][$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN']]);
 			echo PHP_EOL;
 			//self::generate_css('div.results p.bibleVersion', 'color', 'version_fontcolor');
 			self::generate_options_css('div.results p.bibleVersion', 'color', $BGETOPTIONS['VERSIONSTYLES_TEXTCOLOR']);
@@ -1894,6 +1896,11 @@ class BibleGet_Customize
 			'',
 			true
 		);
+
+		wp_enqueue_style(
+		    'bibleget-customizerpanel-style',
+		    plugins_url('css/customizer-panel.css', __FILE__)
+		);
 	}
 
 	/**
@@ -1916,6 +1923,17 @@ class BibleGet_Customize
 			'', // Define a version (optional)
 			true // Specify whether to put in footer (leave this true)
 		);
+
+		$BGETPROPERTIES = new BGETPROPERTIES();
+		//and these are our constants, as close as I can get to ENUMS
+		//hey with this operation they transform quite nicely for the client side javascript!
+		$BGETreflection = new ReflectionClass('BGET');
+		$BGETinstanceprops = $BGETreflection->getConstants();
+		$BGETConstants = array();
+		foreach($BGETinstanceprops as $key => $value) {
+			$BGETConstants[$key] = $value;
+		}
+		wp_localize_script('bibleget-customizerpreview', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants, 'BGET' => $BGETPROPERTIES->BGETOPTIONS));
 	}
 
 	/**
@@ -2019,9 +2037,9 @@ class BGET
 		"OUTSET"			=> 8
 	],
 	CSSRULE = [
-		'ALIGN' => ['left','center','right','justify'],
-		'TEXTSTYLE' => ['bold','italic','underline','line-through'],
-		'BORDERSTYLE' => ['none','dotted','dashed','solid','double','groove','ridge','inset','outset']
+		'ALIGN' => ['','left','center','right','justify'], //add empty initial value since our enum is 1 based, not 0 based
+		'TEXTSTYLE' => ['','bold','italic','underline','line-through'], //add empty initial value since our enum is 1 based, not 0 based
+		'BORDERSTYLE' => ['none','dotted','dashed','solid','double','groove','ridge','inset','outset'] //this enum is 0 based
 	];
 };
 

@@ -5,9 +5,6 @@ function jq( myid ) {
 
 jQuery(document).ready(function(){
 	jQuery('input[type="range"]').each(function(){
-		let min = jQuery(this).attr('min');
-		let max = jQuery(this).attr('max');
-		let val = jQuery(this).val();
 		let unit = 'px';
 		if(this.id.includes('PARAGRAPHSTYLES_WIDTH') ){
 			unit = '%';
@@ -15,10 +12,21 @@ jQuery(document).ready(function(){
 			let FtSizeUnitId = this.id.replace('FONTSIZE','FONTSIZEUNIT');
 			unit = jQuery(jq(FtSizeUnitId)).val();
 		}
-		jQuery(this).before('<span style="margin:0px 5px;vertical-align:top;display:inline-block;width:2em;">'+min+unit+'</span>');
-		jQuery(this).after('<span style="margin:0px 5px;vertical-align:top;display:inline-block;width:2em;">'+max+unit+'</span><span style="margin:0px 5px;color:Green;font-weight:bold;position:relative;top:-3px;border:1px solid Black;border-radius:3px;padding: 3px;background-color:White;width:2em;text-align:center;display:inline-block;" class="rangeValue">'+val+'</span>');
+		let min = (unit == 'em') ? jQuery(this).attr('min')/10 : jQuery(this).attr('min');
+		let max = (unit == 'em') ? jQuery(this).attr('max')/10 : jQuery(this).attr('max');
+		let val = (unit == 'em') ? jQuery(this).val()/10 : jQuery(this).val();
+		jQuery(this).before('<span class="rangeBefore">'+min+unit+'</span>');
+		jQuery(this).after('<span class="rangeAfter">'+max+unit+'</span><span class="rangeValue">'+val+'</span>');
 		jQuery(this).on('input',function(){
-			jQuery(this).siblings('.rangeValue').text(this.value);
+			if(this.id.includes('FONTSIZE')){
+				let FtSizeUnitId = this.id.replace('FONTSIZE','FONTSIZEUNIT');
+				unit = jQuery(jq(FtSizeUnitId)).val();
+			}
+			if(unit=='em'){
+				jQuery(this).siblings('.rangeValue').text(this.value/10);
+			}else{
+				jQuery(this).siblings('.rangeValue').text(this.value);
+			}
 		});
 	});
 
@@ -37,7 +45,27 @@ jQuery(document).ready(function(){
 	if(jQuery(jq('_customize-input-BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]_ctl')).val()=='auto'){
 		jQuery(jq('_customize-input-BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]_ctl')).prop('disabled',true);
 	}else{
+		//we don't need to enable it explicitly, it's already enable unless we explicity disable
+	}
 
+	if(jQuery(jq('_customize-input-BGET[VERSIONSTYLES_FONTSIZEUNIT]_ctl')).val()=='inherit'){
+		let $FtSize = jQuery(jq('_customize-input-BGET[VERSIONSTYLES_FONTSIZE]_ctl'));
+		$FtSize.prop('disabled',true);
+	}
+
+	if(jQuery(jq('_customize-input-BGET[BOOKCHAPTERSTYLES_FONTSIZEUNIT]_ctl')).val()=='inherit'){
+		let $FtSize = jQuery(jq('_customize-input-BGET[BOOKCHAPTERSTYLES_FONTSIZE]_ctl'));
+		$FtSize.prop('disabled',true);
+	}
+
+	if(jQuery(jq('_customize-input-BGET[VERSENUMBERSTYLES_FONTSIZEUNIT]_ctl')).val()=='inherit'){
+		let $FtSize = jQuery(jq('_customize-input-BGET[VERSENUMBERSTYLES_FONTSIZE]_ctl'));
+		$FtSize.prop('disabled',true);
+	}
+
+	if(jQuery(jq('_customize-input-BGET[VERSETEXTSTYLES_FONTSIZEUNIT]_ctl')).val()=='inherit'){
+		let $FtSize = jQuery(jq('_customize-input-BGET[VERSETEXTSTYLES_FONTSIZE]_ctl'));
+		$FtSize.prop('disabled',true);
 	}
 
 	jQuery(jq('_customize-input-BGET[VERSIONSTYLES_FONTSIZEUNIT]_ctl'))
@@ -50,31 +78,17 @@ jQuery(document).ready(function(){
 			if(this.value == 'inherit'){
 				$FtSize.prop('disabled',true);
 			}
-			else{
+			else if(this.value == 'em'){
+				$FtSize.prop('disabled',false);
+				$FtSize.prev('span').text(($FtSize.attr('min')/10) + this.value);
+				$FtSize.next('span').text(($FtSize.attr('max')/10) + this.value);
+				$FtSize.siblings('.rangeValue').text($FtSize.val()/10);
+			}else{
 				$FtSize.prop('disabled',false);
 				$FtSize.prev('span').text($FtSize.attr('min') + this.value);
 				$FtSize.next('span').text($FtSize.attr('max') + this.value);
+				$FtSize.siblings('.rangeValue').text($FtSize.val());
 			}
 	});
-
-	if(jQuery(jq('_customize-input-BGET[VERSIONSTYLES_FONTSIZEUNIT]_ctl')).val()=='auto'){
-		let $FtSize = jQuery(jq('_customize-input-BGET[VERSIONSTYLES_FONTSIZE]_ctl'));
-		$FtSize.prop('disabled',true);
-	}
-
-	if(jQuery(jq('_customize-input-BGET[BOOKCHAPTERSTYLES_FONTSIZEUNIT]_ctl')).val()=='auto'){
-		let $FtSize = jQuery(jq('_customize-input-BGET[BOOKCHAPTERSTYLES_FONTSIZE]_ctl'));
-		$FtSize.prop('disabled',true);
-	}
-
-	if(jQuery(jq('_customize-input-BGET[VERSENUMBERSTYLES_FONTSIZEUNIT]_ctl')).val()=='auto'){
-		let $FtSize = jQuery(jq('_customize-input-BGET[VERSENUMBERSTYLES_FONTSIZE]_ctl'));
-		$FtSize.prop('disabled',true);
-	}
-
-	if(jQuery(jq('_customize-input-BGET[VERSETEXTSTYLES_FONTSIZEUNIT]_ctl')).val()=='auto'){
-		let $FtSize = jQuery(jq('_customize-input-BGET[VERSETEXTSTYLES_FONTSIZE]_ctl'));
-		$FtSize.prop('disabled',true);
-	}
 
 });

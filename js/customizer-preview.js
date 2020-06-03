@@ -5,246 +5,295 @@
  * then make any necessary changes to the page using jQuery.
  */
 ( function( $ ) {
+	/* Wouldn't it be great to be able to just iterate over the defined properties / attributes / options?
+	 * Maybe we could, if we defined the function to bind such that it's the same as the Gutenberg block live preview functions?
+	 * Making these functions another property of the defined properties / attributes? Would that be possible?
+	 * Would probably require like an eval or something like that? I don't like the idea of eval though...
+	 * In the meantime, we can still iterate over them and use a switch case to treat them one by one...
+	*/
+	if(BibleGetGlobal !== null && typeof BibleGetGlobal === 'object' && BibleGetGlobal.hasOwnProperty('BGETProperties') && BibleGetGlobal.hasOwnProperty('BGETConstants') && BibleGetGlobal.hasOwnProperty('BGET') ){
+		if(typeof BibleGetGlobal.BGETProperties === 'object' && typeof BibleGetGlobal.BGETConstants === 'object' && typeof BibleGetGlobal.BGET === 'object'){
+			let { BGETProperties,BGETConstants,BGET } = BibleGetGlobal; //extract our properties
+			for(const key in BGETProperties ){
+				wp.customize( 'BGET['+key+']',function(value){
+					value.bind(function( newval ) {
+						//keep our local store of properties/attributes/preferences updated
+						BGET[key] = newval; 
+						//and now we can use either newval within the related case below, or simply use the key from our BGET store
+						//this is very useful when dealing with cases that are closely related, and reuse the same logic
+						//if we avoid using 'newval' and use the BGET[key], 
+						//we can use the exact same code for multiple cascading cases with a break only for the last case involved
+						let textalign,borderstyle,fontweight,fontstyle,fontsize,styles,fontType,font,link,decorations,textdecoration;
+						switch(key){
+							case 'PARAGRAPHSTYLES_FONTFAMILY':
+								fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
+								font = newval.replace(/\+/g, ' ');
+								font = font.split(':');
+								if(fontType == 'googlefont'){
+									link = 'https://fonts.googleapis.com/css?family=' + newval;
+									if ($("link[href*='" + font + "']").length > 0){
+										$("link[href*='" + font + "']").attr('href',link)
+									}
+									else{
+										$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
+									}
+								}
+								$('div.results').css('font-family', font[0] );				
+							break;
+							case 'PARAGRAPHSTYLES_LINEHEIGHT':
+								$('div.results .versesParagraph').css('line-height', BGET.PARAGRAPHSTYLES_LINEHEIGHT+'em' );
+							break;
+							case 'PARAGRAPHSTYLES_PADDINGTOPBOTTOM':
+							//nobreak;
+							case 'PARAGRAPHSTYLES_PADDINGLEFTRIGHT':
+								$('div.results').css('padding', BGET.PARAGRAPHSTYLES_PADDINGTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_PADDINGLEFTRIGHT+'px');
+							break;
+							case 'PARAGRAPHSTYLES_MARGINTOPBOTTOM':
+							//nobreak;
+							case 'PARAGRAPHSTYLES_MARGINLEFTRIGHT':
+							//nobreak;
+							case 'PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT':
+								if(BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT === 'auto'){
+									$('div.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+ BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT);
+								}
+								else{
+									$('div.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHT+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT );            
+								}
+							break;
+							case 'PARAGRAPHSTYLES_PARAGRAPHALIGN':
+								textalign = BGETConstants.CSSRULE.ALIGN[newval];
+								$('div.results .versesParagraph').css('text-align', textalign );
+							break;
+							case 'PARAGRAPHSTYLES_WIDTH':
+								$('div.results').css('width', newval+'%' );
+							break;
+							case 'PARAGRAPHSTYLES_NOVERSIONFORMATTING':
 
-	//console.log("ready and a set and a gooooooo!");
+							break;
+							case 'PARAGRAPHSTYLES_BORDERWIDTH':
+								$('div.results').css('border-width', newval+'px' );
+							break;
+							case 'PARAGRAPHSTYLES_BORDERCOLOR':
+								$('div.results').css('border-color', newval );
+							break;
+							case 'PARAGRAPHSTYLES_BORDERSTYLE':
+								borderstyle = BGETConstants.CSSRULE.BORDERSTYLE[newval];
+								$('div.results').css('border-style', borderstyle );
+							break;
+							case 'PARAGRAPHSTYLES_BORDERRADIUS':
+								$('div.results').css('border-radius', newval+'px' );
+							break;
+							case 'PARAGRAPHSTYLES_BACKGROUNDCOLOR':
+								$('div.results').css('background-color', newval );
+							break;
+							case 'VERSIONSTYLES_BOLD':
+								fontweight = BGET.VERSIONSTYLES_BOLD ? 'bold' : 'normal';
+								$('div.results .bibleVersion').css('font-weight',fontweight);
+							break;
+							case 'VERSIONSTYLES_ITALIC':
+								fontstyle = BGET.VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
+								$('div.results .bibleVersion').css('font-style',fontstyle);
+							break;
+							case 'VERSIONSTYLES_UNDERLINE':
+							//nobreak;
+							case 'VERSIONSTYLES_STRIKETHROUGH':
+								decorations = [];
+								if(BGET.VERSIONSTYLES_UNDERLINE){ decorations.push('underline'); }
+								if(BGET.VERSIONSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
+								$('div.results .bibleVersion').css('text-decoration',textdecoration);
+							break;
+							case 'VERSIONSTYLES_TEXTCOLOR':
+								$('div.results .bibleVersion').css('color', newval );
+							break;
+							case 'VERSIONSTYLES_FONTSIZE':
+							//nobreak;
+							case 'VERSIONSTYLES_FONTSIZEUNIT':
+								fontsize = BGET.VERSIONSTYLES_FONTSIZE;
+								if(BGET.VERSIONSTYLES_FONTSIZEUNIT == 'em'){
+									fontsize /= 10;
+								}
+								$('div.results .bibleVersion').css('font-size', fontsize+BGET.VERSIONSTYLES_FONTSIZEUNIT );
+							break;
+							case 'VERSIONSTYLES_VALIGN':
 
+							break;
+							case 'BOOKCHAPTERSTYLES_BOLD':
+								fontweight = BGET.BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
+								$('div.results .bookChapter').css('font-weight',fontweight);
+							break;
+							case 'BOOKCHAPTERSTYLES_ITALIC':
+								fontstyle = BGET.BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
+								$('div.results .bookChapter').css('font-style',fontstyle);
+							break;
+							case 'BOOKCHAPTERSTYLES_UNDERLINE':
+							//nobreak;
+							case 'BOOKCHAPTERSTYLES_STRIKETHROUGH':
+								decorations = [];
+								if(BGET.BOOKCHAPTERSTYLES_UNDERLINE){ decorations.push('underline'); }
+								if(BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
+								$('div.results .bookChapter').css('text-decoration',textdecoration);
+							break;
+							case 'BOOKCHAPTERSTYLES_TEXTCOLOR':
+								$('div.results .bookChapter').css('color', newval );
+							break;
+							case 'BOOKCHAPTERSTYLES_FONTSIZE':
+							//nobreak;
+							case 'BOOKCHAPTERSTYLES_FONTSIZEUNIT':
+								fontsize = BGET.BOOKCHAPTERSTYLES_FONTSIZE;
+								if(BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em'){
+									fontsize /= 10;
+								}
+								$('div.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
+							break;
+							case 'BOOKCHAPTERSTYLES_VALIGN':
 
-	wp.customize( 'bibleget_fontfamily', function( value ) {
-		value.bind( function( newval ) {
-			var fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
-			//alert(newval);
-			//console.log('wp.customize bibleget_fontfamily BEGIN');
-			//console.log(newval);
-			var font = newval.replace(/\+/g, ' ');
-			font = font.split(':');
-			//console.log(font);
-			//console.log('wp.customize bibleget_fontfamily END');
-			if(fontType == 'googlefont'){
-                var link = 'https://fonts.googleapis.com/css?family=' + newval;
-    			if ($("link[href*='" + font + "']").length > 0){
-    				$("link[href*='" + font + "']").attr('href',link)
-    			}
-    			else{
-    				$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
-    			}
-            }
-			$('div.results').css('font-family', font[0] );
-		} );
-	} );
+							break;
+							case 'VERSENUMBERSTYLES_BOLD':
+								fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
+								$('div.results .versesParagraph .verseNum').css('font-weight',fontweight);
+							break;
+							case 'VERSENUMBERSTYLES_ITALIC':
+								fontstyle = BGET.VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
+								$('div.results .versesParagraph .verseNum').css('font-style',fontstyle);
+							break;
+							case 'VERSENUMBERSTYLES_UNDERLINE':
+							//nobreak;
+							case 'VERSENUMBERSTYLES_STRIKETHROUGH':
+								decorations = [];
+								if(BGET.VERSENUMBERSTYLES_UNDERLINE){ decorations.push('underline'); }
+								if(BGET.VERSENUMBERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
+								$('div.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
+							break;
+							case 'VERSENUMBERSTYLES_TEXTCOLOR':
+								$('div.results .versesParagraph .verseNum').css('color', newval );
+							break;
+							case 'VERSENUMBERSTYLES_FONTSIZE':
+							//nobreak;
+							case 'VERSENUMBERSTYLES_FONTSIZEUNIT':
+								fontsize = BGET.VERSENUMBERSTYLES_FONTSIZE;
+								if(BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'){
+									fontsize /= 10;
+								}
+								$('div.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
+							break;
+							case 'VERSENUMBERSTYLES_VALIGN':
+								styles = {};
+								switch(BGET.VERSENUMBERSTYLES_VALIGN){
+									case BGETConstants.VALIGN.SUPERSCRIPT:
+										styles['vertical-align'] = 'baseline';
+										styles['position'] = 'relative';
+										styles['top'] = '-0.6em';
+									break;
+									case BGETConstants.VALIGN.SUBSCRIPT:
+										styles['vertical-align'] = 'baseline';
+										styles['position'] = 'relative';
+										styles['top'] = '0.6em';
+									break;
+									case BGETConstants.VALIGN.NORMAL: 
+									styles['vertical-align'] = 'baseline';
+									styles['position'] = 'static';
+								break;
+								}
+								$('div.results .versesParagraph .verseNum').css(styles);
+							break;
+							case 'VERSETEXTSTYLES_BOLD':
+								fontweight = BGET.VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
+								$('div.results .versesParagraph').css('font-weight',fontweight);
+							break;
+							case 'VERSETEXTSTYLES_ITALIC':
+								fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
+								$('div.results .versesParagraph').css('font-style',fontstyle);
+							break;
+							case 'VERSETEXTSTYLES_UNDERLINE':
+							//nobreak;
+							case 'VERSETEXTSTYLES_STRIKETHROUGH':
+								decorations = [];
+								if(BGET.VERSETEXTSTYLES_UNDERLINE){ decorations.push('underline'); }
+								if(BGET.VERSETEXTSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
+								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
+								$('div.results .versesParagraph').css('text-decoration',textdecoration);
+							break;
+							case 'VERSETEXTSTYLES_TEXTCOLOR':
+								$('div.results .versesParagraph').css('color', newval );
+							break;
+							case 'VERSETEXTSTYLES_FONTSIZE':
+							//nobreak;
+							case 'VERSETEXTSTYLES_FONTSIZEUNIT':
+								fontsize = BGET.VERSETEXTSTYLES_FONTSIZE;
+								if(BGET.VERSETEXTSTYLES_FONTSIZEUNIT == 'em'){
+									fontsize /= 10;
+								}
+								$('div.results .versesParagraph').css('font-size', fontsize+BGET.VERSETEXTSTYLES_FONTSIZEUNIT );
+							break;
+							case 'VERSETEXTSTYLES_VALIGN':
+								//this wouldn't make sense, not using
+							break;
+							/* We don't use any of the Layout Prefs in the Customizer at least for now
+							 * considering that the change the structure of the Bible quote, not just the styling
+							 * Theoretically it would be possible even without a ServerSideRender (as in the case of the Gutenberg block)
+							 * if we were using a json response from the BibleGet server instead of an html response
+							 * or, even with the current html response, using DOM manipulation similarly to how the ServerSideRender
+							 * is manipulating the DOM. We'll see, one thing at a time
+							case 'LAYOUTPREFS_SHOWBIBLEVERSION':
 
-	wp.customize( 'bibleget_borderwidth', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('border-width', newval.toString()+'px' );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BIBLEVERSIONALIGNMENT':
 
-	wp.customize( 'bibleget_borderstyle', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('border-style', newval );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BIBLEVERSIONPOSITION':
 
-	wp.customize( 'bibleget_bordercolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('border-color', newval );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BIBLEVERSIONWRAP':
 
-	wp.customize( 'bibleget_bgcolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('background-color', newval );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BOOKCHAPTERALIGNMENT':
 
-	wp.customize( 'bibleget_borderradius', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('border-radius', newval.toString()+'px' );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BOOKCHAPTERPOSITION':
 
-	wp.customize( 'bibleget_width', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results').css('width', newval.toString()+'%' );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BOOKCHAPTERWRAP':
 
-	wp.customize( 'bibleget_textalign', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph').css('text-align', newval );
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BOOKCHAPTERFORMAT':
 
-	wp.customize( 'bibleget_marginleftright', function( value ) {
-		value.bind( function( newval ) {
-			if(newval == 'auto'){
-				$('div.results').css('margin-left', newval );      
-				$('div.results').css('margin-right', newval );      
-			}
-			else{
-				$('div.results').css('margin-left', newval.toString()+'px' );            
-				$('div.results').css('margin-right', newval.toString()+'px' );            
-			}
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_BOOKCHAPTERFULLQUERY':
 
-	wp.customize( 'bibleget_margintopbottom', function( value ) {
-		value.bind( function( newval ) {
-			if(newval == 'auto'){
-				$('div.results').css('margin-top', newval );      
-				$('div.results').css('margin-bottom', newval );      
-			}
-			else{
-				$('div.results').css('margin-top', newval.toString()+'px' );            
-				$('div.results').css('margin-bottom', newval.toString()+'px' );            
-			}
-		} );
-	} );
+							break;
+							case 'LAYOUTPREFS_SHOWVERSENUMBERS':
 
-	wp.customize( 'bibleget_paddingleftright', function( value ) {
-		value.bind( function( newval ) {
-			if(newval == 'auto'){
-				$('div.results').css('padding-left', newval );      
-				$('div.results').css('padding-right', newval );      
-			}
-			else{
-				$('div.results').css('padding-left', newval.toString()+'px' );            
-				$('div.results').css('padding-right', newval.toString()+'px' );            
-			}
-		} );
-	} );
+							break;
+							case 'VERSION':
 
-	wp.customize( 'bibleget_paddingtopbottom', function( value ) {
-		value.bind( function( newval ) {
-			if(newval == 'auto'){
-				$('div.results').css('padding-top', newval );      
-				$('div.results').css('padding-bottom', newval );      
-			}
-			else{
-				$('div.results').css('padding-top', newval.toString()+'px' );            
-				$('div.results').css('padding-bottom', newval.toString()+'px' );            
-			}
-		} );
-	} );
+							break;
+							case 'QUERY':
 
-	wp.customize( 'version_fontcolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .bibleVersion').css('color', newval );
-		} );
-	} );
+							break;
+							case 'POPUP':
 
-	wp.customize( 'bookchapter_fontcolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .bookChapter').css('color', newval );
-		} );
-	} );
+							break;
+							case 'FORCEVERSION':
 
-	wp.customize( 'versenumber_fontcolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph .verseNum').css('color', newval );
-		} );
-	} );
+							break;
+							case 'FORCECOPYRIGHT':
 
-	wp.customize( 'versetext_fontcolor', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph').css('color', newval );
-		} );
-	} );
-
-	wp.customize( 'version_fontsize', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .bibleVersion').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
-		} );
-	} );
-
-	wp.customize( 'bookchapter_fontsize', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .bookChapter').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
-		} );
-	} );
-
-	wp.customize( 'versenumber_fontsize', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph .verseNum').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
-		} );
-	} );
-
-	wp.customize( 'versetext_fontsize', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph').css('font-size', newval.toString()+'pt' ); //(newval / 10).toString()+'em'
-		} );
-	} );
-
-	wp.customize( 'version_fontstyle', function( value ) {
-		value.bind( function( newval ) {
-			dosetstyles($('div.results .bibleVersion'),newval.split(','));
-		} );
-	} );
-
-	wp.customize( 'bookchapter_fontstyle', function( value ) {
-		value.bind( function( newval ) {
-			dosetstyles($('div.results .bookChapter'),newval.split(','));
-		} );
-	} );
-
-	wp.customize( 'versenumber_fontstyle', function( value ) {
-		value.bind( function( newval ) {
-			dosetstyles($('div.results .versesParagraph .verseNum'),newval.split(','));
-		} );
-	} );
-
-	wp.customize( 'versetext_fontstyle', function( value ) {
-		value.bind( function( newval ) {
-			dosetstyles($('div.results .versesParagraph'),newval.split(','));
-		} );
-	} );
-
-	wp.customize( 'linespacing_verses', function( value ) {
-		value.bind( function( newval ) {
-			$('div.results .versesParagraph').css('line-height', newval.toString()+'%' );
-		} );
-	} );
-
+							break;
+							*/
+						}
+					});
+				});
+			}		
+		}
+		else{
+			alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BGETProperties property of the BibleGetGlobal object is not available');
+		}
+	}
+	else{
+		alert('Live preview script does not seem to have been "localized" correctly with BibleGetGlobal object');
+	}
 
 } )( jQuery );
-
-function dosetstyles($element,setstyles){
-
-	if(setstyles.indexOf('bold') != -1){
-		$element.css('font-weight','bold');
-	}
-	else {
-		$element.css('font-weight','normal');
-	}
-
-	if(setstyles.indexOf('italic') != -1){
-		$element.css('font-style','italic');      
-	}
-	else{
-		$element.css('font-style','normal');
-	}
-
-	if(setstyles.indexOf('underline') != -1){
-		$element.css('text-decoration','underline');      
-	}
-	else if(setstyles.indexOf('strikethrough') != -1){
-		$element.css('text-decoration','line-through');      
-	}
-	else{
-		$element.css('text-decoration','none');
-	}
-
-	if(setstyles.indexOf('superscript') != -1){
-		$element.css('vertical-align','baseline'); 
-		$element.css('position','relative'); 
-		$element.css('top','-0.6em'); 
-	}
-	else if(setstyles.indexOf('subscript') != -1){
-		$element.css('vertical-align','baseline'); 
-		$element.css('position','relative'); 
-		$element.css('top','0.6em'); 
-	}
-	else{
-		$element.css('position','static'); 
-	}
-}
-

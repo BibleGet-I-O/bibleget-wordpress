@@ -28,13 +28,11 @@ if (class_exists ( 'WP_Customize_Control' )) {
 <div class="bibleget-buttonset button-group button-large">
 <?php foreach ( $this->choices as $value => $label ) : ?>
 <?php
-		$labelstyles = "";
 		$buttonstyle = "";
 		$checked = false;
 		$setting = '';
 		switch ($value) {
 			case 'bold' :
-				$labelstyles .= "font-weight:bold;";
 				$buttonstyle = $this->value('bold_setting') === true ? "button-primary" : "button-secondary";
 				$checked = $this->value('bold_setting');
 				$setting = 'bold_setting';

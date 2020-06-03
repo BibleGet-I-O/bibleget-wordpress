@@ -1,0 +1,21 @@
+.rangeBefore,.rangeAfter {
+	margin:0px 5px;
+	vertical-align:top;
+	display:inline-block;
+	width:2em;
+} 
+
+.rangeValue {
+	margin:0px 5px;
+	color:Green;
+	font-weight:bold;
+	position:relative;
+	top:-3px;
+	border:1px solid Black;
+	border-radius:3px;
+	padding: 3px;
+	background-color:White;
+	width:2em;
+	text-align:center;
+	display:inline-block;
+}

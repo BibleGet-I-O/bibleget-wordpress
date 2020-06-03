@@ -78,23 +78,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeBibleVersionAlign(ev){
 				let LAYOUTPREFS_BIBLEVERSIONALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				let textalign;
-				switch(LAYOUTPREFS_BIBLEVERSIONALIGNMENT){
-					case BGET.ALIGN.LEFT:
-						textalign = 'left';
-						break;
-					case BGET.ALIGN.CENTER:
-						textalign = 'center';
-						break;
-					case BGET.ALIGN.RIGHT:
-						textalign = 'right';
-						break;
-					case BGET.ALIGN.JUSTIFY:
-						textalign = 'justify';
-						break;
-				}
+				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BIBLEVERSIONALIGNMENT];
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + textalign+'; }'));
-				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT:LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
+				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
 			}
 
 			function changeBibleVersionPos(ev){
@@ -112,21 +98,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeBookChapterAlign(ev) {
 				let LAYOUTPREFS_BOOKCHAPTERALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				let textalign;
-				switch(LAYOUTPREFS_BOOKCHAPTERALIGNMENT){
-					case BGET.ALIGN.LEFT:
-						textalign = 'left';
-						break;
-					case BGET.ALIGN.CENTER:
-						textalign = 'center';
-						break;
-					case BGET.ALIGN.RIGHT:
-						textalign = 'right';
-						break;
-					case BGET.ALIGN.JUSTIFY:
-						textalign = 'justify';
-						break;
-				}
+				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BOOKCHAPTERALIGNMENT];
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ text-align: (?:.*?); \}/, 'div.results .bookChapter { text-align: ' + textalign + '; }'));
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERALIGNMENT });
 			}
@@ -1232,7 +1204,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
 										createElement(Button, {
-											//icon: 'editor-alignleft',
 											value: BGET.TEXTSTYLE.BOLD,
 											isPrimary: attributes.VERSIONSTYLES_BOLD,
 											isSecondary: !attributes.VERSIONSTYLES_BOLD,
@@ -1241,7 +1212,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'bold'
 										}, __('B','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-aligncenter',
 											value: BGET.TEXTSTYLE.ITALIC,
 											isPrimary: (attributes.VERSIONSTYLES_ITALIC === true),
 											isSecondary: (attributes.VERSIONSTYLES_ITALIC !== true),
@@ -1250,7 +1220,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'italic'
 										}, __('I','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.UNDERLINE,
 											isPrimary: (attributes.VERSIONSTYLES_UNDERLINE === true),
 											isSecondary: (attributes.VERSIONSTYLES_UNDERLINE !== true),
@@ -1259,7 +1228,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'underline'
 										}, __('U','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.STRIKETHROUGH,
 											isPrimary: (attributes.VERSIONSTYLES_STRIKETHROUGH === true),
 											isSecondary: (attributes.VERSIONSTYLES_STRIKETHROUGH !== true),
@@ -1304,7 +1272,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
 										createElement(Button, {
-											//icon: 'editor-alignleft',
 											value: BGET.TEXTSTYLE.BOLD,
 											isPrimary: attributes.BOOKCHAPTERSTYLES_BOLD,
 											isSecondary: !attributes.BOOKCHAPTERSTYLES_BOLD,
@@ -1313,7 +1280,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'bold'
 										}, __('B','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-aligncenter',
 											value: BGET.TEXTSTYLE.ITALIC,
 											isPrimary: (attributes.BOOKCHAPTERSTYLES_ITALIC === true),
 											isSecondary: (attributes.BOOKCHAPTERSTYLES_ITALIC !== true),
@@ -1322,7 +1288,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'italic'
 										}, __('I','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.UNDERLINE,
 											isPrimary: (attributes.BOOKCHAPTERSTYLES_UNDERLINE === true),
 											isSecondary: (attributes.BOOKCHAPTERSTYLES_UNDERLINE !== true),
@@ -1331,7 +1296,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'underline'
 										}, __('U','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.STRIKETHROUGH,
 											isPrimary: (attributes.BOOKCHAPTERSTYLES_STRIKETHROUGH === true),
 											isSecondary: (attributes.BOOKCHAPTERSTYLES_STRIKETHROUGH !== true),
@@ -1376,7 +1340,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup verseNumberStyles' },
 										createElement(Button, {
-											//icon: 'editor-alignleft',
 											value: BGET.TEXTSTYLE.BOLD,
 											isPrimary: attributes.VERSENUMBERSTYLES_BOLD,
 											isSecondary: !attributes.VERSENUMBERSTYLES_BOLD,
@@ -1385,7 +1348,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'bold'
 										}, __('B','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-aligncenter',
 											value: BGET.TEXTSTYLE.ITALIC,
 											isPrimary: (attributes.VERSENUMBERSTYLES_ITALIC === true),
 											isSecondary: (attributes.VERSENUMBERSTYLES_ITALIC !== true),
@@ -1394,7 +1356,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'italic'
 										}, __('I','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.UNDERLINE,
 											isPrimary: (attributes.VERSENUMBERSTYLES_UNDERLINE === true),
 											isSecondary: (attributes.VERSENUMBERSTYLES_UNDERLINE !== true),
@@ -1403,7 +1364,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'underline'
 										}, __('U','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.STRIKETHROUGH,
 											isPrimary: (attributes.VERSENUMBERSTYLES_STRIKETHROUGH === true),
 											isSecondary: (attributes.VERSENUMBERSTYLES_STRIKETHROUGH !== true),
@@ -1474,7 +1434,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },
 										createElement(Button, {
-											//icon: 'editor-alignleft',
 											value: BGET.TEXTSTYLE.BOLD,
 											isPrimary: attributes.VERSETEXTSTYLES_BOLD,
 											isSecondary: !attributes.VERSETEXTSTYLES_BOLD,
@@ -1483,7 +1442,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'bold'
 										}, __('B','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-aligncenter',
 											value: BGET.TEXTSTYLE.ITALIC,
 											isPrimary: (attributes.VERSETEXTSTYLES_ITALIC === true),
 											isSecondary: (attributes.VERSETEXTSTYLES_ITALIC !== true),
@@ -1492,7 +1450,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'italic'
 										}, __('I','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.UNDERLINE,
 											isPrimary: (attributes.VERSETEXTSTYLES_UNDERLINE === true),
 											isSecondary: (attributes.VERSETEXTSTYLES_UNDERLINE !== true),
@@ -1501,7 +1458,6 @@ const BGET = BibleGetGlobal.BGETConstants;
 											className: 'underline'
 										}, __('U','bibleget-io') ),
 										createElement(Button, {
-											//icon: 'editor-alignright',
 											value: BGET.TEXTSTYLE.STRIKETHROUGH,
 											isPrimary: (attributes.VERSETEXTSTYLES_STRIKETHROUGH === true),
 											isSecondary: (attributes.VERSETEXTSTYLES_STRIKETHROUGH !== true),
