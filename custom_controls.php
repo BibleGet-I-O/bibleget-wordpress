@@ -43,7 +43,7 @@ if (class_exists ( 'WP_Customize_Control' )) {
 				$setting = 'italic_setting';
 				break;
 			case 'underline' :
-				$buttonstyle = $this->value('unerline_setting') === true ? "button-primary" : "button-secondary";
+				$buttonstyle = $this->value('underline_setting') === true ? "button-primary" : "button-secondary";
 				$checked = $this->value('underline_setting');
 				$setting = 'underline_setting';
 				break;

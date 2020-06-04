@@ -24,81 +24,49 @@ wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 			// console.log(this.value);
 			// console.log(this.checked);
 			// console.log(jQuery(this).parent());
-			var fval = [];
-			if (control.setting.get() != "") {
-				fval = control.setting.get().split(",");
+			//var fval = [];
+			//console.log(typeof control.settings);
+			/*
+			if (control.hasOwnProperty(settings) && typeof control.settings === 'object' && control.settings.length > 0 ) {
+				//fval = control.setting.get().split(",");
 			}
+			*/
 			if (this.checked) {
 				jQuery(this).parent().removeClass('button-secondary').addClass(
 						'button-primary');
-				fval.push(this.value);
-				if (this.value == 'underline') {
-					var $strikethrough = jQuery(
-							'input:checkbox[value="strikethrough"]',
-							control.container);
-					if ($strikethrough.prop('checked')
-							&& $strikethrough.prop('checked') === true) {
-						$strikethrough.prop('checked', false);
-						$strikethrough.parent().removeClass('button-primary')
-								.addClass('button-secondary');
-						var index = fval.indexOf('strikethrough');
-						if (index != -1) {
-							fval.remove(index);
-						}
-					}
-				} else if (this.value == 'strikethrough') {
-					var $underline = jQuery(
-							'input:checkbox[value="underline"]',
-							control.container);
-					if ($underline.prop('checked')
-							&& $underline.prop('checked') === true) {
-						$underline.prop('checked', false);
-						$underline.parent().removeClass('button-primary')
-								.addClass('button-secondary');
-						var index = fval.indexOf('underline');
-						if (index != -1) {
-							fval.remove(index);
-						}
-					}
-				} else if (this.value == 'superscript') {
-					var $subscript = jQuery(
-							'input:checkbox[value="subscript"]',
-							control.container);
-					if ($subscript.prop('checked')
-							&& $subscript.prop('checked') === true) {
+				if(jQuery(this).hasClass('superscript')){
+					let $subscript = jQuery('input:checkbox.subscript', control.container);
+					if ($subscript.prop('checked') && $subscript.prop('checked') === true) {
 						$subscript.prop('checked', false);
-						$subscript.parent().removeClass('button-primary')
-								.addClass('button-secondary');
-						var index = fval.indexOf('subscript');
-						if (index != -1) {
-							fval.remove(index);
-						}
+						$subscript.parent().removeClass('button-primary').addClass('button-secondary');
 					}
-				} else if (this.value == 'subscript') {
-					var $superscript = jQuery(
-							'input:checkbox[value="superscript"]',
-							control.container);
-					if ($superscript.prop('checked')
-							&& $superscript.prop('checked') === true) {
+					control.settings.valign_setting.set(1);
+				}
+				else if(jQuery(this).hasClass('subscript')){
+					let $superscript = jQuery('input:checkbox.superscript', control.container);
+					if ($superscript.prop('checked') && $superscript.prop('checked') === true) {
 						$superscript.prop('checked', false);
-						$superscript.parent().removeClass('button-primary')
-								.addClass('button-secondary');
-						var index = fval.indexOf('superscript');
-						if (index != -1) {
-							fval.remove(index);
-						}
+						$superscript.parent().removeClass('button-primary').addClass('button-secondary');
+					}
+					control.settings.valign_setting.set(2);
+				}
+				
+			} else {
+				jQuery(this).parent().removeClass('button-primary').addClass('button-secondary');
+				//console.log('a checkbox was unchecked, which has a value of :'+this.value);
+				if(jQuery(this).hasClass('superscript')){
+					let $subscript = jQuery('input:checkbox.subscript', control.container);
+					if ($subscript.prop('checked') === false) {
+						control.settings.valign_setting.set(3);
 					}
 				}
-			} else {
-				jQuery(this).parent().removeClass('button-primary').addClass(
-						'button-secondary');
-				var index = fval.indexOf(this.value);
-				if (index != -1) {
-					fval.remove(index);
+				else if(jQuery(this).hasClass('subscript')){
+					let $superscript = jQuery('input:checkbox.superscript', control.container);
+					if ($superscript.prop('checked') === false) {
+						control.settings.valign_setting.set(3);
+					}
 				}
 			}
-			control.setting.set(fval.join(","));
-			// console.log(control.setting.get());
 		});
 
 	}

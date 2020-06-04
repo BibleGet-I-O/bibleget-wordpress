@@ -79,7 +79,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let LAYOUTPREFS_BIBLEVERSIONALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BIBLEVERSIONALIGNMENT];
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, 'div.results p.bibleVersion { text-align: ' + textalign+'; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, '.bibleQuote.results p.bibleVersion { text-align: ' + textalign+'; }'));
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
 			}
 
@@ -99,7 +99,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let LAYOUTPREFS_BOOKCHAPTERALIGNMENT = parseInt(ev.currentTarget.value);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BOOKCHAPTERALIGNMENT];
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ text-align: (?:.*?); \}/, 'div.results .bookChapter { text-align: ' + textalign + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \.bookChapter \{ text-align: (?:.*?); \}/, '.bibleQuote.results .bookChapter { text-align: ' + textalign + '; }'));
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERALIGNMENT });
 			}
 
@@ -145,13 +145,13 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 			function changeParagraphStyleBorderWidth(PARAGRAPHSTYLES_BORDERWIDTH){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-width: (?:.*?); \}/, 'div.results { border-width: ' + PARAGRAPHSTYLES_BORDERWIDTH + 'px; }'));				
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-width: (?:.*?); \}/, '.bibleQuote.results { border-width: ' + PARAGRAPHSTYLES_BORDERWIDTH + 'px; }'));				
 				setAttributes({ PARAGRAPHSTYLES_BORDERWIDTH });
 			}
 
 			function changeParagraphStyleBorderRadius(PARAGRAPHSTYLES_BORDERRADIUS){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-radius: (?:.*?); \}/, 'div.results { border-width: ' + PARAGRAPHSTYLES_BORDERRADIUS + 'px; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-radius: (?:.*?); \}/, '.bibleQuote.results { border-radius: ' + PARAGRAPHSTYLES_BORDERRADIUS + 'px; }'));
 				setAttributes({ PARAGRAPHSTYLES_BORDERRADIUS });
 			}
 
@@ -160,21 +160,21 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let borderstyle = BGET.CSSRULE.BORDERSTYLE[PARAGRAPHSTYLES_BORDERSTYLE];
 				//console.log('borderstyle = '+borderstyle);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-style: (?:.*?); \}/, 'div.results { border-style: ' + borderstyle + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-style: (?:.*?); \}/, '.bibleQuote.results { border-style: ' + borderstyle + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_BORDERSTYLE });
 			}
 
 			function changeParagraphStyleBorderColor(bordercolor){
 				let PARAGRAPHSTYLES_BORDERCOLOR = bordercolor.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ border-color: (?:.*?); \}/, 'div.results { border-color: ' + PARAGRAPHSTYLES_BORDERCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-color: (?:.*?); \}/, '.bibleQuote.results { border-color: ' + PARAGRAPHSTYLES_BORDERCOLOR + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_BORDERCOLOR });
 			}
 
 			function changeParagraphStyleBackgroundColor(backgroundcolor){
 				let PARAGRAPHSTYLES_BACKGROUNDCOLOR = backgroundcolor.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ background-color: (?:.*?); \}/, 'div.results { background-color: ' + PARAGRAPHSTYLES_BACKGROUNDCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ background-color: (?:.*?); \}/, '.bibleQuote.results { background-color: ' + PARAGRAPHSTYLES_BACKGROUNDCOLOR + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_BACKGROUNDCOLOR });
 			}
 
@@ -192,7 +192,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 					case 'auto':
 						margLR = 'auto';
 				}
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_MARGINTOPBOTTOM });
 			}
 
@@ -210,7 +210,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 					case 'auto':
 						margLR = 'auto';
 				}
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHT });
 			}
 
@@ -228,21 +228,21 @@ const BGET = BibleGetGlobal.BGETConstants;
 					case 'auto':
 						margLR = 'auto';
 				}
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ margin: (?:.*?); \}/, 'div.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
 				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT });
 			}
 
 			function changeParagraphStylePaddingTopBottom(PARAGRAPHSTYLES_PADDINGTOPBOTTOM){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let { PARAGRAPHSTYLES_PADDINGLEFTRIGHT}  = attributes;
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ padding: (?:.*?); \}/, 'div.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ padding: (?:.*?); \}/, '.bibleQuote.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
 				setAttributes({ PARAGRAPHSTYLES_PADDINGTOPBOTTOM });
 			}
 
 			function changeParagraphStylePaddingLeftRight(PARAGRAPHSTYLES_PADDINGLEFTRIGHT){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let { PARAGRAPHSTYLES_PADDINGTOPBOTTOM}  = attributes;
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ padding: (?:.*?); \}/, 'div.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ padding: (?:.*?); \}/, '.bibleQuote.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
 				setAttributes({ PARAGRAPHSTYLES_PADDINGLEFTRIGHT });
 			}
 
@@ -250,13 +250,13 @@ const BGET = BibleGetGlobal.BGETConstants;
 				//console.log('('+(typeof PARAGRAPHSTYLES_LINEHEIGHT)+') PARAGRAPHSTYLES_LINEHEIGHT = '+PARAGRAPHSTYLES_LINEHEIGHT);
 				PARAGRAPHSTYLES_LINEHEIGHT = parseFloat(PARAGRAPHSTYLES_LINEHEIGHT);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph \{ line-height: (?:.*?); \}/, 'div.results p.versesParagraph { line-height: ' + PARAGRAPHSTYLES_LINEHEIGHT + 'em; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph \{ line-height: (?:.*?); \}/, '.bibleQuote.results p.versesParagraph { line-height: ' + PARAGRAPHSTYLES_LINEHEIGHT + 'em; }'));
 				setAttributes({ PARAGRAPHSTYLES_LINEHEIGHT });
 			}
 
 			function changeParagraphStyleWidth(PARAGRAPHSTYLES_WIDTH){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \{ width: (?:.*?); \}/, 'div.results { width: ' + PARAGRAPHSTYLES_WIDTH + '%; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ width: (?:.*?); \}/, '.bibleQuote.results { width: ' + PARAGRAPHSTYLES_WIDTH + '%; }'));
 				setAttributes({ PARAGRAPHSTYLES_WIDTH });
 			}
 
@@ -291,9 +291,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 					decorationrule = decorations.join(' ');
 				}
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
@@ -315,7 +315,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (attributes.VERSIONSTYLES_FONTSIZEUNIT == 'em') ? VERSIONSTYLES_FONTSIZE/10 : VERSIONSTYLES_FONTSIZE;
 				let fontsizerule = (attributes.VERSIONSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSIONSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSIONSTYLES_FONTSIZE });
 			}
@@ -324,7 +324,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (VERSIONSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSIONSTYLES_FONTSIZE/10 : attributes.VERSIONSTYLES_FONTSIZE;
 				let fontsizerule = (VERSIONSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSIONSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSIONSTYLES_FONTSIZEUNIT });
 			}
@@ -332,7 +332,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeBibleVersionStyleFontColor(color){
 				let VERSIONSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.bibleVersion \{ color: (?:.*?); \}/, 'div.results p\.bibleVersion { color: ' + VERSIONSTYLES_TEXTCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.bibleVersion \{ color: (?:.*?); \}/, '.bibleQuote.results p\.bibleVersion { color: ' + VERSIONSTYLES_TEXTCOLOR + '; }'));
 				setAttributes({ VERSIONSTYLES_TEXTCOLOR });
 			}
 
@@ -367,9 +367,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 					decorationrule = decorations.join(' ');
 				}
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
@@ -391,7 +391,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em') ? BOOKCHAPTERSTYLES_FONTSIZE/10 : BOOKCHAPTERSTYLES_FONTSIZE;
 				let fontsizerule = (attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZE });
 			}
@@ -400,7 +400,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em') ? attributes.BOOKCHAPTERSTYLES_FONTSIZE/10 : attributes.BOOKCHAPTERSTYLES_FONTSIZE;
 				let fontsizerule = (BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+BOOKCHAPTERSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZEUNIT });
 			}
@@ -408,7 +408,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeBookChapterStyleFontColor(color){
 				let BOOKCHAPTERSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results \.bookChapter \{ color: (?:.*?); \}/, 'div.results \.bookChapter { color: ' + BOOKCHAPTERSTYLES_TEXTCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \.bookChapter \{ color: (?:.*?); \}/, '.bibleQuote.results \.bookChapter { color: ' + BOOKCHAPTERSTYLES_TEXTCOLOR + '; }'));
 				setAttributes({ BOOKCHAPTERSTYLES_TEXTCOLOR });
 			}
 
@@ -443,9 +443,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 					decorationrule = decorations.join(' ');
 				}
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
@@ -467,7 +467,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (attributes.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em') ? VERSENUMBERSTYLES_FONTSIZE/10 : VERSENUMBERSTYLES_FONTSIZE;
 				let fontsizerule = (attributes.VERSENUMBERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSENUMBERSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSENUMBERSTYLES_FONTSIZE });
 			}
@@ -476,7 +476,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (VERSENUMBERSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSENUMBERSTYLES_FONTSIZE/10 : attributes.VERSENUMBERSTYLES_FONTSIZE;
 				let fontsizerule = (VERSENUMBERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSENUMBERSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSENUMBERSTYLES_FONTSIZEUNIT });
 			}
@@ -484,7 +484,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeVerseNumberStyleFontColor(color){
 				let VERSENUMBERSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph span\.verseNum \{ color: (?:.*?); \}/, 'div.results p\.versesParagraph span\.verseNum { color: ' + VERSENUMBERSTYLES_TEXTCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph span\.verseNum \{ color: (?:.*?); \}/, '.bibleQuote.results p\.versesParagraph span\.verseNum { color: ' + VERSENUMBERSTYLES_TEXTCOLOR + '; }'));
 				setAttributes({ VERSENUMBERSTYLES_TEXTCOLOR });
 			}
 
@@ -511,65 +511,65 @@ const BGET = BibleGetGlobal.BGETConstants;
 				//console.log('valignrule =');
 				//console.log(valignrule);
 				//if we find the selector and the corresponding rule then we change it
-				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/).test(bbGetDynSS) ){
+				if( (/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/).test(bbGetDynSS) ){
 					//console.log('we have found a position rule to change');
-					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/,`$1${valignrule.position}$4`);
+					bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?position:))(.*?)(;.*)/,`$1${valignrule.position}$4`);
 				}
 				else{ //if we can't find the rule to edit, then we create it
 					//console.log('we have not found a position rule to change, we must create it');
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+					if( (/\.bibleQuote\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
 						//console.log('we have not found at least the correct selector, we will add the rule to this selector');
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1position:${valignrule.position};$2`);
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1position:${valignrule.position};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						//console.log('we have not found the correct selector, we will add the selector and the rule');
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph span.verseNum { position: ${valignrule.position}; }
+						.bibleQuote.results p.versesParagraph span.verseNum { position: ${valignrule.position}; }
 						`;
 					} 
 				}
 				//if we find the selector and the corresponding rule then we change it
-				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/).test(bbGetDynSS) ){
-					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/,`$1${valignrule['vertical-align']}$4`);
+				if( (/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?vertical\-align:))(.*?)(;.*)/,`$1${valignrule['vertical-align']}$4`);
 				}
 				else{ //if we can't find the rule to edit, then we create it
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1vertical-align:${valignrule['vertical-align']};$2`);
+					if( (/\.bibleQuote\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1vertical-align:${valignrule['vertical-align']};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph span.verseNum { vertical-align: ${valignrule['vertical-align']}; }
+						.bibleQuote.results p.versesParagraph span.verseNum { vertical-align: ${valignrule['vertical-align']}; }
 						`;
 					} 
 				}
 				//if we find the selector and the corresponding rule then we change it (if BGET.VALIGN.NORMAL we remove it)
-				if( (/(div\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/).test(bbGetDynSS) ){
+				if( (/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/).test(bbGetDynSS) ){
 					//console.log('we have found a top rule to change');
 					if(VERSENUMBERSTYLES_VALIGN === BGET.VALIGN.NORMAL){
 						//console.log('VALIGN.NORMAL requires us to remove the top rule, now removing rule from selector');
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{.*?)top:.*?;(.*)/,`$1$2`);
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{.*?)top:.*?;(.*)/,`$1$2`);
 					}
 					else{
 						//console.log('now changing the rule we found in the selector');
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/,`$1${valignrule.top}$4`);
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?top:))(.*?)(;.*)/,`$1${valignrule.top}$4`);
 					}
 				}
 				else if(VERSENUMBERSTYLES_VALIGN !== BGET.VALIGN.NORMAL){ //if we can't find the rule to edit, then we create it (except if BGET.VALIGN.NORMAL)
 					//console.log('we did not find a top rule to change and VALIGN!=NORMAL so we must add a top rule');
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
+					if( (/\.bibleQuote\.results p\.versesParagraph span\.verseNum \{/).test(bbGetDynSS) ){
 						//console.log('we did find the selector in any case, now adding a top rule to the selector');
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1top:${valignrule.top};$2`);
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{)(.*?\})/,`$1top:${valignrule.top};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						//console.log('we did not even find the selector so we will now add both the selector and the top rule');
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph span.verseNum { top: ${valignrule.top}; }
+						.bibleQuote.results p.versesParagraph span.verseNum { top: ${valignrule.top}; }
 						`;
 					} 
 				}
@@ -609,50 +609,50 @@ const BGET = BibleGetGlobal.BGETConstants;
 				}
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				//if we find the selector and the corresponding rule then we change it
-				if( (/(div\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/).test(bbGetDynSS) ){
-					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`);
+				if( (/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-weight:))(.*?)(;.*)/,`$1${boldrule}$4`);
 				}
 				else{ //if we can't find the rule to edit, then we create it
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1font-weight:${boldrule};$2`);
+					if( (/\.bibleQuote\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{)(.*?\})/,`$1font-weight:${boldrule};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph { font-weight: ${boldrule}; }
+						.bibleQuote.results p.versesParagraph { font-weight: ${boldrule}; }
 						`;
 					} 
 				}
 				//if we find the selector and the corresponding rule then we change it
-				if( (/(div\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/).test(bbGetDynSS) ){
-					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
+				if( (/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-style:))(.*?)(;.*)/,`$1${italicrule}$4`);
 				}
 				else{ //if we can't find the rule to edit, then we create it
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1font-style:${italicrule};$2`);
+					if( (/\.bibleQuote\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{)(.*?\})/,`$1font-style:${italicrule};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph { font-style: ${italicrule}; }
+						.bibleQuote.results p.versesParagraph { font-style: ${italicrule}; }
 						`;
 					} 
 				}
 				//if we find the selector and the corresponding rule then we change it
-				if( (/(div\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/).test(bbGetDynSS) ){
-					bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
+				if( (/(\.bibleQuote\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/).test(bbGetDynSS) ){
+					bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?text\-decoration:))(.*?)(;.*)/,`$1${decorationrule}$4`);
 				}
 				else{ //if we can't find the rule to edit, then we create it
 					//if we can at least find the corresponding selector, add rule to selector
-					if( (/div\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
-						bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{)(.*?\})/,`$1text-decoration:${decorationrule};$2`);
+					if( (/\.bibleQuote\.results p\.versesParagraph \{/).test(bbGetDynSS) ){
+						bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{)(.*?\})/,`$1text-decoration:${decorationrule};$2`);
 					}
 					//otherwise create the rule ex-novo
 					else{
 						bbGetDynSS = `${bbGetDynSS}
-						div.results p.versesParagraph { text-decoration: ${decorationrule}; }
+						.bibleQuote.results p.versesParagraph { text-decoration: ${decorationrule}; }
 						`;
 					} 
 				}
@@ -677,7 +677,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (attributes.VERSETEXTSTYLES_FONTSIZEUNIT == 'em') ? VERSETEXTSTYLES_FONTSIZE/10 : VERSETEXTSTYLES_FONTSIZE;
 				let fontsizerule = (attributes.VERSETEXTSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSETEXTSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSETEXTSTYLES_FONTSIZE });
 			}
@@ -686,7 +686,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let fontsize = (VERSETEXTSTYLES_FONTSIZEUNIT == 'em') ? attributes.VERSETEXTSTYLES_FONTSIZE/10 : attributes.VERSETEXTSTYLES_FONTSIZE;
 				let fontsizerule = (VERSETEXTSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSETEXTSTYLES_FONTSIZEUNIT;
-				bbGetDynSS = bbGetDynSS.replace(/(div\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
+				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				setAttributes({ VERSETEXTSTYLES_FONTSIZEUNIT });
 			}
@@ -694,7 +694,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 			function changeVerseTextStyleFontColor(color){
 				let VERSETEXTSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
-				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/div\.results p\.versesParagraph \{ color: (?:.*?); \}/, 'div.results p\.versesParagraph { color: ' + VERSETEXTSTYLES_TEXTCOLOR + '; }'));
+				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph \{ color: (?:.*?); \}/, '.bibleQuote.results p\.versesParagraph { color: ' + VERSETEXTSTYLES_TEXTCOLOR + '; }'));
 				setAttributes({ VERSETEXTSTYLES_TEXTCOLOR });
 			}
 
@@ -707,8 +707,8 @@ const BGET = BibleGetGlobal.BGETConstants;
 					return false;
 				}
 				//console.log($('.bibleGetSearch input').val());
-				//console.log(attributes.version);
-				if(attributes.version.length > 1){
+				//console.log(attributes.VERSION);
+				if(attributes.VERSION.length > 1){
 					let dlg = jQuery('<div>', { html: __('You cannot select more than one Bible version when doing a keyword search', 'bibleget-io') }).appendTo('body').dialog({
 						close: function(){
 							$(this).dialog('destroy').remove();
@@ -720,7 +720,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 					};
 					dlg.dialog('option', 'title', '<span class="dashicons dashicons-warning"></span>' + __('Notice', 'bibleget-io'));
 				}
-				else if(attributes.version.length === 0){
+				else if(attributes.VERSION.length === 0){
 					let dlg = jQuery('<div>', { html: __('You must select at least one Bible version in order to do a keyword search', 'bibleget-io') }).appendTo('body').dialog({
 						close: function () {
 							$(this).dialog('destroy').remove();
@@ -737,7 +737,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 					$.ajax({
 						type: 'post',
 						url: BibleGetGlobal.ajax_url,
-						data: { action: 'searchByKeyword', keyword: keyword, version: attributes.version[0] },
+						data: { action: 'searchByKeyword', keyword: keyword, version: attributes.VERSION[0] },
 						dataType: 'json',
 						success: function(response){
 							//console.log('successful ajax call, search results:');

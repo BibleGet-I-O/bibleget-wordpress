@@ -1060,7 +1060,7 @@ class BibleGet_Customize
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'} = new stdClass();
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->title = __('Line height', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->controltype = 'select';
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->choices = array('1.0' => 'single', '1.5' => '1½', '2.0' => 'double');
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->choices = array('1.0' => 'single', '1.15' => '1.15', '1.5' => '1½', '2.0' => 'double');
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_width setting and control */
@@ -1625,96 +1625,71 @@ class BibleGet_Customize
 			if ($is_googlefont && !empty($mod)) {
 				$t = explode(":", $mod);
 				$ff = preg_replace("/[\+|:]/", " ", $t[0]);
-				$cssrule = sprintf('%s { %s:%s; }', 'div.results', 'font-family', "'" . $ff . "'");
+				$cssrule = sprintf('%s { %s:%s; }', '.bibleQuote.results', 'font-family', "'" . $ff . "'");
 				echo $cssrule;
 			} else {
-				self::generate_css('div.results', 'font-family',	'bibleget_fontfamily');
+			    self::generate_options_css('.bibleQuote.results', 'font-family',	$BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY']);
 			}
 			echo PHP_EOL;
-			echo 'div.results p { margin: 0; }';
+			echo '.bibleQuote.results p { margin: 0; }';
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'border-width',		'bibleget_borderwidth', '', 'px');
-			self::generate_options_css('div.results', 'border-width', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERWIDTH'], '', 'px');
+			self::generate_options_css('.bibleQuote.results', 'border-width', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERWIDTH'], '', 'px');
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'border-radius',		'bibleget_borderradius', '', 'px');
-			self::generate_options_css('div.results', 'border-radius', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERRADIUS'], '', 'px');
+			self::generate_options_css('.bibleQuote.results', 'border-radius', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERRADIUS'], '', 'px');
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'border-color', 		'bibleget_bordercolor');
-			self::generate_options_css('div.results', 'border-color', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERCOLOR'], '', '');
+			self::generate_options_css('.bibleQuote.results', 'border-color', $BGETOPTIONS['PARAGRAPHSTYLES_BORDERCOLOR'], '', '');
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'border-style',		'bibleget_borderstyle');
-			self::generate_options_css('div.results', 'border-style', BGET::CSSRULE["BORDERSTYLE"][$BGETOPTIONS['PARAGRAPHSTYLES_BORDERSTYLE']], '', '');
+			self::generate_options_css('.bibleQuote.results', 'border-style', BGET::CSSRULE["BORDERSTYLE"][$BGETOPTIONS['PARAGRAPHSTYLES_BORDERSTYLE']], '', '');
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'background-color',	'bibleget_bgcolor');
-			self::generate_options_css('div.results', 'background-color', $BGETOPTIONS['PARAGRAPHSTYLES_BACKGROUNDCOLOR'], '', '');
+			self::generate_options_css('.bibleQuote.results', 'background-color', $BGETOPTIONS['PARAGRAPHSTYLES_BACKGROUNDCOLOR'], '', '');
 			echo PHP_EOL;
-			//self::generate_css('div.results', 'width',				'bibleget_width', '', '%');
-			self::generate_options_css('div.results', 'width', $BGETOPTIONS['PARAGRAPHSTYLES_WIDTH'], '', '%');
+			self::generate_options_css('.bibleQuote.results', 'width', $BGETOPTIONS['PARAGRAPHSTYLES_WIDTH'], '', '%');
 			echo PHP_EOL;
 
-			//$mod1 = get_theme_mod('bibleget_margintopbottom', self::$bibleget_style_settings->bibleget_margintopbottom->dfault);
-			//$mod2 = get_theme_mod('bibleget_marginleftright', self::$bibleget_style_settings->bibleget_marginleftright->dfault);
 			$mod1 = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINTOPBOTTOM'];
 			$mod2 = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHT'];
 			$unit = $BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT'];
-			$cssrule = '';
-			//if (!empty($mod1) && !empty($mod2)) {
 			$cssrule = sprintf(
 				'%s { %s: %s %s; }',
-				'div.results',
+				'.bibleQuote.results',
 				'margin',
 				$mod1 . 'px',
 				($unit == 'auto' ? $unit : $mod2 . $unit)
 			);
 			echo $cssrule;
 			echo PHP_EOL;
-			//}
 
-			//$mod1 = get_theme_mod('bibleget_paddingtopbottom', self::$bibleget_style_settings->bibleget_paddingtopbottom->dfault);
-			//$mod2 = get_theme_mod('bibleget_paddingleftright', self::$bibleget_style_settings->bibleget_paddingleftright->dfault);
 			$mod1 = $BGETOPTIONS['PARAGRAPHSTYLES_PADDINGTOPBOTTOM'];
 			$mod2 = $BGETOPTIONS['PARAGRAPHSTYLES_PADDINGLEFTRIGHT'];
-			$cssrule = '';
-			//if (!empty($mod1) && !empty($mod2)) {
-				$cssrule = sprintf(
-					'%s { %s: %s %s; }',
-					'div.results',
-					'padding',
-					//($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
-					//($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
-					$mod1 . 'px',
-					$mod2 . 'px'
-				);
-				echo $cssrule;
-				echo PHP_EOL;
-			//}
+			$cssrule = sprintf(
+				'%s { %s: %s %s; }',
+				'.bibleQuote.results',
+				'padding',
+				//($mod1 == 'auto' ? $mod1 : $mod1 . 'px'),
+				//($mod2 == 'auto' ? $mod2 : $mod2 . 'px')
+				$mod1 . 'px',
+				$mod2 . 'px'
+			);
+			echo $cssrule;
+			echo PHP_EOL;
 
-			//self::generate_css('div.results p.versesParagraph', 'text-align', 'bibleget_textalign');
-			self::generate_options_css('div.results p.versesParagraph', 'text-align', BGET::CSSRULE["ALIGN"][$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN']]);
+			self::generate_options_css('.bibleQuote.results p.versesParagraph', 'text-align', BGET::CSSRULE["ALIGN"][$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN']]);
 			echo PHP_EOL;
-			//self::generate_css('div.results p.bibleVersion', 'color', 'version_fontcolor');
-			self::generate_options_css('div.results p.bibleVersion', 'color', $BGETOPTIONS['VERSIONSTYLES_TEXTCOLOR']);
+			self::generate_options_css('.bibleQuote.results p.bibleVersion', 'color', $BGETOPTIONS['VERSIONSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			//self::generate_css('div.results .bookChapter', 'color', 'bookchapter_fontcolor');
-			self::generate_options_css('div.results .bookChapter', 'color', $BGETOPTIONS['BOOKCHAPTERSTYLES_TEXTCOLOR']);
+			self::generate_options_css('.bibleQuote.results .bookChapter', 'color', $BGETOPTIONS['BOOKCHAPTERSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			//self::generate_css('div.results p.versesParagraph', 'color', 'versetext_fontcolor');
-			self::generate_options_css('div.results p.versesParagraph', 'color', $BGETOPTIONS['VERSETEXTSTYLES_TEXTCOLOR']);
+			self::generate_options_css('.bibleQuote.results p.versesParagraph', 'color', $BGETOPTIONS['VERSETEXTSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			//self::generate_css('div.results p.versesParagraph span.verseNum', 'color', 'versenumber_fontcolor');
-			self::generate_options_css('div.results p.versesParagraph span.verseNum', 'color', $BGETOPTIONS['VERSENUMBERSTYLES_TEXTCOLOR']);
+			self::generate_options_css('.bibleQuote.results p.versesParagraph span.verseNum', 'color', $BGETOPTIONS['VERSENUMBERSTYLES_TEXTCOLOR']);
 			echo PHP_EOL;
-			echo 'div.results p.versesParagraph span.verseNum { margin: 0px 3px; }';
+			echo '.bibleQuote.results p.versesParagraph span.verseNum { margin: 0px 3px; }';
 			echo PHP_EOL;
 			$fontsizerules = array(
-				//'version_fontsize'		=> 'div.results p.bibleVersion',
-				//'bookchapter_fontsize'	=> 'div.results .bookChapter',
-				//'versetext_fontsize'	=> 'div.results p.versesParagraph',
-				//'versenumber_fontsize'	=> 'div.results p.versesParagraph span.verseNum'
-				'VERSIONSTYLES_FONTSIZE'		=> 'div.results p.bibleVersion',
-				'BOOKCHAPTERSTYLES_FONTSIZE'	=> 'div.results .bookChapter',
-				'VERSETEXTSTYLES_FONTSIZE'		=> 'div.results p.versesParagraph',
-				'VERSENUMBERSTYLES_FONTSIZE'	=> 'div.results p.versesParagraph span.verseNum',
+				'VERSIONSTYLES_FONTSIZE'		=> '.bibleQuote.results p.bibleVersion',
+				'BOOKCHAPTERSTYLES_FONTSIZE'	=> '.bibleQuote.results .bookChapter',
+				'VERSETEXTSTYLES_FONTSIZE'		=> '.bibleQuote.results p.versesParagraph',
+				'VERSENUMBERSTYLES_FONTSIZE'	=> '.bibleQuote.results p.versesParagraph span.verseNum',
 			);
 			$fontsizeunits = array(
 				'VERSIONSTYLES_FONTSIZEUNIT',
@@ -1744,14 +1719,10 @@ class BibleGet_Customize
 
 
 			$fontstylerules = array(
-				// 'version_fontstyle'		=> 'div.results p.bibleVersion',
-				// 'bookchapter_fontstyle' => 'div.results .bookChapter',
-				// 'versetext_fontstyle'	=> 'div.results p.versesParagraph',
-				// 'versenumber_fontstyle' => 'div.results p.versesParagraph span.verseNum'
-				'VERSIONSTYLES_'		=> 'div.results p.bibleVersion',
-				'BOOKCHAPTERSTYLES_'	=> 'div.results .bookChapter',
-				'VERSETEXTSTYLES_'		=> 'div.results p.versesParagraph',
-				'VERSENUMBERSTYLES_' 	=> 'div.results p.versesParagraph span.verseNum'
+				'VERSIONSTYLES_'		=> '.bibleQuote.results p.bibleVersion',
+				'BOOKCHAPTERSTYLES_'	=> '.bibleQuote.results .bookChapter',
+				'VERSETEXTSTYLES_'		=> '.bibleQuote.results p.versesParagraph',
+				'VERSENUMBERSTYLES_' 	=> '.bibleQuote.results p.versesParagraph span.verseNum'
 			);
 			foreach ($fontstylerules as $fontstylerule => $css_selector) {
 				$cssrule = '';
@@ -1819,11 +1790,11 @@ class BibleGet_Customize
 				//unset($fval);
 			}
 
-			//self::generate_css('div.results p.versesParagraph', 'line-height', 'linespacing_verses', '', '%');
+			//self::generate_css('.bibleQuote.results p.versesParagraph', 'line-height', 'linespacing_verses', '', '%');
 			echo PHP_EOL;
 
 			//$linespacing_verses = get_theme_mod('linespacing_verses', self::$bibleget_style_settings->linespacing_verses->dfault);
-			self::generate_options_css('div.results p.versesParagraph', 'line-height', $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em');
+			self::generate_options_css('.bibleQuote.results p.versesParagraph', 'line-height', $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em');
 			$linespacing_verses = $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em';
 			$fontsize_versenumber = $BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZE'];
 			if($BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'] == 'em'){
@@ -1831,25 +1802,25 @@ class BibleGet_Customize
 			}
 			$fontsize_versenumber .= $BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'];
 			//$fontsize_versenumber = get_theme_mod('versenumber_fontsize', self::$bibleget_style_settings->versenumber_fontsize->dfault);
-			echo "div.results p.versesParagraph span.sm { text-transform: lowercase; font-variant: small-caps; } ";
+			echo ".bibleQuote.results p.versesParagraph span.sm { text-transform: lowercase; font-variant: small-caps; } ";
 			echo PHP_EOL;
 			echo '/* Senseline. A line that is broken to be reading aloud/public speaking. Poetry is included in this category. */';
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.pof { display: block; text-indent: 0; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.po { display: block; margin-left:5%; margin-top:-1%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.po { display: block; margin-left:5%; margin-top:-1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.pol { display: block; margin-left:5%; margin-top:-1%; margin-bottom:1em; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.pos { display: block; margin-top:1em; margin-left:5%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo "div.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber; }";
+			echo ".bibleQuote.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber; }";
 			echo PHP_EOL;
 
 			//$bibleversionalign = get_theme_mod('bibleversionalign', 'left');
@@ -1862,7 +1833,7 @@ class BibleGet_Customize
 					$bibleversionalign = 'right';
 				break;
 			}
-			echo "div.results p.bibleVersion { text-align: $bibleversionalign; }";
+			echo ".bibleQuote.results p.bibleVersion { text-align: $bibleversionalign; }";
 			echo PHP_EOL;
 
 			//$bookchapteralign = get_theme_mod('bookchapteralign', 'left');
@@ -1875,10 +1846,10 @@ class BibleGet_Customize
 					$bookchapteralign = 'right';
 				break;
 			}
-			echo "div.results .bookChapter { text-align: $bookchapteralign; }";
+			echo ".bibleQuote.results .bookChapter { text-align: $bookchapteralign; }";
 			echo PHP_EOL;
 
-			echo "div.results span.bookChapter { margin-left: 12px; }"; //will only apply when bottom-inline
+			echo ".bibleQuote.results span.bookChapter { margin-left: 12px; }"; //will only apply when bottom-inline
 			echo PHP_EOL;
 			?>
 		</style>

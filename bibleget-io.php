@@ -50,24 +50,23 @@ require_once(plugin_dir_path(__FILE__) . "options.php");
  */
 function BibleGet_on_activation()
 {
-    if (!current_user_can('activate_plugins'))
-        return;
-        $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
-        check_admin_referer("activate-plugin_{$plugin}");
+    if (!current_user_can('activate_plugins')){ return; }
+    $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
+    check_admin_referer("activate-plugin_{$plugin}");
 
-        // Uncomment the following line to see the function in action
-        // exit( var_dump( $_GET ) );
-        bibleGetSetOptions();
+    // Uncomment the following line to see the function in action
+    // exit( var_dump( $_GET ) );
+    bibleGetSetOptions();
 
-        // let's do some cleanup from previous versions
-        if (file_exists(plugin_dir_path(__FILE__) . 'css/styles.css')) {
-            if (wp_delete_file(plugin_dir_path(__FILE__) . 'css/styles.css') === false) {
-                wp_delete_file(realpath(plugin_dir_path(__FILE__) . 'css/styles.css'));
-            }
+    // let's do some cleanup from previous versions
+    if (file_exists(plugin_dir_path(__FILE__) . 'css/styles.css')) {
+        if (wp_delete_file(plugin_dir_path(__FILE__) . 'css/styles.css') === false) {
+            wp_delete_file(realpath(plugin_dir_path(__FILE__) . 'css/styles.css'));
         }
-        // we have renamed the image files, so these will be left over...
-        array_map('wp_delete_file', glob(plugin_dir_path(__FILE__) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
-        register_uninstall_hook(__FILE__, 'BibleGet_on_uninstall');
+    }
+    // we have renamed the image files, so these will be left over...
+    array_map('wp_delete_file', glob(plugin_dir_path(__FILE__) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
+    register_uninstall_hook(__FILE__, 'BibleGet_on_uninstall');
 }
 
 /**

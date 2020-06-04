@@ -38,15 +38,15 @@
 										$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
 									}
 								}
-								$('div.results').css('font-family', font[0] );				
+								$('.bibleQuote.results').css('font-family', font[0] );				
 							break;
 							case 'PARAGRAPHSTYLES_LINEHEIGHT':
-								$('div.results .versesParagraph').css('line-height', BGET.PARAGRAPHSTYLES_LINEHEIGHT+'em' );
+								$('.bibleQuote.results .versesParagraph').css('line-height', BGET.PARAGRAPHSTYLES_LINEHEIGHT+'em' );
 							break;
 							case 'PARAGRAPHSTYLES_PADDINGTOPBOTTOM':
 							//nobreak;
 							case 'PARAGRAPHSTYLES_PADDINGLEFTRIGHT':
-								$('div.results').css('padding', BGET.PARAGRAPHSTYLES_PADDINGTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_PADDINGLEFTRIGHT+'px');
+								$('.bibleQuote.results').css('padding', BGET.PARAGRAPHSTYLES_PADDINGTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_PADDINGLEFTRIGHT+'px');
 							break;
 							case 'PARAGRAPHSTYLES_MARGINTOPBOTTOM':
 							//nobreak;
@@ -54,45 +54,45 @@
 							//nobreak;
 							case 'PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT':
 								if(BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT === 'auto'){
-									$('div.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+ BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT);
+									$('.bibleQuote.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+ BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT);
 								}
 								else{
-									$('div.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHT+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT );            
+									$('.bibleQuote.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHT+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT );            
 								}
 							break;
 							case 'PARAGRAPHSTYLES_PARAGRAPHALIGN':
 								textalign = BGETConstants.CSSRULE.ALIGN[newval];
-								$('div.results .versesParagraph').css('text-align', textalign );
+								$('.bibleQuote.results .versesParagraph').css('text-align', textalign );
 							break;
 							case 'PARAGRAPHSTYLES_WIDTH':
-								$('div.results').css('width', newval+'%' );
+								$('.bibleQuote.results').css('width', newval+'%' );
 							break;
 							case 'PARAGRAPHSTYLES_NOVERSIONFORMATTING':
 
 							break;
 							case 'PARAGRAPHSTYLES_BORDERWIDTH':
-								$('div.results').css('border-width', newval+'px' );
+								$('.bibleQuote.results').css('border-width', newval+'px' );
 							break;
 							case 'PARAGRAPHSTYLES_BORDERCOLOR':
-								$('div.results').css('border-color', newval );
+								$('.bibleQuote.results').css('border-color', newval );
 							break;
 							case 'PARAGRAPHSTYLES_BORDERSTYLE':
 								borderstyle = BGETConstants.CSSRULE.BORDERSTYLE[newval];
-								$('div.results').css('border-style', borderstyle );
+								$('.bibleQuote.results').css('border-style', borderstyle );
 							break;
 							case 'PARAGRAPHSTYLES_BORDERRADIUS':
-								$('div.results').css('border-radius', newval+'px' );
+								$('.bibleQuote.results').css('border-radius', newval+'px' );
 							break;
 							case 'PARAGRAPHSTYLES_BACKGROUNDCOLOR':
-								$('div.results').css('background-color', newval );
+								$('.bibleQuote.results').css('background-color', newval );
 							break;
 							case 'VERSIONSTYLES_BOLD':
 								fontweight = BGET.VERSIONSTYLES_BOLD ? 'bold' : 'normal';
-								$('div.results .bibleVersion').css('font-weight',fontweight);
+								$('.bibleQuote.results .bibleVersion').css('font-weight',fontweight);
 							break;
 							case 'VERSIONSTYLES_ITALIC':
 								fontstyle = BGET.VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
-								$('div.results .bibleVersion').css('font-style',fontstyle);
+								$('.bibleQuote.results .bibleVersion').css('font-style',fontstyle);
 							break;
 							case 'VERSIONSTYLES_UNDERLINE':
 							//nobreak;
@@ -101,10 +101,10 @@
 								if(BGET.VERSIONSTYLES_UNDERLINE){ decorations.push('underline'); }
 								if(BGET.VERSIONSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
 								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
-								$('div.results .bibleVersion').css('text-decoration',textdecoration);
+								$('.bibleQuote.results .bibleVersion').css('text-decoration',textdecoration);
 							break;
 							case 'VERSIONSTYLES_TEXTCOLOR':
-								$('div.results .bibleVersion').css('color', newval );
+								$('.bibleQuote.results .bibleVersion').css('color', newval );
 							break;
 							case 'VERSIONSTYLES_FONTSIZE':
 							//nobreak;
@@ -113,18 +113,18 @@
 								if(BGET.VERSIONSTYLES_FONTSIZEUNIT == 'em'){
 									fontsize /= 10;
 								}
-								$('div.results .bibleVersion').css('font-size', fontsize+BGET.VERSIONSTYLES_FONTSIZEUNIT );
+								$('.bibleQuote.results .bibleVersion').css('font-size', fontsize+BGET.VERSIONSTYLES_FONTSIZEUNIT );
 							break;
 							case 'VERSIONSTYLES_VALIGN':
 
 							break;
 							case 'BOOKCHAPTERSTYLES_BOLD':
 								fontweight = BGET.BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
-								$('div.results .bookChapter').css('font-weight',fontweight);
+								$('.bibleQuote.results .bookChapter').css('font-weight',fontweight);
 							break;
 							case 'BOOKCHAPTERSTYLES_ITALIC':
 								fontstyle = BGET.BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
-								$('div.results .bookChapter').css('font-style',fontstyle);
+								$('.bibleQuote.results .bookChapter').css('font-style',fontstyle);
 							break;
 							case 'BOOKCHAPTERSTYLES_UNDERLINE':
 							//nobreak;
@@ -133,10 +133,10 @@
 								if(BGET.BOOKCHAPTERSTYLES_UNDERLINE){ decorations.push('underline'); }
 								if(BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
 								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
-								$('div.results .bookChapter').css('text-decoration',textdecoration);
+								$('.bibleQuote.results .bookChapter').css('text-decoration',textdecoration);
 							break;
 							case 'BOOKCHAPTERSTYLES_TEXTCOLOR':
-								$('div.results .bookChapter').css('color', newval );
+								$('.bibleQuote.results .bookChapter').css('color', newval );
 							break;
 							case 'BOOKCHAPTERSTYLES_FONTSIZE':
 							//nobreak;
@@ -145,18 +145,18 @@
 								if(BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em'){
 									fontsize /= 10;
 								}
-								$('div.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
+								$('.bibleQuote.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
 							break;
 							case 'BOOKCHAPTERSTYLES_VALIGN':
 
 							break;
 							case 'VERSENUMBERSTYLES_BOLD':
 								fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
-								$('div.results .versesParagraph .verseNum').css('font-weight',fontweight);
+								$('.bibleQuote.results .versesParagraph .verseNum').css('font-weight',fontweight);
 							break;
 							case 'VERSENUMBERSTYLES_ITALIC':
 								fontstyle = BGET.VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
-								$('div.results .versesParagraph .verseNum').css('font-style',fontstyle);
+								$('.bibleQuote.results .versesParagraph .verseNum').css('font-style',fontstyle);
 							break;
 							case 'VERSENUMBERSTYLES_UNDERLINE':
 							//nobreak;
@@ -165,10 +165,10 @@
 								if(BGET.VERSENUMBERSTYLES_UNDERLINE){ decorations.push('underline'); }
 								if(BGET.VERSENUMBERSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
 								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
-								$('div.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
+								$('.bibleQuote.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
 							break;
 							case 'VERSENUMBERSTYLES_TEXTCOLOR':
-								$('div.results .versesParagraph .verseNum').css('color', newval );
+								$('.bibleQuote.results .versesParagraph .verseNum').css('color', newval );
 							break;
 							case 'VERSENUMBERSTYLES_FONTSIZE':
 							//nobreak;
@@ -177,7 +177,7 @@
 								if(BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'){
 									fontsize /= 10;
 								}
-								$('div.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
+								$('.bibleQuote.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
 							break;
 							case 'VERSENUMBERSTYLES_VALIGN':
 								styles = {};
@@ -197,15 +197,15 @@
 									styles['position'] = 'static';
 								break;
 								}
-								$('div.results .versesParagraph .verseNum').css(styles);
+								$('.bibleQuote.results .versesParagraph .verseNum').css(styles);
 							break;
 							case 'VERSETEXTSTYLES_BOLD':
 								fontweight = BGET.VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
-								$('div.results .versesParagraph').css('font-weight',fontweight);
+								$('.bibleQuote.results .versesParagraph').css('font-weight',fontweight);
 							break;
 							case 'VERSETEXTSTYLES_ITALIC':
 								fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
-								$('div.results .versesParagraph').css('font-style',fontstyle);
+								$('.bibleQuote.results .versesParagraph').css('font-style',fontstyle);
 							break;
 							case 'VERSETEXTSTYLES_UNDERLINE':
 							//nobreak;
@@ -214,10 +214,10 @@
 								if(BGET.VERSETEXTSTYLES_UNDERLINE){ decorations.push('underline'); }
 								if(BGET.VERSETEXTSTYLES_STRIKETHROUGH){ decorations.push('line-through'); }
 								textdecoration = decorations.length === 0 ? 'none' : decorations.join(' ');
-								$('div.results .versesParagraph').css('text-decoration',textdecoration);
+								$('.bibleQuote.results .versesParagraph').css('text-decoration',textdecoration);
 							break;
 							case 'VERSETEXTSTYLES_TEXTCOLOR':
-								$('div.results .versesParagraph').css('color', newval );
+								$('.bibleQuote.results .versesParagraph').css('color', newval );
 							break;
 							case 'VERSETEXTSTYLES_FONTSIZE':
 							//nobreak;
@@ -226,7 +226,7 @@
 								if(BGET.VERSETEXTSTYLES_FONTSIZEUNIT == 'em'){
 									fontsize /= 10;
 								}
-								$('div.results .versesParagraph').css('font-size', fontsize+BGET.VERSETEXTSTYLES_FONTSIZEUNIT );
+								$('.bibleQuote.results .versesParagraph').css('font-size', fontsize+BGET.VERSETEXTSTYLES_FONTSIZEUNIT );
 							break;
 							case 'VERSETEXTSTYLES_VALIGN':
 								//this wouldn't make sense, not using
