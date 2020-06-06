@@ -1049,23 +1049,17 @@ class BibleGet_Customize
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'} = new stdClass();
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->title = __('Text align', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->controltype = 'textalign';
-		/*
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices = array();
-		foreach(BGET::ALIGN as $enum => $value){
-			self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->choices[$value] = BGET::CSSRULE["ALIGN"][$value];
-		}
-		*/
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PARAGRAPHALIGN]'}->section = 'bibleget_paragraph_style_options';
 
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'} = new stdClass();
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->title = __('Line height', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->controltype = 'select';
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->choices = array('1.0' => 'single', '1.15' => '1.15', '1.5' => '1½', '2.0' => 'double');
+		/* translators: context is label for line-height select option */
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->choices = array('1.0' => __('single','bibleget-io'), '1.15' => '1.15', '1.5' => '1½', '2.0' => __('double','bibleget-io'));
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_LINEHEIGHT]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_width setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'} = new stdClass();
-		/* translators: "%" refers to "percentage" as used in CSS rules (e.g. "width: 100%"), do not change */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->title = __('Width on the page', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->controltype = 'range';
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_WIDTH]'}->choices = array("min" => 10, "max" => 100, "step" => 1);
@@ -1110,7 +1104,7 @@ class BibleGet_Customize
 		/* Define bibleget_paddingtopbottom setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'} = new stdClass();
 		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->title = __('Padding top/bottom', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->title = __('Padding top / bottom', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->choices = $margin_padding_vals;
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->section = 'bibleget_paragraph_style_options';
@@ -1118,7 +1112,7 @@ class BibleGet_Customize
 		/* Define bibleget_paddingleftright setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'} = new stdClass();
 		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->title = __('Padding left/right', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->title = __('Padding left / right', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->choices = $margin_padding_vals;
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->section = 'bibleget_paragraph_style_options';
@@ -1126,21 +1120,21 @@ class BibleGet_Customize
 		/* Define bibleget_margintopbottom setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'} = new stdClass();
 		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->title = __('Margin top/bottom', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->title = __('Margin top / bottom', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->choices = $margin_padding_vals;
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_marginleftright setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'} = new stdClass();
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->title = __('Margin left/right', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->title = __('Margin left / right', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->choices = $margin_padding_vals;
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHT]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_marginleftright setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'} = new stdClass();
-		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->title = __('Margin left/right unit', "bibleget-io");
+		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->title = __('Margin left / right unit', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->controltype = 'select';
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->choices = array('px' => 'px', '%' => '%', 'auto' => 'auto');
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT]'}->section = 'bibleget_paragraph_style_options';
@@ -1607,6 +1601,13 @@ class BibleGet_Customize
 		<!--Customizer CSS-->
 		<?php $is_googlefont = false;
 		$BGETOPTIONS = get_option("BGET",[]);
+		if(false === $BGETOPTIONS){
+		    $BGETOPTIONS = [];
+		    $BGETPROPERTIES = new BGETPROPERTIES();
+		    foreach($BGETPROPERTIES->OPTIONS as $option => $array){
+		        $BGETOPTIONS[$option] = $array['default'];
+		    }
+		}
 		//$mod = get_theme_mod('bibleget_fontfamily', self::$bibleget_style_settings->bibleget_fontfamily->dfault);
 		$mod = $BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY'];
 		//echo '<!-- mod variable = '.$mod.' -->';

@@ -1141,11 +1141,11 @@ const BGET = BibleGetGlobal.BGETConstants;
 								value: attributes.PARAGRAPHSTYLES_LINEHEIGHT,
 								label: __('Line height', 'bibleget-io'),
 								options: [
-									/*translators: context is label for line-height select control */
+									/* translators: context is label for line-height select option */
 									{ value: 1.0, label: __('single','bibleget-io') },
 									{ value: 1.15, label: '1.15' },
 									{ value: 1.5, label: '1.5' },
-									/*translators: context is label for line-height select control */
+									/* translators: context is label for line-height select option */
 									{ value: 2.0, label: __('double','bibleget-io') },
 								],
 								onChange: changeParagraphStyleLineHeight
@@ -1159,14 +1159,14 @@ const BGET = BibleGetGlobal.BGETConstants;
 							}),
 							createElement(RangeControl, {
 								value: attributes.PARAGRAPHSTYLES_MARGINTOPBOTTOM,
-								label: __('Top / bottom margin', 'bibleget-io'),
+								label: __('Margin top / bottom', 'bibleget-io'),
 								min: 0,
 								max: 30,
 								onChange: changeParagraphStyleMarginTopBottom
 							}),
 							createElement(RangeControl, {
 								value: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHT,
-								label: __('Left / right margin', 'bibleget-io'),
+								label: __('Margin left / right', 'bibleget-io'),
 								min: 0,
 								max: 30,
 								disabled: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT === 'auto',
@@ -1175,7 +1175,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 							}),
 							createElement(SelectControl, {
 								value: attributes.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT,
-								label: __('Left / right margin unit','bibleget-io'),
+								label: __('Margin left / right unit','bibleget-io'),
 								options: [
 									{ value: 'px', label: 'px' },
 									{ value: '%', label: '%' },
@@ -1335,7 +1335,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								})
 							),
 						),
-						createElement(PanelBody, { title: __('Verse Number styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+						createElement(PanelBody, { title: __('Verse number styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
 							createElement(PanelRow, {},
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup verseNumberStyles' },
@@ -1429,7 +1429,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								})
 							),
 						),
-						createElement(PanelBody, { title: __('Verse Text styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
+						createElement(PanelBody, { title: __('Verse text styles', 'bibleget-io'), initialOpen: false, icon: 'admin-appearance' },
 							createElement(PanelRow, {},
 								createElement(BaseControl, { label: __('Text style', 'bibleget-io') },
 									createElement(ButtonGroup, { className: 'bibleGetTextStyleButtonGroup' },

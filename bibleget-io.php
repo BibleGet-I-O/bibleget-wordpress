@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 5.9
+ * Version: 6.0
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -28,7 +28,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v5_9");
+define("BIBLEGETPLUGINVERSION", "v6_0");
 
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
@@ -57,14 +57,6 @@ function BibleGet_on_activation()
     // exit( var_dump( $_GET ) );
     bibleGetSetOptions();
 
-    // let's do some cleanup from previous versions
-    if (file_exists(plugin_dir_path(__FILE__) . 'css/styles.css')) {
-        if (wp_delete_file(plugin_dir_path(__FILE__) . 'css/styles.css') === false) {
-            wp_delete_file(realpath(plugin_dir_path(__FILE__) . 'css/styles.css'));
-        }
-    }
-    // we have renamed the image files, so these will be left over...
-    array_map('wp_delete_file', glob(plugin_dir_path(__FILE__) . 'images/btn_donateCC_LG-[a-z][a-z]_[A-Z][A-Z].gif'));
     register_uninstall_hook(__FILE__, 'BibleGet_on_uninstall');
 }
 
@@ -1406,6 +1398,14 @@ function bibleGetDeleteOptions()
  */
 function bibleGetSetOptions()
 {
+
+    $BGET = [];
+    $BGETOPTIONS = new BGETPROPERTIES();
+    foreach($BGETOPTIONS->OPTIONS as $option => $array){
+        $BGET[$option] = $array['default']; //default will be based on current option if exists
+    }
+    update_option($BGET,$BGETOPTIONS);
+
     $metadata = bibleGetGetMetaData("biblebooks");
     if ($metadata !== false) {
         // bibleGetWriteLog("Retrieved biblebooks metadata...");

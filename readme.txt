@@ -5,7 +5,7 @@ Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cit
 Requires at least: 5.0
 Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 5.9
+Stable tag: 6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 6.0 =
+* Ensure that default options are defined on activation
 
 = 5.9 =
 * Gutenberg block now has all possible options in the sidebar, which are in synchronized to Customizer options
@@ -290,6 +293,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 
 == Upgrade Notice ==
+
+= 6.0 =
+Version prior to 5.9 must update to maintain compatibility with the BibleGet endpoint.
 
 = 5.9 =
 Must update to maintain compatibility with the BibleGet endpoint
