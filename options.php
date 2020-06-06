@@ -2289,7 +2289,7 @@ class BGETPROPERTIES {
 	}
 	public static function setAndIsStringArray($arr,$key){
 	    $ret = true;
-	    if(isset($arr[$key]) && is_array($arr[$key]) && !is_empty($arr[$key])){
+	    if(isset($arr[$key]) && is_array($arr[$key]) && !empty($arr[$key])){
 	        foreach($arr[$key] as $idx => $value){
 	            if(!is_string($value)){
 	                $ret = false;
