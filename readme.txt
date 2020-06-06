@@ -5,7 +5,7 @@ Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cit
 Requires at least: 5.0
 Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 6.0
+Stable tag: 6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,12 +111,15 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 == Changelog ==
 
+= 6.1 =
+* Fix typo in PHP update_option function
+
 = 6.0 =
 * Ensure that default options are defined on activation
 
 = 5.9 =
 * Gutenberg block now has all possible options in the sidebar, which are in synchronized to Customizer options
-* Customizer has better UI, even though it doesn't have all the options from the Customizer
+* Customizer has better UI, even though it doesn't have all the layout options that the Gutenberg block has
 * An update to the html output from the BibleGet server requests required an update to the plugin handling logic of the html structure
 * Better handling both from the BibleGet endpoint and from the plugin for rendering of Bible book names in WP interface language when using non catholic versions with different book numbering
 
@@ -293,6 +296,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 
 == Upgrade Notice ==
+
+= 6.1 =
+Version prior to 5.9 must update to maintain compatibility with the BibleGet endpoint.
 
 = 6.0 =
 Version prior to 5.9 must update to maintain compatibility with the BibleGet endpoint.
