@@ -5,7 +5,7 @@ Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cit
 Requires at least: 5.0
 Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 5.8
+Stable tag: 5.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,6 +91,14 @@ However Bible quotes are cached by the BibleGet plugin for a seven day period, w
 If you do not want to wait seven days or until the cache expires, there is a new option in the BibleGet Settings page since version 5.7 which allows to flush the cache.
 A word of caution however: the more recent updates to the BibleGet service endpoint have started imposing hard limits on the number of requests that can be issued from any given domain, IP address or referer. No more than 30 requests for one same Bible quote can be issued in a two day period, and no more than 100 requests for different Bible quotes can be issued in a two day period. If you have many Bible quotes on your website and you risk hitting the limit, it may be best not to flush the cache all at once but rather wait out the seven days until the cache expires.  
 
+= Sometimes the Bible quote block is giving an error 'Error loading block: The response is not a valid JSON response.' =
+If you sometimes see this error, one possible situation is that your server configuration needs to allow for a larger buffer for proxy requests. You can check that that is the case if you open your browser's Inspector Tools (for example CTRL-SHIFT-I in Google Chrome) and you see a failed GET request by the api-fetch.min.js script to a wp-json endpoint something like this: **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**
+You can further inspect the *Network* tab of the browser's Inspector Tools (this may require reloading the page and retrying the request). If you see a similar request in the Network tab with a response of '502 Bad Gateway', this could be an indication that you may need a larger buffer for your server. 
+If for example you have an nginx server, you may need to edit your **/etc/nginx/nginx.conf** and set 'proxy_buffer_size' to a larger value (see for example [this thread](https://talk.plesk.com/threads/fpm-buffer-settings-and-proxy-buffer.344813/ "fpm buffer settings and proxy buffer")).
+
+= I'm not able to use some options in the Gutenberg block such as positioning of the Bible version =
+There was recently an update to the BibleGet service endpoint which slightly changed the structure of the html that comprises the Bible quotes. It is necessary to update the plugin to v5.9 in order to be compatible with these changes. 
+
 == Screenshots ==
 
 1. Inserting a Bible quote block into an article or page
@@ -102,6 +110,12 @@ A word of caution however: the more recent updates to the BibleGet service endpo
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 5.9 =
+* Gutenberg block now has all possible options in the sidebar, which are in synchronized to Customizer options
+* Customizer has better UI, even though it doesn't have all the options from the Customizer
+* An update to the html output from the BibleGet server requests required an update to the plugin handling logic of the html structure
+* Better handling both from the BibleGet endpoint and from the plugin for rendering of Bible book names in WP interface language when using non catholic versions with different book numbering
 
 = 5.8 =
 * once a traditional shortcode is transformed into a block shortcode, allow transforming the block shortcode into a 'Bible quote' block 
@@ -276,6 +290,9 @@ A word of caution however: the more recent updates to the BibleGet service endpo
 
 
 == Upgrade Notice ==
+
+= 5.9 =
+Must update to maintain compatibility with the BibleGet endpoint
 
 = 5.8 =
 Versions prior to 5.1 must be updated. v5.4 adds a Gutenberg block

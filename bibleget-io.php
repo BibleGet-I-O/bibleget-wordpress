@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 5.8
+ * Version: 5.9
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -27,9 +27,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//TODO: better ui for the customizer, use sliders
 
-define("BIBLEGETPLUGINVERSION", "v5_8");
+define("BIBLEGETPLUGINVERSION", "v5_9");
 
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
@@ -465,11 +464,11 @@ function bibleGet_renderGutenbergBlock($atts)
             $domDocument = new DOMDocument();
             $domDocument->loadHTML('<!DOCTYPE HTML><head></head><body>' . mb_convert_encoding($output, 'HTML-ENTITIES', 'UTF-8') . '</body>');
             if($domDocument){
-                $results = $domDocument->getElementById('results');
-                $errors = $domDocument->getElementById('errors');
-                $info = $domDocument->getElementById('BibleGetInfo');
                 $xPath = new DOMXPath($domDocument);
-                if($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== null ){
+                $results    = $xPath->query('//div[contains(@class,"results")]')->item(0);          //$domDocument->getElementById('results');
+                $errors     = $xPath->query('//div[contains(@class,"errors")]')->item(0);           //$domDocument->getElementById('errors');
+                $info       = $xPath->query('//input[contains(@class,"BibleGetInfo")]')->item(0);   //$domDocument->getElementById('BibleGetInfo');
+                if($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false ){
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     foreach($bibleVersionEls as $bibleVersionEl){
@@ -477,7 +476,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== null ){
+                if($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false ){
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     foreach ($bibleVersionEls as $bibleVersionEl) {
@@ -486,7 +485,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if ($atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] !== BGET::POS["TOP"] && $results !== null) {
+                if ($atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] !== BGET::POS["TOP"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     $bibleVersionCnt = $bibleVersionEls->count();
@@ -511,7 +510,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== null){
+                if($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== false){
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     foreach($bibleVersionEls as $bibleVersionEl){
@@ -528,7 +527,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if ($atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== null) {
+                if ($atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
                     foreach ($bookChapterEls as $bookChapterEl) {
@@ -538,15 +537,15 @@ function bibleGet_renderGutenbergBlock($atts)
                 }
 
 
-                if(($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== null){
+                if(($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== false){
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
                     if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANG"] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"] ){
                         $locale = substr(get_locale(), 0, 2);
                         $languageName = Locale::getDisplayLanguage($locale, 'en');
                         foreach ($bookChapterEls as $bookChapterEl) {
-                            $bookNum = (int) $xPath->query('following-sibling::input[@class="bookNum"]', $bookChapterEl)->item(0)->getAttribute("value");
-                            $usrprop = "bibleget_biblebooks" . $bookNum;
+                            $bookNum = (int) $xPath->query('following-sibling::input[@class="univBookNum"]', $bookChapterEl)->item(0)->getAttribute("value");
+                            $usrprop = "bibleget_biblebooks" . ($bookNum-1);
                             $jsbook = json_decode(get_option($usrprop), true);
                             //get the index of the current language from the available languages
                             $biblebookslangs = get_option("bibleget_languages");
@@ -589,7 +588,7 @@ function bibleGet_renderGutenbergBlock($atts)
                  => if pos is bottominline it will change the p to a span and then we won't know what to look for
                  => if we have already wrapped then the fullreference will be appended to the parentheses or the brackets!
                  */
-                if ($atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] === true && $results !== null) {
+                if ($atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] === true && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
                     foreach ($bookChapterEls as $bookChapterEl) {
@@ -607,7 +606,7 @@ function bibleGet_renderGutenbergBlock($atts)
                 }
 
                 /* Make sure to deal with wrap before you deal with pos, because if pos is bottominline it will change the p to a span and then we won't know what to look for */
-                if ($atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] !== BGET::WRAP["NONE"] && $results !== null) {
+                if ($atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] !== BGET::WRAP["NONE"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
                     foreach ($bookChapterEls as $bookChapterEl) {
@@ -624,7 +623,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS["TOP"] && $results !== null) {
+                if ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS["TOP"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
                     switch($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION']){
@@ -647,7 +646,7 @@ function bibleGet_renderGutenbergBlock($atts)
 
                 }
 
-                if($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== null ){
+                if($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== false ){
                     $nonDefaultLayout = true;
                     $verseNumberEls = $xPath->query('//span[contains(@class,"verseNum")]');
                     foreach($verseNumberEls as $verseNumberEl){
