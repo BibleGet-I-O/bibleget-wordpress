@@ -54,6 +54,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 			//Function to update the query with Bible reference
 			function changeQuery(QUERY) {
+				//BibleGetGlobal.BGETProperties['QUERY'].default = QUERY;
 				setAttributes({ QUERY });
 			}
 
@@ -63,15 +64,18 @@ const BGET = BibleGetGlobal.BGETConstants;
 					alert(__('You must indicate the desired version or versions','bibleget-io'));
 					return false;
 				}
+				//BibleGetGlobal.BGETProperties['VERSION'].default = VERSION;
 				setAttributes({ VERSION });
 			}
 
 			//Function to update whether the Bible quote will be showed in a popup or not
 			function changePopup(POPUP) {
+				//BibleGetGlobal.BGETProperties['POPUP'].default = POPUP;
 				setAttributes({ POPUP });
 			}
 
 			function changeBibleVersionVisibility(LAYOUTPREFS_SHOWBIBLEVERSION){
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_SHOWBIBLEVERSION'].default = LAYOUTPREFS_SHOWBIBLEVERSION;
 				setAttributes({ LAYOUTPREFS_SHOWBIBLEVERSION });
 			}
 
@@ -80,18 +84,19 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BIBLEVERSIONALIGNMENT];
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.bibleVersion \{ text-align: (?:.*?); \}/, '.bibleQuote.results p.bibleVersion { text-align: ' + textalign+'; }'));
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'].default = LAYOUTPREFS_BIBLEVERSIONALIGNMENT;
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
 			}
 
 			function changeBibleVersionPos(ev){
 				let LAYOUTPREFS_BIBLEVERSIONPOSITION = parseInt(ev.currentTarget.value);
-				//console.log('setting LAYOUTPREFS_BIBLEVERSIONPOSITION to '+ev.currentTarget.value);
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BIBLEVERSIONPOSITION'].default = LAYOUTPREFS_BIBLEVERSIONPOSITION;
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONPOSITION });
-				//console.log(attributes);
 			}
 
 			function changeBibleVersionWrap(ev){
 				let LAYOUTPREFS_BIBLEVERSIONWRAP = parseInt(ev.currentTarget.value);
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BIBLEVERSIONWRAP'].default = LAYOUTPREFS_BIBLEVERSIONWRAP;
 				setAttributes({ LAYOUTPREFS_BIBLEVERSIONWRAP });
 			}
 
@@ -100,20 +105,24 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let textalign = BGET.CSSRULE.ALIGN[LAYOUTPREFS_BOOKCHAPTERALIGNMENT];
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \.bookChapter \{ text-align: (?:.*?); \}/, '.bibleQuote.results .bookChapter { text-align: ' + textalign + '; }'));
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'].default = LAYOUTPREFS_BOOKCHAPTERALIGNMENT;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERALIGNMENT });
 			}
 
 			function changeBookChapterPos(ev) {
 				let LAYOUTPREFS_BOOKCHAPTERPOSITION = parseInt(ev.currentTarget.value);
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERPOSITION'].default = LAYOUTPREFS_BOOKCHAPTERPOSITION;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERPOSITION });
 			}
 
 			function changeBookChapterWrap(ev) {
 				let LAYOUTPREFS_BOOKCHAPTERWRAP = parseInt(ev.currentTarget.value);
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERWRAP'].default = LAYOUTPREFS_BOOKCHAPTERWRAP;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERWRAP });
 			}
 
 			function changeShowFullReference(LAYOUTPREFS_BOOKCHAPTERFULLQUERY){
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'].default = LAYOUTPREFS_BOOKCHAPTERFULLQUERY;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFULLQUERY });
 			}
 
@@ -125,6 +134,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				else if(attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANG || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANGABBREV){
 					LAYOUTPREFS_BOOKCHAPTERFORMAT = (usebookabbreviation ? BGET.FORMAT.BIBLELANGABBREV : BGET.FORMAT.BIBLELANG);
 				}
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERFORMAT'].default = LAYOUTPREFS_BOOKCHAPTERFORMAT;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
 			}
 
@@ -136,22 +146,26 @@ const BGET = BibleGetGlobal.BGETConstants;
 				else if(attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.USERLANGABBREV || attributes.LAYOUTPREFS_BOOKCHAPTERFORMAT === BGET.FORMAT.BIBLELANGABBREV){
 					LAYOUTPREFS_BOOKCHAPTERFORMAT = (booknameusewplang ? BGET.FORMAT.USERLANGABBREV : BGET.FORMAT.BIBLELANGABBREV);
 				}
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_BOOKCHAPTERFORMAT'].default = LAYOUTPREFS_BOOKCHAPTERFORMAT;
 				setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
 			}
 
 			function changeVerseNumberVisibility(LAYOUTPREFS_SHOWVERSENUMBERS){
+				BibleGetGlobal.BGETProperties['LAYOUTPREFS_SHOWVERSENUMBERS'].default = LAYOUTPREFS_SHOWVERSENUMBERS;
 				setAttributes({ LAYOUTPREFS_SHOWVERSENUMBERS });
 			}
 
 			function changeParagraphStyleBorderWidth(PARAGRAPHSTYLES_BORDERWIDTH){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-width: (?:.*?); \}/, '.bibleQuote.results { border-width: ' + PARAGRAPHSTYLES_BORDERWIDTH + 'px; }'));				
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_BORDERWIDTH'].default = PARAGRAPHSTYLES_BORDERWIDTH;
 				setAttributes({ PARAGRAPHSTYLES_BORDERWIDTH });
 			}
 
 			function changeParagraphStyleBorderRadius(PARAGRAPHSTYLES_BORDERRADIUS){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-radius: (?:.*?); \}/, '.bibleQuote.results { border-radius: ' + PARAGRAPHSTYLES_BORDERRADIUS + 'px; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_BORDERRADIUS'].default = PARAGRAPHSTYLES_BORDERRADIUS;
 				setAttributes({ PARAGRAPHSTYLES_BORDERRADIUS });
 			}
 
@@ -161,6 +175,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				//console.log('borderstyle = '+borderstyle);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-style: (?:.*?); \}/, '.bibleQuote.results { border-style: ' + borderstyle + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_BORDERSTYLE'].default = PARAGRAPHSTYLES_BORDERSTYLE;
 				setAttributes({ PARAGRAPHSTYLES_BORDERSTYLE });
 			}
 
@@ -168,6 +183,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let PARAGRAPHSTYLES_BORDERCOLOR = bordercolor.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ border-color: (?:.*?); \}/, '.bibleQuote.results { border-color: ' + PARAGRAPHSTYLES_BORDERCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_BORDERCOLOR'].default = PARAGRAPHSTYLES_BORDERCOLOR;
 				setAttributes({ PARAGRAPHSTYLES_BORDERCOLOR });
 			}
 
@@ -175,6 +191,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let PARAGRAPHSTYLES_BACKGROUNDCOLOR = backgroundcolor.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ background-color: (?:.*?); \}/, '.bibleQuote.results { background-color: ' + PARAGRAPHSTYLES_BACKGROUNDCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_BACKGROUNDCOLOR'].default = PARAGRAPHSTYLES_BACKGROUNDCOLOR;
 				setAttributes({ PARAGRAPHSTYLES_BACKGROUNDCOLOR });
 			}
 
@@ -193,6 +210,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 						margLR = 'auto';
 				}
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_MARGINTOPBOTTOM'].default = PARAGRAPHSTYLES_MARGINTOPBOTTOM;
 				setAttributes({ PARAGRAPHSTYLES_MARGINTOPBOTTOM });
 			}
 
@@ -211,6 +229,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 						margLR = 'auto';
 				}
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_MARGINLEFTRIGHT'].default = PARAGRAPHSTYLES_MARGINLEFTRIGHT;
 				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHT });
 			}
 
@@ -229,6 +248,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 						margLR = 'auto';
 				}
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ margin: (?:.*?); \}/, '.bibleQuote.results { margin: ' + PARAGRAPHSTYLES_MARGINTOPBOTTOM + 'px ' + margLR + '; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT'].default = PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT;
 				setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT });
 			}
 
@@ -236,6 +256,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let { PARAGRAPHSTYLES_PADDINGLEFTRIGHT}  = attributes;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ padding: (?:.*?); \}/, '.bibleQuote.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_PADDINGTOPBOTTOM'].default = PARAGRAPHSTYLES_PADDINGTOPBOTTOM;
 				setAttributes({ PARAGRAPHSTYLES_PADDINGTOPBOTTOM });
 			}
 
@@ -243,6 +264,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				let { PARAGRAPHSTYLES_PADDINGTOPBOTTOM}  = attributes;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ padding: (?:.*?); \}/, '.bibleQuote.results { padding: ' + PARAGRAPHSTYLES_PADDINGTOPBOTTOM + 'px ' + PARAGRAPHSTYLES_PADDINGLEFTRIGHT + 'px; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_PADDINGLEFTRIGHT'].default = PARAGRAPHSTYLES_PADDINGLEFTRIGHT;
 				setAttributes({ PARAGRAPHSTYLES_PADDINGLEFTRIGHT });
 			}
 
@@ -251,12 +273,14 @@ const BGET = BibleGetGlobal.BGETConstants;
 				PARAGRAPHSTYLES_LINEHEIGHT = parseFloat(PARAGRAPHSTYLES_LINEHEIGHT);
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph \{ line-height: (?:.*?); \}/, '.bibleQuote.results p.versesParagraph { line-height: ' + PARAGRAPHSTYLES_LINEHEIGHT + 'em; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_LINEHEIGHT'].default = PARAGRAPHSTYLES_LINEHEIGHT;
 				setAttributes({ PARAGRAPHSTYLES_LINEHEIGHT });
 			}
 
 			function changeParagraphStyleWidth(PARAGRAPHSTYLES_WIDTH){
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \{ width: (?:.*?); \}/, '.bibleQuote.results { width: ' + PARAGRAPHSTYLES_WIDTH + '%; }'));
+				BibleGetGlobal.BGETProperties['PARAGRAPHSTYLES_WIDTH'].default = PARAGRAPHSTYLES_WIDTH;
 				setAttributes({ PARAGRAPHSTYLES_WIDTH });
 			}
 
@@ -297,15 +321,19 @@ const BGET = BibleGetGlobal.BGETConstants;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
+						BibleGetGlobal.BGETProperties['VERSIONSTYLES_BOLD'].default = VERSIONSTYLES_BOLD;
 						setAttributes({ VERSIONSTYLES_BOLD });
 						break;
 					case BGET.TEXTSTYLE.ITALIC:
+						BibleGetGlobal.BGETProperties['VERSIONSTYLES_ITALIC'].default = VERSIONSTYLES_ITALIC;
 						setAttributes({ VERSIONSTYLES_ITALIC });
 						break;
 					case BGET.TEXTSTYLE.UNDERLINE:
+						BibleGetGlobal.BGETProperties['VERSIONSTYLES_UNDERLINE'].default = VERSIONSTYLES_UNDERLINE;
 						setAttributes({ VERSIONSTYLES_UNDERLINE });
 						break;
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						BibleGetGlobal.BGETProperties['VERSIONSTYLES_STRIKETHROUGH'].default = VERSIONSTYLES_STRIKETHROUGH;
 						setAttributes({ VERSIONSTYLES_STRIKETHROUGH });
 						break;
 				}
@@ -317,6 +345,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (attributes.VERSIONSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSIONSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSIONSTYLES_FONTSIZE'].default = VERSIONSTYLES_FONTSIZE;
 				setAttributes({ VERSIONSTYLES_FONTSIZE });
 			}
 
@@ -326,6 +355,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (VERSIONSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSIONSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.bibleVersion \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSIONSTYLES_FONTSIZEUNIT'].default = VERSIONSTYLES_FONTSIZEUNIT;
 				setAttributes({ VERSIONSTYLES_FONTSIZEUNIT });
 			}
 
@@ -333,6 +363,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let VERSIONSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.bibleVersion \{ color: (?:.*?); \}/, '.bibleQuote.results p\.bibleVersion { color: ' + VERSIONSTYLES_TEXTCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['VERSIONSTYLES_TEXTCOLOR'].default = VERSIONSTYLES_TEXTCOLOR;
 				setAttributes({ VERSIONSTYLES_TEXTCOLOR });
 			}
 
@@ -373,15 +404,19 @@ const BGET = BibleGetGlobal.BGETConstants;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
+						BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_BOLD'].default = BOOKCHAPTERSTYLES_BOLD;
 						setAttributes({ BOOKCHAPTERSTYLES_BOLD });
 						break;
 					case BGET.TEXTSTYLE.ITALIC:
+						BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_ITALIC'].default = BOOKCHAPTERSTYLES_ITALIC;
 						setAttributes({ BOOKCHAPTERSTYLES_ITALIC });
 						break;
 					case BGET.TEXTSTYLE.UNDERLINE:
+						BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_UNDERLINE'].default = BOOKCHAPTERSTYLES_UNDERLINE;
 						setAttributes({ BOOKCHAPTERSTYLES_UNDERLINE });
 						break;
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_STRIKETHROUGH'].default = BOOKCHAPTERSTYLES_STRIKETHROUGH;
 						setAttributes({ BOOKCHAPTERSTYLES_STRIKETHROUGH });
 						break;
 				}
@@ -393,6 +428,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.BOOKCHAPTERSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_FONTSIZE'].default = BOOKCHAPTERSTYLES_FONTSIZE;
 				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZE });
 			}
 
@@ -402,6 +438,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+BOOKCHAPTERSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results \.bookChapter \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_FONTSIZEUNIT'].default = BOOKCHAPTERSTYLES_FONTSIZEUNIT;
 				setAttributes({ BOOKCHAPTERSTYLES_FONTSIZEUNIT });
 			}
 
@@ -409,6 +446,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let BOOKCHAPTERSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results \.bookChapter \{ color: (?:.*?); \}/, '.bibleQuote.results \.bookChapter { color: ' + BOOKCHAPTERSTYLES_TEXTCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['BOOKCHAPTERSTYLES_TEXTCOLOR'].default = BOOKCHAPTERSTYLES_TEXTCOLOR;
 				setAttributes({ BOOKCHAPTERSTYLES_TEXTCOLOR });
 			}
 
@@ -449,15 +487,19 @@ const BGET = BibleGetGlobal.BGETConstants;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
+						BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_BOLD'].default = VERSENUMBERSTYLES_BOLD;
 						setAttributes({ VERSENUMBERSTYLES_BOLD });
 						break;
 					case BGET.TEXTSTYLE.ITALIC:
+						BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_ITALIC'].default = VERSENUMBERSTYLES_ITALIC;
 						setAttributes({ VERSENUMBERSTYLES_ITALIC });
 						break;
 					case BGET.TEXTSTYLE.UNDERLINE:
+						BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_UNDERLINE'].default = VERSENUMBERSTYLES_UNDERLINE;
 						setAttributes({ VERSENUMBERSTYLES_UNDERLINE });
 						break;
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_STRIKETHROUGH'].default = VERSENUMBERSTYLES_STRIKETHROUGH;
 						setAttributes({ VERSENUMBERSTYLES_STRIKETHROUGH });
 						break;
 				}
@@ -469,6 +511,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (attributes.VERSENUMBERSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSENUMBERSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_FONTSIZE'].default = VERSENUMBERSTYLES_FONTSIZE;
 				setAttributes({ VERSENUMBERSTYLES_FONTSIZE });
 			}
 
@@ -478,6 +521,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (VERSENUMBERSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSENUMBERSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph span\.verseNum \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_FONTSIZEUNIT'].default = VERSENUMBERSTYLES_FONTSIZEUNIT;
 				setAttributes({ VERSENUMBERSTYLES_FONTSIZEUNIT });
 			}
 
@@ -485,6 +529,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let VERSENUMBERSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph span\.verseNum \{ color: (?:.*?); \}/, '.bibleQuote.results p\.versesParagraph span\.verseNum { color: ' + VERSENUMBERSTYLES_TEXTCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_TEXTCOLOR'].default = VERSENUMBERSTYLES_TEXTCOLOR;
 				setAttributes({ VERSENUMBERSTYLES_TEXTCOLOR });
 			}
 
@@ -574,6 +619,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 					} 
 				}
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSENUMBERSTYLES_VALIGN'].default = VERSENUMBERSTYLES_VALIGN;
 				setAttributes({ VERSENUMBERSTYLES_VALIGN });
 			}
 
@@ -659,15 +705,19 @@ const BGET = BibleGetGlobal.BGETConstants;
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
 				switch(target){
 					case BGET.TEXTSTYLE.BOLD:
+						BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_BOLD'].default = VERSETEXTSTYLES_BOLD;
 						setAttributes({ VERSETEXTSTYLES_BOLD });
 						break;
 					case BGET.TEXTSTYLE.ITALIC:
+						BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_ITALIC'].default = VERSETEXTSTYLES_ITALIC;
 						setAttributes({ VERSETEXTSTYLES_ITALIC });
 						break;
 					case BGET.TEXTSTYLE.UNDERLINE:
+						BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_UNDERLINE'].default = VERSETEXTSTYLES_UNDERLINE;
 						setAttributes({ VERSETEXTSTYLES_UNDERLINE });
 						break;
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
+						BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_STRIKETHROUGH'].default = VERSETEXTSTYLES_STRIKETHROUGH;
 						setAttributes({ VERSETEXTSTYLES_STRIKETHROUGH });
 						break;
 				}
@@ -679,6 +729,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (attributes.VERSETEXTSTYLES_FONTSIZEUNIT == 'inherit') ? 'inherit' : fontsize+attributes.VERSETEXTSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_FONTSIZE'].default = VERSETEXTSTYLES_FONTSIZE;
 				setAttributes({ VERSETEXTSTYLES_FONTSIZE });
 			}
 
@@ -688,6 +739,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let fontsizerule = (VERSETEXTSTYLES_FONTSIZEUNIT === 'inherit') ? 'inherit' : fontsize+VERSETEXTSTYLES_FONTSIZEUNIT;
 				bbGetDynSS = bbGetDynSS.replace(/(\.bibleQuote\.results p\.versesParagraph \{(.*?font\-size:))(.*?)(;.*)/,`$1${fontsizerule}$4`)				
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS);
+				BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_FONTSIZEUNIT'].default = VERSETEXTSTYLES_FONTSIZEUNIT;
 				setAttributes({ VERSETEXTSTYLES_FONTSIZEUNIT });
 			}
 
@@ -695,6 +747,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				let VERSETEXTSTYLES_TEXTCOLOR = color.hex;
 				let bbGetDynSS = jQuery('#bibleGetDynamicStylesheet').text();
 				jQuery('#bibleGetDynamicStylesheet').text(bbGetDynSS.replace(/\.bibleQuote\.results p\.versesParagraph \{ color: (?:.*?); \}/, '.bibleQuote.results p\.versesParagraph { color: ' + VERSETEXTSTYLES_TEXTCOLOR + '; }'));
+				BibleGetGlobal.BGETProperties['VERSETEXTSTYLES_TEXTCOLOR'].default = VERSETEXTSTYLES_TEXTCOLOR;
 				setAttributes({ VERSETEXTSTYLES_TEXTCOLOR });
 			}
 
