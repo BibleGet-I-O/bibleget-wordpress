@@ -1609,19 +1609,12 @@ class BibleGet_Customize
 	?>
 		<!--Customizer CSS-->
 		<?php $is_googlefont = false;
-		$BGETOPTIONS = get_option("BGET");
-		if(false === $BGETOPTIONS ){
-		    $BGETOPTIONS = [];
-		    $BGETPROPERTIES = new BGETPROPERTIES();
-		    foreach($BGETPROPERTIES->OPTIONS as $option => $array){
+		$BGETOPTIONS = get_option("BGET",[]);
+		$BGETPROPERTIES = new BGETPROPERTIES();
+		foreach($BGETPROPERTIES->OPTIONS as $option => $array){
+		    if(!isset($BGETOPTIONS[$option])){
 		        $BGETOPTIONS[$option] = $array['default'];
 		    }
-		}
-		else{
-		    // we shouldn't need to do typecasting
-		    // https://developer.wordpress.org/reference/functions/get_option/
-		    // says that scalar values will be returned as strings, but we are storing an array, not a scalar
-		    // so it is being serialized and unserialized according to correct type defined
 		}
 
 		$mod = $BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY'];

@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 6.4
+ * Version: 6.5
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -28,7 +28,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v6_4");
+define("BIBLEGETPLUGINVERSION", "v6_5");
 
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
@@ -204,19 +204,19 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
         if(isset($atts[$option])){
             switch($array["type"]){
                 case 'number':
-                    $atts[$option] = BibleGetCustomize::sanitize_float($atts[$option]);
+                    $atts[$option] = BibleGet_Customize::sanitize_float($atts[$option]);
                     break;
                 case 'integer':
                     $atts[$option] = absint($atts[$option]);
                     break;
                 case 'boolean':
-                    $atts[$option] = BibleGetCustomize::sanitize_boolean($atts[$option]);
+                    $atts[$option] = BibleGet_Customize::sanitize_boolean($atts[$option]);
                     break;
                 case 'string':
                     $atts[$option] = esc_html($atts[$option]);
                     break;
                 case 'array':
-                    $atts[$option] = BibleGetCustomize::sanitize_array($atts[$option]);
+                    $atts[$option] = BibleGet_Customize::sanitize_array($atts[$option]);
                     break;
             }
         }
@@ -686,7 +686,7 @@ function bibleGet_renderGutenbergBlock($atts)
                 }
             }
             //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
-            $a = get_option['BGET'];
+            $a = get_option('BGET');
             $optionsNoUpdateFromBlock = ['POPUP','QUERY','VERSION','PARAGRAPHSTYLES_FONTFAMILY'];
             foreach($atts as $key => $value){
                 if(!in_array($key,$optionsNoUpdateFromBlock)){
