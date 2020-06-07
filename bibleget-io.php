@@ -687,9 +687,9 @@ function bibleGet_renderGutenbergBlock($atts)
             }
             //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
             $a = get_option['BGET'];
-            $perBlockOptions = ['POPUP','QUERY','VERSION'];
+            $optionsNoUpdateFromBlock = ['POPUP','QUERY','VERSION','PARAGRAPHSTYLES_FONTFAMILY'];
             foreach($atts as $key => $value){
-                if(!in_array($key,$perBlockOptions)){
+                if(!in_array($key,$optionsNoUpdateFromBlock)){
                     $a[$key] = $value;
                 }
             }
