@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 6.3
+ * Version: 6.4
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -28,7 +28,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v6_3");
+define("BIBLEGETPLUGINVERSION", "v6_4");
 
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
@@ -686,7 +686,7 @@ function bibleGet_renderGutenbergBlock($atts)
                 }
             }
             //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
-            $a = [];
+            $a = get_option['BGET'];
             $perBlockOptions = ['POPUP','QUERY','VERSION'];
             foreach($atts as $key => $value){
                 if(!in_array($key,$perBlockOptions)){
@@ -1778,7 +1778,43 @@ function searchByKeyword(){
     curl_close($ch);
     wp_die();
 }
+
 add_action("wp_ajax_searchByKeyword", "searchByKeyword");
+
+function updateBGET(){
+    $options = $_POST['options'];
+    $BGET = get_option('BGET');
+    foreach($options as $option => $array){
+        if(!isset($array["value"]) || !isset($array["type"]) ){
+            return false;
+        }
+        $value = $array["value"];
+        switch($array["type"]){
+            case 'string':
+                $BGET[$option] = esc_html($array["value"]);
+                break;
+            case 'integer':
+                $BGET[$option] = intval($array["value"]);
+                break;
+            case 'number':
+                $BGET[$option] = filter_var($array["value"], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                break;
+            case 'boolean';
+                $BGET[$option] = is_bool($array["value"]) ? $array["value"] : $array["value"] === 'true';
+                break;
+            case 'array':
+                $BGET[$option] = is_array($array["value"]) ? array_map('esc_html',$array["value"]) : (strpos(",",$array["value"]) ? explode(",",$array["value"]) : []);
+                if(count($BGET[$option]) === 0 && $option == "VERSION"){ $BGET[$option] = ["NABRE"]; }
+                break;
+        }
+        $BGET[$option] = $value;
+        // TODO: we should probably do some sanitization to ensure correct type
+    }
+    return update_option('BGET',$BGET);
+}
+
+add_action("wp_ajax_updateBGET", "updateBGET");
+
 
 if (is_admin()) {
     $bibleget_settings_page = new BibleGetSettingsPage();

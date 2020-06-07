@@ -11,13 +11,26 @@ jQuery(document).ready(function($) {
 	}
 
 	jQuery("#versionselect").change(function() {
-		var fval = jQuery(this).val();
+		let fval = jQuery(this).val();
 		// console.log(fval);
-		if (fval !== null && fval.length > 0) {
-			jQuery("#favorite_version").val(fval.join(","));
-		} else {
-			jQuery("#favorite_version").val('');
+		if (fval === null || fval.length === 0) {
+			fval = ["NABRE"];
 		}
+		jQuery.ajax({
+			url: ajaxurl,
+			data: {action: 'updateBGET', options: { VERSION: {value: fval, type: 'array'} } },
+			method: 'POST',
+			beforeSend : function() {
+				jQuery('#bibleget_ajax_spinner').show();
+			},
+			complete : function() {
+				jQuery('#bibleget_ajax_spinner').hide();
+			},
+			success: function(){},
+			error: function(jqXHR, textStatus, errorThrown){
+				alert('BGET options not updated, error '+textStatus+': '+errorThrown);
+			}
+		});
 	});
 
 	jQuery("#bibleget-server-data-renew-btn").click(function() {

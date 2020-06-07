@@ -619,22 +619,29 @@ class BibleGetSettingsPage
 		}
 
 		$counter = ($this->versionsbylangcount + $this->versionlangscount);
-
+        /*
 		$selected = array();
 		if (isset($this->options['favorite_version']) && $this->options['favorite_version']) {
 			$selected = explode(",", $this->options['favorite_version']);
 		}
+		*/
 		$size = $counter < 10 ? $counter : 10;
 		echo '<select id="versionselect" size=' . $size . ' multiple>';
 
 		$langs = $this->versionsbylang["langs"];
 		$versionsbylang = $this->versionsbylang["versions"];
-
-		foreach ($langs as $lang) {
+        $BGET = get_option('BGET');
+        if(false === $BGET){
+            $BGET = array();
+        }
+        if( false === isset($BGET["VERSION"])){
+            $BGET["VERSION"] = ["NABRE"];
+        }
+        foreach ($langs as $lang) {
 			echo '<optgroup label="-' . $lang . '-">';
 			foreach ($versionsbylang[$lang] as $abbr => $value) {
 				$selectedstr = '';
-				if (in_array($abbr, $selected)) {
+				if (in_array($abbr, $BGET["VERSION"])) {
 					$selectedstr = " SELECTED";
 				}
 				echo '<option value="' . $abbr . '"' . $selectedstr . '>' . $abbr . ' — ' . $value["fullname"] . ' (' . $value["year"] . ')</option>';
@@ -643,7 +650,6 @@ class BibleGetSettingsPage
 		}
 		echo '</select>';
 		echo '<br /><i>'.__("In order to select multiple items, hold down CTRL key (Command key on Mac) while clicking items.","bibleget-io").'</i>';
-		echo '<input type="hidden" id="favorite_version" name="bibleget_settings[favorite_version]" value="" />';
 	}
 
 	public function googlefontsapikey_callback()
