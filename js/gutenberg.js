@@ -34,7 +34,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 							query = getAttributeValue('bibleget', 'query', text);
 						}
 
-						let version = getAttributeValue('bibleget', 'versions', text) || getAttributeValue('bibleget', 'versions', text) || "NABRE";
+						let version = getAttributeValue('bibleget', 'versions', text) || getAttributeValue('bibleget', 'version', text) || "NABRE";
 
 						let popup = getAttributeValue('bibleget', 'popup', text);
 

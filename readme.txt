@@ -116,7 +116,7 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 = 6.2 =
 * Better type checks on saved options when building default options
-* Ensure shortcodes will be rendered same as Gutenber blocks
+* Ensure shortcodes will be rendered same as Gutenberg blocks
 
 = 6.1 =
 * Fix typo in PHP update_option function
