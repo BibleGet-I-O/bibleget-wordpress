@@ -111,6 +111,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 == Changelog ==
 
+= 6.6 =
+* Fix sanitization function which was failing in some cases
+
 = 6.5 =
 * Fix error message : Illegal string offset 'PARAGRAPHSTYLES_FONTFAMILY' in options.php
 * Fix typo in PHP get_option function
@@ -311,6 +314,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 
 == Upgrade Notice ==
+
+= 6.6 =
+Versions prior to 5.9 must be updated to maintain compatibility with the BibleGet endpoint
 
 = 6.5 =
 Versions prior to 5.9 must be updated to maintain compatibility with the BibleGet endpoint

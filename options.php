@@ -1580,15 +1580,20 @@ class BibleGet_Customize
 	}
 
 	public static function sanitize_array($input){
-	    if(!is_array($input) && strpos(",",$input)){
-	        $input = explode(",",$input);
+	    if(!is_array($input)){
+	        if(strpos(",",$input)){
+	            $input = explode(",",$input);
+	        }
+	        else{
+	            $input = [$input];
+	        }
 	    }
 	    $newArr = [];
-		foreach($input as $key => $value){
-			$value = wp_filter_nohtml_kses($value);
-			$newArray[$key] = $value;
-		}
-		return $newArray;
+	    foreach($input as $key => $value){
+	        $value = wp_filter_nohtml_kses($value);
+	        $newArr[$key] = $value;
+	    }
+	    return $newArr;
 	}
 
 	public static function sanitize_float( $input ) {
@@ -2071,7 +2076,7 @@ class BGETPROPERTIES {
 				"type" => "integer"
 			],
 			"PARAGRAPHSTYLES_BORDERCOLOR" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERCOLOR"] : "#00AA00",
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BORDERCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BORDERCOLOR"] : "#0000FF",
 				"type" => "string"
 			],
 			"PARAGRAPHSTYLES_BORDERSTYLE" => [
@@ -2083,7 +2088,7 @@ class BGETPROPERTIES {
 				"type" => "integer"
 			],
 			"PARAGRAPHSTYLES_BACKGROUNDCOLOR" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BACKGROUNDCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BACKGROUNDCOLOR"] : '#efe9d5', //unit: px
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"PARAGRAPHSTYLES_BACKGROUNDCOLOR") ? $this->BGETOPTIONS["PARAGRAPHSTYLES_BACKGROUNDCOLOR"] : '#efece9',
 				"type" => "string"
 			],
 			"VERSIONSTYLES_BOLD" => [
@@ -2107,11 +2112,11 @@ class BGETPROPERTIES {
 				"type" => "string"
 			],
 			"VERSIONSTYLES_FONTSIZE" => [
-			    "default" => self::setAndIsNumber($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 10,
+			    "default" => self::setAndIsNumber($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSIONSTYLES_FONTSIZE"]) : 9,
 				"type" => "integer"
 			],
 			"VERSIONSTYLES_FONTSIZEUNIT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSIONSTYLES_FONTSIZEUNIT"] : 'px',
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSIONSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSIONSTYLES_FONTSIZEUNIT"] : 'em',
 				"type" => "string"
 			],
 			"VERSIONSTYLES_VALIGN" => [
@@ -2143,7 +2148,7 @@ class BGETPROPERTIES {
 				"type" => "integer"
 			],
 			"BOOKCHAPTERSTYLES_FONTSIZEUNIT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZEUNIT"] : 'px',
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"BOOKCHAPTERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["BOOKCHAPTERSTYLES_FONTSIZEUNIT"] : 'em',
 				"type" => "string"
 			],
 			"BOOKCHAPTERSTYLES_VALIGN" => [
@@ -2171,11 +2176,11 @@ class BGETPROPERTIES {
 				"type" => "string"
 			],
 			"VERSENUMBERSTYLES_FONTSIZE" => [
-			    "default" => self::setAndIsNumber($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 10,
+			    "default" => self::setAndIsNumber($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZE") ? intval($this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZE"]) : 6,
 				"type" => "integer"
 			],
 			"VERSENUMBERSTYLES_FONTSIZEUNIT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZEUNIT"] : 'px',
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSENUMBERSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSENUMBERSTYLES_FONTSIZEUNIT"] : 'em',
 				"type" => "string"
 			],
 			"VERSENUMBERSTYLES_VALIGN" => [
@@ -2207,7 +2212,7 @@ class BGETPROPERTIES {
 				"type" => "integer"
 			],
 			"VERSETEXTSTYLES_FONTSIZEUNIT" => [
-				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZEUNIT"] : 'px',
+				"default" => self::setAndNotNothing($this->BGETOPTIONS,"VERSETEXTSTYLES_FONTSIZEUNIT") ? $this->BGETOPTIONS["VERSETEXTSTYLES_FONTSIZEUNIT"] : 'em',
 				"type" => "string"
 			],
 			"VERSETEXTSTYLES_VALIGN" => [
