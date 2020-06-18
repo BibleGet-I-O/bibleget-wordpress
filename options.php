@@ -1095,21 +1095,18 @@ class BibleGet_Customize
 
 		/* Define bibleget_borderwidth setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'} = new stdClass();
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->title = __('Border width', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->controltype = 'range';
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERWIDTH]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_borderradius setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'} = new stdClass();
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->title = __('Border radius', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->controltype = 'range';
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERRADIUS]'}->section = 'bibleget_paragraph_style_options';
 
 		/* Define bibleget_paddingtopbottom setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'} = new stdClass();
-		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->title = __('Padding top / bottom', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGTOPBOTTOM]'}->choices = $margin_padding_vals;
@@ -1117,7 +1114,6 @@ class BibleGet_Customize
 
 		/* Define bibleget_paddingleftright setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'} = new stdClass();
-		/* translators: "px" refers to pixels as used in CSS rules, do not translate */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->title = __('Padding left / right', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_PADDINGLEFTRIGHT]'}->choices = $margin_padding_vals;
@@ -1125,7 +1121,6 @@ class BibleGet_Customize
 
 		/* Define bibleget_margintopbottom setting and control */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'} = new stdClass();
-		/* translators: "px" refers to the unit "pixels" as used in CSS rules, do not translate */
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->title = __('Margin top / bottom', "bibleget-io");
 		self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->controltype = 'range';
 		//self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_MARGINTOPBOTTOM]'}->choices = $margin_padding_vals;
@@ -1150,7 +1145,6 @@ class BibleGet_Customize
 		$bibleget_styles_general = new stdClass();
 
 		$bibleget_styles_general->FONT_SIZE = new stdClass();
-		/* translators: "pt" refers to points as used in CSS rules, do not translate */
 		$bibleget_styles_general->FONT_SIZE->title = __("Font size", "bibleget-io");
 		$bibleget_styles_general->FONT_SIZE->controltype = 'range';
 
