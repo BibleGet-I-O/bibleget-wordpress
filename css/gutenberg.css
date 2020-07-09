@@ -51,6 +51,61 @@
     margin-right: 9px;
 }
 
+#searchResultsContainer {
+	display: flex;
+	justify-content: space-around;
+}
+
+.ui-dialog #searchResultsContainer button {
+	background-color: #0091CD;
+	color: White;
+	border: 1px outset Blue;
+	padding: 6px 9px;
+	float: none;
+	position: static;
+	white-space: nowrap;
+	border-radius: 3px;
+}
+
+.ui-dialog #searchResultsContainer button:hover {
+	background-color: #007fb4; 
+}
+
+.ui-dialog #searchResultsContainer button:disabled,.ui-dialog #searchResultsContainer button:disabled:hover {
+    background-color: #cccccc;
+    border: 1px ridge lightgray;
+}
+
+.ui-dialog #searchResultsContainer button i.fa {
+  margin-right: 6px;
+}
+
+#searchResultsControlPanel {
+	min-width: 20%;
+	max-width: 25%;
+	margin-right: 23px;
+	padding-top: 23px;
+	border: 1px groove White;
+	text-align: center;
+	box-shadow: 10px 2px 10px Gray;
+}
+
+#searchResultsControlPanel .controlComponent {
+	margin: 33px 0px;
+}
+
+#searchResultsControlPanel .controlComponent label {
+	display: block;
+}
+
+#searchResultsControlPanel .controlComponent button {
+  margin: 10px 0px;
+}
+
+#searchResultsContents {
+  min-width: 75%;
+}
+
 #bibleGetSearchResultsTableContainer {
 	border: 1px solid #963;
 	overflow-y: auto;
@@ -59,7 +114,7 @@
 }
 
 #bibleGetSearchResultsTableContainer table {
-  width: 100%;
+ 	width: 100%;
 }
 
 #bibleGetSearchResultsTableContainer th, td { padding: 8px 16px; }
@@ -78,8 +133,13 @@
 }
 
 #bibleGetSearchResultsTableContainer tbody td {
-  border-bottom: 1px groove White;
-  background-color: #EFEFEF;
+ 	border-bottom: 1px groove White;
+ 	border-right: 1px groove White;
+ 	background-color: #EFEFEF;
+}
+
+#bibleGetSearchResultsTableContainer tbody td:last-child {
+	border-right: 0px;
 }
 
 #bibleGetSearchResultsTableContainer mark {

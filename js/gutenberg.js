@@ -753,8 +753,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 			function doKeywordSearch(notused){
 				
-				let keyword = $('.bibleGetSearch input').val().replace(/\W/g, ''); //remove non-word characters from keyword
-				
+				let keyword = $('.bibleGetSearch input').val().replace(/\W/g, ''), //remove non-word characters from keyword
+					$searchresults,
+					$searchresultsOrderedByReference;
 				if(keyword.length < 3){
 					alert(__('You cannot perform a search using less than three letters.','bibleget-io') );
 					return false;
@@ -812,38 +813,151 @@ const BGET = BibleGetGlobal.BGETConstants;
 									
 								}
 								else{
-									let BOOK = __('BOOK', 'bibleget-io');
-									let CHAPTER = __('CHAPTER', 'bibleget-io');
-									let VERSE = __('VERSE', 'bibleget-io');
-									let VERSETEXT = __('VERSE TEXT', 'bibleget-io');
+									let BOOK = __('BOOK', 'bibleget-io'),
+										CHAPTER = __('CHAPTER', 'bibleget-io'),
+										VERSE = __('VERSE', 'bibleget-io'),
+										VERSETEXT = __('VERSE TEXT', 'bibleget-io'),
+										ACTION = __('ACTION','bibleget-io'),
+										FILTER_BY_KEYWORD = __('Filter by keyword','bibleget-io'),
+										$searchresults = response,
+										$searchresultsOrderedByReference = JSON.parse(JSON.stringify(response)),
+										numResultsStr = response.results.length === 1 ? __('There is {n} result for the keyword {k} in the version {v}','bibleget-io').formatUnicorn({n: '<b>'+response.results.length+'</b>',k: '<b>'+response.info.keyword+'</b>',v: '<b>'+response.info.version+'</b>'}) : __('There are {n} results for the keyword {k} in the version {v}.', 'bibleget-io').formatUnicorn({n: '<b>'+response.results.length+'</b>',k: '<b>'+response.info.keyword+'</b>',v: '<b>'+response.info.version+'</b>'});
+										$searchresultsOrderedByReference.results.sort(function(a,b){ return a.booknum - b.booknum; });
 									let searchResultsHtmlMarkup = `
-									<div>${response.results.length > 1 ? __('There are {n} results', 'bibleget-io').formatUnicorn({n: response.results.length}) : __('There is 1 result','bibleget-io') }:</div>
-									<div id="bibleGetSearchResultsTableContainer">
-										<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable" id="SearchResultsTable">
-											<thead class="fixedHeader">
-												<tr class="alternateRow"><th>${BOOK}</th><th>${CHAPTER}</th><th>${VERSE}</th><th>${VERSETEXT}</th></tr>
-											</thead>
-											<tbody class="scrollContent">
-											</tbody>
-										</table>
-									</div>`;
-									let dlg = jQuery('<div>', { html: searchResultsHtmlMarkup }).appendTo('body').dialog({
-										open: function(){
+								    <div id="searchResultsContainer"> <!-- this is our flex container -->
+								      <div id="searchResultsControlPanel" class="searchResultsFlexChild">
+								        <div class="controlComponent">
+								          <label>${FILTER_BY_KEYWORD}<input type="text" id="keywordFilter" /></label>
+								          <button id="APPLY_FILTER"><i class="fa fa-filter" aria-hidden="true"></i><span class="label">${__('Apply filter','bibleget-io')}</span></button>
+								        </div>
+								        <div class="controlComponent">
+								          <button id="ORDER_RESULTS_BY"><i class="fa fa-sort" aria-hidden="true"></i><span class="label">${__('Order results by reference','bibleget-io')}</span></button>
+								        </div>
+								      </div>
+								      <div id="searchResultsContents" class="searchResultsFlexChild">
+										<div id="searchResultsInfo" style="font-weight:normal;">${numResultsStr}</div>
+										<div id="bibleGetSearchResultsTableContainer">
+											<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable" id="SearchResultsTable">
+												<thead class="fixedHeader">
+													<tr class="alternateRow"><th>${ACTION}</th><th>${BOOK} ${CHAPTER} ${VERSE}</th><th>${VERSETEXT}</th></tr>
+												</thead>
+												<tbody class="scrollContent">
+												</tbody>
+											</table>
+										</div> <!-- End tableContainer -->
+								      </div> <!-- END searchResultsContents  -->
+								    </div> <!-- END searchResultsContainer  -->`;
+									let $quotesArr,
+										dlg = jQuery('<div>', { html: searchResultsHtmlMarkup }).appendTo('body').dialog({
+											open: function(){
+												$quotesArr = $('.block-editor-block-inspector .bibleGetQuery').find('input').val().split(';');
+												let bookChapterVerse,
+													enabledState;
 												for (let $result of response.results) {
-													jQuery("#SearchResultsTable tbody").append('<tr><td>' + BibleGetGlobal.biblebooks.fullname[parseInt($result.book) - 1].split('|')[0] + '</td><td>' + $result.chapter + '</td><td>' + $result.verse + '</td><td>' + addMark($result.text, response.info.keyword) + '</td></tr>');
+													bookChapterVerse = BibleGetGlobal.biblebooks.fullname[parseInt($result.univbooknum) - 1].split('|')[0] + ' ' + $result.chapter + ':' + $result.verse;
+													enabledState = $quotesArr.includes(bookChapterVerse) ? ' disabled' : '';
+													jQuery("#SearchResultsTable tbody").append('<tr><td><button'+enabledState+'><i class="fa fa-plus" aria-hidden="true"></i>'+__('Insert','bibleget-io')+'</button><input type="hidden" class="searchResultJSON" value="'+encodeURIComponent(JSON.stringify($result))+'" /></td><td>' + bookChapterVerse + '</td><td>' + addMark($result.text, response.info.keyword) + '</td></tr>');
 												}
-										},
-										close: function () {
-											$(this).dialog('destroy').remove();
-										},
-										dialogClass: 'bibleGetSearchDlg',
-										position: {my:'center top',at:'center top'},
-										width: '80%'//,
-									});
-									dlg.data("uiDialog")._title = function (title) {
-										title.html(this.options.title);
-									};
-									dlg.dialog('option', 'title', '<span class="dashicons dashicons-code-standards"></span>' + __('Search results', 'bibleget-io'));
+												$('#searchResultsContainer').on('click','button',function(){
+									              //First check the context of the button that was clicked: control panel or searchResultsContents
+									              let $filterLabel,
+									                  $orderbyLabel,
+									                  $keywordFilter,
+									                  $ORDER_BY,
+									                  $FILTER_BY,
+									                  REFRESH = false;
+									              switch($(this).parents('.searchResultsFlexChild').attr('id')){
+									                case 'searchResultsControlPanel':
+									                  $orderbyLabel = $('#ORDER_RESULTS_BY').find('span.label');
+									                  if($orderbyLabel.text() == __('Order results by reference','bibleget-io') ){
+									                    $ORDER_BY = 'importance';
+									                  }
+									                  else if($orderbyLabel.text() == __('Order results by importance','bibleget-io') ){
+									                    $ORDER_BY = 'reference';
+									                  }
+									                  
+									                  $filterLabel = $('#APPLY_FILTER').find('span.label');
+									                  $keywordFilter = $('#keywordFilter').val() !== '' && $('#keywordFilter').val().length > 2 ? $('#keywordFilter').val() : '';
+									                  
+									                  switch( $(this).attr('id') ){
+									                    case 'ORDER_RESULTS_BY':
+									                      REFRESH = true;
+									                      if( $orderbyLabel.text() == __('Order results by reference','bibleget-io') ){
+									                        $ORDER_BY = 'reference';
+									                        $orderbyLabel.text(__('Order results by importance','bibleget-io'));
+									                      }
+									                      else{
+									                        $ORDER_BY = 'importance';
+									                        $orderbyLabel.text(__('Order results by reference','bibleget-io'));
+									                      }
+									                    break;
+									                    case 'APPLY_FILTER':
+									                      
+									                      if($filterLabel.text() == __('Apply filter','bibleget-io') ){
+									                        if($keywordFilter != '' && $keywordFilter.length > 2){
+									                          REFRESH = true;
+									                          $filterLabel.text(__('Remove filter','bibleget-io'));
+									                          $('#keywordFilter').prop('readonly',true);
+									                        }
+									                        else{
+									                          if($keywordFilter == ''){ alert('Cannot filter by an empty string!'); }
+									                          else if($keywordFilter.length < 3){ alert('Keyword must be at least three characters long'); }
+									                        }
+									                      }
+									                      else{
+									                        $('#keywordFilter').val('');
+									                        $keywordFilter = '';
+									                        REFRESH = true;
+									                        $filterLabel.text(__('Apply filter','bibleget-io'));
+									                        $('#keywordFilter').prop('readonly',false);
+									                      }
+									                    break;
+									                  }
+									                  
+									                  if(REFRESH){ refreshTable({ORDER_BY: $ORDER_BY,FILTER_BY: $keywordFilter},$searchresults,$searchresultsOrderedByReference); }
+									                  
+									                break;
+									                case 'searchResultsContents':
+									                  //alert('button was clicked! it is in the context of the searchResultsContents');
+									                  //alert($(this).next().prop('tagName') );
+									                  if($(this).next('input[type=hidden]').length != 0){
+									                    //showSpinner();
+														let currentRef = $(this).parent('td').next('td').text();
+														if($quotesArr.includes(bookChapterVerse) === false){ 
+															$(this).addClass('disabled').prop('disabled',true);
+															let $inputval = $(this).next('input[type=hidden]').val();
+															let $resultsStr = decodeURIComponent($inputval);
+															//alert($resultsStr);
+															let $result = JSON.parse($resultsStr);
+															let $resultsObj = {};
+															$resultsObj.results = [$result];
+															$resultsObj.errors = $searchresults.errors;
+															$resultsObj.info = $searchresults.info;
+															$quotesArr.push(currentRef); 
+															$('.block-editor-block-inspector .bibleGetQuery').find('input').val($quotesArr.join(';'));
+															changeQuery($quotesArr.join(';'));
+														}
+									                  }
+									                  else{
+									                    alert('could not select next hidden input');
+									                  }
+									                break;
+									              }
+													
+												});
+											},
+											close: function () {
+												$('#searchResultsContainer').off('click');
+												$(this).dialog('destroy').remove();
+											},
+											dialogClass: 'bibleGetSearchDlg',
+											position: {my:'center top',at:'center top'},
+											width: '80%'//,
+										});
+										dlg.data("uiDialog")._title = function (title) {
+											title.html(this.options.title);
+										};
+										dlg.dialog('option', 'title', '<span class="dashicons dashicons-code-standards"></span>' + __('Search results', 'bibleget-io'));
 								}
 							}
 						},
@@ -853,6 +967,67 @@ const BGET = BibleGetGlobal.BGETConstants;
 					});
 				}
 			}
+
+          function refreshTable(options,$searchresults,$searchresultsOrderedByReference){
+            let counter = 0,
+				enabledState,
+				bookChapterVerse,
+				$quotesArr = $('.block-editor-block-inspector .bibleGetQuery').find('input').val().split(';');
+            jQuery("#SearchResultsTable tbody").empty();
+            switch(options.ORDER_BY){
+              case 'importance':
+                for(let $result of $searchresults.results){
+                  bookChapterVerse = BibleGetGlobal.biblebooks.fullname[parseInt($result.univbooknum) - 1].split('|')[0]+' '+$result.chapter+':'+$result.verse;
+				  enabledState = $quotesArr.includes(bookChapterVerse) ? ' disabled' : '';
+				  if(options.FILTER_BY == ''){
+                    jQuery("#SearchResultsTable tbody").append('<tr><td><button'+enabledState+'><i class="fa fa-plus" aria-hidden="true"></i>'+__('Insert','bibleget-io')+'</button><input type="hidden" class="searchResultJSON" value="'+encodeURIComponent(JSON.stringify($result))+'" /></td><td>'+bookChapterVerse+'</td><td>'+addMark($result.text,$searchresults.info.keyword)+'</td></tr>');
+                  }
+                  else{
+                    let $filter = new RegExp(options.FILTER_BY,"i");
+                    if( $filter.test($result.text) ){
+                      jQuery("#SearchResultsTable tbody").append('<tr><td><button'+enabledState+'><i class="fa fa-plus" aria-hidden="true"></i>'+__('Insert','bibleget-io')+'</button><input type="hidden" class="searchResultJSON" value="'+encodeURIComponent(JSON.stringify($result))+'" /></td><td>'+bookChapterVerse+'</td><td>'+addMark($result.text,[$searchresults.info.keyword,options.FILTER_BY])+'</td></tr>');
+                      ++counter;
+                    }
+                  }
+                }
+                break;
+              case 'reference':
+                for(let $result of $searchresultsOrderedByReference.results){
+                  bookChapterVerse = BibleGetGlobal.biblebooks.fullname[parseInt($result.univbooknum) - 1].split('|')[0]+' '+$result.chapter+':'+$result.verse;
+				  enabledState = $quotesArr.includes(bookChapterVerse) ? ' disabled' : '';
+                  if(options.FILTER_BY == ''){
+                    jQuery("#SearchResultsTable tbody").append('<tr><td><button'+enabledState+'><i class="fa fa-plus" aria-hidden="true"></i>'+__('Insert','bibleget-io')+'</button><input type="hidden" class="searchResultJSON" value="'+encodeURIComponent(JSON.stringify($result))+'" /></td><td>'+bookChapterVerse+'</td><td>'+addMark($result.text,$searchresults.info.keyword)+'</td></tr>');
+                  }
+                  else{
+                    let $filter = new RegExp(options.FILTER_BY,"i");
+                    if( $filter.test($result.text) ){
+                      jQuery("#SearchResultsTable tbody").append('<tr><td><button'+enabledState+'><i class="fa fa-plus" aria-hidden="true"></i>'+__('Insert','bibleget-io')+'</button><input type="hidden" class="searchResultJSON" value="'+encodeURIComponent(JSON.stringify($result))+'" /></td><td>'+bookChapterVerse+'</td><td>'+addMark($result.text,[$searchresults.info.keyword,options.FILTER_BY])+'</td></tr>');
+                      ++counter;
+                    }
+                  }
+                }
+                break;
+            }
+            if(options.FILTER_BY == ''){
+              if($searchresults.results.length === 1){
+                numResultsStr = __('There is {n} result for the keyword {k} in the version {v}.','bibleget-io');
+              }
+              else{
+                numResultsStr = __('There are {n} results for the keyword {k} in the version {v}.','bibleget-io');
+              }
+              jQuery('#searchResultsInfo').html(numResultsStr.formatUnicorn({n:'<b>'+$searchresults.results.length+'</b>',k:'<b>'+$searchresults.info.keyword+'</b>',v:'<b>'+$searchresults.info.version+'</b>'}));
+            }
+            else{
+              if(counter == 1){
+                numResultsStr = __('There is {n} result for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
+              }
+              else if(counter > 1){
+                numResultsStr = __('There are {n} results for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
+              }
+              jQuery('#searchResultsInfo').html(numResultsStr.formatUnicorn({n:'<b>'+counter+'</b>',k:'<b>'+$searchresults.info.keyword+'</b>',f:'<b>'+options.FILTER_BY+'</b>',v:'<b>'+$searchresults.info.version+'</b>'}));
+            }
+          }
+
 
 			function doNothing(value){
 				//do nothing
@@ -892,6 +1067,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 									/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
 									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
 									label: __('Bible Reference', 'bibleget-io'), 
+									className: 'bibleGetQuery',
 									onChange: changeQuery,
 								})
 							),
@@ -1628,7 +1804,10 @@ String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 	};
 
 let addMark = function (text, keyword) {
-	return text.replace(new RegExp("("+keyword+")", "gi"), '<mark>$1</mark>');
+    if(typeof keyword === 'string'){
+      keyword = [keyword];
+    }
+    return text.replace(new RegExp("("+keyword.join('|')+")", "gi"),'<mark>$1</mark>');
 };
 
 const getAttributeValue = function (tag, att, content) {

@@ -5,7 +5,7 @@ Tags: bible,shortcode,quote,citation,verses,bibbia,citazione,versetti,biblia,cit
 Requires at least: 5.0
 Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 6.6
+Stable tag: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,11 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 6.7 =
+* Fix search results for Bible versions to work with the latest updates to the BibleGet search endpoint
+* Add filter and order functionality to the search results window
+* Add possibility of inserting Bible verses from the search results into the Gutenberg block directly from the search results window
 
 = 6.6 =
 * Fix sanitization function which was failing in some cases
@@ -314,6 +319,9 @@ There was recently an update to the BibleGet service endpoint which slightly cha
 
 
 == Upgrade Notice ==
+
+= 6.7 =
+Must update in order to maintain compatibility with the BibleGet search endpoint
 
 = 6.6 =
 Versions prior to 5.9 must be updated to maintain compatibility with the BibleGet endpoint
