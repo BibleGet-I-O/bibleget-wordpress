@@ -14,6 +14,22 @@ const BGET = BibleGetGlobal.BGETConstants;
 	const { InspectorControls } = editor; //Block inspector wrapper
 	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker } = components; //WordPress form inputs and server-side renderer
 
+
+	const colorizeIco = createElement('svg', { 
+		'aria-hidden': 'true',
+		focusable: 'false',
+		width: '20', 
+		height: '20',
+		role: 'img',
+		'viewBox': '0 0 22 22',
+		xmlns: "http://www.w3.org/2000/svg"
+	}, createElement('path', {
+		d: "M0 0h24v24H0V0z",
+		fill: "none"
+	} ), createElement('path', {
+		d: "M17.66 5.41l.92.92-2.69 2.69-.92-.92 2.69-2.69M17.67 3c-.26 0-.51.1-.71.29l-3.12 3.12-1.93-1.91-1.41 1.41 1.42 1.42L3 16.25V21h4.75l8.92-8.92 1.42 1.42 1.41-1.41-1.92-1.92 3.12-3.12c.4-.4.4-1.03.01-1.42l-2.34-2.34c-.2-.19-.45-.29-.7-.29zM6.92 19L5 17.08l8.06-8.06 1.92 1.92L6.92 19z"
+	}) );
+
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
 		category: 'widgets',
@@ -1352,14 +1368,14 @@ const BGET = BibleGetGlobal.BGETConstants;
 								* Any change to the source ENUMS in PHP will be reflected here automatically, no manual intervention required
 								*/ 
 							}),
-							createElement(PanelBody, { title: __('Border color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Border color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.PARAGRAPHSTYLES_BORDERCOLOR,
 									disableAlpha: false,
 									onChangeComplete: changeParagraphStyleBorderColor
 								})
 							),
-							createElement(PanelBody, { title: __('Background color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Background color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.PARAGRAPHSTYLES_BACKGROUNDCOLOR,
 									disableAlpha: false,
@@ -1488,7 +1504,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								onChange: changeBibleVersionFontSizeUnit,
 								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
 							}),
-							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.VERSIONSTYLES_TEXTCOLOR,
 									disableAlpha: false,
@@ -1556,7 +1572,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								onChange: changeBookChapterFontSizeUnit,
 								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
 							}),
-							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.BOOKCHAPTERSTYLES_TEXTCOLOR,
 									disableAlpha: false,
@@ -1650,7 +1666,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								onChange: changeVerseNumberFontSizeUnit,
 								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
 							}),
-							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.VERSENUMBERSTYLES_TEXTCOLOR,
 									disableAlpha: false,
@@ -1718,7 +1734,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								onChange: changeVerseTextFontSizeUnit,
 								help: __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)','bibleget-io')
 							}),
-							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: 'color-picker' },
+							createElement(PanelBody, { title: __('Font color','bibleget-io'), initialOpen: false, icon: colorizeIco },
 								createElement(ColorPicker, {
 									color: attributes.VERSETEXTSTYLES_TEXTCOLOR,
 									disableAlpha: false,
@@ -1852,3 +1868,25 @@ const getInnerContent = function (tag, content) {
 	return result[1];
 };
 
+let searchBoxRendered = setInterval(
+	function(){
+		if( jQuery('.bibleGetSearchBtn').length > 0 ){
+			clearInterval(searchBoxRendered);
+			//if we find a bibleGetSearchBtn element 
+			//and it's still an immediate sibling of a ".bibleGetSearch" element
+			//rather than it's input child, then we move it
+			if (jQuery('.bibleGetSearchBtn').length > 0 && jQuery('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch') ){
+				jQuery('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
+				jQuery('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
+				//console.log('we moved the bibleGetSearchBtn');
+			}
+			jQuery('.bibleGetSearch input').on('focus',function(){
+				jQuery('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
+			});
+			jQuery('.bibleGetSearch input').on('blur', function () {
+				jQuery('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color":"#006395" });
+			});
+		}
+	},
+	10
+);
