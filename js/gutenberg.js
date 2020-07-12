@@ -814,7 +814,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 							//console.log(results);
 							if (response.hasOwnProperty("results") && typeof response.results === 'object') {							
 								if(response.results.length === 0){
-									
+									/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
 									let dlgNoResults = jQuery('<div>', { html: '<h3>'+__('There are no search results for {k} in the version {v}','bibleget-io').formatUnicorn({k:('&lt;'+response.info.keyword+'&gt;'),v:response.info.version}) +'</h3>' }).appendTo('body').dialog({
 										close: function () {
 											$(this).dialog('destroy').remove();
@@ -837,6 +837,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 										FILTER_BY_KEYWORD = __('Filter by keyword','bibleget-io'),
 										$searchresults = response,
 										$searchresultsOrderedByReference = JSON.parse(JSON.stringify(response)),
+										/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
 										numResultsStr = response.results.length === 1 ? __('There is {n} result for the keyword {k} in the version {v}','bibleget-io').formatUnicorn({n: '<b>'+response.results.length+'</b>',k: '<b>'+response.info.keyword+'</b>',v: '<b>'+response.info.version+'</b>'}) : __('There are {n} results for the keyword {k} in the version {v}.', 'bibleget-io').formatUnicorn({n: '<b>'+response.results.length+'</b>',k: '<b>'+response.info.keyword+'</b>',v: '<b>'+response.info.version+'</b>'});
 										$searchresultsOrderedByReference.results.sort(function(a,b){ return a.booknum - b.booknum; });
 									let searchResultsHtmlMarkup = `
@@ -1026,19 +1027,23 @@ const BGET = BibleGetGlobal.BGETConstants;
             }
             if(options.FILTER_BY == ''){
               if($searchresults.results.length === 1){
-                numResultsStr = __('There is {n} result for the keyword {k} in the version {v}.','bibleget-io');
+                /* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
+				numResultsStr = __('There is {n} result for the keyword {k} in the version {v}.','bibleget-io');
               }
               else{
-                numResultsStr = __('There are {n} results for the keyword {k} in the version {v}.','bibleget-io');
+                /* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
+				numResultsStr = __('There are {n} results for the keyword {k} in the version {v}.','bibleget-io');
               }
               jQuery('#searchResultsInfo').html(numResultsStr.formatUnicorn({n:'<b>'+$searchresults.results.length+'</b>',k:'<b>'+$searchresults.info.keyword+'</b>',v:'<b>'+$searchresults.info.version+'</b>'}));
             }
             else{
               if(counter == 1){
-                numResultsStr = __('There is {n} result for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
+                /* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
+				numResultsStr = __('There is {n} result for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
               }
               else if(counter > 1){
-                numResultsStr = __('There are {n} results for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
+                /* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
+				numResultsStr = __('There are {n} results for the keyword {k} filtered by {f} in the version {v}.','bibleget-io');
               }
               jQuery('#searchResultsInfo').html(numResultsStr.formatUnicorn({n:'<b>'+counter+'</b>',k:'<b>'+$searchresults.info.keyword+'</b>',f:'<b>'+options.FILTER_BY+'</b>',v:'<b>'+$searchresults.info.version+'</b>'}));
             }
@@ -1080,7 +1085,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 								//A simple text control for bible quote query
 								createElement(TextControl, {
 									value: attributes.QUERY,
-									/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
+									
 									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
 									label: __('Bible Reference', 'bibleget-io'), 
 									className: 'bibleGetQuery',
@@ -1102,7 +1107,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 									type: 'text',
 									//value: '',
 									placeholder: __('e.g. Creation', 'bibleget-io'),
-									help: __('You can not choose more than one Bible version when searching by keyword.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
+									help: __('You cannot choose more than one Bible version when searching by keyword.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
 									label: __('Search for Bible quotes by keyword', 'bibleget-io'),
 									className: 'bibleGetSearch',
 									onChange: doNothing
