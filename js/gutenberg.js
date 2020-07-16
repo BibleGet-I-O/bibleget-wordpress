@@ -1874,18 +1874,25 @@ const getInnerContent = function (tag, content) {
 };
 
 
-let searchBoxRendered;
+let searchBoxRendered = null;
 
 let startFixBibleGetSearchBtn = function(){
-	searchBoxRendered = setInterval(
-		fixBibleGetSearchBtn,
-		10
-	);
+	//console.log(this);
+	setTimeout(function(){
+		if(jQuery('.getBibleQuotePanel').hasClass('is-opened')){
+			//console.log('panel was opened, now starting fix for search button...');
+			searchBoxRendered = setInterval(
+				fixBibleGetSearchBtn,
+				10
+			);	
+		}	
+	},10);
 }
 
 let fixBibleGetSearchBtn = function(){
 	if( jQuery('.bibleGetSearchBtn').length > 0 ){
 		clearInterval(searchBoxRendered);
+		searchBoxRendered = null;
 		//if we find a bibleGetSearchBtn element 
 		//and it's still an immediate sibling of a ".bibleGetSearch" element
 		//rather than it's input child, then we move it
@@ -1900,6 +1907,9 @@ let fixBibleGetSearchBtn = function(){
 		jQuery('.bibleGetSearch input').on('blur', function () {
 			jQuery('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color":"#006395" });
 		});
+	}
+	else{
+		//console.log('looking for .bibleGetSearchBtn...');
 	}
 };
 
