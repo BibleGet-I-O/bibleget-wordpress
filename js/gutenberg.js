@@ -1069,7 +1069,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				}),
 				createElement(Fragment, {},
 					createElement(InspectorControls, {},
-						createElement(PanelBody, { title: __('Get Bible quote', 'bibleget-io'), initialOpen: true, icon: 'download' },
+						createElement(PanelBody, { title: __('Get Bible quote', 'bibleget-io'), initialOpen: true, icon: 'download', className: 'getBibleQuotePanel', onToggle: startFixBibleGetSearchBtn },
 							createElement(PanelRow, {},
 								//Select version to quote from
 								createElement(SelectControl, {
@@ -1873,25 +1873,34 @@ const getInnerContent = function (tag, content) {
 	return result[1];
 };
 
-let searchBoxRendered = setInterval(
-	function(){
-		if( jQuery('.bibleGetSearchBtn').length > 0 ){
-			clearInterval(searchBoxRendered);
-			//if we find a bibleGetSearchBtn element 
-			//and it's still an immediate sibling of a ".bibleGetSearch" element
-			//rather than it's input child, then we move it
-			if (jQuery('.bibleGetSearchBtn').length > 0 && jQuery('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch') ){
-				jQuery('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
-				jQuery('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
-				//console.log('we moved the bibleGetSearchBtn');
-			}
-			jQuery('.bibleGetSearch input').on('focus',function(){
-				jQuery('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
-			});
-			jQuery('.bibleGetSearch input').on('blur', function () {
-				jQuery('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color":"#006395" });
-			});
+
+let searchBoxRendered;
+
+let startFixBibleGetSearchBtn = function(){
+	searchBoxRendered = setInterval(
+		fixBibleGetSearchBtn,
+		10
+	);
+}
+
+let fixBibleGetSearchBtn = function(){
+	if( jQuery('.bibleGetSearchBtn').length > 0 ){
+		clearInterval(searchBoxRendered);
+		//if we find a bibleGetSearchBtn element 
+		//and it's still an immediate sibling of a ".bibleGetSearch" element
+		//rather than it's input child, then we move it
+		if (jQuery('.bibleGetSearchBtn').length > 0 && jQuery('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch') ){
+			jQuery('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
+			jQuery('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
+			//console.log('we moved the bibleGetSearchBtn');
 		}
-	},
-	10
-);
+		jQuery('.bibleGetSearch input').on('focus',function(){
+			jQuery('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
+		});
+		jQuery('.bibleGetSearch input').on('blur', function () {
+			jQuery('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color":"#006395" });
+		});
+	}
+};
+
+startFixBibleGetSearchBtn();
