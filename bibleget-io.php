@@ -184,6 +184,9 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
     if(isset($atts["versions"])){
         $atts["version"] = explode(",", $atts["versions"]);
     }
+    else if(isset($atts["version"])){
+        $atts["version"] = explode(",", $atts["version"]);
+    }
 
     $vversions = get_option("bibleget_versions", array());
     if (count($vversions) < 1) {
