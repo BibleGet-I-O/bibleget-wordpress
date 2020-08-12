@@ -21,16 +21,16 @@ Also available is a shortcode `[bibleget]` that you can use to insert Bible quot
 The text of the Bible quotes is retrieved from the BibleGet API *[https://query.bibleget.io](https://query.bibleget.io "BibleGet API endpoint")*.
 
 **Sample usage of the shortcode:** 
-  - `[bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"]`
-  - `[bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"]` 
+* `[bibleget query="Exodus 19:5-6,8;20:1-17" version="CEI2008"]`
+* `[bibleget query="Matthew 1:1-10,12-15" versions="NVBSE,NABRE"]` 
 
 It is also possible to place the reference for the desired Bible quote in the contents of the shortcode:
-  - `[bibleget version="NABRE"]John 3:16;1 John 4:7-8[/bibleget]`
+* `[bibleget version="NABRE"]John 3:16;1 John 4:7-8[/bibleget]`
 
 The Plugin also has a settings page **“BibleGet I/O”** under **“Settings”** in the Administration area, where you can choose your preferred Bible versions from those available on the BibleGet server so that you don’t have to use the `version` or `versions` parameter every time. 
 After you have made your choices in the settings area, remember to click on **“Save”**! 
 Once the preferred version is set you can simply use:
-  - `[bibleget query=“1 Cor 13”]` 
+* `[bibleget query=“1 Cor 13”]` 
 
 The style settings are customizable using the **Wordpress Customizer**, so you can make the Bible quotes fit into the style of your own blog / WordPress website.
 
@@ -62,26 +62,26 @@ _________
 The `query` parameter must contain a Bible reference formulated according to the standard notation for Bible citations (see [Bible citation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation") on Wikipedia).
 Two different notations can be used, the English style notation and the International style notation.
 **ENGLISH NOTATION:**
-  - “:” is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
+* “:” is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
 
-  - “-” is the from – to separator, and it can be used in one of three ways:
+* “-” is the from – to separator, and it can be used in one of three ways:
 
-      1. from chapter to chapter: “15-16″ means “from chapter 15 to chapter 16”.
-      2. from chapter,verse to verse (of the same chapter): “15:1-5” means “chapter 15, from verse 1 to verse 5”.
-      3. from chapter,verse to chapter,verse “15:1-16:5” means “from chapter 15,verse 1 to chapter 16,verse 5”.
+    1. from chapter to chapter: “15-16″ means “from chapter 15 to chapter 16”.
+    2. from chapter,verse to verse (of the same chapter): “15:1-5” means “chapter 15, from verse 1 to verse 5”.
+    3. from chapter,verse to chapter,verse “15:1-16:5” means “from chapter 15,verse 1 to chapter 16,verse 5”.
 
-  - “,” is the separator between one verse and another. “15:5,7,9” means “chapter 15,verse 5 then verse 7 then verse 9”.
+* “,” is the separator between one verse and another. “15:5,7,9” means “chapter 15,verse 5 then verse 7 then verse 9”.
 
-  - “;” is the separator between one query and another. “15:5-7;16:3-9,11-13” means “chapter 15, verses 5 to 7; then chapter 16, verses 3 to 9 and verses 11 to 13”.
+* “;” is the separator between one query and another. “15:5-7;16:3-9,11-13” means “chapter 15, verses 5 to 7; then chapter 16, verses 3 to 9 and verses 11 to 13”.
 
 **INTERNATIONAL NOTATION:**
-  - “,” is the chapter - verse separator. “15,5” means “chapter 15, verse 5”.
+* “,” is the chapter - verse separator. “15,5” means “chapter 15, verse 5”.
    
-  - “-” same as English notation
+* “-” same as English notation
    
-  - “.” is the separator between one verse and another. “15,5.7.9” means “chapter 15,verse 5 then verse 7 then verse 9”.
+* “.” is the separator between one verse and another. “15,5.7.9” means “chapter 15,verse 5 then verse 7 then verse 9”.
    
-  - “;” same as English notation
+* “;” same as English notation
    
 Either notation can be used, however they cannot be mixed within the same query.
 
