@@ -12,23 +12,9 @@ const BGET = BibleGetGlobal.BGETConstants;
 	const { createElement, Fragment } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
-	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker } = components; //WordPress form inputs and server-side renderer
+	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker, Dashicon } = components; //WordPress form inputs and server-side renderer
 
-
-	const colorizeIco = createElement('svg', { 
-		'aria-hidden': 'true',
-		focusable: 'false',
-		width: '20', 
-		height: '20',
-		role: 'img',
-		'viewBox': '0 0 22 22',
-		xmlns: "http://www.w3.org/2000/svg"
-	}, createElement('path', {
-		d: "M0 0h24v24H0V0z",
-		fill: "none"
-	} ), createElement('path', {
-		d: "M17.66 5.41l.92.92-2.69 2.69-.92-.92 2.69-2.69M17.67 3c-.26 0-.51.1-.71.29l-3.12 3.12-1.93-1.91-1.41 1.41 1.42 1.42L3 16.25V21h4.75l8.92-8.92 1.42 1.42 1.41-1.41-1.92-1.92 3.12-3.12c.4-.4.4-1.03.01-1.42l-2.34-2.34c-.2-.19-.45-.29-.7-.29zM6.92 19L5 17.08l8.06-8.06 1.92 1.92L6.92 19z"
-	}) );
+	const colorizeIco = createElement(Dashicon, { icon: 'color-picker' } );
 
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
@@ -829,11 +815,17 @@ const BGET = BibleGetGlobal.BGETConstants;
 									
 								}
 								else{
+									/* translators: this string is capitalized because it is the head of a column in a table */
 									let BOOK = __('BOOK', 'bibleget-io'),
+										/* translators: this string is capitalized because it is the head of a column in a table */
 										CHAPTER = __('CHAPTER', 'bibleget-io'),
+										/* translators: this string is capitalized because it is the head of a column in a table */
 										VERSE = __('VERSE', 'bibleget-io'),
+										/* translators: this string is capitalized because it is the head of a column in a table */
 										VERSETEXT = __('VERSE TEXT', 'bibleget-io'),
+										/* translators: this string is capitalized because it is the head of a column in a table */
 										ACTION = __('ACTION','bibleget-io'),
+										/* translators: this string is capitalized because it is the head of a column in a table */
 										FILTER_BY_KEYWORD = __('Filter by keyword','bibleget-io'),
 										$searchresults = response,
 										$searchresultsOrderedByReference = JSON.parse(JSON.stringify(response)),

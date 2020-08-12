@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 6.9
+ * Version: 7.0
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -28,12 +28,10 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v6_9");
+define("BIBLEGETPLUGINVERSION", "v7_0");
 
 if (!defined('ABSPATH')) {
-    header('Status: 403 Forbidden');
-    header('HTTP/1.1 403 Forbidden');
-    exit();
+    die("You cannot access this file directly.");
 }
 
 define("TRANSIENT_PREFIX","bibleget_");
@@ -621,15 +619,19 @@ function bibleGetGutenbergScripts($hook)
         foreach( $wp_styles->queue as $style ){
             if(strpos($wp_styles->registered[$style]->src,'fontawesome')){
                 $isFontAwesomeEnqueued = true;
+                break;
             }
             else if(strpos($wp_styles->registered[$style]->src,'font-awesome')){
                 $isFontAwesomeEnqueued = true;
+                break;
             }
             else if(strpos($wp_styles->registered[$style]->handle,'fontawesome')){
                 $isFontAwesomeEnqueued = true;
+                break;
             }
             else if(strpos($wp_styles->registered[$style]->handle,'font-awesome')){
                 $isFontAwesomeEnqueued = true;
+                break;
             }
         }
         if(!$isFontAwesomeEnqueued){

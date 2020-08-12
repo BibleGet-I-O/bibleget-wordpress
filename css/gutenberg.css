@@ -30,7 +30,7 @@
 }
 
 .bibleGetSearch input {
-    width: 80%;
+    width: 80% !important;
     /* height: 2.8em;*/
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
