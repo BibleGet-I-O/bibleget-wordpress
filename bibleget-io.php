@@ -997,7 +997,7 @@ function bibleGetQueryServer($finalquery)
         // $output .= "<br /><br />Effettuate ".$count1." e ".$count2." sostituzioni.";
 
         $matches = null;
-        if (preg_match_all("/<div class=\"errors\" id=\"errors\">.*?<\/div>/s", $output, $matches)) {
+        if (preg_match_all("/<div class=\"errorsTbl\" id=\"errorsTbl\">.*?<\/div>/s", $output, $matches)) {
             // capture table of error messages, and turn it into notices for backend
             $errorshtml = new DOMDocument();
             $errorshtml->loadHTML("<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>" . $matches[0][0] . "</body>");
