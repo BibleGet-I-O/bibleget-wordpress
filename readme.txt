@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 7.0
+Stable tag: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,9 +116,10 @@ If you do not want to wait seven days or until the cache expires, there is a new
 A word of caution however: the more recent updates to the BibleGet service endpoint have started imposing hard limits on the number of requests that can be issued from any given domain, IP address or referer. No more than 30 requests for one same Bible quote can be issued in a two day period, and no more than 100 requests for different Bible quotes can be issued in a two day period. If you have many Bible quotes on your website and you risk hitting the limit, it may be best not to flush the cache all at once but rather wait out the seven days until the cache expires.  
 
 = Sometimes the Bible quote block is giving an error 'Error loading block: The response is not a valid JSON response.' =
-If you sometimes see this error, one possible situation is that your server configuration needs to allow for a larger buffer for proxy requests. You can check that that is the case if you open your browser's Inspector Tools (for example CTRL-SHIFT-I in Google Chrome) and you see a failed GET request by the api-fetch.min.js script to a wp-json endpoint something like this: **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**
-You can further inspect the *Network* tab of the browser's Inspector Tools (this may require reloading the page and retrying the request). If you see a similar request in the Network tab with a response of '502 Bad Gateway', this could be an indication that you may need a larger buffer for your server. 
-If for example you have an nginx server, you may need to edit your **/etc/nginx/nginx.conf** and set 'proxy_buffer_size' to a larger value (see for example [this thread](https://talk.plesk.com/threads/fpm-buffer-settings-and-proxy-buffer.344813/ "fpm buffer settings and proxy buffer")).
+If you sometimes see this error, one possible situation is that the server configuration is not able to handle large GET requests. Since the Bible quote block has many styling options, the function that renders the block every time a change needs to send all of the data from the styling options to the server in order for the render to complete successfully. However requests of type GET only allow for so much data in the request URL. You can check if this is the actual problem you are encountering by opening your browser's Inspector Tools (for example CTRL-SHIFT-I in Google Chrome) and checking if you see a failed GET request by the api-fetch.min.js script to a wp-json endpoint something like this: **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**
+You can further inspect the *Network* tab of the browser's Inspector Tools (this may require reloading the page and retrying the request). If you see a similar request in the Network tab with a response of '502 Bad Gateway', this could be an indication that your server is hitting the buffer limit for GET requests. 
+To fix this, POST requests need to be made instead of GET requests, however this functionality has only been introduced in Gutenberg v8.8, released August 19th 2020. Therefore the only to fix this is to install the Gutenberg plugin with a minimum version of 8.8. This functionality will be included one of the next releases of WordPress.
+To check if the issue is fixed, after installing the Gutenberg plugin again open the browser's Inspector Tools, open the *Network* tab, then create a new Bible quote block. You can check the request method used in the request by the `api-fetch.min.js` script to **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**, under `Headers -> General -> Request Method`, it should now show `POST`.
 
 = I'm not able to use some options in the Gutenberg block such as positioning of the Bible version =
 There was recently an update to the BibleGet I/O API which slightly changed the structure of the html that comprises the Bible quotes. It is necessary to update the plugin to v5.9 in order to be compatible with these changes. 
@@ -134,6 +135,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 7.1 =
+* use `POST` requests for the ServerSideRender component if available (Gutenberg 8.8 plugin required)
 
 = 7.0 =
 * Compatibility with WordPress 5.5
@@ -353,6 +357,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 7.1 =
+Fixes some possible problems with the Bible quote block by changing the API method from GET to POST. Requires Gutenberg plugin v8.8
 
 = 7.0 =
 Compatibility with WordPress 5.5
