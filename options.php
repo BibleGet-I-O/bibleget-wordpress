@@ -1802,6 +1802,7 @@ class BibleGet_Customize
 			//$linespacing_verses = get_theme_mod('linespacing_verses', self::$bibleget_style_settings->linespacing_verses->dfault);
 			self::generate_options_css('.bibleQuote.results p.versesParagraph', 'line-height', $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em');
 			$linespacing_verses = $BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em';
+			$poi_linespacing = ($BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'] + 1.0).'em';
 			$fontsize_versenumber = $BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZE'];
 			if($BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'] == 'em'){
 				$fontsize_versenumber /= 10;
@@ -1822,7 +1823,7 @@ class BibleGet_Customize
 			echo PHP_EOL;
 			echo ".bibleQuote.results p.versesParagraph span.poif { display: block; margin-left:7%; margin-top:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
-			echo ".bibleQuote.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $linespacing_verses; }";
+			echo ".bibleQuote.results p.versesParagraph span.poi { display: block; margin-left:7%; margin-top:-1%; line-height: $poi_linespacing; }";
 			echo PHP_EOL;
 			echo ".bibleQuote.results p.versesParagraph span.poil { display: block; margin-left:7%; margin-bottom:1%; line-height: $linespacing_verses; }";
 			echo PHP_EOL;
