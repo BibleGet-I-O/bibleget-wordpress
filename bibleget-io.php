@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: BibleGet I/O
- * Version: 7.1
+ * Version: 7.2
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
  * Author: John Romano D'Orazio
@@ -28,7 +28,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v7_1");
+define("BIBLEGETPLUGINVERSION", "v7_2");
 
 if (!defined('ABSPATH')) {
     die("You cannot access this file directly.");
@@ -997,7 +997,7 @@ function bibleGetQueryServer($finalquery)
         // $output .= "<br /><br />Effettuate ".$count1." e ".$count2." sostituzioni.";
 
         $matches = null;
-        if (preg_match_all("/<div class=\"errorsTbl\" id=\"errorsTbl\">.*?<\/div>/s", $output, $matches)) {
+        if (preg_match_all("/<div class=\"errors bibleQuote\">.*?<\/div>/s", $output, $matches)) {
             // capture table of error messages, and turn it into notices for backend
             $errorshtml = new DOMDocument();
             $errorshtml->loadHTML("<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>" . $matches[0][0] . "</body>");
@@ -1009,7 +1009,7 @@ function bibleGetQueryServer($finalquery)
                     $errs[] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage[0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl() . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __("If this error continues, please notify the BibleGet plugin author at") . ": <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode("The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage[0]->nodeValue . "\n\nKind regards,\n\n") . "\">bibleget.io@gmail.com</a>" . "</span>";
                 }
             }
-            $output = preg_replace("/<div class=\"errors\" id=\"errors\">.*?<\/div>/s", '', $output);
+            $output = preg_replace("/<div class=\"errors bibleQuote\">.*?<\/div>/s", '', $output);
         }
     } else {
         $errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' . __("There was an error communicating with the BibleGet server, please wait a few minutes and try again", "bibleget-io") . ': &apos;' . curl_error($ch) . '&apos;: ' . $finalquery . '</span>';

@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 7.1
+Stable tag: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,8 +136,12 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Changelog ==
 
+= 7.2 =
+* Fix: styling of poetic verses in NABRE version
+* Fix: error table not hidden to end user 
+
 = 7.1 =
-* use `POST` requests for the ServerSideRender component if available (Gutenberg 8.8 plugin required)
+* Use `POST` requests for the ServerSideRender component if available (Gutenberg 8.8 plugin required)
 
 = 7.0 =
 * Compatibility with WordPress 5.5
@@ -357,6 +361,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 7.2 =
+Better styling of poetic verses in NABRE version, fix for error table being shown to end user
 
 = 7.1 =
 Fixes some possible problems with the Bible quote block by changing the API method from GET to POST. Requires Gutenberg plugin v8.8

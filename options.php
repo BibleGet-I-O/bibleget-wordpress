@@ -1833,6 +1833,10 @@ class BibleGet_Customize
 			echo PHP_EOL;
 			echo ".bibleQuote.results p.versesParagraph span.speaker { font-weight: bold; background-color: #eeeeee; padding: 3px; border-radius: 3px; font-size: $fontsize_versenumber; }";
 			echo PHP_EOL;
+			echo ".bibleQuote.errors { display: none; }";
+			echo PHP_EOL;
+			echo ".bibleQuote.info { display: none; }";
+			echo PHP_EOL;
 
 			//$bibleversionalign = get_theme_mod('bibleversionalign', 'left');
 			$bibleversionalign = 'left';
