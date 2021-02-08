@@ -27,23 +27,24 @@
 				return ( 
 						this.nodeType === 1 && ( 
 								jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') 
-						) && (
+						//) && (
 								jQuery(this).parent('.verseText').prevAll('.verseText').length == 0 //is the first .verseText of a chapter
 								||
 								jQuery(this).parent('.verseText').prev('.verseText').contents().last().filter(function(){
 									return this.nodeType === 1 && ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
 								})
-						) 
+						//) 
 				) 
 			}).css({"display":"inline-block","position":"relative","left":function(index){ return "-"+jQuery(this).parent('.verseText').prev('.verseNum').outerWidth(true)+"px"; } });    
 			//HERE IS THE LOGIC:
 			//IF the (first node) following a .verseText node is not a text node,
 			//AND it IS an element node with class pof,poif,po,poi,poil...	  
-			//AND (this is the first .verseText node of a chapter
-			//    OR 
-			//    the last node within the preceding .verseText node IS an element node with class pof,poif,po,poi,poil)
+			//--AND (this is the first .verseText node of a chapter
+			//--    OR 
+			//--    the last node within the preceding .verseText node IS an element node with class pof,poif,po,poi,poil)
 	
 			//THEN change the css display of that (first node) to "inline-block" and left position it removing the width of the span with the verse number 
+			//TODO: shouldn't we do this any time it's the first node within a verseText node, since it follows a verseNum?
 	
 	
 			jQuery(this).contents().first().filter(function(){
@@ -55,11 +56,26 @@
 			}).parent('.verseText').prev('.verseNum').before('<br>'); 
 			//HERE IS THE LOGIC:
 			//IF the (first node) following a .verseText node is not a text node,
-			//AND it IS an element node with class pof	  
+			//AND it IS an element node with class pof	 
 			//AND this is not the first .verseText node of a chapter
-	
+			//THEN add a newline before the preceding .verseNum node containing the verse number
+			
+			jQuery(this).contents().first().filter(function(){
+				return (
+					this.nodeType === 1 && (
+						( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
+						&& jQuery(this).parent('.verseText').prevAll('.verseText').length > 0
+						&& jQuery(this).parent('.verseText').prevAll('.verseText:first').contents().last().css('display') == 'inline-block'
+					)
+				)
+			}).parent('.verseText').prev('.verseNum').before('<br>');
+			//HERE IS THE LOGIC:
+			//IF the (first node) following a .verseText node is not a text node,
+			//AND it IS an element node with class po
+			//AND this is not the first .verseText node of a chapter
+			//AND the last node of the previous .verseText node has css display:inline-block
 			//THEN add a newline before the preceding .verseNum node containing the verse number 
-	
+
 			//HERE INSTEAD WE REMOVE ANY EXTRA SPACES AT THE BEGINNING OF A VERSE...
 			jQuery(this).html( jQuery(this).html().replace( /^\s/, '' ) );
 					
