@@ -145,3 +145,7 @@
 #bibleGetSearchResultsTableContainer mark {
   font-weight: bold;
 }
+
+.getBibleQuotePanel .bibleVersionSelect select[multiple] {
+	height: auto;
+}
