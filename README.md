@@ -62,6 +62,7 @@ https://youtu.be/zqJqU_5UZ5M
 ## How do I formulate a Bible citation?
 The `query` parameter must contain a Bible reference formulated according to the standard notation for Bible citations (see [Bible citation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation") on Wikipedia).
 Two different notations can be used, the English style notation and the International style notation.
+
 **ENGLISH NOTATION:**
 
   * “:” is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
