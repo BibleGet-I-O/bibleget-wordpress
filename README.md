@@ -16,7 +16,7 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 | License URI       | http://www.gnu.org/licenses/gpl-2.0.html                                                                                   |
 
 ## How it works
-Insert Bible quotes in your articles or pages using the "Bible quote" block or the [bibleget] shortcode; uses the BibleGet I/O API.
+Insert Bible quotes in your articles or pages using the **Bible quote** block or the `[bibleget]` shortcode. Behind the scenes the texts for the Bible quotes are retrieved from the BibleGet I/O API endpoint.
 
 ## Description
 
