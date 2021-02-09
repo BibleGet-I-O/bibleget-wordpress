@@ -128,7 +128,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 _________
 
-* [BibleGet Website](https://www.bibleget.io/ "BibleGet Project Website")
-* [Subscribe to the Youtube channel!](https://www.youtube.com/channel/UCDt6zo7t6q0oE3ZRyY0YVOw?sub_confirmation=1 "BibleGet Youtube channel")
-* [Follow on Facebook!](https://www.facebook.com/BibleGetIO/ "BibleGet Facebook Page")
-* [Follow on Twitter!](https://twitter.com/biblegetio "@BibleGetIO")
+![alt text](https://github.com/paulrobertlloyd/socialmediaicons/blob/main/huffduffer-16x16.png?raw=true) [BibleGet Website](https://www.bibleget.io/ "BibleGet Project Website")
+![alt text](https://github.com/paulrobertlloyd/socialmediaicons/blob/main/youtube-16x16.png?raw=true) [Subscribe to the Youtube channel!](https://www.youtube.com/channel/UCDt6zo7t6q0oE3ZRyY0YVOw?sub_confirmation=1 "BibleGet Youtube channel")
+![alt text](https://github.com/paulrobertlloyd/socialmediaicons/blob/main/facebook-16x16.png?raw=true) [Follow on Facebook!](https://www.facebook.com/BibleGetIO/ "BibleGet Facebook Page")
+![alt text](https://github.com/paulrobertlloyd/socialmediaicons/blob/main/twitter-16x16.png?raw=true) [Follow on Twitter!](https://twitter.com/biblegetio "@BibleGetIO")
