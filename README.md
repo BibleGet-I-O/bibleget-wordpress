@@ -53,9 +53,13 @@ The style settings are customizable using the **Wordpress Customizer**, so you c
 
 The **Bible quote** block also has a number of customizable options in the **block editor** which allow you to set not only the style but also the layout of the elements that make up the Bible quote.
 
-https://youtu.be/KWd_q6e8A2w
+### Youtube playlist
 
-https://youtu.be/zqJqU_5UZ5M
+* Installation and removal of the BibleGet plugin for WordPress : https://youtu.be/KWd_q6e8A2w
+* Adding a Google Fonts API key : https://youtu.be/zqJqU_5UZ5M
+* Converting a BibleGet shortcode to a Gutenberg block : https://youtu.be/h1mgmTrg8Oc
+* Using the BibleGet block, the BibleGet shortcode, and the Customizer : https://youtu.be/Y6YipqOfJBw
+* Refreshing metadata from the BibleGet API : https://youtu.be/YrYj9T2k08c
 
 # Frequently Asked Questions
 
