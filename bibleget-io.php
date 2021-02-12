@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
     die("You cannot access this file directly.");
 }
 
-define("TRANSIENT_PREFIX","bibleget_");
+define("TRANSIENT_PREFIX", "bibleget_");
 
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
@@ -47,7 +47,9 @@ require_once(plugin_dir_path(__FILE__) . "options.php");
  */
 function BibleGet_on_activation()
 {
-    if (!current_user_can('activate_plugins')){ return; }
+    if (!current_user_can('activate_plugins')) {
+        return;
+    }
     $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
     check_admin_referer("activate-plugin_{$plugin}");
 
@@ -67,12 +69,12 @@ function BibleGet_on_deactivation()
 {
     if (!current_user_can('activate_plugins'))
         return;
-        $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
-        check_admin_referer("deactivate-plugin_{$plugin}");
+    $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
+    check_admin_referer("deactivate-plugin_{$plugin}");
 
-        // Uncomment the following line to see the function in action
-        // exit( var_dump( $_GET ) );
-        // bibleGetDeleteOptions();
+    // Uncomment the following line to see the function in action
+    // exit( var_dump( $_GET ) );
+    // bibleGetDeleteOptions();
 }
 
 /**
@@ -122,16 +124,14 @@ function BibleGet_on_uninstall()
     //in order avoid this
     $sql = "DELETE
             FROM  $wpdb->options
-            WHERE `option_name` LIKE '%transient_%".TRANSIENT_PREFIX."%'
+            WHERE `option_name` LIKE '%transient_%" . TRANSIENT_PREFIX . "%'
             ";
     //We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
-    if($wpdb->query( $sql ) !== false){
+    if ($wpdb->query($sql) !== false) {
         //echo 'cacheflushed';
-    }
-    else{
+    } else {
         //echo 'cacheNotFlushed';
     }
-
 }
 
 
@@ -179,10 +179,9 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
 {
 
     //add possibility of using "versions" parameter instead of "version"
-    if(isset($atts["versions"])){
+    if (isset($atts["versions"])) {
         $atts["version"] = explode(",", $atts["versions"]);
-    }
-    else if(isset($atts["version"])){
+    } else if (isset($atts["version"])) {
         $atts["version"] = explode(",", $atts["version"]);
     }
 
@@ -197,13 +196,13 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
     // so that shortcode Bible quotes will be consistent with Gutenberg block Bible quotes
     $BGET = [];
     $BGETOPTIONS = new BGETPROPERTIES();
-    foreach($BGETOPTIONS->OPTIONS as $option => $array){
+    foreach ($BGETOPTIONS->OPTIONS as $option => $array) {
         $option = strtolower($option); //shortcode attributes are all lowercased by default, so we need to lowercase for consistency
         $BGET[$option] = $array['default']; //default will be based on current saved option if exists
 
         //while we are building our default values, we will also enforce type on $atts so we know we are speaking the same language
-        if(isset($atts[$option])){
-            switch($array["type"]){
+        if (isset($atts[$option])) {
+            switch ($array["type"]) {
                 case 'number':
                     $atts[$option] = BibleGet_Customize::sanitize_float($atts[$option]);
                     break;
@@ -227,7 +226,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
     //now to maintain consistency with our Gutenberg block code etc., let's retransform the keys to uppercase
     //and use $atts instead of $a
     $atts = [];
-    foreach($a as $key => $value){
+    foreach ($a as $key => $value) {
         $atts[strtoupper($key)] = $value;
     }
 
@@ -271,13 +270,13 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
         if ($finalquery != "") {
 
-            if (false === ($output = get_transient(TRANSIENT_PREFIX.md5($finalquery)))) {
+            if (false === ($output = get_transient(TRANSIENT_PREFIX . md5($finalquery)))) {
                 // $output = $finalquery;
                 // return '<div class="bibleget-quote-div">' . $output . '</div>';
                 $output = bibleGetQueryServer($finalquery);
                 if ($output) {
                     $output = str_replace(PHP_EOL, '', $output);
-                    set_transient(TRANSIENT_PREFIX.md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
+                    set_transient(TRANSIENT_PREFIX . md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
                 } else {
                     $output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
                 }
@@ -298,20 +297,20 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
             $nonDefaultLayout = false; //set this flag to true as soon as we see that we have a layout pref that isn't default value, so we will know to update the $output accordingly
             $domDocument = new DOMDocument();
             $domDocument->loadHTML('<!DOCTYPE HTML><head></head><body>' . mb_convert_encoding($output, 'HTML-ENTITIES', 'UTF-8') . '</body>');
-            if($domDocument){
+            if ($domDocument) {
                 $xPath = new DOMXPath($domDocument);
                 $results    = $xPath->query('//div[contains(@class,"results")]')->item(0);          //$domDocument->getElementById('results');
                 $errors     = $xPath->query('//div[contains(@class,"errors")]')->item(0);           //$domDocument->getElementById('errors');
                 $info       = $xPath->query('//input[contains(@class,"BibleGetInfo")]')->item(0);   //$domDocument->getElementById('BibleGetInfo');
-                if($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false ){
+                if ($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
-                    foreach($bibleVersionEls as $bibleVersionEl){
-                        $bibleVersionEl->setAttribute("style","display:none;");
+                    foreach ($bibleVersionEls as $bibleVersionEl) {
+                        $bibleVersionEl->setAttribute("style", "display:none;");
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false ){
+                if ($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     foreach ($bibleVersionEls as $bibleVersionEl) {
@@ -325,7 +324,7 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     $bibleVersionCnt = $bibleVersionEls->count();
                     $bibleVersionStack = [];
-                    switch($bibleVersionCnt){
+                    switch ($bibleVersionCnt) {
                         case 0:
                             //don't do anything
                             break;
@@ -335,8 +334,8 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                             break;
                         default:
                             foreach ($bibleVersionEls as $bibleVersionEl) {
-                                array_push($bibleVersionStack,$bibleVersionEl);
-                                if(count($bibleVersionStack) > 1){
+                                array_push($bibleVersionStack, $bibleVersionEl);
+                                if (count($bibleVersionStack) > 1) {
                                     $replacementNode = array_shift($bibleVersionStack);
                                     $results->replaceChild($replacementNode, $bibleVersionStack[0]);
                                 }
@@ -345,17 +344,17 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== false){
+                if ($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
-                    foreach($bibleVersionEls as $bibleVersionEl){
+                    foreach ($bibleVersionEls as $bibleVersionEl) {
                         $text = $bibleVersionEl->textContent;
-                        switch($atts['LAYOUTPREFS_BIBLEVERSIONWRAP']){
+                        switch ($atts['LAYOUTPREFS_BIBLEVERSIONWRAP']) {
                             case  BGET::WRAP["PARENTHESES"]:
-                                $text = "(".$text.")";
+                                $text = "(" . $text . ")";
                                 break;
                             case  BGET::WRAP["BRACKETS"]:
-                                $text = "[".$text."]";
+                                $text = "[" . $text . "]";
                                 break;
                         }
                         $bibleVersionEl->textContent = $text;
@@ -372,15 +371,15 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                 }
 
 
-                if(($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== false){
+                if (($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
-                    if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANG"] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"] ){
+                    if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANG"] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]) {
                         $locale = substr(get_locale(), 0, 2);
                         $languageName = Locale::getDisplayLanguage($locale, 'en');
                         foreach ($bookChapterEls as $bookChapterEl) {
                             $bookNum = (int) $xPath->query('following-sibling::input[@class="univBookNum"]', $bookChapterEl)->item(0)->getAttribute("value");
-                            $usrprop = "bibleget_biblebooks" . ($bookNum-1);
+                            $usrprop = "bibleget_biblebooks" . ($bookNum - 1);
                             $jsbook = json_decode(get_option($usrprop), true);
                             //get the index of the current language from the available languages
                             $biblebookslangs = get_option("bibleget_languages");
@@ -388,25 +387,23 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                             if ($currentLangIdx === false) {
                                 $currentLangIdx = array_search("English", $biblebookslangs);
                             }
-                            $lclbook = trim(explode('|',$jsbook[$currentLangIdx][0])[0]);
-                            $lclabbrev = trim(explode('|',$jsbook[$currentLangIdx][1])[0]);
+                            $lclbook = trim(explode('|', $jsbook[$currentLangIdx][0])[0]);
+                            $lclabbrev = trim(explode('|', $jsbook[$currentLangIdx][1])[0]);
                             $bookChapterText = $bookChapterEl->textContent;
                             //Remove book name from the string (check includes any possible spaces in the book name)
                             if (preg_match('/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $bookChapterText, $res)) {
                                 $bookChapterText = str_replace($res[0], "", $bookChapterText);
                             }
 
-                            if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]){
+                            if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]) {
                                 //use abbreviated form in wp lang
                                 $bookChapterEl->textContent = $lclabbrev  . $bookChapterText;
-                            }
-                            else{
+                            } else {
                                 //use full form in wp lang
                                 $bookChapterEl->textContent = $lclbook . $bookChapterText;
                             }
                         }
-                    }
-                    else if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["BIBLELANGABBREV"]){
+                    } else if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["BIBLELANGABBREV"]) {
                         //use abbreviated form in bible version lang
                         foreach ($bookChapterEls as $bookChapterEl) {
                             $bookAbbrev = $xPath->query('following-sibling::input[@class="bookAbbrev"]', $bookChapterEl)->item(0)->getAttribute("value");
@@ -461,9 +458,9 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                 if ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS["TOP"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
-                    switch($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION']){
+                    switch ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION']) {
                         case BGET::POS["BOTTOM"]:
-                            foreach($bookChapterEls as $bookChapterEl){
+                            foreach ($bookChapterEls as $bookChapterEl) {
                                 $results->insertBefore($bookChapterEl->nextSibling, $bookChapterEl);
                             }
                             break;
@@ -471,21 +468,20 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                             foreach ($bookChapterEls as $bookChapterEl) {
                                 $class = $bookChapterEl->getAttribute("class");
                                 $text = $bookChapterEl->textContent;
-                                $span = $domDocument->createElement("span",$text);
-                                $span->setAttribute("class",$class);
+                                $span = $domDocument->createElement("span", $text);
+                                $span->setAttribute("class", $class);
                                 $bookChapterEl->nextSibling->appendChild($span);
                                 $results->removeChild($bookChapterEl);
                             }
                             break;
                     }
-
                 }
 
-                if($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== false ){
+                if ($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $verseNumberEls = $xPath->query('//span[contains(@class,"verseNum")]');
-                    foreach($verseNumberEls as $verseNumberEl){
-                        $verseNumberEl->setAttribute("style","display:none;");
+                    foreach ($verseNumberEls as $verseNumberEl) {
+                        $verseNumberEl->setAttribute("style", "display:none;");
                     }
                 }
                 /*
@@ -498,12 +494,12 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
                  }
                  */
                 //If any of the Layout options were not the default options, then we need to update our $output with the new html layout
-                if($nonDefaultLayout === true){
+                if ($nonDefaultLayout === true) {
                     $output = $domDocument->saveHTML($results);
-                    if($errors !== null){
+                    if ($errors !== null) {
                         $output .= $domDocument->saveHTML($errors);
                     }
-                    if($info !== null){
+                    if ($info !== null) {
                         $output .= $domDocument->saveHTML($info);
                     }
                 }
@@ -564,7 +560,7 @@ function bibleget_gutenberg()
             'jquery-ui-dialog'
         ),
         filemtime("$dir/$gutenberg_js")
-        );
+    );
 
     $gutenberg_css = 'css/gutenberg.css';
     wp_register_style(
@@ -572,7 +568,7 @@ function bibleget_gutenberg()
         plugins_url($gutenberg_css, __FILE__),
         array('wp-jquery-ui-dialog'),
         filemtime("$dir/$gutenberg_css")
-        );
+    );
 
     //we aren't actually going to create the settings page here,
     //we're just using some of the same information that is used to create the settings page
@@ -588,16 +584,16 @@ function bibleget_gutenberg()
     $BGETreflection = new ReflectionClass('BGET');
     $BGETinstanceprops = $BGETreflection->getConstants();
     $BGETConstants = array();
-    foreach($BGETinstanceprops as $key => $value) {
+    foreach ($BGETinstanceprops as $key => $value) {
         $BGETConstants[$key] = $value;
     }
 
     wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'langCodes' => $langCodes, 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants));
 
     register_block_type('bibleget/bible-quote', array(
-        'editor_script'		=> 'bibleget-gutenberg-block',
-        'editor_style'		=> 'bibleget-gutenberg-editor',
-        'render_callback'	=> 'bibleGet_renderGutenbergBlock',
+        'editor_script'        => 'bibleget-gutenberg-block',
+        'editor_style'        => 'bibleget-gutenberg-editor',
+        'render_callback'    => 'bibleGet_renderGutenbergBlock',
         'attributes' => $BGETPROPERTIES->OPTIONS
     ));
 }
@@ -613,29 +609,26 @@ function bibleGetGutenbergScripts($hook)
     wp_enqueue_style('wp-jquery-ui-dialog');
     wp_enqueue_style('bibleget-popup', plugins_url('css/popup.css', __FILE__));
     wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
-    if (!wp_style_is( 'fontawesome', 'enqueued' )) {
+    if (!wp_style_is('fontawesome', 'enqueued')) {
         global $wp_styles;
         $isFontAwesomeEnqueued = false;
-        foreach( $wp_styles->queue as $style ){
-            if(strpos($wp_styles->registered[$style]->src,'fontawesome')){
+        foreach ($wp_styles->queue as $style) {
+            if (strpos($wp_styles->registered[$style]->src, 'fontawesome')) {
                 $isFontAwesomeEnqueued = true;
                 break;
-            }
-            else if(strpos($wp_styles->registered[$style]->src,'font-awesome')){
+            } else if (strpos($wp_styles->registered[$style]->src, 'font-awesome')) {
                 $isFontAwesomeEnqueued = true;
                 break;
-            }
-            else if(strpos($wp_styles->registered[$style]->handle,'fontawesome')){
+            } else if (strpos($wp_styles->registered[$style]->handle, 'fontawesome')) {
                 $isFontAwesomeEnqueued = true;
                 break;
-            }
-            else if(strpos($wp_styles->registered[$style]->handle,'font-awesome')){
+            } else if (strpos($wp_styles->registered[$style]->handle, 'font-awesome')) {
                 $isFontAwesomeEnqueued = true;
                 break;
             }
         }
-        if(!$isFontAwesomeEnqueued){
-            wp_enqueue_style( 'fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css', false, '4.6.1' );
+        if (!$isFontAwesomeEnqueued) {
+            wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css', false, '4.6.1');
         }
     }
 }
@@ -700,45 +693,45 @@ function bibleGet_renderGutenbergBlock($atts)
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
         if ($finalquery != "") {
 
-            if (false === ($output = get_transient(TRANSIENT_PREFIX.md5($finalquery)))) {
+            if (false === ($output = get_transient(TRANSIENT_PREFIX . md5($finalquery)))) {
                 // $output = $finalquery;
                 // return '<div class="bibleget-quote-div">' . $output . '</div>';
                 $output = bibleGetQueryServer($finalquery);
                 if ($output) {
                     $output = str_replace(PHP_EOL, '', $output);
-                    set_transient(TRANSIENT_PREFIX.md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
+                    set_transient(TRANSIENT_PREFIX . md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
                 } else {
                     $output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
                 }
             }
             //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
             $a = get_option('BGET');
-            $optionsNoUpdateFromBlock = ['POPUP','QUERY','VERSION','PARAGRAPHSTYLES_FONTFAMILY'];
-            foreach($atts as $key => $value){
-                if(!in_array($key,$optionsNoUpdateFromBlock)){
+            $optionsNoUpdateFromBlock = ['POPUP', 'QUERY', 'VERSION', 'PARAGRAPHSTYLES_FONTFAMILY'];
+            foreach ($atts as $key => $value) {
+                if (!in_array($key, $optionsNoUpdateFromBlock)) {
                     $a[$key] = $value;
                 }
             }
-            update_option("BGET",$a);
+            update_option("BGET", $a);
 
             /* If any of the LayoutPrefs are different than the defaults, we need to manipulate the DOM */
             $nonDefaultLayout = false; //set this flag to true as soon as we see that we have a layout pref that isn't default value, so we will know to update the $output accordingly
             $domDocument = new DOMDocument();
             $domDocument->loadHTML('<!DOCTYPE HTML><head></head><body>' . mb_convert_encoding($output, 'HTML-ENTITIES', 'UTF-8') . '</body>');
-            if($domDocument){
+            if ($domDocument) {
                 $xPath = new DOMXPath($domDocument);
                 $results    = $xPath->query('//div[contains(@class,"results")]')->item(0);          //$domDocument->getElementById('results');
                 $errors     = $xPath->query('//div[contains(@class,"errors")]')->item(0);           //$domDocument->getElementById('errors');
                 $info       = $xPath->query('//input[contains(@class,"BibleGetInfo")]')->item(0);   //$domDocument->getElementById('BibleGetInfo');
-                if($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false ){
+                if ($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
-                    foreach($bibleVersionEls as $bibleVersionEl){
-                        $bibleVersionEl->setAttribute("style","display:none;");
+                    foreach ($bibleVersionEls as $bibleVersionEl) {
+                        $bibleVersionEl->setAttribute("style", "display:none;");
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false ){
+                if ($atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN["LEFT"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     foreach ($bibleVersionEls as $bibleVersionEl) {
@@ -752,7 +745,7 @@ function bibleGet_renderGutenbergBlock($atts)
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
                     $bibleVersionCnt = $bibleVersionEls->count();
                     $bibleVersionStack = [];
-                    switch($bibleVersionCnt){
+                    switch ($bibleVersionCnt) {
                         case 0:
                             //don't do anything
                             break;
@@ -762,8 +755,8 @@ function bibleGet_renderGutenbergBlock($atts)
                             break;
                         default:
                             foreach ($bibleVersionEls as $bibleVersionEl) {
-                                array_push($bibleVersionStack,$bibleVersionEl);
-                                if(count($bibleVersionStack) > 1){
+                                array_push($bibleVersionStack, $bibleVersionEl);
+                                if (count($bibleVersionStack) > 1) {
                                     $replacementNode = array_shift($bibleVersionStack);
                                     $results->replaceChild($replacementNode, $bibleVersionStack[0]);
                                 }
@@ -772,17 +765,17 @@ function bibleGet_renderGutenbergBlock($atts)
                     }
                 }
 
-                if($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== false){
+                if ($atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !==  BGET::WRAP["NONE"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
-                    foreach($bibleVersionEls as $bibleVersionEl){
+                    foreach ($bibleVersionEls as $bibleVersionEl) {
                         $text = $bibleVersionEl->textContent;
-                        switch($atts['LAYOUTPREFS_BIBLEVERSIONWRAP']){
+                        switch ($atts['LAYOUTPREFS_BIBLEVERSIONWRAP']) {
                             case  BGET::WRAP["PARENTHESES"]:
-                                $text = "(".$text.")";
+                                $text = "(" . $text . ")";
                                 break;
                             case  BGET::WRAP["BRACKETS"]:
-                                $text = "[".$text."]";
+                                $text = "[" . $text . "]";
                                 break;
                         }
                         $bibleVersionEl->textContent = $text;
@@ -799,15 +792,15 @@ function bibleGet_renderGutenbergBlock($atts)
                 }
 
 
-                if(($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== false){
+                if (($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT["BIBLELANG"]) && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
-                    if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANG"] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"] ){
+                    if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANG"] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]) {
                         $locale = substr(get_locale(), 0, 2);
                         $languageName = Locale::getDisplayLanguage($locale, 'en');
                         foreach ($bookChapterEls as $bookChapterEl) {
                             $bookNum = (int) $xPath->query('following-sibling::input[@class="univBookNum"]', $bookChapterEl)->item(0)->getAttribute("value");
-                            $usrprop = "bibleget_biblebooks" . ($bookNum-1);
+                            $usrprop = "bibleget_biblebooks" . ($bookNum - 1);
                             $jsbook = json_decode(get_option($usrprop), true);
                             //get the index of the current language from the available languages
                             $biblebookslangs = get_option("bibleget_languages");
@@ -815,25 +808,23 @@ function bibleGet_renderGutenbergBlock($atts)
                             if ($currentLangIdx === false) {
                                 $currentLangIdx = array_search("English", $biblebookslangs);
                             }
-                            $lclbook = trim(explode('|',$jsbook[$currentLangIdx][0])[0]);
-                            $lclabbrev = trim(explode('|',$jsbook[$currentLangIdx][1])[0]);
+                            $lclbook = trim(explode('|', $jsbook[$currentLangIdx][0])[0]);
+                            $lclabbrev = trim(explode('|', $jsbook[$currentLangIdx][1])[0]);
                             $bookChapterText = $bookChapterEl->textContent;
                             //Remove book name from the string (check includes any possible spaces in the book name)
                             if (preg_match('/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $bookChapterText, $res)) {
                                 $bookChapterText = str_replace($res[0], "", $bookChapterText);
                             }
 
-                            if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]){
+                            if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["USERLANGABBREV"]) {
                                 //use abbreviated form in wp lang
                                 $bookChapterEl->textContent = $lclabbrev  . $bookChapterText;
-                            }
-                            else{
+                            } else {
                                 //use full form in wp lang
                                 $bookChapterEl->textContent = $lclbook . $bookChapterText;
                             }
                         }
-                    }
-                    else if($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["BIBLELANGABBREV"]){
+                    } else if ($atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT["BIBLELANGABBREV"]) {
                         //use abbreviated form in bible version lang
                         foreach ($bookChapterEls as $bookChapterEl) {
                             $bookAbbrev = $xPath->query('following-sibling::input[@class="bookAbbrev"]', $bookChapterEl)->item(0)->getAttribute("value");
@@ -888,9 +879,9 @@ function bibleGet_renderGutenbergBlock($atts)
                 if ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS["TOP"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $bookChapterEls = $xPath->query('//p[contains(@class,"bookChapter")]');
-                    switch($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION']){
+                    switch ($atts['LAYOUTPREFS_BOOKCHAPTERPOSITION']) {
                         case BGET::POS["BOTTOM"]:
-                            foreach($bookChapterEls as $bookChapterEl){
+                            foreach ($bookChapterEls as $bookChapterEl) {
                                 $results->insertBefore($bookChapterEl->nextSibling, $bookChapterEl);
                             }
                             break;
@@ -898,21 +889,20 @@ function bibleGet_renderGutenbergBlock($atts)
                             foreach ($bookChapterEls as $bookChapterEl) {
                                 $class = $bookChapterEl->getAttribute("class");
                                 $text = $bookChapterEl->textContent;
-                                $span = $domDocument->createElement("span",$text);
-                                $span->setAttribute("class",$class);
+                                $span = $domDocument->createElement("span", $text);
+                                $span->setAttribute("class", $class);
                                 $bookChapterEl->nextSibling->appendChild($span);
                                 $results->removeChild($bookChapterEl);
                             }
                             break;
                     }
-
                 }
 
-                if($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== false ){
+                if ($atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY["HIDE"] && $results !== false) {
                     $nonDefaultLayout = true;
                     $verseNumberEls = $xPath->query('//span[contains(@class,"verseNum")]');
-                    foreach($verseNumberEls as $verseNumberEl){
-                        $verseNumberEl->setAttribute("style","display:none;");
+                    foreach ($verseNumberEls as $verseNumberEl) {
+                        $verseNumberEl->setAttribute("style", "display:none;");
                     }
                 }
                 /*
@@ -925,12 +915,12 @@ function bibleGet_renderGutenbergBlock($atts)
                  }
                  */
                 //If any of the Layout options were not the default options, then we need to update our $output with the new html layout
-                if($nonDefaultLayout === true){
+                if ($nonDefaultLayout === true) {
                     $output = $domDocument->saveHTML($results);
-                    if($errors !== null){
+                    if ($errors !== null) {
                         $output .= $domDocument->saveHTML($errors);
                     }
-                    if($info !== null){
+                    if ($info !== null) {
                         $output .= $domDocument->saveHTML($info);
                     }
                 }
@@ -1598,6 +1588,7 @@ function bibleGetQueryClean($query)
     }
     $query = trim($query);
     $query = preg_replace('/\s+/', '', $query);
+    $query = preg_replace("/[\x{2011}-\x{2015}|\x{2212}|\x{23AF}]/u", chr(45), $query);
     $query = str_replace(' ', '', $query);
 
     if (strpos($query, ':') && strpos($query, '.')) {
@@ -1612,7 +1603,7 @@ function bibleGetQueryClean($query)
         return $var !== "";
     }));
 
-        return array_map("bibleGetToProperCase", $queries);
+    return array_map("bibleGetToProperCase", $queries);
 }
 
 
@@ -1652,14 +1643,13 @@ function bibleGetDeleteOptions()
 
 
     // DELETE BIBLEGET_VERSIONINDEX CACHED INFO
-    $bibleversionsabbrev = array_keys(get_option("bibleget_versions",array()));
+    $bibleversionsabbrev = array_keys(get_option("bibleget_versions", array()));
     foreach ($bibleversionsabbrev as $abbrev) {
         delete_option("bibleget_" . $abbrev . "IDX");
     }
 
     // DELETE BIBLEGET_VERSIONS CACHED INFO
     delete_option("bibleget_versions");
-
 }
 
 
@@ -1671,10 +1661,10 @@ function bibleGetSetOptions()
 
     $BGET = [];
     $BGETOPTIONS = new BGETPROPERTIES();
-    foreach($BGETOPTIONS->OPTIONS as $option => $array){
+    foreach ($BGETOPTIONS->OPTIONS as $option => $array) {
         $BGET[$option] = $array['default']; //default will be based on current option if exists
     }
-    update_option('BGET',$BGET);
+    update_option('BGET', $BGET);
 
     $metadata = bibleGetGetMetaData("biblebooks");
     if ($metadata !== false) {
@@ -1745,7 +1735,8 @@ function bibleGetSetOptions()
 }
 add_action('wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions');
 
-function flushBibleQuotesCache(){
+function flushBibleQuotesCache()
+{
     global $wpdb;
     //The following SELECT should select both the transient and the transient_timeout
     //This will also remove the Google Fonts API key transient if it uses the same prefix...
@@ -1753,13 +1744,12 @@ function flushBibleQuotesCache(){
     //in order avoid this
     $sql = "DELETE
             FROM  $wpdb->options
-            WHERE `option_name` LIKE '%transient_%".TRANSIENT_PREFIX."%'
+            WHERE `option_name` LIKE '%transient_%" . TRANSIENT_PREFIX . "%'
             ";
     //We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
-    if($wpdb->query( $sql ) !== false){
+    if ($wpdb->query($sql) !== false) {
         echo 'cacheflushed';
-    }
-    else{
+    } else {
         echo 'cacheNotFlushed';
     }
     wp_die();
@@ -1767,7 +1757,8 @@ function flushBibleQuotesCache(){
 
 add_action('wp_ajax_flush_bible_quotes_cache', 'flushBibleQuotesCache');
 
-function searchByKeyword(){
+function searchByKeyword()
+{
     $keyword = $_POST['keyword'];
     $version = $_POST['version'];
     $request = "query=keywordsearch&return=json&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION . "&version=" . $version . "&keyword=" . $keyword;
@@ -1777,7 +1768,7 @@ function searchByKeyword(){
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
     curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS,$request);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     if (ini_get('safe_mode') || ini_get('open_basedir')) {
         // safe mode is on, we can't use some settings
     } else {
@@ -1787,7 +1778,7 @@ function searchByKeyword(){
     $output = curl_exec($ch);
     $info = curl_getinfo($ch);
 
-    if(curl_errno($ch)){
+    if (curl_errno($ch)) {
         $error = new stdClass();
         $error->errno = curl_errno($ch);
         $error->message = curl_error($ch);
@@ -1797,8 +1788,7 @@ function searchByKeyword(){
     // echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
     else if ($info["http_code"] != 200) {
         echo json_encode($info);
-    }
-    else if ($output) {
+    } else if ($output) {
         echo $output;
     }
     curl_close($ch);
@@ -1807,15 +1797,16 @@ function searchByKeyword(){
 
 add_action("wp_ajax_searchByKeyword", "searchByKeyword");
 
-function updateBGET(){
+function updateBGET()
+{
     $options = $_POST['options'];
     $BGET = get_option('BGET');
-    foreach($options as $option => $array){
-        if(!isset($array["value"]) || !isset($array["type"]) ){
+    foreach ($options as $option => $array) {
+        if (!isset($array["value"]) || !isset($array["type"])) {
             return false;
         }
         $value = $array["value"];
-        switch($array["type"]){
+        switch ($array["type"]) {
             case 'string':
                 $BGET[$option] = esc_html($array["value"]);
                 break;
@@ -1829,14 +1820,16 @@ function updateBGET(){
                 $BGET[$option] = is_bool($array["value"]) ? $array["value"] : $array["value"] === 'true';
                 break;
             case 'array':
-                $BGET[$option] = is_array($array["value"]) ? array_map('esc_html',$array["value"]) : (strpos(",",$array["value"]) ? explode(",",$array["value"]) : []);
-                if(count($BGET[$option]) === 0 && $option == "VERSION"){ $BGET[$option] = ["NABRE"]; }
+                $BGET[$option] = is_array($array["value"]) ? array_map('esc_html', $array["value"]) : (strpos(",", $array["value"]) ? explode(",", $array["value"]) : []);
+                if (count($BGET[$option]) === 0 && $option == "VERSION") {
+                    $BGET[$option] = ["NABRE"];
+                }
                 break;
         }
         $BGET[$option] = $value;
         // TODO: we should probably do some sanitization to ensure correct type
     }
-    return update_option('BGET',$BGET);
+    return update_option('BGET', $BGET);
 }
 
 add_action("wp_ajax_updateBGET", "updateBGET");
@@ -1858,8 +1851,8 @@ if (is_admin()) {
 
 
 
-add_action( 'wp_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
-add_action( 'admin_enqueue_scripts', array( 'BibleGet_Customize', 'bibleget_customizer_print_script' ) );
+add_action('wp_enqueue_scripts', array('BibleGet_Customize', 'bibleget_customizer_print_script'));
+add_action('admin_enqueue_scripts', array('BibleGet_Customize', 'bibleget_customizer_print_script'));
 
 // Setup the Theme Customizer settings and controls...
 add_action('customize_register', array(
