@@ -1065,6 +1065,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 							createElement(PanelRow, {},
 								//Select version to quote from
 								createElement(SelectControl, {
+									className: 'bibleVersionSelect',
 									value: attributes.VERSION,
 									label: __('Bible Version', 'bibleget-io'),
 									onChange: changeVersion,
