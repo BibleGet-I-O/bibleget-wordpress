@@ -156,3 +156,12 @@
 .getBibleQuotePanel .bibleVersionSelect select[multiple] {
 	height: auto;
 }
+
+mark {
+    font-weight: bold;
+    padding: 2px 0;
+}
+
+a.subMark {
+    background-color: lightyellow; padding: 2px 0;
+}
