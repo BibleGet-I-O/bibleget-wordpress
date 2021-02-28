@@ -1,4 +1,4 @@
-.bibleGetButtonGroup,.bibleGetTextStyleButtonGroup {
+.bibleGetButtonGroup, .bibleGetTextStyleButtonGroup {
     margin-right: 3px;
 }
 
@@ -45,7 +45,7 @@
     border-bottom-left-radius: 0;
 }
 
-.bibleGetSearch input:focus + .bibleGetSearchButton {
+.bibleGetSearch input:focus+.bibleGetSearchBtn {
     border-color: #007cba;
     box-shadow: 0 0 0 1px #007cba;
     outline: 2px solid transparent;
@@ -59,109 +59,133 @@
 }
 
 #searchResultsContainer {
-	display: flex;
-	justify-content: space-around;
+    display: flex;
+    justify-content: space-around;
 }
 
 .ui-dialog #searchResultsContainer button {
-	background-color: #0091CD;
-	color: White;
-	border: 1px outset Blue;
-	padding: 6px 9px;
-	float: none;
-	position: static;
-	white-space: nowrap;
-	border-radius: 3px;
+    background-color: #0091cd;
+    color: White;
+    border: 1px outset Blue;
+    padding: 6px 9px;
+    float: none;
+    position: static;
+    white-space: nowrap;
+    border-radius: 3px;
 }
 
 .ui-dialog #searchResultsContainer button:hover {
-	background-color: #007fb4; 
+    background-color: #007fb4;
 }
 
-.ui-dialog #searchResultsContainer button:disabled,.ui-dialog #searchResultsContainer button:disabled:hover {
+.ui-dialog #searchResultsContainer button:disabled, .ui-dialog #searchResultsContainer button:disabled:hover {
     background-color: #cccccc;
     border: 1px ridge lightgray;
 }
 
 .ui-dialog #searchResultsContainer button i.fa {
-  margin-right: 6px;
+    margin-right: 6px;
 }
 
 #searchResultsControlPanel {
-	min-width: 20%;
-	max-width: 25%;
-	margin-right: 23px;
-	padding-top: 23px;
-	border: 1px groove White;
-	text-align: center;
-	box-shadow: 10px 2px 10px Gray;
+    min-width: 20%;
+    max-width: 25%;
+    margin-right: 23px;
+    padding-top: 23px;
+    border: 1px groove White;
+    text-align: center;
+    box-shadow: 10px 2px 10px Gray;
 }
 
 #searchResultsControlPanel .controlComponent {
-	margin: 33px 0px;
+    margin: 33px 0px;
 }
 
 #searchResultsControlPanel .controlComponent label {
-	display: block;
+    display: block;
 }
 
 #searchResultsControlPanel .controlComponent button {
-  margin: 10px 0px;
+    margin: 10px 0px;
 }
 
 #searchResultsContents {
-  min-width: 75%;
+    min-width: 75%;
 }
 
 #bibleGetSearchResultsTableContainer {
-	border: 1px solid #963;
-	overflow-y: auto;
+    border: 1px solid #963;
+    overflow-y: auto;
     max-height: 500px;
     overflow-y: auto;
 }
 
 #bibleGetSearchResultsTableContainer table {
- 	width: 100%;
+    width: 100%;
 }
 
-#bibleGetSearchResultsTableContainer th, td { padding: 8px 16px; }
+#bibleGetSearchResultsTableContainer th, td {
+    padding: 8px 16px;
+}
 
 #bibleGetSearchResultsTableContainer thead th {
-	position: sticky;
+    position: sticky;
     top: 0;
-	background: #C96;
-	border-left: 1px solid #EB8;
-	border-right: 1px solid #B74;
-	border-top: 1px solid #EB8;
-	font-weight: normal;
-	text-align: center;
+    background: #c96;
+    border-left: 1px solid #eb8;
+    border-right: 1px solid #b74;
+    border-top: 1px solid #eb8;
+    font-weight: normal;
+    text-align: center;
     color: White;
     font-weight: bold;
 }
 
 #bibleGetSearchResultsTableContainer tbody td {
- 	border-bottom: 1px groove White;
- 	border-right: 1px groove White;
- 	background-color: #EFEFEF;
+    border-bottom: 1px groove White;
+    border-right: 1px groove White;
+    background-color: #efefef;
 }
 
 #bibleGetSearchResultsTableContainer tbody td:last-child {
-	border-right: 0px;
+    border-right: 0px;
 }
 
 #bibleGetSearchResultsTableContainer mark {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .getBibleQuotePanel .bibleVersionSelect select[multiple] {
-	height: auto;
+    height: auto;
 }
 
 mark {
     font-weight: bold;
+    padding: 2px 2px;
+}
+
+a.submark {
+    background-color: lightyellow;
+    color: inherit;
     padding: 2px 0;
 }
 
-a.subMark {
-    background-color: lightyellow; padding: 2px 0;
+a.submark:hover {
+    color: inherit;
+}
+
+a.bmark {
+    background-color: hotpink;
+    padding: 2px 2px;
+    color: inherit;
+}
+
+a.bsubmark {
+    background-color: pink;
+    padding: 2px 0;
+    color: inherit;
+}
+
+a.bsubmark:hover {
+    color: inherit;
 }
