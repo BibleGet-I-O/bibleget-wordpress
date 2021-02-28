@@ -15,6 +15,22 @@ const BGET = BibleGetGlobal.BGETConstants;
 	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker, Dashicon } = components; //WordPress form inputs and server-side renderer
 
 	const colorizeIco = createElement(Dashicon, { icon: 'color-picker' });
+	const SearchBoxControl = ( props ) => {
+		return (createElement('div',{ className: 'bibleGetSearch' },[
+			createElement('input',{
+				type: 'search',
+				placeholder: __('e.g. Creation', 'bibleget-io'),
+				className: 'bibleGetSearchInput'
+			}),
+			createElement(Button,{
+				icon: 'search',
+				isPrimary: true,
+				onClick: props.onButtonClick,
+				className: 'bibleGetSearchBtn'
+			})
+		])
+		)
+	}
 
 	registerBlockType('bibleget/bible-quote', {
 		title: __('Bible quote', 'bibleget-io'), // Block title.
@@ -1096,21 +1112,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 							),
 							createElement(PanelRow, {},
 								//A simple text control for bible quote search
-								createElement(TextControl, {
-									type: 'text',
-									//value: '',
-									placeholder: __('e.g. Creation', 'bibleget-io'),
-									help: __('You cannot choose more than one Bible version when searching by keyword.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
-									label: __('Search for Bible quotes by keyword', 'bibleget-io'),
-									className: 'bibleGetSearch',
-									onChange: doNothing
-								}),
-								createElement(Button, {
-									icon: 'search',
-									isPrimary: true,
-									onClick: doKeywordSearch,
-									className: 'bibleGetSearchBtn'
-								})
+								createElement(SearchBoxControl,{ onButtonClick: doKeywordSearch })
 							)
 						),
 						createElement(PanelBody, { title: __('Layout Bible version', 'bibleget-io'), initialOpen: false, icon: 'layout' },
@@ -1772,20 +1774,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 	/* Someone might say this is the wrong way to do this, but hey I don't care, as long as it works */
 	$(document).on('click', '[data-type="bibleget/bible-quote"]', function() {
-		//if we find a bibleGetSearchBtn element 
-		//and it's still an immediate sibling of a ".bibleGetSearch" element
-		//rather than it's input child, then we move it
-		if ($('.bibleGetSearchBtn').length > 0 && $('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch')) {
-			$('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
-			$('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
-			//console.log('we moved the bibleGetSearchBtn');
-		}
-		$('.bibleGetSearch input').on('focus', function() {
-			$('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
-		});
-		$('.bibleGetSearch input').on('blur', function() {
-			$('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color": "#006395" });
-		});
+		//anything you put here will be triggered every time a Bible quote block is selected
 	});
 
 }(
@@ -1867,43 +1856,6 @@ const getInnerContent = function(tag, content) {
 };
 
 
-let searchBoxRendered = null;
 
-let startFixBibleGetSearchBtn = function() {
-	//console.log(this);
-	setTimeout(function() {
-		if (jQuery('.getBibleQuotePanel').hasClass('is-opened')) {
-			//console.log('panel was opened, now starting fix for search button...');
-			searchBoxRendered = setInterval(
-				fixBibleGetSearchBtn,
-				10
-			);
-		}
-	}, 10);
-}
 
-let fixBibleGetSearchBtn = function() {
-	if (jQuery('.bibleGetSearchBtn').length > 0) {
-		clearInterval(searchBoxRendered);
-		searchBoxRendered = null;
-		//if we find a bibleGetSearchBtn element 
-		//and it's still an immediate sibling of a ".bibleGetSearch" element
-		//rather than it's input child, then we move it
-		if (jQuery('.bibleGetSearchBtn').length > 0 && jQuery('.bibleGetSearchBtn').prev().hasClass('bibleGetSearch')) {
-			jQuery('.bibleGetSearchBtn').insertAfter('.bibleGetSearch input');
-			jQuery('.bibleGetSearch input').outerHeight(jQuery('.bibleGetSearchBtn').outerHeight());
-			//console.log('we moved the bibleGetSearchBtn');
-		}
-		jQuery('.bibleGetSearch input').on('focus', function() {
-			jQuery('.bibleGetSearchBtn').css({ "border-color": "#007cba", "box-shadow": "0 0 0 1px #007cba", "outline": "2px solid transparent" });
-		});
-		jQuery('.bibleGetSearch input').on('blur', function() {
-			jQuery('.bibleGetSearchBtn').css({ "outline": 0, "box-shadow": "none", "border-color": "#006395" });
-		});
-	}
-	else {
-		//console.log('looking for .bibleGetSearchBtn...');
-	}
-};
 
-startFixBibleGetSearchBtn();
