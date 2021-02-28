@@ -1,7 +1,7 @@
 # BibleGet plugin for WordPress
 A plugin that let's you insert Bible quotes into your WordPress pages or posts, using the **Bible quote** block or the `[bibleget]` shortcode. Behind the scenes the texts for the Bible quotes are retrieved from the BibleGet I/O API endpoint. Bible quotes can be inserted either by Bible reference or (in the case of the **Bible quote** block) by searching for verses that contain a specific term.
 
-| Informazioni      |                                                                                                                            |
+| Information       |                                                                                                                            |
 |-------------------|----------------------------------------------------------------------------------------------------------------------------|
 | Contributors      | JohnRDOrazio                                                                                                               |
 | Author URI        | https://www.johnromanodorazio.com                                                                                          |
