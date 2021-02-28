@@ -1081,7 +1081,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 				}),
 				createElement(Fragment, {},
 					createElement(InspectorControls, {},
-						createElement(PanelBody, { title: __('Get Bible quote', 'bibleget-io'), initialOpen: true, icon: 'download', className: 'getBibleQuotePanel', onToggle: startFixBibleGetSearchBtn },
+						createElement(PanelBody, { title: __('Get Bible quote', 'bibleget-io'), initialOpen: true, icon: 'download', className: 'getBibleQuotePanel' },
 							createElement(PanelRow, {},
 								//Select version to quote from
 								createElement(SelectControl, {
