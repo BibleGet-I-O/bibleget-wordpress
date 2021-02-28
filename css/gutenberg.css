@@ -180,6 +180,10 @@ a.bmark {
     color: inherit;
 }
 
+a.bmark:hover {
+    color: inherit;
+}
+
 a.bsubmark {
     background-color: pink;
     padding: 2px 0;

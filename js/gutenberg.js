@@ -1026,7 +1026,7 @@ var incr = (function () {
 								jQuery("#SearchResultsTable tbody").append('<tr><td><button' + enabledState + '><i class="fa fa-plus" aria-hidden="true"></i>' + __('Insert', 'bibleget-io') + '</button><input type="hidden" class="searchResultJSON" value="' + encodeURIComponent(JSON.stringify($result)) + '" /></td><td>' + bookChapterVerse + '</td><td>' + addMark($result.text, [$searchresults.info.keyword, stripDiacritics($searchresults.info.keyword)]) + '</td></tr>');
 							}
 							else {
-								let $filter = new RegExp((options.FILTER_BY|stripDiacritics(options.FILTER_BY)), "i");
+								let $filter = new RegExp(`(${options.FILTER_BY}|${stripDiacritics(options.FILTER_BY)}|${addDiacritics(options.FILTER_BY)})`, "i");
 								if ($filter.test($result.text)) {
 									jQuery("#SearchResultsTable tbody").append('<tr><td><button' + enabledState + '><i class="fa fa-plus" aria-hidden="true"></i>' + __('Insert', 'bibleget-io') + '</button><input type="hidden" class="searchResultJSON" value="' + encodeURIComponent(JSON.stringify($result)) + '" /></td><td>' + bookChapterVerse + '</td><td>' + addMark($result.text, [$searchresults.info.keyword, stripDiacritics($searchresults.info.keyword), options.FILTER_BY, stripDiacritics(options.FILTER_BY)]) + '</td></tr>');
 									++counter;
@@ -1042,7 +1042,7 @@ var incr = (function () {
 								jQuery("#SearchResultsTable tbody").append('<tr><td><button' + enabledState + '><i class="fa fa-plus" aria-hidden="true"></i>' + __('Insert', 'bibleget-io') + '</button><input type="hidden" class="searchResultJSON" value="' + encodeURIComponent(JSON.stringify($result)) + '" /></td><td>' + bookChapterVerse + '</td><td>' + addMark($result.text, [$searchresults.info.keyword, stripDiacritics($searchresults.info.keyword)]) + '</td></tr>');
 							}
 							else {
-								let $filter = new RegExp((options.FILTER_BY|stripDiacritics(options.FILTER_BY)), "i");
+								let $filter = new RegExp(`(${options.FILTER_BY}|${stripDiacritics(options.FILTER_BY)}|${addDiacritics(options.FILTER_BY)})`, "i");
 								if ($filter.test($result.text)) {
 									jQuery("#SearchResultsTable tbody").append('<tr><td><button' + enabledState + '><i class="fa fa-plus" aria-hidden="true"></i>' + __('Insert', 'bibleget-io') + '</button><input type="hidden" class="searchResultJSON" value="' + encodeURIComponent(JSON.stringify($result)) + '" /></td><td>' + bookChapterVerse + '</td><td>' + addMark($result.text, [$searchresults.info.keyword, stripDiacritics($searchresults.info.keyword), options.FILTER_BY, stripDiacritics(options.FILTER_BY)]) + '</td></tr>');
 									++counter;
@@ -1051,6 +1051,9 @@ var incr = (function () {
 						}
 						break;
 				}
+				console.log("options = ");
+				console.log(options);
+				console.log("counter =" + counter);
 				if (options.FILTER_BY == '') {
 					if ($searchresults.results.length === 1) {
 						/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
