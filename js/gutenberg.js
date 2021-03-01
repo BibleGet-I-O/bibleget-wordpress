@@ -5,6 +5,7 @@
  */
 
 const BGET = BibleGetGlobal.BGETConstants;
+console.log(BibleGetGlobal);
 var incr = (function () {
     var i = 1;
 
@@ -87,6 +88,8 @@ var incr = (function () {
 		//display the edit interface + preview
 		edit(props) {
 			const { attributes, setAttributes } = props;
+			//console.log("props = ");
+			//console.log(props);
 
 			//Function to update the query with Bible reference
 			function changeQuery(QUERY) {
@@ -102,6 +105,13 @@ var incr = (function () {
 				}
 				//BibleGetGlobal.BGETProperties['VERSION'].default = VERSION;
 				setAttributes({ VERSION });
+			}
+
+			function changePreferOrigin(preferHebrewOrigin) {
+				//console.log('Prefer origin toggle was clicked');
+				//console.log(preferHebrewOrigin);
+				let PREFERORIGIN = preferHebrewOrigin ? BGET.PREFERORIGIN.HEBREW : BGET.PREFERORIGIN.GREEK;
+				setAttributes({ PREFERORIGIN });
 			}
 
 			//Function to update whether the Bible quote will be showed in a popup or not
@@ -1051,9 +1061,6 @@ var incr = (function () {
 						}
 						break;
 				}
-				console.log("options = ");
-				console.log(options);
-				console.log("counter =" + counter);
 				if (options.FILTER_BY == '') {
 					if ($searchresults.results.length === 1) {
 						/* translators: do not remove or translate anything within the curly brackets. They are used for string formatting in javascript */
@@ -1081,7 +1088,7 @@ var incr = (function () {
 			var bibleVersionsSelectOptions = [];
 			for (let [prop, val] of Object.entries(BibleGetGlobal.versionsByLang.versions)) {
 				for (let [prop1, val1] of Object.entries(val)) {
-					let newOption = { value: prop1, label: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')' };
+					let newOption = { value: prop1, label: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')', title: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')' };
 					bibleVersionsSelectOptions.push(newOption);
 				}
 			}
@@ -1111,11 +1118,19 @@ var incr = (function () {
 								//A simple text control for bible quote query
 								createElement(TextControl, {
 									value: attributes.QUERY,
-
 									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
 									label: __('Bible Reference', 'bibleget-io'),
 									className: 'bibleGetQuery',
 									onChange: changeQuery,
+								})
+							),
+							createElement(PanelRow, {},
+								//Select whether the text based on the Hebrew should be preferred to the text based on the Greek
+								createElement(ToggleControl, {
+									checked: ( attributes.PREFERORIGIN === BGET.PREFERORIGIN.HEBREW ),
+									label: __('Prefer GREEK <|> HEBREW origin', 'bibleget-io'),
+									help: __('Some Bible passages offer two versions of the text, based on the Greek and the Hebrew texts. This option will determine which of the two versions should be returned.', 'bibleget-io'),
+									onChange: changePreferOrigin,
 								})
 							),
 							createElement(PanelRow, {},
@@ -1129,7 +1144,11 @@ var incr = (function () {
 							),
 							createElement(PanelRow, {},
 								//A simple text control for bible quote search
-								createElement(SearchBoxControl,{ onButtonClick: doKeywordSearch })
+								createElement(BaseControl, {
+										label: __('Search for Bible quotes by keyword', 'bibleget-io'),
+										help: __('You cannot choose more than one Bible version when searching by keyword.', 'bibleget-io')
+									}, createElement(SearchBoxControl, { onButtonClick: doKeywordSearch })
+								)
 							)
 						),
 						createElement(PanelBody, { title: __('Layout Bible version', 'bibleget-io'), initialOpen: false, icon: 'layout' },

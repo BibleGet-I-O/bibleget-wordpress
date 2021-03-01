@@ -261,6 +261,11 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
         $finalquery .= implode(";", $goodqueries);
         $finalquery .= "&version=";
         $finalquery .= implode(",", $atts['VERSION']);
+        if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["GREEK"]) {
+            $finalquery .= "&preferorigin=GREEK";
+        } else if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["HEBREW"]) {
+            $finalquery .= "&preferorigin=HEBREW";
+        }
         if ($atts['FORCEVERSION'] === true) {
             $finalquery .= "&forceversion=true";
         }
@@ -684,6 +689,11 @@ function bibleGet_renderGutenbergBlock($atts)
         $finalquery .= implode(";", $goodqueries);
         $finalquery .= "&version=";
         $finalquery .= implode(",", $atts['VERSION']);
+        if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["GREEK"]){
+            $finalquery .= "&preferorigin=GREEK";
+        } else if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["HEBREW"]) {
+            $finalquery .= "&preferorigin=HEBREW";
+        }
         if ($atts['FORCEVERSION'] === true) {
             $finalquery .= "&forceversion=true";
         }
@@ -706,7 +716,7 @@ function bibleGet_renderGutenbergBlock($atts)
             }
             //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
             $a = get_option('BGET');
-            $optionsNoUpdateFromBlock = ['POPUP', 'QUERY', 'VERSION', 'PARAGRAPHSTYLES_FONTFAMILY'];
+            $optionsNoUpdateFromBlock = ['POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION', 'PARAGRAPHSTYLES_FONTFAMILY'];
             foreach ($atts as $key => $value) {
                 if (!in_array($key, $optionsNoUpdateFromBlock)) {
                     $a[$key] = $value;
@@ -954,7 +964,7 @@ function bibleGetQueryServer($finalquery)
     $ssl_version = str_replace('OpenSSL/', '', $curl_version['ssl_version']);
     if (version_compare($curl_version['version'], '7.34.0', '>=') && version_compare($ssl_version, '1.0.1', '>=')) {
         //we should be good to go for secure SSL communication supporting TLSv1_2
-        $ch = curl_init("https://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
+        $ch = curl_init("https://query.bibleget.io/v3/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
@@ -963,7 +973,7 @@ function bibleGetQueryServer($finalquery)
         //curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
 
     } else {
-        $ch = curl_init("http://query.bibleget.io/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
+        $ch = curl_init("http://query.bibleget.io/v3/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
     }
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);

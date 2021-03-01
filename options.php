@@ -2022,6 +2022,10 @@ class BGET
 		"INSET"				=> 7,
 		"OUTSET"			=> 8
 	],
+	PREFERORIGIN = [
+		"GREEK"				=> 0,
+		"HEBREW"			=> 1
+	],
 	CSSRULE = [
 		'ALIGN' => ['','left','center','right','justify'], //add empty initial value since our enum is 1 based, not 0 based
 		'TEXTSTYLE' => ['','bold','italic','underline','line-through'], //add empty initial value since our enum is 1 based, not 0 based
@@ -2274,6 +2278,10 @@ class BGETPROPERTIES {
 			"POPUP" => [
 			    "default" => self::setAndIsBoolean($this->BGETOPTIONS,"POPUP") ? $this->BGETOPTIONS["POPUP"] : false,
 				"type" => "boolean"
+			],
+			"PREFERORIGIN" => [
+				"default" => self::setAndIsNumber($this->BGETOPTIONS,"PREFERORIGIN") ? intval($this->BGETOPTIONS["PREFERORIGIN"]) : BGET::PREFERORIGIN["HEBREW"],
+				"type" => "integer"
 			],
 			"FORCEVERSION" => [ //not currently used
 			    "default" => self::setAndIsBoolean($this->BGETOPTIONS,"FORCEVERSION") ? $this->BGETOPTIONS["FORCEVERSION"] : false,

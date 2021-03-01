@@ -159,6 +159,10 @@
     height: auto;
 }
 
+.getBibleQuotePanel .bibleVersionSelect select[multiple] + .components-input-control__suffix {
+    visibility: hidden;
+}
+
 mark {
     font-weight: bold;
     padding: 2px 2px;
