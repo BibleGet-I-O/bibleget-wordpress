@@ -21,13 +21,11 @@ var incr = (function () {
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
 	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker, Dashicon, ComboboxControl } = components; //WordPress form inputs and server-side renderer
-	const { useInstanceId } = compose;
+	//const { useInstanceId } = compose;
 
 	const colorizeIco = createElement(Dashicon, { icon: 'color-picker' });
 
-	const SearchBoxControl = ( { id: idProp, ...props} ) => {
-		const id = useUniqueId( idProp );
-
+	const SearchBoxControl = ( props ) => {
 		return (createElement('div', { className: 'bibleGetSearch' }, 
 			createElement('input',{
 				type: 'search',
@@ -42,13 +40,6 @@ var incr = (function () {
 			})
 		)
 		);
-	}
-
-	function useUniqueId( idProp ) {
-		const instanceId = useInstanceId( SearchBoxControl );
-		const id = `inspector-searchbox-control-${ instanceId }`;
-	
-		return idProp || id;
 	}
 
 	const websafe_fonts = [

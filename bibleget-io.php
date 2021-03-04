@@ -558,10 +558,11 @@ function bibleget_gutenberg()
         plugins_url($gutenberg_js, __FILE__),
         array(
             'wp-blocks',
-            'wp-i18n',
             'wp-element',
-            'wp-components',
+            'wp-i18n',
             'wp-editor',
+            'wp-components',
+            'wp-compose',
             'jquery-ui-dialog'
         ),
         filemtime("$dir/$gutenberg_js")
@@ -944,7 +945,7 @@ function bibleGet_renderGutenbergBlock($atts)
         }
     } else {
         /* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
-        $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $a['query'] . '&gt;<br />' . $queries . '</span>';
+        $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $atts['QUERY'] . '&gt;<br />' . $queries . '</span>';
         return '<div class="bibleget-quote-div">' . $output . '</div>';
     }
 }
