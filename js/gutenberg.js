@@ -28,7 +28,7 @@ var incr = (function () {
 	const SearchBoxControl = ( { id: idProp, ...props} ) => {
 		const id = useUniqueId( idProp );
 
-		return (createElement('div', { className: 'bibleGetSearch' }, [
+		return (createElement('div', { className: 'bibleGetSearch' }, 
 			createElement('input',{
 				type: 'search',
 				placeholder: __('e.g. Creation', 'bibleget-io'),
@@ -40,8 +40,8 @@ var incr = (function () {
 				onClick: props.onButtonClick,
 				className: 'bibleGetSearchBtn'
 			})
-		])
 		)
+		);
 	}
 
 	function useUniqueId( idProp ) {
@@ -1132,7 +1132,7 @@ var incr = (function () {
 					bibleVersionsSelectOptions.push(newOption);
 				}
 			}
-			return createElement('div', { key: `bibleQuoteWrapperDiv-${incr()}` }, [
+			return createElement('div', { key: `bibleQuoteWrapperDiv-${incr()}` },
 				//Preview a block with a PHP render callback
 				createElement(ServerSideRender, {
 					block: 'bibleget/bible-quote',
@@ -1825,8 +1825,7 @@ var incr = (function () {
 						)
 					)
 				)
-
-			])
+			)
 		},
 		save() {
 			return null;//save has to exist. This all we need
