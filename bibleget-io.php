@@ -562,7 +562,6 @@ function bibleget_gutenberg()
             'wp-i18n',
             'wp-editor',
             'wp-components',
-            'wp-compose',
             'jquery-ui-dialog'
         ),
         filemtime("$dir/$gutenberg_js")

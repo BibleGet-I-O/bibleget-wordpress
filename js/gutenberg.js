@@ -14,14 +14,13 @@ var incr = (function () {
     }
 })();
 
-(function(blocks, element, i18n, editor, components, compose, ServerSideRender, $) {
+(function(blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment, useState } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
 	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker, Dashicon, ComboboxControl } = components; //WordPress form inputs and server-side renderer
-	//const { useInstanceId } = compose;
 
 	const colorizeIco = createElement(Dashicon, { icon: 'color-picker' });
 
@@ -1854,7 +1853,6 @@ var incr = (function () {
 	wp.i18n,
 	wp.blockEditor,
 	wp.components,
-	wp.compose,
 	wp.serverSideRender,
 	jQuery
 ));
