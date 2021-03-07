@@ -156,13 +156,21 @@
     font-weight: bold;
 }
 
-.getBibleQuotePanel .bibleVersionSelect select[multiple] {
+.getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input  {
     height: auto;
     min-height: 8.5em;
 }
 
-.getBibleQuotePanel .bibleVersionSelect select[multiple] + .components-input-control__suffix {
+.getBibleQuotePanel select[multiple].components-select-control__input + .components-input-control__suffix {
     visibility: hidden;
+}
+
+.getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input {
+    font-size: 13px;
+}
+
+.getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input:hover {
+    color: inherit;
 }
 
 mark {
@@ -197,13 +205,5 @@ a.bsubmark {
 }
 
 a.bsubmark:hover {
-    color: inherit;
-}
-
-select.bibleVersionSelect.components-select-control__input {
-    font-size: 13px;
-}
-
-select.bibleVersionSelect.components-select-control__input:hover {
     color: inherit;
 }
