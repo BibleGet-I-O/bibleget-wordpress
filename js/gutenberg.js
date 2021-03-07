@@ -1202,7 +1202,7 @@ var incr = (function () {
 										multiple: true,
 										options: bibleVersionsOptGroupOptions
 									})
-								}
+								)
 							),
 							createElement(PanelRow, {},
 								//A simple text control for bible quote query
