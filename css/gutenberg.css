@@ -46,6 +46,10 @@
     border-bottom-left-radius: 0;
 }
 
+.bibleGetSearchBtn.components-button.is-primary.has-icon .dashicon.dashicons.dashicons-search {
+    margin: 0 3px;
+}
+
 .bibleGetSearch input:focus+.bibleGetSearchBtn {
     border-color: #007cba;
     box-shadow: 0 0 0 1px #007cba;
