@@ -1193,10 +1193,18 @@ var incr = (function () {
 								//Select version to quote from
 								createElement(BaseControl, {
 										label: __('Bible Version', 'bibleget-io'),
-										help: __('You can select more than one Bible version by holding down CTRL while clicking. Likewise you can remove a single Bible version from a multiple selection by holding down CTRL while clicking.', 'bibleget-io')
+										help: createElement(
+											'span',
+											{
+												dangerouslySetInnerHTML: {
+													/*translators: do not change the html tags or their attributes */
+													__html: __('You can select more than one Bible version by holding down CTRL while clicking. Likewise you can remove a single Bible version from a multiple selection by holding down CTRL while clicking. Note that selections made here will not change the default preferred version, which should be set in <a href="{href}">the plugin settings area</a> instead.', 'bibleget-io').formatUnicorn({ href: BibleGetGlobal.bibleget_admin_url })
+												}
+											}
+										)
 									},
 									createElement(OptGroupControl, {
-										className: 'bibleVersionSelect',
+										className: 'bibleVersionSelect components-select-control__input',
 										value: attributes.VERSION,
 										onChange: changeVersion,
 										multiple: true,
@@ -1208,7 +1216,15 @@ var incr = (function () {
 								//A simple text control for bible quote query
 								createElement(TextControl, {
 									value: attributes.QUERY,
-									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
+									help: createElement(
+										'span',
+										{
+											dangerouslySetInnerHTML: {
+												/*translators: do not change the html tags or their attributes */
+												__html: __('Type the desired Bible quote using the <a href="{href}" target="_blank">standard notation for Bible citations</a>. You can chain multiple quotes together with semicolons.', 'bibleget-io').formatUnicorn({ href: 'https://en.wikipedia.org/wiki/Bible_citation' })
+											}
+										}
+									),
 									label: __('Bible Reference', 'bibleget-io'),
 									className: 'bibleGetQuery',
 									onChange: changeQuery,

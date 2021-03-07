@@ -4,6 +4,7 @@
 
 .components-base-control__label {
     display: block !important;
+    padding-bottom: 4px;
 }
 
 .bibleGetTextStyleButtonGroup button {
@@ -157,6 +158,7 @@
 
 .getBibleQuotePanel .bibleVersionSelect select[multiple] {
     height: auto;
+    min-height: 8.5em;
 }
 
 .getBibleQuotePanel .bibleVersionSelect select[multiple] + .components-input-control__suffix {
@@ -195,5 +197,13 @@ a.bsubmark {
 }
 
 a.bsubmark:hover {
+    color: inherit;
+}
+
+select.bibleVersionSelect.components-select-control__input {
+    font-size: 13px;
+}
+
+select.bibleVersionSelect.components-select-control__input:hover {
     color: inherit;
 }
