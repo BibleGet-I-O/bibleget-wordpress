@@ -14,14 +14,13 @@ var incr = (function () {
     }
 })();
 
-(function(blocks, element, i18n, editor, components, compose, ServerSideRender, $) {
+(function(blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment, useState } = element; //React.createElement
 	const { __ } = i18n; //translation functions
 	const { InspectorControls } = editor; //Block inspector wrapper
 	const { TextControl, SelectControl, RangeControl, ToggleControl, PanelBody, PanelRow, Button, ButtonGroup, BaseControl, ColorPicker, Dashicon, ComboboxControl } = components; //WordPress form inputs and server-side renderer
-	//const { useInstanceId } = compose;
 
 	const colorizeIco = createElement(Dashicon, { icon: 'color-picker' });
 
@@ -42,6 +41,60 @@ var incr = (function () {
 		);
 	}
 
+	const Option = props => {
+		let label = props.label;
+		let value = props.value;
+		return createElement('option', { value: value }, label);
+	}
+
+	const OptionGroup = props => {
+		let label = props.label;
+		let options = props.options;
+		return createElement(
+			'optgroup',
+			{ label: label },
+			options.map(function (item, index) {
+				return createElement(Option, Object.assign({}, { key: index }, item));
+			})
+		);
+	};
+
+	const OptGroupControl = props => {
+		let options = props.options;
+		let className = props.className;
+		let multiple = props.multiple;
+		let value = props.value;
+		let onChange = function (event) {
+			let options = event.target.getElementsByTagName('option');
+			let result = [].filter
+				.call(options, function (item) {
+					return item.selected;
+				})
+				.map(function (item) {
+					return item.value;
+				});
+			props.onChange(result);
+		};
+		return createElement(
+			'select',
+			{
+				className: className,
+				multiple: multiple,
+				onChange: onChange,
+				value: value
+			},
+			options.map(function (item, index) {
+				if ('options' in item) {
+					return createElement(
+						OptionGroup,
+						Object.assign({}, { key: index }, item)
+					);
+				}
+				return createElement(Option, Object.assign({}, { key: index }, item));
+			})
+		);
+	};
+	
 	const websafe_fonts = [
 		{ "fontFamily": "Arial", 				"fallback": "Helvetica",	"genericFamily": "sans-serif" },
 		{ "fontFamily": "Arial Black",			"fallback": "Gadget",		"genericFamily": "sans-serif" },
@@ -1116,13 +1169,16 @@ var incr = (function () {
 				}
 			}
 
-			var bibleVersionsSelectOptions = [];
+			var bibleVersionsOptGroupOptions = [];
 			for (let [prop, val] of Object.entries(BibleGetGlobal.versionsByLang.versions)) {
+				let newOptGroup = { options: [], label: prop };
 				for (let [prop1, val1] of Object.entries(val)) {
 					let newOption = { value: prop1, label: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')', title: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')' };
-					bibleVersionsSelectOptions.push(newOption);
+					newOptGroup.options.push(newOption);
 				}
+				bibleVersionsOptGroupOptions.push(newOptGroup);
 			}
+
 			return createElement('div', { key: `bibleQuoteWrapperDiv-${incr()}` },
 				//Preview a block with a PHP render callback
 				createElement(ServerSideRender, {
@@ -1135,22 +1191,40 @@ var incr = (function () {
 						createElement(PanelBody, { title: __('Get Bible quote', 'bibleget-io'), initialOpen: true, icon: 'download', className: 'getBibleQuotePanel' },
 							createElement(PanelRow, {},
 								//Select version to quote from
-								createElement(SelectControl, {
-									className: 'bibleVersionSelect',
-									value: attributes.VERSION,
-									label: __('Bible Version', 'bibleget-io'),
-									labelPosition: 'top',
-									onChange: changeVersion,
-									multiple: true,
-									options: bibleVersionsSelectOptions,
-									help: __('You can select more than one Bible version by holding down CTRL while clicking. Likewise you can remove a single Bible version from a multiple selection by holding down CTRL while clicking.', 'bibleget-io')
-								})
+								createElement(BaseControl, {
+										label: __('Bible Version', 'bibleget-io'),
+										help: createElement(
+											'span',
+											{
+												dangerouslySetInnerHTML: {
+													/*translators: do not change the html tags or their attributes */
+													__html: __('You can select more than one Bible version by holding down CTRL while clicking. Likewise you can remove a single Bible version from a multiple selection by holding down CTRL while clicking. Note that selections made here will not change the default preferred version, which should be set in <a href="{href}">the plugin settings area</a> instead.', 'bibleget-io').formatUnicorn({ href: BibleGetGlobal.bibleget_admin_url })
+												}
+											}
+										)
+									},
+									createElement(OptGroupControl, {
+										className: 'bibleVersionSelect components-select-control__input',
+										value: attributes.VERSION,
+										onChange: changeVersion,
+										multiple: true,
+										options: bibleVersionsOptGroupOptions
+									})
+								)
 							),
 							createElement(PanelRow, {},
 								//A simple text control for bible quote query
 								createElement(TextControl, {
 									value: attributes.QUERY,
-									help: __('Type the desired Bible quote using the standard notation for Bible citations. You can chain multiple quotes together with semicolons.', 'bibleget-io'),//  .formatUnicorn({ href:'https://en.wikipedia.org/wiki/Bible_citation'}),    <a href="{href}">
+									help: createElement(
+										'span',
+										{
+											dangerouslySetInnerHTML: {
+												/*translators: do not change the html tags or their attributes */
+												__html: __('Type the desired Bible quote using the <a href="{href}" target="_blank">standard notation for Bible citations</a>. You can chain multiple quotes together with semicolons.', 'bibleget-io').formatUnicorn({ href: 'https://en.wikipedia.org/wiki/Bible_citation' })
+											}
+										}
+									),
 									label: __('Bible Reference', 'bibleget-io'),
 									className: 'bibleGetQuery',
 									onChange: changeQuery,
@@ -1854,7 +1928,6 @@ var incr = (function () {
 	wp.i18n,
 	wp.blockEditor,
 	wp.components,
-	wp.compose,
 	wp.serverSideRender,
 	jQuery
 ));
