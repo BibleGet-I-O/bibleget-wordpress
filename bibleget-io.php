@@ -36,6 +36,10 @@ if (!defined('ABSPATH')) {
 
 define("TRANSIENT_PREFIX", "bibleget_");
 
+define("BIBLE_API","https://query.bibleget.io/v3/index.php");
+define("SEARCH_API","https://query.bibleget.io/v3/search.php");
+define("METADATA_API","https://query.bibleget.io/v3/metadata.php");
+
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
 require_once(plugin_dir_path(__FILE__) . "options.php");
@@ -964,7 +968,7 @@ function bibleGetQueryServer($finalquery)
     $ssl_version = str_replace('OpenSSL/', '', $curl_version['ssl_version']);
     if (version_compare($curl_version['version'], '7.34.0', '>=') && version_compare($ssl_version, '1.0.1', '>=')) {
         //we should be good to go for secure SSL communication supporting TLSv1_2
-        $ch = curl_init("https://query.bibleget.io/v3/index.php?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
+        $ch = curl_init(BIBLE_API . "?" . $finalquery . "&return=html&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
@@ -1503,7 +1507,7 @@ function bibleGetGetMetaData($request)
     $ssl_version = str_replace('OpenSSL/', '', $curl_version['ssl_version']);
     if (version_compare($curl_version['version'], '7.34.0', '>=') && version_compare($ssl_version, '1.0.1', '>=')) {
         //we should be good to go for secure SSL communication supporting TLSv1_2
-        $url = "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+        $url = METADATA_API . "?query=" . $request . "&return=json";
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -1513,7 +1517,7 @@ function bibleGetGetMetaData($request)
         //curl_setopt($ch, CURLOPT_CAINFO, plugin_dir_path ( __FILE__ ) . "DST_Root_CA.pem");
 
     } else {
-        $url = "http://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+        $url = "http://query.bibleget.io/v3/metadata.php?query=" . $request . "&return=json";
         $ch = curl_init($url);
     }
 
@@ -1527,12 +1531,12 @@ function bibleGetGetMetaData($request)
     }
 
     $response = curl_exec($ch);
-    if (curl_errno($ch) && (curl_errno($ch) === 77 || curl_errno($ch) === 60) && $url == "https://query.bibleget.io/metadata.php?query=" . $request . "&return=json") {
+    if (curl_errno($ch) && (curl_errno($ch) === 77 || curl_errno($ch) === 60) && $url == METADATA_API . "?query=" . $request . "&return=json") {
         //error 60: SSL certificate problem: unable to get local issuer certificate
         //error 77: error setting certificate verify locations CAPath: none
         //curl.cainfo needs to be set in php.ini to point to the curl pem bundle available at https://curl.haxx.se/ca/cacert.pem
         //until that's fixed on the server environment let's resort to a simple http request
-        $url = "http://query.bibleget.io/metadata.php?query=" . $request . "&return=json";
+        $url = "http://query.bibleget.io/v3/metadata.php?query=" . $request . "&return=json";
         curl_setopt($ch, CURLOPT_URL, $url);
         $response = curl_exec($ch);
         if (curl_errno($ch)) {
@@ -1772,7 +1776,7 @@ function searchByKeyword()
     $keyword = $_POST['keyword'];
     $version = $_POST['version'];
     $request = "query=keywordsearch&return=json&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION . "&version=" . $version . "&keyword=" . $keyword;
-    $ch = curl_init("https://query.bibleget.io/search.php");
+    $ch = curl_init(SEARCH_API);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
