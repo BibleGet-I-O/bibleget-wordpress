@@ -171,6 +171,7 @@
 
 .getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input {
     font-size: 13px;
+    color: inherit;
 }
 
 .getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input:hover {

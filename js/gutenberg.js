@@ -14,6 +14,10 @@ var incr = (function () {
     }
 })();
 
+const getKeyByValue = function (object, value) {
+	return Object.keys(object).find(key => object[key] === value);
+};
+
 (function(blocks, element, i18n, editor, components, ServerSideRender, $) {
 	//define the same attributes as the shortcode, but now in JSON format
 	const { registerBlockType } = blocks; //Blocks API
@@ -44,7 +48,8 @@ var incr = (function () {
 	const Option = props => {
 		let label = props.label;
 		let value = props.value;
-		return createElement('option', { value: value }, label);
+		let title = props.title;
+		return createElement('option', { value: value, title: title }, label);
 	}
 
 	const OptionGroup = props => {
@@ -54,7 +59,7 @@ var incr = (function () {
 			'optgroup',
 			{ label: label },
 			options.map(function (item, index) {
-				return createElement(Option, Object.assign({}, { key: index }, item));
+				return createElement(Option, Object.assign({}, { key: `${item.label.replace(/\s/g,'')}-${index}` }, item));
 			})
 		);
 	};
@@ -64,33 +69,34 @@ var incr = (function () {
 		let className = props.className;
 		let multiple = props.multiple;
 		let value = props.value;
-		let onChange = function (event) {
-			let options = event.target.getElementsByTagName('option');
-			let result = [].filter
-				.call(options, function (item) {
-					return item.selected;
-				})
-				.map(function (item) {
-					return item.value;
-				});
-			props.onChange(result);
+		const handleOnChange = ( event ) => {
+			if ( multiple ) {
+				const selectedOptions = [ ...event.target.options ].filter(
+					( { selected } ) => selected
+				);
+				const newValues = selectedOptions.map( ( { value } ) => value );
+				props.onChange( newValues );
+				return;
+			}
+			props.onChange( event.target.value, { event } );
 		};
+
 		return createElement(
 			'select',
 			{
 				className: className,
 				multiple: multiple,
-				onChange: onChange,
+				onChange: handleOnChange,
 				value: value
 			},
 			options.map(function (item, index) {
 				if ('options' in item) {
 					return createElement(
 						OptionGroup,
-						Object.assign({}, { key: index }, item)
+						Object.assign({}, { key: `${item.label.replace(/\s/g,'')}-${index}` }, item)
 					);
 				}
-				return createElement(Option, Object.assign({}, { key: index }, item));
+				return createElement(Option, Object.assign({}, { key: `${item.label.replace(/\s/g,'')}-${index}` }, item));
 			})
 		);
 	};
@@ -1169,15 +1175,33 @@ var incr = (function () {
 				}
 			}
 
+			const langCompare = function ( a, b ) {
+				if ( a.label < b.label ){
+				  return -1;
+				}
+				if ( a.label > b.label ){
+				  return 1;
+				}
+				return 0;
+			}
+
+			const languageNames = new Intl.DisplayNames([BibleGetGlobal.currentLangISO], {type: 'language'});
+
 			var bibleVersionsOptGroupOptions = [];
+			//BibleGetGlobal.versionsByLang.langs.sort();
 			for (let [prop, val] of Object.entries(BibleGetGlobal.versionsByLang.versions)) {
-				let newOptGroup = { options: [], label: prop };
+				//let isoFromLang = getKeyByValue(BibleGetGlobal.langCodes,prop);
+				let isoFromLang = ISOcodeFromLang[prop];
+				let langInCurrentLocale = languageNames.of(isoFromLang);
+				//console.log('isoFromLang = ' + isoFromLang + ', langInCurrentLocale =' + langInCurrentLocale);
+				let newOptGroup = { options: [], label: langInCurrentLocale };
 				for (let [prop1, val1] of Object.entries(val)) {
 					let newOption = { value: prop1, label: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')', title: prop1 + ' - ' + val1.fullname + ' (' + val1.year + ')' };
 					newOptGroup.options.push(newOption);
 				}
 				bibleVersionsOptGroupOptions.push(newOptGroup);
 			}
+			bibleVersionsOptGroupOptions.sort( langCompare );
 
 			return createElement('div', { key: `bibleQuoteWrapperDiv-${incr()}` },
 				//Preview a block with a PHP render callback
@@ -2093,7 +2117,7 @@ const getInnerContent = function(tag, content) {
 	return result[1];
 };
 
-
+const ISOcodeFromLang = {"Afrikaans":"af","Akan":"ak","Albanian":"sq","Amharic":"am","Arabic":"ar","Armenian":"hy","Azerbaijani":"az","Basque":"eu","Belarusian":"be","Bengali":"bn","Bihari":"bh","Bosnian":"bs","Breton":"br","Bulgarian":"bg","Cambodian":"km","Catalan":"ca","Chichewa":"ny","Chinese":"zh","Corsican":"co","Croatian":"hr","Czech":"cs","Danish":"da","Dutch":"nl","English":"en","Esperanto":"eo","Estonian":"et","Faroese":"fo","Filipino":"tl","Finnish":"fi","French":"fr","Frisian":"fy","Galician":"gl","Georgian":"ka","German":"de","Greek":"el","Guarani":"gn","Gujarati":"gu","Haitian Creole":"ht","Hausa":"ha","Hebrew":"iw","Hindi":"hi","Hungarian":"hu","Icelandic":"is","Igbo":"ig","Indonesian":"id","Interlingua":"ia","Irish":"ga","Italian":"it","Japanese":"ja","Javanese":"jw","Kannada":"kn","Kazakh":"kk","Kinyarwanda":"rw","Kirundi":"rn","Kongo":"kg","Korean":"ko","Kurdish":"ku","Kyrgyz":"ky","Laothian":"lo","Latin":"la","Latvian":"lv","Lingala":"ln","Lithuanian":"lt","Luganda":"lg","Macedonian":"mk","Malagasy":"mg","Malay":"ms","Malayalam":"ml","Maltese":"mt","Maori":"mi","Marathi":"mr","Moldavian":"mo","Mongolian":"mn","Nepali":"ne","Norwegian":"no","Occitan":"oc","Oriya":"or","Oromo":"om","Pashto":"ps","Persian":"fa","Polish":"pl","Portuguese":"pt","Punjabi":"pa","Quechua":"qu","Romanian":"ro","Romansh":"rm","Russian":"ru","Scots Gaelic":"gd","Serbian":"sr","Serbo-Croatian":"sh","Sesotho":"st","Setswana":"tn","Shona":"sn","Sindhi":"sd","Sinhalese":"si","Slovak":"sk","Slovenian":"sl","Somali":"so","Spanish":"es","Sundanese":"su","Swahili":"sw","Swedish":"sv","Tajik":"tg","Tamil":"ta","Tatar":"tt","Telugu":"te","Thai":"th","Tigrinya":"ti","Tonga":"to","Turkish":"tr","Turkmen":"tk","Twi":"tw","Uighur":"ug","Ukrainian":"uk","Urdu":"ur","Uzbek":"uz","Vietnamese":"vi","Welsh":"cy","Wolof":"wo","Xhosa":"xh","Yiddish":"yi","Yoruba":"yo","Zulu":"zu"};
 
 
 
