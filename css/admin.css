@@ -21,10 +21,10 @@ form input[type=color] {
 	padding: 2px 6px;
 	border: 2px inset White;
 	border-radius: 3px;
-	text-shadow: 1px 1px 1px Black;
 	margin: 0px 6px;
-	font-size: 1.3em;
-	font-family: 'Courier New', Courier, monospace;
+	font-size: 1.1em;
+	font-family: sans-serif;
+	font-weight: bold;
 }
 
 .bibleget-dynamic-data-wrapper {
