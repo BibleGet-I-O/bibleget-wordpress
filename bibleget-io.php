@@ -598,8 +598,13 @@ function bibleget_gutenberg()
     }
 
     $haveGFonts = $optionsInfo->gfontsAPIkeyCheck();
+    $GFonts = null;
+    $gfontsFilePath = WP_PLUGIN_DIR . "/bibleget-io/gfonts_preview/gfontsWeblist.json";
+    if($haveGFonts === "SUCCESS" && file_exists($gfontsFilePath) ){
+        $GFonts = json_decode(file_get_contents($gfontsFilePath) );
+    }
 
-    wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'bibleget_admin_url' => admin_url("options-general.php?page=bibleget-settings-admin"), 'langCodes' => $langCodes, 'currentLangISO' => get_bloginfo ( 'language' ), 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants, 'haveGFonts' => $haveGFonts));
+    wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'bibleget_admin_url' => admin_url("options-general.php?page=bibleget-settings-admin"), 'langCodes' => $langCodes, 'currentLangISO' => get_bloginfo ( 'language' ), 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants, 'haveGFonts' => $haveGFonts, 'GFonts' => $GFonts));
 
     register_block_type('bibleget/bible-quote', array(
         'editor_script'        => 'bibleget-gutenberg-block',
