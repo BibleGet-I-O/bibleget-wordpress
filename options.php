@@ -676,18 +676,18 @@ class BibleGetSettingsPage
 					$d2 = new DateTime();
 					$d2->setTimestamp($this->gfontsAPIkeyTimeOut);
 					$diff = $d2->diff($d1);
-					$gfontsAPIkeyTimeLeft = $diff->m . "months, " . $diff->d . " days";
+					$gfontsAPIkeyTimeLeft = $diff->m . " months, " . $diff->d . " days";
 
 					$timeLeft = array();
 
 					if ($diff->m > 0) {
-						$timeLeft[] = ($diff->m . " month" . (($diff->m > 1) ? "s" : ""));
+						$timeLeft[] = ($diff->m . " " . _n("month", "months", $diff->m, "bibleget-io"));
 					}
 					if ($diff->d > 0) {
-						$timeLeft[] = ($diff->d . " day" . (($diff->d > 1) ? "s" : ""));
+						$timeLeft[] = ($diff->d . " " . _n("day", "days", $diff->d, "bibleget-io"));
 					}
 
-					$gfontsAPIkeyTimeLeft = (count($timeLeft) > 0) ? "[" . implode(", ", $timeLeft) . "]" : "";
+					$gfontsAPIkeyTimeLeft = (count($timeLeft) > 0) ? "[" . implode(", ", $timeLeft) . "]" : "[0 " .  _n("day", "days", 2, "bibleget-io") . "]";
 
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
 					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">' . __("VALID", "bibleget-io") . '</span><br />';
