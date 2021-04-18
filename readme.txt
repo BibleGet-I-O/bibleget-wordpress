@@ -134,6 +134,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 * Fix: recent updates to the Block editor gave a fixed height to all select inputs, whether they had the `multiple` attribute or not, needed to override it for `select[multiple]` until it's fixed in the Gutenberg repo
 * Enhancement: Bible versions are now grouped into option groups organized by language in the multiselect
 * Enhancement: functional font-picker added to the General Styles in the gutenberg block options, which also works with Google Fonts API key and font previews
+* Enhandement: add option for preferring Greek / Hebrew origin for those Bible texts that offer a choice
+* Enhancement: highlight accented search results matched against non accented keywords
+* Enhancement: allow for any kind of dash in formulation of the Bible citation query string
 
 = 7.2 =
 * Fix: styling of poetic verses in NABRE version
