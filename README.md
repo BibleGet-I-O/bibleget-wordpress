@@ -8,10 +8,10 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 | Plugin URI        | https://www.bibleget.io                                                                                                    |
 | Donate link       | https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58                                         |
 | Tags              | bible, block, shortcode, quote, citation, verses, bibbia, citazione, versetti, biblia, cita, versiculos, versets, citation |
-| Requires at least | WordPress 5.0                                                                                                              |
-| Tested up to      | WordPress 5.6.1                                                                                                            |
+| Requires at least | WordPress 5.6                                                                                                              |
+| Tested up to      | WordPress 5.7.1                                                                                                            |
 | Requires PHP      | 5.6                                                                                                                        |
-| Stable tag        | 7.2                                                                                                                        |
+| Stable tag        | 7.3                                                                                                                        |
 | License           | GPLv2 or later                                                                                                             |
 | License URI       | http://www.gnu.org/licenses/gpl-2.0.html                                                                                   |
 
