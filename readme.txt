@@ -365,7 +365,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 == Upgrade Notice ==
 
 = 7.3 =
-Fixes botched styling of the multiselect in the block editor after recent WordPress/Gutenberg updates, adds font picker to block editor
+Fixes botched styling of the multiselect in the block editor after recent WordPress/Gutenberg updates, adds a few enhancements to the block editor options
 
 = 7.2 =
 Better styling of poetic verses in NABRE version, fix for error table being shown to end user
