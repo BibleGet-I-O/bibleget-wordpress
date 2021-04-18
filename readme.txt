@@ -4,7 +4,7 @@ Author URI: https://www.johnromanodorazio.com
 Plugin URI: https://www.bibleget.io
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, versetti, biblia, cita, versiculos, versets, citation
-Requires at least: 5.0
+Requires at least: 5.6
 Tested up to: 5.7.1
 Requires PHP: 5.6
 Stable tag: 7.2
@@ -114,12 +114,6 @@ In order to allow for new layout options, the BibleGet I/O API itself was slight
 However Bible quotes are cached by the BibleGet plugin for a seven day period, which means that from the time of the update until about a week later the cached Bible quotes will not have the necessary information for them to work with the 'Bible quote' block.
 If you do not want to wait seven days or until the cache expires, there is a new option in the BibleGet Settings page since version 5.7 which allows to flush the cache.
 A word of caution however: the more recent updates to the BibleGet service endpoint have started imposing hard limits on the number of requests that can be issued from any given domain, IP address or referer. No more than 30 requests for one same Bible quote can be issued in a two day period, and no more than 100 requests for different Bible quotes can be issued in a two day period. If you have many Bible quotes on your website and you risk hitting the limit, it may be best not to flush the cache all at once but rather wait out the seven days until the cache expires.  
-
-= Sometimes the Bible quote block is giving an error 'Error loading block: The response is not a valid JSON response.' =
-If you sometimes see this error, one possible situation is that the server configuration is not able to handle large GET requests. Since the Bible quote block has many styling options, the function that renders the block every time a change needs to send all of the data from the styling options to the server in order for the render to complete successfully. However requests of type GET only allow for so much data in the request URL. You can check if this is the actual problem you are encountering by opening your browser's Inspector Tools (for example CTRL-SHIFT-I in Google Chrome) and checking if you see a failed GET request by the api-fetch.min.js script to a wp-json endpoint something like this: **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**
-You can further inspect the *Network* tab of the browser's Inspector Tools (this may require reloading the page and retrying the request). If you see a similar request in the Network tab with a response of '502 Bad Gateway', this could be an indication that your server is hitting the buffer limit for GET requests.
-To fix this, POST requests need to be made instead of GET requests, however this functionality has only been introduced in Gutenberg v8.8, released August 19th 2020. Therefore the only way to fix this on a version of WordPress less than 5.6 is to install the Gutenberg plugin with a minimum version of 8.8. For versions of WordPress greater than 5.6 installation of the Gutenberg plugin is not be required.
-When having to fix by installation of the Gutenberg plugin, in order to test the fix once the plugin has been installed, open the browser's Inspector Tools, open the *Network* tab, then create a new Bible quote block. You can check the request method used in the request by the `api-fetch.min.js` script to **/wp-json/wp/v2/block-renderer/bibleget/bible-quote?...**, under `Headers -> General -> Request Method`, it should now show `POST`.
 
 = I'm not able to use some options in the Gutenberg block such as positioning of the Bible version =
 There was recently an update to the BibleGet I/O API which slightly changed the structure of the html that comprises the Bible quotes. It is necessary to update the plugin to v5.9 in order to be compatible with these changes. 
