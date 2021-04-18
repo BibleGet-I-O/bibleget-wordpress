@@ -38,7 +38,7 @@
 										$('link:last').after('<link href="' + link + '" rel="stylesheet" type="text/css">');
 									}
 								}
-								$('.bibleQuote.results').css('font-family', font[0] );				
+								$('.bibleQuote.results').css('font-family', font[0] );
 							break;
 							case 'PARAGRAPHSTYLES_LINEHEIGHT':
 								$('.bibleQuote.results .versesParagraph').css('line-height', BGET.PARAGRAPHSTYLES_LINEHEIGHT+'em' );

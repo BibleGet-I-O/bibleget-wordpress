@@ -938,7 +938,7 @@ class BibleGetSettingsPage
 											$errorinfo[] = "Response from curl request 3 is false for font-family {$thisfamily}";
 										}
 										if (curl_errno($ch3)) {
-											$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error($ch);
+											$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error($ch3);
 										}
 										if ($status3 != 200) {
 											$errorinfo[] = "Status on curl request 3 for font-family {$thisfamily}: " . $status3;
@@ -950,7 +950,7 @@ class BibleGetSettingsPage
 									$errorinfo[] = "Response from curl request 2 is false for font-family {$thisfamily}";
 								}
 								if (curl_errno($ch2)) {
-									$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error($ch);
+									$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error($ch2);
 								}
 								if ($status2 != 200) {
 									$errorinfo[] = "Status on curl request 2 for font-family {$thisfamily}: " . $status2;
@@ -1653,7 +1653,7 @@ class BibleGet_Customize
 			if ($is_googlefont && !empty($mod)) {
 				$t = explode(":", $mod);
 				$ff = preg_replace("/[\+|:]/", " ", $t[0]);
-				$cssrule = sprintf('%s { %s:%s; }', '.bibleQuote.results', 'font-family', "'" . $ff . "'");
+				$cssrule = sprintf('%s { %s: %s; }', '.bibleQuote.results', 'font-family', "'" . $ff . "'");
 				echo $cssrule;
 			} else {
 				self::generate_options_css('.bibleQuote.results', 'font-family',	$BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY']);

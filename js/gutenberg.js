@@ -200,7 +200,7 @@ const getKeyByValue = function (object, value) {
       value: props.value,
       onChange: props.onChange,
       options: filteredOptions,
-      onInputChange: (inputValue) => {
+      onFilterValueChange: (inputValue) => {
         setFilteredOptions(
           fontOptions.filter((option) =>
             option.label.toLowerCase().startsWith(inputValue.toLowerCase())
@@ -1442,25 +1442,37 @@ const getKeyByValue = function (object, value) {
               "; }"
           )
         );
-        BibleGetGlobal.BGETProperties[
-          "VERSETEXTSTYLES_TEXTCOLOR"
-        ].default = VERSETEXTSTYLES_TEXTCOLOR;
+        BibleGetGlobal.BGETProperties["VERSETEXTSTYLES_TEXTCOLOR"].default = VERSETEXTSTYLES_TEXTCOLOR;
         setAttributes({ VERSETEXTSTYLES_TEXTCOLOR });
       }
 
-      function setFontFamily(PARAGRAPHSTYLES_FONTFAMILY) {
+      const setFontFamily = PARAGRAPHSTYLES_FONTFAMILY => {
+        console.log('setFontFamily was called');
+        let fontType = 'websafe';
+        if ( BibleGetGlobal.haveGFonts === "SUCCESS"
+            && typeof BibleGetGlobal.GFonts === 'object'
+            && BibleGetGlobal.GFonts.hasOwnProperty('items')
+            && BibleGetGlobal.GFonts.items.length > 0
+            && BibleGetGlobal.GFonts.items.filter(value => value.family.replace(/ /g,"+") === PARAGRAPHSTYLES_FONTFAMILY ).length
+          ) {
+          //console.log('gfont was detected');
+          fontType = 'gfont';
+        }
+        if (fontType === 'gfont' && $("link[href*='" + PARAGRAPHSTYLES_FONTFAMILY + "']").length === 0){
+          //console.log('we do not seem to have a stylesheet for gfont family "' + PARAGRAPHSTYLES_FONTFAMILY + '" yet');
+          $("link:last").after(
+            '<link href="https://fonts.googleapis.com/css?family=' + PARAGRAPHSTYLES_FONTFAMILY + '" rel="stylesheet" type="text/css">'
+          );
+        }
+        let fontFamilyRdbl = PARAGRAPHSTYLES_FONTFAMILY.replace(/[\+]/g, " ");
         let bbGetDynSS = jQuery("#bibleGetDynamicStylesheet").text();
         jQuery("#bibleGetDynamicStylesheet").text(
           bbGetDynSS.replace(
-            /\.bibleQuote\.results \{ font-family: (?:.*?); \}/,
-            ".bibleQuote.results { font-family: " +
-			PARAGRAPHSTYLES_FONTFAMILY +
-              "; }"
+            /\.bibleQuote\.results \{ font\-family: (?:.*?); \}/,
+            ".bibleQuote.results { font-family: '" + fontFamilyRdbl + "'; }"
           )
         );
-        BibleGetGlobal.BGETProperties[
-          "PARAGRAPHSTYLES_FONTFAMILY"
-        ].default = PARAGRAPHSTYLES_FONTFAMILY;
+        BibleGetGlobal.BGETProperties["PARAGRAPHSTYLES_FONTFAMILY"].default = PARAGRAPHSTYLES_FONTFAMILY;
         setAttributes({ PARAGRAPHSTYLES_FONTFAMILY });
       }
 
@@ -2807,10 +2819,12 @@ const getKeyByValue = function (object, value) {
                 max: 20,
                 onChange: changeParagraphStylePaddingLeftRight,
               }),
-              createElement(FontSelectCtl, {
-                value: attributes.PARAGRAPHSTYLES_FONTFAMILY,
-                onChange: setFontFamily,
-              })
+              createElement(PanelRow,{},
+                createElement(FontSelectCtl, {
+                  value: attributes.PARAGRAPHSTYLES_FONTFAMILY,
+                  onChange: setFontFamily,
+                })
+              )
             ),
             createElement(
               PanelBody,
