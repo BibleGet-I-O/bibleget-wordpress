@@ -647,6 +647,11 @@ function bibleGetGutenbergScripts($hook)
             wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css', false, '4.6.1');
         }
     }
+    if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css'  ) ){
+        wp_enqueue_style( 'bibleget-fontselect-preview',
+            plugins_url ('css/gfonts_preview/gfonts_preview.css', __FILE__ )
+        );
+    }
 }
 
 add_action('admin_enqueue_scripts', 'bibleGetGutenbergScripts');

@@ -197,10 +197,27 @@ const getKeyByValue = function (object, value) {
     const [filteredOptions, setFilteredOptions] = useState(fontOptions);
     return createElement(ComboboxControl, {
       label: "Font",
+      className: 'BGET_FONTPICKER',
       value: props.value,
       onChange: props.onChange,
       options: filteredOptions,
-      onFilterValueChange: (inputValue) => {
+      onFilterValueChange: inputValue => {
+        console.log('onFilterValueChange: inputValue = ' + inputValue);
+        setTimeout(() => {
+          //console.log('we found ' + jQuery('.BGET_FONTPICKER ul').length + ' BGET_FONTPICKER dropdown lists');
+          if(jQuery('.BGET_FONTPICKER ul').length){
+            //console.log('there are ' + jQuery('.BGET_FONTPICKER li').length + ' li elements in this list');
+            jQuery('.BGET_FONTPICKER li').each(function(idx){
+              let $elem = jQuery('.BGET_FONTPICKER li:nth-child(' + (idx + 1) + ')');
+              let label = $elem.text();
+              if(/websafe/.test(label)){
+                label = label.replace(/\[websafe\]/,'').trim();
+              }
+              //console.log('updating css for label ' + label);
+              $elem.css({fontFamily:label});
+            });
+          }
+        });
         setFilteredOptions(
           fontOptions.filter((option) =>
             option.label.toLowerCase().startsWith(inputValue.toLowerCase())
