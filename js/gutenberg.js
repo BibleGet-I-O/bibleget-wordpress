@@ -189,7 +189,13 @@ const getKeyByValue = function (object, value) {
     })
   );
 
-  if (BibleGetGlobal.haveGFonts === "SUCCESS" && typeof BibleGetGlobal.GFonts === 'object' && BibleGetGlobal.GFonts.hasOwnProperty('items') && BibleGetGlobal.GFonts.items.length > 0 ) {
+  if (
+    BibleGetGlobal.haveGFonts === "SUCCESS"
+    && typeof BibleGetGlobal.GFonts === 'object'
+    && BibleGetGlobal.GFonts !== null
+    && BibleGetGlobal.GFonts.hasOwnProperty('items')
+    && BibleGetGlobal.GFonts.items.length > 0
+  ) {
     BibleGetGlobal.GFonts.items.forEach(value => fontOptions.push({ label: value.family, value: value.family.replace(/ /g,"+") }) );
   }
 
@@ -1468,6 +1474,7 @@ const getKeyByValue = function (object, value) {
         let fontType = 'websafe';
         if ( BibleGetGlobal.haveGFonts === "SUCCESS"
             && typeof BibleGetGlobal.GFonts === 'object'
+            && BibleGetGlobal.GFonts !== null
             && BibleGetGlobal.GFonts.hasOwnProperty('items')
             && BibleGetGlobal.GFonts.items.length > 0
             && BibleGetGlobal.GFonts.items.filter(value => value.family.replace(/ /g,"+") === PARAGRAPHSTYLES_FONTFAMILY ).length
