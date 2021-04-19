@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.6
 Tested up to: 5.7.1
 Requires PHP: 5.6
-Stable tag: 7.4
+Stable tag: 7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 7.5 =
+* Fix: check `GFonts` for null value (like when Google Fonts previews are not installed or updated)
 
 = 7.4 =
 * Fix: recent updates to the Block editor gave a fixed height to all select inputs, whether they had the `multiple` attribute or not, needed to override it for `select[multiple]` until it's fixed in the Gutenberg repo
@@ -372,6 +375,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 7.5 =
+Version 7.5 brings all the latest functionality from the BibleGet API. Update today!
 
 = 7.4 =
 Fixes botched styling of the multiselect in the block editor after recent WordPress/Gutenberg updates, adds a few enhancements to the block editor options
