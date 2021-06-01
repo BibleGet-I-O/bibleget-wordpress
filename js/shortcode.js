@@ -25,23 +25,24 @@
 		jQuery('.versesParagraph .verseText').each(function(){
 			jQuery(this).contents().first().filter(function(){ 
 				return ( 
-						this.nodeType === 1 && ( 
-								jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') 
-						//) && (
-								jQuery(this).parent('.verseText').prevAll('.verseText').length == 0 //is the first .verseText of a chapter
-								||
-								jQuery(this).parent('.verseText').prev('.verseText').contents().last().filter(function(){
-									return this.nodeType === 1 && ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
-								})
-						//) 
+					this.nodeType === 1
+					&& ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
+					&& ( jQuery(this).parent('.verseText').prevAll('.verseText').length == 0 //is the first .verseText of a chapter
+						|| jQuery(this).parent('.verseText').prev('.verseText').contents().last().filter( function() { //the last node within the preceding .verseText node
+							return this.nodeType === 1 
+								&& ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
+						})
+					) 
 				) 
 			}).css({"display":"inline-block","position":"relative","left":function(index){ return "-"+jQuery(this).parent('.verseText').prev('.verseNum').outerWidth(true)+"px"; } });    
 			//HERE IS THE LOGIC:
-			//IF the (first node) following a .verseText node is not a text node,
-			//AND it IS an element node with class pof,poif,po,poi,poil...	  
-			//--AND (this is the first .verseText node of a chapter
-			//--    OR 
-			//--    the last node within the preceding .verseText node IS an element node with class pof,poif,po,poi,poil)
+			//IF the (first node) following a .verseText node is not a text node but an element node,
+			//AND it IS an element node with class pof,poif,po,poi,pol,pos,poil...
+			//AND (
+			//--	this is the first .verseText node of a chapter
+			//--	OR 
+			//--	the last node within the preceding .verseText node IS an ELEMENT node and HAS CLASS pof,poif,po,poi,poil
+			//-- )
 	
 			//THEN change the css display of that (first node) to "inline-block" and left position it removing the width of the span with the verse number 
 			//TODO: shouldn't we do this any time it's the first node within a verseText node, since it follows a verseNum?
