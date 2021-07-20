@@ -1,6 +1,9 @@
 # BibleGet plugin for WordPress
 A plugin that let's you insert Bible quotes into your WordPress pages or posts, using the **Bible quote** block or the `[bibleget]` shortcode. Behind the scenes the texts for the Bible quotes are retrieved from the BibleGet I/O API endpoint. Bible quotes can be inserted either by Bible reference or (in the case of the **Bible quote** block) by searching for verses that contain a specific term.
 
+![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/bibleget-io)
+![WordPress Plugin Active Installs](https://img.shields.io/wordpress/plugin/installs/bibleget-io)
+
 | Information       |                                                                                                                            |
 |-------------------|----------------------------------------------------------------------------------------------------------------------------|
 | Contributors      | JohnRDOrazio                                                                                                               |
@@ -11,7 +14,7 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 | Requires at least | WordPress 5.6                                                                                                              |
 | Tested up to      | WordPress 5.7.1                                                                                                            |
 | Requires PHP      | 5.6                                                                                                                        |
-| Stable tag        | 7.4                                                                                                                        |
+| Stable tag        | 7.5                                                                                                                        |
 | License           | GPLv2 or later                                                                                                             |
 | License URI       | http://www.gnu.org/licenses/gpl-2.0.html                                                                                   |
 
