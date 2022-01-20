@@ -64,10 +64,10 @@ Other parameters available to the shortcode are:
   * `preferorigin`: can have a value of `GREEK` or `HEBREW`, useful in those cases where there are multiple texts for the same book, chapter or verse in the same Bible edition, such as in the Book of Esther where both versions are included, one based on the original Greek text, and the other based on the original Hebrew text. Example: `[bibleget query="Esther 1:1" preferorigin="HEBREW"]`
   * `layoutprefs_showbibleversion`: can have a value of `true` or `false`. Example: `[bibleget query="Ezekiel 25:17" layoutprefs_showbibleversion="false"]`
   * `layoutprefs_bibleversionalignment`: can have a value of `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`. Example: `[bibleget query="Psalm 149:3" layoutprefs_bibleversionalignment="LEFT"]`
-  * `layoutprefs_bibleversionposition`: can have a value of `TOP`, `BOTTOM or `BOTTOMINLINE`. Example: `[bibleget query="2 Samuel 6:14" layoutprefs_bibleversionposition="BOTTOM"]`
+  * `layoutprefs_bibleversionposition`: can have a value of `TOP`, `BOTTOM` or `BOTTOMINLINE`. Example: `[bibleget query="2 Samuel 6:14" layoutprefs_bibleversionposition="BOTTOM"]`
   * `layoutprefs_bibleversionwrap`: can have a value of `NONE`, `PARENTHESES` or `BRACKETS`. Example: `[bibleget query="Ecclesiastes 3:1-4" layoutprefs_bibleversionwrap="BRACKETS"]`
   * `layoutprefs_bookchapteralignment`: can have a value of `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`. Example: `[bibleget query="Galatians 5:7-10" layoutprefs_bookchapteralignment="RIGHT"]`
-  * `layoutprefs_bookchapterposition`: can have a value of `TOP`, `BOTTOM or `BOTTOMINLINE`. Example: `[bibleget query="Mark 13:35-37" layoutprefs_bookchapterposition="BOTTOMINLINE"]`
+  * `layoutprefs_bookchapterposition`: can have a value of `TOP`, `BOTTOM` or `BOTTOMINLINE`. Example: `[bibleget query="Mark 13:35-37" layoutprefs_bookchapterposition="BOTTOMINLINE"]`
   * `layoutprefs_bookchapterwrap`: can have a value of `NONE`, `PARENTHESES` or `BRACKETS`. Example: `[bibleget query="John 8:12" layoutprefs_bookchapterwrap="PARENTHESES"]`
   * `layoutprefs_bookchapterformat`: can have a value of `USERLANG`, `BIBLELANG`, `USERLANGABBREV` or `BIBLELANGABBREV`. Example: `[bibleget query="Psalms 144:1-2" layoutprefs_bookchapterformat="USERLANGABBREV"]`
   * `layoutprefs_bookchapterfullquery`: can have a value of `true` or `false`. Example: `[bibleget query="Isaiah 6:8" layoutprefs_bookchapterfullquery="true"]`
