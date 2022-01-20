@@ -28,7 +28,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v7_5");
+define("BIBLEGETPLUGINVERSION", "v7_6");
 
 if (!defined('ABSPATH')) {
     die("You cannot access this file directly.");
@@ -201,11 +201,17 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
     $BGET = [];
     $BGETOPTIONS = new BGETPROPERTIES();
     foreach ($BGETOPTIONS->OPTIONS as $option => $array) {
+        $optionUCase = $option;
         $option = strtolower($option); //shortcode attributes are all lowercased by default, so we need to lowercase for consistency
         $BGET[$option] = $array['default']; //default will be based on current saved option if exists
 
         //while we are building our default values, we will also enforce type on $atts so we know we are speaking the same language
         if (isset($atts[$option])) {
+            $r = new ReflectionClass('BGET');
+            if( $r->getConstant($optionUCase) && is_array($r->getConstant($optionUCase)) && in_array( $atts[$option], array_keys( $r->getConstant($optionUCase) ) ) ) {
+                //if user is using a string value instead of our enum values, let's try to get an enum value from the string value
+                $atts[$option] = $r->getConstant($optionUCase)[$atts[$option]];
+            }
             switch ($array["type"]) {
                 case 'number':
                     $atts[$option] = BibleGet_Customize::sanitize_float($atts[$option]);
