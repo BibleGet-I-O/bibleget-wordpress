@@ -208,6 +208,15 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
         //while we are building our default values, we will also enforce type on $atts so we know we are speaking the same language
         if (isset($atts[$option])) {
             $r = new ReflectionClass('BGET');
+            if( str_ends_with($optionUCase, "ALIGNMENT") ) {
+                $optionUCase = "ALIGN";
+            } else if( str_ends_with($optionUCase, "WRAP") ) {
+                $optionUCase = "WRAP";
+            } else if( str_ends_with($optionUCase, "POSITION") ) {
+                $optionUCase = "POS";
+            } else if( str_ends_with($optionUCase, "FORMAT") ) {
+                $optionUCase = "FORMAT";
+            }
             if( $r->getConstant($optionUCase) && is_array($r->getConstant($optionUCase)) && in_array( $atts[$option], array_keys( $r->getConstant($optionUCase) ) ) ) {
                 //if user is using a string value instead of our enum values, let's try to get an enum value from the string value
                 $atts[$option] = $r->getConstant($optionUCase)[$atts[$option]];
