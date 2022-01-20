@@ -57,7 +57,21 @@ The Plugin also has a settings page **“BibleGet I/O”** under **“Settings�
 After you have made your choices in the settings area, remember to click on **“Save”**!
 Once the preferred version is set you can simply use:
 
-  * `[bibleget query=“1 Cor 13”]`
+  * `[bibleget query="1 Cor 13"]`
+
+Other parameters available to the shortcode are:
+  * `popup`: can have a value of `true` or `false`. Will determine whether the text of the Bible quote will show in a full block, or instead in a popup window upon clicking the Bible quote. Example: `[bibleget query="Romans 8:28" popup="true"]`
+  * `preferorigin`: can have a value of `GREEK` or `HEBREW`, useful in those cases where there are multiple texts for the same book, chapter or verse in the same Bible edition, such as in the Book of Esther where both versions are included, one based on the original Greek text, and the other based on the original Hebrew text. Example: `[bibleget query="Esther 1:1" preferorigin="HEBREW"]`
+  * `layoutprefs_showbibleversion`: can have a value of `true` or `false`. Example: `[bibleget query="Ezekiel 25:17" layoutprefs_showbibleversion="false"]`
+  * `layoutprefs_bibleversionalignment`: can have a value of `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`. Example: `[bibleget query="Psalm 149:3" layoutprefs_bibleversionalignment="LEFT"]`
+  * `layoutprefs_bibleversionposition`: can have a value of `TOP`, `BOTTOM or `BOTTOMINLINE`. Example: `[bibleget query="2 Samuel 6:14" layoutprefs_bibleversionposition="BOTTOM"]`
+  * `layoutprefs_bibleversionwrap`: can have a value of `NONE`, `PARENTHESES` or `BRACKETS`. Example: `[bibleget query="Ecclesiastes 3:1-4" layoutprefs_bibleversionwrap="BRACKETS"]`
+  * `layoutprefs_bookchapteralignment`: can have a value of `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`. Example: `[bibleget query="Galatians 5:7-10" layoutprefs_bookchapteralignment="RIGHT"]`
+  * `layoutprefs_bookchapterposition`: can have a value of `TOP`, `BOTTOM or `BOTTOMINLINE`. Example: `[bibleget query="Mark 13:35-37" layoutprefs_bookchapterposition="BOTTOMINLINE"]`
+  * `layoutprefs_bookchapterwrap`: can have a value of `NONE`, `PARENTHESES` or `BRACKETS`. Example: `[bibleget query="John 8:12" layoutprefs_bookchapterwrap="PARENTHESES"]`
+  * `layoutprefs_bookchapterformat`: can have a value of `USERLANG`, `BIBLELANG`, `USERLANGABBREV` or `BIBLELANGABBREV`. Example: `[bibleget query="Psalms 144:1-2" layoutprefs_bookchapterformat="USERLANGABBREV"]`
+  * `layoutprefs_bookchapterfullquery`: can have a value of `true` or `false`. Example: `[bibleget query="Isaiah 6:8" layoutprefs_bookchapterfullquery="true"]`
+  * `layoutprefs_showversenumbers`: can have a value of `true` or `false`. Example: `[bibleget query="1 John 2:15-17" layoutprefs_showversenumbers="false"]`
 
 The style settings are customizable using the **Wordpress Customizer**, so you can make the Bible quotes fit the style of your own blog / WordPress website.
 
