@@ -77,7 +77,8 @@ _________
 
 = How do I formulate a Bible citation? =
 The `query` parameter must contain a Bible reference formulated according to the standard notation for Bible citations (see [Bible citation](http://en.wikipedia.org/wiki/Bible_citation "http://en.wikipedia.org/wiki/Bible_citation") on Wikipedia).
-Two different notations can be used, the English style notation and the International style notation.
+Two different notations can be used, the English (Chicago Manual of Style) notation and the International style notation.
+
 **ENGLISH NOTATION:**
 
   * “:” is the chapter – verse separator. “15:5” means “chapter 15, verse 5”.
@@ -103,6 +104,8 @@ Two different notations can be used, the English style notation and the Internat
   * “;” same as English notation
    
 Either notation can be used, however they cannot be mixed within the same query.
+
+MLA style notation (which uses a “.” dot as the chapter verse separator, and only supports verse ranges, not non-consecutive verses) is not supported.
 
 At least the first query (of a series of queries chained by a semi-colon) must indicate the name of the book to quote from; the name of the book can be written in full in more than 20 different languages, or written using the abbreviated form.
 See the page [List of Book Abbreviations](https://www.bibleget.io/how-it-works/list-of-book-abbreviations/ "List of Book Abbreviations").
