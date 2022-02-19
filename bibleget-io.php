@@ -1324,6 +1324,21 @@ function bibleGetIsValidBook($book)
     return bibleGetIdxOf($book, $biblebooks);
 }
 
+function setCommunicationError( $notices, $err ) {
+    $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
+    $currentPageUrl = bibleGetCurrentPageUrl();
+    $errs = [
+        "",
+        /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
+        __("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+        /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
+        __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io")
+    ];
+    $notices[] = "BIBLEGET PLUGIN ERROR: " .
+        sprintf( $errs[$err], $optionsurl ) . " ({$currentPageUrl})";
+    update_option('bibleget_error_admin_notices', $notices);
+}
+
 /**
  * FUNCTION bibleGetGetMetaData
  * @var request
@@ -1364,56 +1379,24 @@ function bibleGetGetMetaData($request)
         curl_setopt($ch, CURLOPT_URL, $url);
         $response = curl_exec($ch);
         if (curl_errno($ch)) {
-            $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
-            /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-            $notices[] = "BIBLEGET PLUGIN ERROR: " .
-                sprintf(
-                    __("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
-                    $optionsurl
-                ) .
-                " ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $notices);
+            setCommunicationError( $notices, 1 );
             return false;
         } else {
             $info = curl_getinfo($ch);
             // echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-            if ($info["http_code"] != 200) {
-                $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
-                /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-                $notices[] = "BIBLEGET PLUGIN ERROR: " .
-                    sprintf(
-                        __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
-                        $optionsurl
-                    ) .
-                    " ({$currentPageUrl})";
-                update_option('bibleget_error_admin_notices', $notices);
+            if ($info["http_code"] != 200 && $info["http_code"] != 304 ) {
+                setCommunicationError( $notices, 2 );
                 return false;
             }
         }
     } elseif (curl_errno($ch)) {
-        $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
-        /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-        $notices[] = "BIBLEGET PLUGIN ERROR: " .
-            sprintf(
-                __("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
-                $optionsurl
-            ) .
-            " ({$currentPageUrl})";
-        update_option('bibleget_error_admin_notices', $notices);
+        setCommunicationError( $notices, 1 );
         return false;
     } else {
         $info = curl_getinfo($ch);
         // echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-        if ($info["http_code"] != 200) {
-            $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
-            /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-            $notices[] = "BIBLEGET PLUGIN ERROR: " .
-                sprintf(
-                    __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
-                    $optionsurl
-                ) .
-                " ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $notices);
+        if ($info["http_code"] != 200 && $info["http_code"] != 304) {
+            setCommunicationError( $notices, 2 );
             return false;
         }
     }
