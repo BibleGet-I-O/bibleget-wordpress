@@ -131,11 +131,14 @@ function BibleGet_on_uninstall()
             WHERE `option_name` LIKE '%transient_%" . TRANSIENT_PREFIX . "%'
             ";
     //We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
+    $wpdb->query($sql);
+    /*
     if ($wpdb->query($sql) !== false) {
         //echo 'cacheflushed';
     } else {
         //echo 'cacheNotFlushed';
     }
+    */
 }
 
 
@@ -1009,9 +1012,7 @@ function bibleGetQueryServer($finalquery)
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
-    if (ini_get('safe_mode') || ini_get('open_basedir')) {
-        // safe mode is on, we can't use some settings
-    } else {
+    if (ini_get('open_basedir') === false) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
     }
@@ -1083,10 +1084,10 @@ function bibleGetProcessQueries($queries, $versions)
                 // bibleGetWriteLog("temp variable is an array, hurray!");
                 $indexes[$value] = $temp;
                 // bibleGetWriteLog($indexes[$value]);
-            } else {
+            }/* else {
                 // bibleGetWriteLog("temp variable is neither an object or an array. What the heck is it?");
                 // bibleGetWriteLog($temp);
-            }
+            }*/
         } else {
             // bibleGetWriteLog("option["."bibleget_".$value."IDX"."] does not exist. Now attempting to set options...");
             bibleGetSetOptions();
@@ -1095,9 +1096,9 @@ function bibleGetProcessQueries($queries, $versions)
                 // bibleGetWriteLog($temp);
                 // $temp1 = json_encode($temp);
                 $indexes[$value] = json_decode($temp, true);
-            } else {
+            }/* else {
                 // bibleGetWriteLog("Could not either set or get option["."bibleget_".$value."IDX"."]");
-            }
+            }*/
         }
     }
     // bibleGetWriteLog("indexes array should now be populated:");
@@ -1305,9 +1306,9 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                             return false;
                                         }
                                     }
-                                } else {
+                                }/* else {
                                     // bibleGetWriteLog("something is up with the regex check...");
-                                }
+                                }*/
                             } else {
                                 if (preg_match("/,([1-9][0-9]{0,2})/", $thisquery, $matches)) {
                                     $highverse = intval($matches[1]);
@@ -1550,9 +1551,7 @@ function bibleGetGetMetaData($request)
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
-    if (ini_get('safe_mode') || ini_get('open_basedir')) {
-        // safe mode is on, we can't use some settings
-    } else {
+    if (ini_get('open_basedir') === false) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
     }
@@ -1810,9 +1809,7 @@ function searchByKeyword()
     curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-    if (ini_get('safe_mode') || ini_get('open_basedir')) {
-        // safe mode is on, we can't use some settings
-    } else {
+    if (ini_get('open_basedir') === false) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
     }
