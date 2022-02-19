@@ -103,7 +103,7 @@
 }
 
 #searchResultsControlPanel .controlComponent {
-    margin: 33px 0px;
+    margin: 33px 0;
 }
 
 #searchResultsControlPanel .controlComponent label {
@@ -111,7 +111,7 @@
 }
 
 #searchResultsControlPanel .controlComponent button {
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 #searchResultsContents {
@@ -122,7 +122,6 @@
     border: 1px solid #963;
     overflow-y: auto;
     max-height: 500px;
-    overflow-y: auto;
 }
 
 #bibleGetSearchResultsTableContainer table {
@@ -140,7 +139,6 @@
     border-left: 1px solid #eb8;
     border-right: 1px solid #b74;
     border-top: 1px solid #eb8;
-    font-weight: normal;
     text-align: center;
     color: White;
     font-weight: bold;
@@ -153,7 +151,7 @@
 }
 
 #bibleGetSearchResultsTableContainer tbody td:last-child {
-    border-right: 0px;
+    border-right: 0;
 }
 
 #bibleGetSearchResultsTableContainer mark {
@@ -163,15 +161,12 @@
 .getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input  {
     height: auto;
     min-height: 8.5em;
+    font-size: 13px;
+    color: inherit;
 }
 
 .getBibleQuotePanel select[multiple].components-select-control__input + .components-input-control__suffix {
     visibility: hidden;
-}
-
-.getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input {
-    font-size: 13px;
-    color: inherit;
 }
 
 .getBibleQuotePanel select[multiple].bibleVersionSelect.components-select-control__input:hover {
@@ -180,7 +175,7 @@
 
 mark {
     font-weight: bold;
-    padding: 2px 2px;
+    padding: 2px;
 }
 
 a.submark {
@@ -195,7 +190,7 @@ a.submark:hover {
 
 a.bmark {
     background-color: hotpink;
-    padding: 2px 2px;
+    padding: 2px;
     color: inherit;
 }
 
