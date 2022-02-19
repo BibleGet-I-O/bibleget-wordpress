@@ -42,6 +42,7 @@ define("METADATA_API",  "https://query.bibleget.io/v3/metadata.php");
 
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
+include_once(plugin_dir_path(__FILE__) . "includes/LangCodes.php" );
 require_once(plugin_dir_path(__FILE__) . "options.php");
 
 /**
@@ -563,7 +564,6 @@ function bibleget_gutenberg()
     //we aren't actually going to create the settings page here,
     //we're just using some of the same information that is used to create the settings page
     $optionsInfo = new BibleGetSettingsPage();
-    $langCodes = $optionsInfo->getBibleGetLangCodes();
     $versionsByLang = $optionsInfo->getVersionsByLang();
     $bibleGetBooksInLang = $optionsInfo->getBibleBookNamesInLang();
     //These are our default settings, we will use them for the Gutenberg block
@@ -585,7 +585,19 @@ function bibleget_gutenberg()
         $GFonts = json_decode(file_get_contents($gfontsFilePath) );
     }
 
-    wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', array('ajax_url' => admin_url('admin-ajax.php'), 'bibleget_admin_url' => admin_url("options-general.php?page=bibleget-settings-admin"), 'langCodes' => $langCodes, 'currentLangISO' => get_bloginfo ( 'language' ), 'versionsByLang' => $versionsByLang, 'biblebooks' => $bibleGetBooksInLang, 'BGETProperties' => $BGETPROPERTIES->OPTIONS, 'BGETConstants' => $BGETConstants, 'haveGFonts' => $haveGFonts, 'GFonts' => $GFonts));
+    $myvars = [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'bibleget_admin_url' => admin_url("options-general.php?page=bibleget-settings-admin"),
+        'langCodes' => LANGCODES,
+        'currentLangISO' => get_bloginfo ( 'language' ),
+        'versionsByLang' => $versionsByLang,
+        'biblebooks' => $bibleGetBooksInLang,
+        'BGETProperties' => $BGETPROPERTIES->OPTIONS,
+        'BGETConstants' => $BGETConstants,
+        'haveGFonts' => $haveGFonts,
+        'GFonts' => $GFonts
+    ];
+    wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', $myvars);
 
     register_block_type('bibleget/bible-quote', array(
         'editor_script'        => 'bibleget-gutenberg-block',
@@ -625,7 +637,7 @@ function bibleGetGutenbergScripts($hook)
             }
         }
         if (!$isFontAwesomeEnqueued) {
-            wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css', false, '4.6.1');
+            wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
         }
     }
     if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css'  ) ){
