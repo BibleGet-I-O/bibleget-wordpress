@@ -1,6 +1,6 @@
 .bibleget-textalign .button input {
-	height: 0px;
-	width: 0px;
+    height: 0;
+    width: 0;
 }
 
 .bibleget-textalign.button-group .bget.dashicons, .bibleget-textalign.button-group .bget.dashicons-before:before {
