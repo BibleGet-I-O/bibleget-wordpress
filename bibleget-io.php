@@ -1920,7 +1920,6 @@ function updateBGET()
         if (!isset($array["value"]) || !isset($array["type"])) {
             return false;
         }
-        $value = $array["value"];
         switch ($array["type"]) {
             case 'string':
                 $BGET[$option] = esc_html($array["value"]);
@@ -1940,9 +1939,10 @@ function updateBGET()
                     $BGET[$option] = ["NABRE"];
                 }
                 break;
+            default:
+                //do we need to do some kind of sanitization for this case?
+                $BGET[$option] = esc_html($array["value"]);
         }
-        $BGET[$option] = $value;
-        // TODO: we should probably do some sanitization to ensure correct type
     }
     return update_option('BGET', $BGET);
 }
