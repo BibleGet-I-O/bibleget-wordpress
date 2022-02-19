@@ -358,7 +358,7 @@
         this.$arrow.click(__bind(this.toggleDrop, this));
       };
 
-      Fontselect.prototype.toggleDrop = function (ev) {
+      Fontselect.prototype.toggleDrop = function () {
         if (this.active) {
           this.$element.removeClass("font-select-active");
           this.$drop.hide();
@@ -612,7 +612,7 @@
         });
       };
 
-      Fontselect.prototype.addFontLink = function (font) {
+      //Fontselect.prototype.addFontLink = function (font) {
         //var link = this.options.api + font + '&amp;text=' + encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
         /*
                 var fontfilename = encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
@@ -625,7 +625,7 @@
                     }
                 }
                 */
-      };
+      //};
 
       return Fontselect;
     })();
