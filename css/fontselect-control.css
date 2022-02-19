@@ -17,7 +17,7 @@
 }
 
 .font-select .fs-drop {
-  background: #fff;
+  background-color: #fff;
   border: 1px solid #aaa;
   border-top: 0;
   position: absolute;
@@ -28,6 +28,12 @@
   -o-box-shadow     : 0 4px 5px rgba(0,0,0,.15);
   box-shadow        : 0 4px 5px rgba(0,0,0,.15);
   z-index: 999;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius   : 0 0 4px 4px;
+  border-radius        : 0 0 4px 4px;
+  -moz-background-clip   : padding;
+  -webkit-background-clip: padding-box;
+  background-clip        : padding-box;
 }
 
 .font-select > a {
@@ -76,7 +82,7 @@
   -moz-background-clip   : padding;
   -webkit-background-clip: padding-box;
   background-clip        : padding-box;
-  background: #ccc;
+  background-color: #ccc;
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));
   background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);
   background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);
@@ -99,15 +105,6 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-}
-
-.font-select .fs-drop {
-  -webkit-border-radius: 0 0 4px 4px;
-  -moz-border-radius   : 0 0 4px 4px;
-  border-radius        : 0 0 4px 4px;
-  -moz-background-clip   : padding;
-  -webkit-background-clip: padding-box;
-  background-clip        : padding-box;
 }
 
 .font-select .fs-results {
@@ -140,14 +137,6 @@
 
 .font-select .fs-results li.active em {
   background: transparent;
-}
-
-.font-select-active > a {
-  -webkit-box-shadow: 0 0 5px rgba(0,0,0,.3);
-  -moz-box-shadow   : 0 0 5px rgba(0,0,0,.3);
-  -o-box-shadow     : 0 0 5px rgba(0,0,0,.3);
-  box-shadow        : 0 0 5px rgba(0,0,0,.3);
-  border: 1px solid #5897fb;
 }
 
 .font-select-active > a {
