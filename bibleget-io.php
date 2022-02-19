@@ -619,24 +619,7 @@ function bibleGetGutenbergScripts($hook)
     wp_enqueue_style('bibleget-popup', plugins_url('css/popup.css', __FILE__));
     wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
     if (!wp_style_is('fontawesome', 'enqueued')) {
-        global $wp_styles;
-        $isFontAwesomeEnqueued = false;
-        foreach ($wp_styles->queue as $style) {
-            if (strpos($wp_styles->registered[$style]->src, 'fontawesome')) {
-                $isFontAwesomeEnqueued = true;
-                break;
-            } else if (strpos($wp_styles->registered[$style]->src, 'font-awesome')) {
-                $isFontAwesomeEnqueued = true;
-                break;
-            } else if (strpos($wp_styles->registered[$style]->handle, 'fontawesome')) {
-                $isFontAwesomeEnqueued = true;
-                break;
-            } else if (strpos($wp_styles->registered[$style]->handle, 'font-awesome')) {
-                $isFontAwesomeEnqueued = true;
-                break;
-            }
-        }
-        if (!$isFontAwesomeEnqueued) {
+        if ( false === isFontAwesomeEnqueued() ) {
             wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
         }
     }
@@ -649,6 +632,22 @@ function bibleGetGutenbergScripts($hook)
 
 add_action('admin_enqueue_scripts', 'bibleGetGutenbergScripts');
 
+
+function isFontAwesomeEnqueued() {
+    global $wp_styles;
+    foreach ($wp_styles->queue as $style) {
+        if (strpos($wp_styles->registered[$style]->src, 'fontawesome')) {
+            return true;
+        } else if (strpos($wp_styles->registered[$style]->src, 'font-awesome')) {
+            return true;
+        } else if (strpos($wp_styles->registered[$style]->handle, 'fontawesome')) {
+            return true;
+        } else if (strpos($wp_styles->registered[$style]->handle, 'font-awesome')) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function processOutput( $finalquery ) {
     $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
