@@ -279,50 +279,24 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
             return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
         }
 
-        $finalquery = "query=";
-        $finalquery .= implode(";", $goodqueries);
-        $finalquery .= "&version=";
-        $finalquery .= implode(",", $atts['VERSION']);
-        if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["GREEK"]) {
-            $finalquery .= "&preferorigin=GREEK";
-        } else if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["HEBREW"]) {
-            $finalquery .= "&preferorigin=HEBREW";
-        }
-        if ($atts['FORCEVERSION'] === true) {
-            $finalquery .= "&forceversion=true";
-        }
-        if ($atts['FORCECOPYRIGHT'] === true) {
-            $finalquery .= "&forcecopyright=true";
-        }
+        $finalquery = processFinalQuery( $goodqueries, $atts );
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
-        if ($finalquery != "") {
-            $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
-            if (false === $output) {
-                // $output = $finalquery;
-                // return '<div class="bibleget-quote-div">' . $output . '</div>';
-                $output = bibleGetQueryServer($finalquery);
-                if ($output) {
-                    $output = str_replace(PHP_EOL, '', $output);
-                    set_transient(TRANSIENT_PREFIX . md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
-                } else {
-                    $output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
-                }
-            }
 
-            wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
-            wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
+        $output = processOutput( $finalquery );
 
-            //it shouldn't be necessary to call update_option here,
-            //because even though it's theoretically possible now to set all options inside the shortcode
-            //it would be so impractical that I cannot see anyone actual doing it
-            //and it would probably be confusing to be saving the main query parameters such as "version"
-            //which is being used here as an override compared to any saved options;
-            //same really goes for any parameter used here, it would be used as an ovverride if anything
-            //update_option("BGET",$a);
+        wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
+        wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
 
-            $domDocumentProcessed = processDomDocument( $atts, $output, $content );
-            return $domDocumentProcessed;
-        }
+        //it shouldn't be necessary to call update_option here,
+        //because even though it's theoretically possible now to set all options inside the shortcode
+        //it would be so impractical that I cannot see anyone actual doing it
+        //and it would probably be confusing to be saving the main query parameters such as "version"
+        //which is being used here as an override compared to any saved options;
+        //same really goes for any parameter used here, it would be used as an ovverride if anything
+        //update_option("BGET",$a);
+
+        $domDocumentProcessed = processDomDocument( $atts, $output, $content );
+        return $domDocumentProcessed;
     } else {
         /* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
         $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $a['query'] . '&gt;<br />' . $queries . '</span>';
@@ -663,6 +637,40 @@ function bibleGetGutenbergScripts($hook)
 
 add_action('admin_enqueue_scripts', 'bibleGetGutenbergScripts');
 
+
+function processOutput( $finalquery ) {
+    $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
+    if (false === $output) {
+        $output = bibleGetQueryServer($finalquery);
+        if ($output) {
+            $output = str_replace(PHP_EOL, '', $output);
+            set_transient(TRANSIENT_PREFIX . md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
+        } else {
+            $output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
+        }
+    }
+    return $output;
+}
+
+function processFinalQuery( $goodqueries, $atts ) {
+    $finalquery = "query=";
+    $finalquery .= implode(";", $goodqueries);
+    $finalquery .= "&version=";
+    $finalquery .= implode(",", $atts['VERSION']);
+    if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["GREEK"]){
+        $finalquery .= "&preferorigin=GREEK";
+    } else if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["HEBREW"]) {
+        $finalquery .= "&preferorigin=HEBREW";
+    }
+    if ($atts['FORCEVERSION'] === true) {
+        $finalquery .= "&forceversion=true";
+    }
+    if ($atts['FORCECOPYRIGHT'] === true) {
+        $finalquery .= "&forcecopyright=true";
+    }
+    return $finalquery;
+}
+
 /**
  * Gutenberg Render callback
  */
@@ -708,48 +716,22 @@ function bibleGet_renderGutenbergBlock($atts)
             return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
         }
 
-        $finalquery = "query=";
-        $finalquery .= implode(";", $goodqueries);
-        $finalquery .= "&version=";
-        $finalquery .= implode(",", $atts['VERSION']);
-        if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["GREEK"]){
-            $finalquery .= "&preferorigin=GREEK";
-        } else if ($atts['PREFERORIGIN'] === BGET::PREFERORIGIN["HEBREW"]) {
-            $finalquery .= "&preferorigin=HEBREW";
-        }
-        if ($atts['FORCEVERSION'] === true) {
-            $finalquery .= "&forceversion=true";
-        }
-        if ($atts['FORCECOPYRIGHT'] === true) {
-            $finalquery .= "&forcecopyright=true";
-        }
+        $finalquery = processFinalQuery( $goodqueries, $atts );
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
-        if ($finalquery != "") {
-            $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
-            if (false === $output) {
-                // $output = $finalquery;
-                // return '<div class="bibleget-quote-div">' . $output . '</div>';
-                $output = bibleGetQueryServer($finalquery);
-                if ($output) {
-                    $output = str_replace(PHP_EOL, '', $output);
-                    set_transient(TRANSIENT_PREFIX . md5($finalquery), $output, 7 * 24 * HOUR_IN_SECONDS);
-                } else {
-                    $output = '<span style="color:Red;font-weight:bold;">' . __("Bible Quote failure... Temporary error from the BibleGet server. Please try again in a few minutes", "bibleget-io") . '</span>';
-                }
-            }
-            //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
-            $a = get_option('BGET');
-            $optionsNoUpdateFromBlock = ['POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION'];
-            foreach ($atts as $key => $value) {
-                if (!in_array($key, $optionsNoUpdateFromBlock)) {
-                    $a[$key] = $value;
-                }
-            }
-            update_option("BGET", $a);
 
-            $domDocumentProcessed = processDomDocument( $atts, $output );
-            return $domDocumentProcessed;
+        $output = processOutput( $finalquery );
+        //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
+        $a = get_option('BGET');
+        $optionsNoUpdateFromBlock = ['POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION'];
+        foreach ($atts as $key => $value) {
+            if (!in_array($key, $optionsNoUpdateFromBlock)) {
+                $a[$key] = $value;
+            }
         }
+        update_option("BGET", $a);
+
+        $domDocumentProcessed = processDomDocument( $atts, $output );
+        return $domDocumentProcessed;
     } else {
         /* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
         $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $atts['QUERY'] . '&gt;<br />' . $queries . '</span>';
