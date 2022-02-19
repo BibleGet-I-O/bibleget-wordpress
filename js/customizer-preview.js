@@ -12,7 +12,7 @@ let vsdecorations = [],
 const handleParagraphStyles = (BibleGetGlobal,key) => {
     const { BGET, BGETConstants } = BibleGetGlobal;
     switch(key){
-        case 'PARAGRAPHSTYLES_FONTFAMILY':
+        case 'PARAGRAPHSTYLES_FONTFAMILY': {
             let fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
             let font = BGET[key].replace(/\+/g, ' ');
             font = font.split(':');
@@ -26,7 +26,8 @@ const handleParagraphStyles = (BibleGetGlobal,key) => {
                 }
             }
             jQuery('.bibleQuote.results').css('font-family', font[0] );
-        break;
+            break;
+        }
         case 'PARAGRAPHSTYLES_LINEHEIGHT':
             jQuery('.bibleQuote.results .versesParagraph').css('line-height', BGET.PARAGRAPHSTYLES_LINEHEIGHT+'em' );
         break;
@@ -77,48 +78,53 @@ const handleParagraphStyles = (BibleGetGlobal,key) => {
 const handleVersionStyles = (BibleGetGlobal, key) => {
     const { BGET } = BibleGetGlobal;
     switch( key ) {
-        case 'VERSIONSTYLES_BOLD':
+        case 'VERSIONSTYLES_BOLD': {
             let fontweight = BGET.VERSIONSTYLES_BOLD ? 'bold' : 'normal';
             jQuery('.bibleQuote.results .bibleVersion').css('font-weight',fontweight);
-        break;
-        case 'VERSIONSTYLES_ITALIC':
+            break;
+        }
+        case 'VERSIONSTYLES_ITALIC': {
             let fontstyle = BGET.VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
             jQuery('.bibleQuote.results .bibleVersion').css('font-style',fontstyle);
-        break;
-        case 'VERSIONSTYLES_UNDERLINE':
-            if(BGET.VERSIONSTYLES_UNDERLINE) {
+            break;
+        }
+        case 'VERSIONSTYLES_UNDERLINE': {
+            let idx = vsdecorations.indexOf('underline');
+            if(BGET.VERSIONSTYLES_UNDERLINE && idx === -1) {
                 vsdecorations.push('underline');
-            } else {
-                let idx = vsdecorations.indexOf('underline');
-                if( idx !== -1 ) {
-                    vsdecorations.splice(idx,1);
-                }
             }
-        //nobreak;
-        case 'VERSIONSTYLES_STRIKETHROUGH':
-            if(BGET.VERSIONSTYLES_STRIKETHROUGH){
-                vsdecorations.push('line-through');
-            } else {
-                let idx1 = vsdecorations.indexOf('line-through');
-                if( idx1 !== -1 ) {
-                    vsdecorations.splice(idx1,1);
-                }
+            else if(!BGET.VERSIONSTYLES_UNDERLINE && idx !== -1) {
+                vsdecorations.splice(idx,1);
             }
             let textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
             jQuery('.bibleQuote.results .bibleVersion').css('text-decoration',textdecoration);
-        break;
+            break;
+        }
+        case 'VERSIONSTYLES_STRIKETHROUGH': {
+            let idx = vsdecorations.indexOf('line-through');
+            if(BGET.VERSIONSTYLES_STRIKETHROUGH && idx === -1) {
+                vsdecorations.push('line-through');
+            }
+            else if(!BGET.VERSIONSTYLES_STRIKETHROUGH && idx !== -1) {
+                vsdecorations.splice(idx,1);
+            }
+            let textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
+            jQuery('.bibleQuote.results .bibleVersion').css('text-decoration',textdecoration);
+            break;
+        }
         case 'VERSIONSTYLES_TEXTCOLOR':
             jQuery('.bibleQuote.results .bibleVersion').css('color', BGET[key] );
         break;
         case 'VERSIONSTYLES_FONTSIZE':
         //nobreak;
-        case 'VERSIONSTYLES_FONTSIZEUNIT':
+        case 'VERSIONSTYLES_FONTSIZEUNIT': {
             let fontsize = BGET.VERSIONSTYLES_FONTSIZE;
             if(BGET.VERSIONSTYLES_FONTSIZEUNIT == 'em'){
                 fontsize /= 10;
             }
             jQuery('.bibleQuote.results .bibleVersion').css('font-size', fontsize+BGET.VERSIONSTYLES_FONTSIZEUNIT );
-        break;
+            break;
+        }
         /*
         case 'VERSIONSTYLES_VALIGN':
             //this really only makes sense for verse numbers
@@ -130,48 +136,53 @@ const handleVersionStyles = (BibleGetGlobal, key) => {
 const handleBookChapterStyles = (BibleGetGlobal,key) => {
     const { BGET } = BibleGetGlobal;
     switch( key ) {
-        case 'BOOKCHAPTERSTYLES_BOLD':
+        case 'BOOKCHAPTERSTYLES_BOLD': {
             let fontweight = BGET.BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
-            jQuery('.bibleQuote.results .bookChapter').css('font-weight',fontweight);
-        break;
-        case 'BOOKCHAPTERSTYLES_ITALIC':
+            jQuery('.bibleQuote.results .bookChapter').css('font-weight', fontweight);
+            break;
+        }
+        case 'BOOKCHAPTERSTYLES_ITALIC': {
             let fontstyle = BGET.BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
-            jQuery('.bibleQuote.results .bookChapter').css('font-style',fontstyle);
-        break;
-        case 'BOOKCHAPTERSTYLES_UNDERLINE':
-            if(BGET.BOOKCHAPTERSTYLES_UNDERLINE) {
+            jQuery('.bibleQuote.results .bookChapter').css('font-style', fontstyle);
+            break;
+        }
+        case 'BOOKCHAPTERSTYLES_UNDERLINE': {
+            let idx = bcdecorations.indexOf('underline');
+            if(BGET.BOOKCHAPTERSTYLES_UNDERLINE && idx === -1) {
                 bcdecorations.push('underline');
-            } else {
-                let idx = bcdecorations.indexOf('underline');
-                if( idx !== -1 ) {
-                    bcdecorations.splice(idx,1);
-                }
             }
-        //nobreak;
-        case 'BOOKCHAPTERSTYLES_STRIKETHROUGH':
-            if(BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH) {
-                bcdecorations.push('line-through');
-            } else {
-                let idx1 = bcdecorations.indexOf('line-through');
-                if( idx1 !== -1 ) {
-                    bcdecorations.splice(idx1,1);
-                }
+            else if(!BGET.BOOKCHAPTERSTYLES_UNDERLINE && idx !== -1) {
+                bcdecorations.splice(idx,1);
             }
             let textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
             jQuery('.bibleQuote.results .bookChapter').css('text-decoration',textdecoration);
-        break;
+            break;
+        }
+        case 'BOOKCHAPTERSTYLES_STRIKETHROUGH': {
+            let idx = bcdecorations.indexOf('line-through');
+            if(BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH && idx === -1) {
+                bcdecorations.push('line-through');
+            }
+            else if(!BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH && idx !== -1) {
+                bcdecorations.splice(idx,1);
+            }
+            let textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
+            jQuery('.bibleQuote.results .bookChapter').css('text-decoration',textdecoration);
+            break;
+        }
         case 'BOOKCHAPTERSTYLES_TEXTCOLOR':
             jQuery('.bibleQuote.results .bookChapter').css('color', BGET[key] );
         break;
         case 'BOOKCHAPTERSTYLES_FONTSIZE':
         //nobreak;
-        case 'BOOKCHAPTERSTYLES_FONTSIZEUNIT':
+        case 'BOOKCHAPTERSTYLES_FONTSIZEUNIT': {
             let fontsize = BGET.BOOKCHAPTERSTYLES_FONTSIZE;
             if(BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em'){
                 fontsize /= 10;
             }
             jQuery('.bibleQuote.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
-        break;
+            break;
+        }
         /*
         case 'BOOKCHAPTERSTYLES_VALIGN':
             //this really only makes sense for verse numbers
@@ -183,116 +194,126 @@ const handleBookChapterStyles = (BibleGetGlobal,key) => {
 const handleVerseNumberStyles = (BibleGetGlobal,key) => {
     const { BGET, BGETConstants } = BibleGetGlobal;
     switch(key) {
-        case 'VERSENUMBERSTYLES_BOLD':
+        case 'VERSENUMBERSTYLES_BOLD': {
             let fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
-            jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-weight',fontweight);
-        break;
-        case 'VERSENUMBERSTYLES_ITALIC':
+            jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-weight', fontweight);
+            break;
+        }
+        case 'VERSENUMBERSTYLES_ITALIC': {
             let fontstyle = BGET.VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
-            jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-style',fontstyle);
-        break;
-        case 'VERSENUMBERSTYLES_UNDERLINE':
-            if(BGET.VERSENUMBERSTYLES_UNDERLINE){
+            jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-style', fontstyle);
+            break;
+        }
+        case 'VERSENUMBERSTYLES_UNDERLINE': {
+            let idx = vndecorations.indexOf('underline');
+            if(BGET.VERSENUMBERSTYLES_UNDERLINE && idx === -1){
                 vndecorations.push('underline');
-            } else {
-                let idx = vndecorations.indexOf('underline');
-                if( idx !== -1 ) {
-                    vndecorations.splice(idx,1);
-                }
             }
-        //nobreak;
-        case 'VERSENUMBERSTYLES_STRIKETHROUGH':
-            if(BGET.VERSENUMBERSTYLES_STRIKETHROUGH){
-                vndecorations.push('line-through');
-            } else {
-                let idx1 = vndecorations.indexOf('line-through');
-                if( idx1 !== -1 ) {
-                    vndecorations.splice(idx1,1);
-                }
+            else if (!BGET.VERSENUMBERSTYLES_UNDERLINE && idx !== -1 ) {
+                vndecorations.splice(idx,1);
             }
             let textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
             jQuery('.bibleQuote.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
-        break;
+            break;
+        }
+        case 'VERSENUMBERSTYLES_STRIKETHROUGH': {
+            let idx = vndecorations.indexOf('line-through');
+            if(BGET.VERSENUMBERSTYLES_STRIKETHROUGH && idx === -1) {
+                vndecorations.push('line-through');
+            }
+            else if(!BGET.VERSENUMBERSTYLES_STRIKETHROUGH && idx !== -1 ) {
+                vndecorations.splice(idx,1);
+            }
+            let textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
+            jQuery('.bibleQuote.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
+            break;
+        }
         case 'VERSENUMBERSTYLES_TEXTCOLOR':
             jQuery('.bibleQuote.results .versesParagraph .verseNum').css('color', BGET[key] );
         break;
         case 'VERSENUMBERSTYLES_FONTSIZE':
         //nobreak;
-        case 'VERSENUMBERSTYLES_FONTSIZEUNIT':
+        case 'VERSENUMBERSTYLES_FONTSIZEUNIT': {
             let fontsize = BGET.VERSENUMBERSTYLES_FONTSIZE;
             if(BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'){
                 fontsize /= 10;
             }
             jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
-        break;
-        case 'VERSENUMBERSTYLES_VALIGN':
+            break;
+        }
+        case 'VERSENUMBERSTYLES_VALIGN': {
             let styles = {};
-            switch(BGET.VERSENUMBERSTYLES_VALIGN){
+            switch(BGET.VERSENUMBERSTYLES_VALIGN) {
                 case BGETConstants.VALIGN.SUPERSCRIPT:
                     styles['vertical-align'] = 'baseline';
                     styles['position'] = 'relative';
                     styles['top'] = '-0.6em';
-                break;
+                    break;
                 case BGETConstants.VALIGN.SUBSCRIPT:
                     styles['vertical-align'] = 'baseline';
                     styles['position'] = 'relative';
                     styles['top'] = '0.6em';
-                break;
+                    break;
                 case BGETConstants.VALIGN.NORMAL: 
-                styles['vertical-align'] = 'baseline';
-                styles['position'] = 'static';
-            break;
+                    styles['vertical-align'] = 'baseline';
+                    styles['position'] = 'static';
+                    break;
             }
             jQuery('.bibleQuote.results .versesParagraph .verseNum').css(styles);
-        break;
+            break;
+        }
     }
 }
 
 const handleVerseTextStyles = (BibleGetGlobal,key) => {
     const { BGET } = BibleGetGlobal;
     switch( key ) {
-        case 'VERSETEXTSTYLES_BOLD':
+        case 'VERSETEXTSTYLES_BOLD': {
             let fontweight = BGET.VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
-            jQuery('.bibleQuote.results .versesParagraph').css('font-weight',fontweight);
-        break;
-        case 'VERSETEXTSTYLES_ITALIC':
+            jQuery('.bibleQuote.results .versesParagraph').css('font-weight', fontweight);
+            break;
+        }
+        case 'VERSETEXTSTYLES_ITALIC': {
             let fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
-            jQuery('.bibleQuote.results .versesParagraph').css('font-style',fontstyle);
-        break;
-        case 'VERSETEXTSTYLES_UNDERLINE':
-            if(BGET.VERSETEXTSTYLES_UNDERLINE) { 
+            jQuery('.bibleQuote.results .versesParagraph').css('font-style', fontstyle);
+            break;
+        }
+        case 'VERSETEXTSTYLES_UNDERLINE': {
+            let idx = vtdecorations.indexOf('underline');
+            if(BGET.VERSETEXTSTYLES_UNDERLINE && idx === -1) { 
                 vtdecorations.push('underline');
-            } else {
-                let idx = vtdecorations.indexOf('underline');
-                if( idx !== -1 ) {
-                    vtdecorations.splice(idx,1);
-                }
-            }
-        //nobreak;
-        case 'VERSETEXTSTYLES_STRIKETHROUGH':
-            if(BGET.VERSETEXTSTYLES_STRIKETHROUGH) {
-                vtdecorations.push('line-through');
-            } else {
-                let idx1 = vtdecorations.indexOf('line-through');
-                if( idx1 !== -1 ) {
-                    vtdecorations.splice(idx1,1);
-                }
+            } else if(!BGET.VERSETEXTSTYLES_UNDERLINE && idx !== -1) {
+                vtdecorations.splice(idx,1);
             }
             let textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
             jQuery('.bibleQuote.results .versesParagraph').css('text-decoration',textdecoration);
-        break;
+            break;
+        }
+        case 'VERSETEXTSTYLES_STRIKETHROUGH': {
+            let idx = vtdecorations.indexOf('line-through');
+            if(BGET.VERSETEXTSTYLES_STRIKETHROUGH && idx === -1) {
+                vtdecorations.push('line-through');
+            }
+            else if(!BGET.VERSETEXTSTYLES_STRIKETHROUGH && idx !== -1 ) {
+                vtdecorations.splice(idx,1);
+            }
+            let textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
+            jQuery('.bibleQuote.results .versesParagraph').css('text-decoration',textdecoration);
+            break;
+        }
         case 'VERSETEXTSTYLES_TEXTCOLOR':
             jQuery('.bibleQuote.results .versesParagraph').css('color', BGET[key] );
         break;
         case 'VERSETEXTSTYLES_FONTSIZE':
         //nobreak;
-        case 'VERSETEXTSTYLES_FONTSIZEUNIT':
+        case 'VERSETEXTSTYLES_FONTSIZEUNIT': {
             let fontsize = BGET.VERSETEXTSTYLES_FONTSIZE;
-            if(BGET.VERSETEXTSTYLES_FONTSIZEUNIT == 'em'){
+            if(BGET.VERSETEXTSTYLES_FONTSIZEUNIT == 'em') {
                 fontsize /= 10;
             }
             jQuery('.bibleQuote.results .versesParagraph').css('font-size', fontsize+BGET.VERSETEXTSTYLES_FONTSIZEUNIT );
-        break;
+            break;
+        }
         /*
         case 'VERSETEXTSTYLES_VALIGN':
             //this really only makes sense for verse numbers
@@ -301,18 +322,28 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
     }
 }
 
-( function( $ ) {
+(() => {
     /* Wouldn't it be great to be able to just iterate over the defined properties / attributes / options?
      * Maybe we could, if we defined the function to bind such that it's the same as the Gutenberg block live preview functions?
      * Making these functions another property of the defined properties / attributes? Would that be possible?
      * Would probably require like an eval or something like that? I don't like the idea of eval though...
      * In the meantime, we can still iterate over them and use a switch case to treat them one by one...
     */
-    if(BibleGetGlobal !== null && typeof BibleGetGlobal === 'object' && BibleGetGlobal.hasOwnProperty('BGETProperties') && BibleGetGlobal.hasOwnProperty('BGETConstants') && BibleGetGlobal.hasOwnProperty('BGET') ){
-        if(typeof BibleGetGlobal.BGETProperties === 'object' && typeof BibleGetGlobal.BGETConstants === 'object' && typeof BibleGetGlobal.BGET === 'object'){
-            const { BGETProperties, BGET } = BibleGetGlobal; //extract our properties
+    if(
+        BibleGetGlobal !== null
+        && typeof BibleGetGlobal === 'object'
+        && BibleGetGlobal.hasOwnProperty('BGETProperties')
+        && BibleGetGlobal.hasOwnProperty('BGETConstants')
+        && BibleGetGlobal.hasOwnProperty('BGET') 
+    ) {
+        if(
+            typeof BibleGetGlobal.BGETProperties === 'object'
+            && typeof BibleGetGlobal.BGETConstants === 'object'
+            && typeof BibleGetGlobal.BGET === 'object'
+        ) {
+            const { BGETProperties, BGET } = BibleGetGlobal;
             for(const key in BGETProperties ){
-                wp.customize( 'BGET['+key+']', function(value) {
+                wp.customize( 'BGET['+key+']', (value) => {
                     value.bind(function( newval ) {
                         //keep our local store of properties/attributes/preferences updated
                         BGET[key] = newval; 
@@ -366,5 +397,4 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
     else{
         alert('Live preview script does not seem to have been "localized" correctly with BibleGetGlobal object');
     }
-
-} )( jQuery );
+});
