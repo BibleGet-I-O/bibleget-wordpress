@@ -973,7 +973,7 @@ class BibleGet_Customize
         self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->title = __('Border style', "bibleget-io");
         self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->controltype = 'select';
         self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->choices = array();
-        foreach (BGET::BORDERSTYLE as $enum => $value) {
+        foreach (BGET::BORDERSTYLE as $value) {
             self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->choices[$value] = BGET::CSSRULE["BORDERSTYLE"][$value];
         }
         self::$bibleget_style_settings->{'BGET[PARAGRAPHSTYLES_BORDERSTYLE]'}->section = 'bibleget_paragraph_style_options';
