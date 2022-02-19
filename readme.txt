@@ -5,8 +5,8 @@ Plugin URI: https://www.bibleget.io
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, versetti, biblia, cita, versiculos, versets, citation
 Requires at least: 5.6
-Tested up to: 5.8.3
-Requires PHP: 5.6
+Tested up to: 5.9
+Requires PHP: 7.4
 Stable tag: 7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
