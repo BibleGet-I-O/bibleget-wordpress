@@ -231,7 +231,7 @@ class BibleGetSettingsPage
 
 		$biblebookslangs = get_option("bibleget_languages");
 		if ($biblebookslangs === false || !is_array($biblebookslangs) || count($biblebookslangs) < 1) {
-			bibleGetSetOptions(); //TODO: these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
+			bibleGetSetOptions(); //these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
 			$biblebookslangs = get_option("bibleget_languages");
 		}
 
@@ -743,7 +743,8 @@ class BibleGetSettingsPage
 			$this->gfontsAPIkey = $this->options['googlefontsapi_key'];
 
 			//has this key been tested in the past 3 months at least?
-			if (false === ($result = get_transient(md5($this->options['googlefontsapi_key'])))) {
+			$result = get_transient(md5($this->options['googlefontsapi_key']));
+			if (false === $result) {
 
 				//We will make a secure connection to the Google Fonts API endpoint
 				$curl_version = curl_version();
@@ -1635,7 +1636,7 @@ class BibleGet_Customize
 			//let's check if it's a websafe font or a google font
 			if (self::get_font_index($mod) === false) {
 				//not a websafe font, so most probably a google font...
-				//TODO: add a double check against current google fonts here before proceeding?
+				//should we add a double check against current google fonts here before proceeding?
 				$is_googlefont = true;
 				echo '<link href="https://fonts.googleapis.com/css?family=' . $mod . '" rel="stylesheet" type="text/css" />';
 			}
