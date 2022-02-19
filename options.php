@@ -277,9 +277,7 @@ class BibleGetSettingsPage
 			}
 
 			if (isset($versionsbylang[$lang])) {
-				if (isset($versionsbylang[$lang][$abbr])) {
-					//how can that be?
-				} else {
+				if (!isset($versionsbylang[$lang][$abbr])) {
 					$versionsbylang[$lang][$abbr] = array("fullname" => $fullname, "year" => $year);
 				}
 			} else {
@@ -813,9 +811,9 @@ class BibleGetSettingsPage
                 ");
 				$this->gfontsAPIkeyTimeOut = $transient_timeout[0];
 			}
-		} else {
+		}/* else {
 			//we don't have a previously saved api key, but really who cares
-		}
+		}*/
 
 		$this->gfontsAPIkeyCheckResult = $result;
 		return $result;
@@ -1018,9 +1016,11 @@ class BibleGetSettingsPage
 		if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
 			//plugin settings have been saved. Here goes your code
 			$this->options = get_option('bibleget_settings');
+			/*
 			if ($this->options === false) {
 				// let's set some default options
 			}
+			*/
 		}
 	}
 
