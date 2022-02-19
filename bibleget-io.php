@@ -1175,10 +1175,12 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
     $errs = get_option('bibleget_error_admin_notices', array());
     $dummy = array(); // to avoid error messages on systems with PHP < 5.4 which required third parameter in preg_match_all
 
+    $currentPageUrl = bibleGetCurrentPageUrl();
+
     if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/", $thisquery, $res)) {
         $thisbook = $res[0];
         if (!preg_match("/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery) || preg_match_all("/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery, $dummy) != preg_match_all("/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery, $dummy)) {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[1] . " (" . bibleGetCurrentPageUrl() . ")";
+            $errs[] = "BIBLEGET ERROR: " . $errorMessages[1] . " ({$currentPageUrl})";
             update_option('bibleget_error_admin_notices', $errs);
             return false;
         }
@@ -1190,12 +1192,12 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
             if (strpos($thisquery, ".")) {
                 if (!strpos($thisquery, ",") || strpos($thisquery, ",") > strpos($thisquery, ".")) {
                     // error message: You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[3] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[3] . " ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
                 if (substr_count($thisquery, ",") > substr_count($thisquery, ".")) {
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[0] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[0] . " ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
@@ -1204,7 +1206,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                 // if(preg_match_all("/(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/",$query) < substr_count($query,".") ){
                 if (preg_match_all("/(?<![0-9])(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/", $thisquery, $dummy) != substr_count($thisquery, ".")) {
                     // error message: A dot must be preceded and followed by 1 to 3 digits etc.
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[4] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[4] . " ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
@@ -1213,7 +1215,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         $ints = explode('.', $match);
                         if (intval($ints[0]) >= intval($ints[1])) {
                             $str = sprintf($errorMessages[9], $ints[0], $ints[1], $match);
-                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $str . " (" . bibleGetCurrentPageUrl() . ")";
+                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $str . " ({$currentPageUrl})";
                             update_option('bibleget_error_admin_notices', $errs);
                             return false;
                         }
@@ -1225,7 +1227,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                     // error message: A comma must be preceded and followed by 1 to 3 digits etc.
                     // echo "There are ".preg_match_all("/(?=[1-9][0-9]{0,2}\,[1-9][0-9]{0,2})/",$query)." matches for commas preceded and followed by valid 1-3 digit sequences;<br>";
                     // echo "There are ".substr_count($query,",")." matches for commas in this query.";
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[5] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[5] . " ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 } else {
@@ -1249,7 +1251,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                 if ($match > $chapter_limit) {
                                     /* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                                     $msg = __('A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io");
-                                    $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $match, $thisbook, $jkey, $chapter_limit) . " (" . bibleGetCurrentPageUrl() . ")";
+                                    $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $match, $thisbook, $jkey, $chapter_limit) . " ({$currentPageUrl})";
                                     update_option('bibleget_error_admin_notices', $errs);
                                     return false;
                                 }
@@ -1261,13 +1263,17 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         if ($commacount > 1) {
                             if (!strpos($thisquery, '-')) {
                                 /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-                                $errs[] = "BIBLEGET ERROR: " . __("You cannot have more than one comma and not have a dash!", "bibleget-io") . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl() . ")";
+                                $errs[] = "BIBLEGET ERROR: " .
+                                    __("You cannot have more than one comma and not have a dash!", "bibleget-io") .
+                                    " <{$thisquery}> ({$currentPageUrl})";
                                 update_option('bibleget_error_admin_notices', $errs);
                                 return false;
                             }
                             $parts = explode("-", $thisquery);
                             if (count($parts) != 2) {
-                                $errs[] = "BIBLEGET ERROR: " . __("You seem to have a malformed querystring, there should be only one dash.", "bibleget-io") . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl() . ")";
+                                $errs[] = "BIBLEGET ERROR: " .
+                                    __("You seem to have a malformed querystring, there should be only one dash.", "bibleget-io") .
+                                    " <{$thisquery}> ({$currentPageUrl})";
                                 update_option('bibleget_error_admin_notices', $errs);
                                 return false;
                             }
@@ -1280,7 +1286,9 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                     if ($pp[1] > $verselimit) {
                                         /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                                         $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                        $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $pp[1], $thisbook, $pp[0], $jkey, $verselimit) . " (" . bibleGetCurrentPageUrl() . ")";
+                                        $errs[] = "BIBLEGET ERROR: " .
+                                            sprintf($msg, $pp[1], $thisbook, $pp[0], $jkey, $verselimit) .
+                                            " ({$currentPageUrl})";
                                         update_option('bibleget_error_admin_notices', $errs);
                                         return false;
                                     }
@@ -1309,7 +1317,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                         if ($highverse > $verselimit) {
                                             /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                                             $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " (" . bibleGetCurrentPageUrl() . ")";
+                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
                                             update_option('bibleget_error_admin_notices', $errs);
                                             return false;
                                         }
@@ -1327,7 +1335,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                         if ($highverse > $verselimit) {
                                             /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                                             $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " (" . bibleGetCurrentPageUrl() . ")";
+                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
                                             update_option('bibleget_error_admin_notices', $errs);
                                             return false;
                                         }
@@ -1349,7 +1357,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                     if ($highverse > $verselimit) {
                                         /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                                         $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                        $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " (" . bibleGetCurrentPageUrl() . ")";
+                                        $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
                                         update_option('bibleget_error_admin_notices', $errs);
                                         return false;
                                     }
@@ -1368,7 +1376,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         if (intval($zchapter) > $chapter_limit) {
                             /* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                             $msg = __('A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io");
-                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $zchapter, $thisbook, $jkey, $chapter_limit) . " (" . bibleGetCurrentPageUrl() . ")";
+                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $zchapter, $thisbook, $jkey, $chapter_limit) . " ({$currentPageUrl})";
                             update_option('bibleget_error_admin_notices', $errs);
                             return false;
                         }
@@ -1381,19 +1389,19 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                     // error message: A dash must be preceded and followed by 1 to 3 digits etc.
                     // echo "There are ".preg_match("/(?=[1-9][0-9]{0,2}\-[1-9][0-9]{0,2})/",$query)." matches for dashes preceded and followed by valid 1-3 digit sequences;<br>";
                     // echo "There are ".substr_count($query,"-")." matches for dashes in this query.";
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[6] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[6]} ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
                 if (preg_match("/\-[1-9][0-9]{0,2}\,/", $thisquery) && (!preg_match("/\,[1-9][0-9]{0,2}\-/", $thisquery) || preg_match_all("/(?=\,[1-9][0-9]{0,2}\-)/", $thisquery, $dummy) > preg_match_all("/(?=\-[1-9][0-9]{0,2}\,)/", $thisquery, $dummy))) {
                     // error message: there must be as many comma constructs preceding dashes as there are following dashes
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[7] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[7]} ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
                 if (substr_count($thisquery, "-") > 1 && (!strpos($thisquery, ".") || (substr_count($thisquery, "-") - 1 > substr_count($thisquery, ".")))) {
                     // error message: there cannot be multiple dashes in a query if there are not as many dots minus 1.
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[8] . " (" . bibleGetCurrentPageUrl() . ")";
+                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[8]} ({$currentPageUrl})";
                     update_option('bibleget_error_admin_notices', $errs);
                     return false;
                 }
@@ -1406,8 +1414,15 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         $matchesB_LEFT = explode(",", $matchesB[0]);
                         $matchesB_RIGHT = explode(",", $matchesB[1]);
                         if ($matchesB_LEFT[0] >= $matchesB_RIGHT[0]) {
-                            /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf(__("Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>"), $matchesB_LEFT[0], $matchesB_RIGHT[0], $matchB[1]) . " (" . bibleGetCurrentPageUrl() . ")";
+                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
+                                sprintf(
+                                    /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+                                    __("Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>"),
+                                    $matchesB_LEFT[0],
+                                    $matchesB_RIGHT[0],
+                                    $matchB[1]
+                                ) .
+                                " ({$currentPageUrl})";
                             update_option('bibleget_error_admin_notices', $errs);
                             return false;
                         }
@@ -1416,8 +1431,15 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         $matchesA_temp = explode(",", $matchA[1]);
                         $matchesA = explode("-", $matchesA_temp[1]);
                         if ($matchesA[0] >= $matchesA[1]) {
-                            /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf(__("Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>"), $matchesA[0], $matchesA[1], $matchA[1]) . " (" . bibleGetCurrentPageUrl() . ")";
+                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
+                                sprintf(
+                                    /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+                                    __("Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>"),
+                                    $matchesA[0],
+                                    $matchesA[1],
+                                    $matchA[1]
+                                ) .
+                                " ({$currentPageUrl})";
                             update_option('bibleget_error_admin_notices', $errs);
                             return false;
                         }
@@ -1428,7 +1450,14 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                         $ints = explode("-", $match);
                         if ($ints[0] >= $ints[1]) {
                             /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . sprintf(__("Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>"), $ints[0], $ints[1], $match) . " (" . bibleGetCurrentPageUrl() . ")";
+                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
+                                sprintf(
+                                    __("Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>"),
+                                    $ints[0],
+                                    $ints[1],
+                                    $match
+                                ) .
+                                " ({$currentPageUrl})";
                             update_option('bibleget_error_admin_notices', $errs);
                             return false;
                         }
@@ -1447,13 +1476,13 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
             }
             return $thisbook;
         } else {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[2] . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl() . ")";
+            $errs[] = "BIBLEGET ERROR: " . $errorMessages[2] . " <{$thisquery}> ({$currentPageUrl})";
             update_option('bibleget_error_admin_notices', $errs);
             return false;
         }
     } else {
         if (!preg_match("/^[1-9][0-9]{0,2}/", $thisquery)) {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[10] . " <" . $thisquery . ">" . " (" . bibleGetCurrentPageUrl() . ")";
+            $errs[] = "BIBLEGET ERROR: " . $errorMessages[10] . " <{$thisquery}> ({$currentPageUrl})";
             update_option('bibleget_error_admin_notices', $errs);
             return false;
         }
