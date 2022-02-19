@@ -538,7 +538,7 @@
 
       Fontselect.prototype.toReadable = function (font) {
         var t = font.split(":");
-        var rdbl = t[0].replace(/[\+]/g, " ");
+        var rdbl = t[0].replace(/[+]/g, " ");
         if (
           t[1] !== undefined &&
           t[1].length > 0 &&
@@ -667,10 +667,10 @@
               //console.log('new fontselect.google_fonts:');
               //console.log($.fontselect.google_fonts);
               return new Fontselect($ths, settings, $.fontselect.google_fonts);
-            },
+            }/*,
             error: function (jqXHR, textStatus, errorThrown) {
               //console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
-            },
+            }*/
           });
         }
         //console.log(bibleget_settings);
