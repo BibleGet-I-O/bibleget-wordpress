@@ -3,6 +3,12 @@
 //console.log("admin.js is successfully loaded");
 //console.log(bibleGetOptionsFromServer);
 
+function enableNotificationDismissal() {
+  jQuery(".bibleget-settings-notification-dismiss").click(function() {
+    jQuery("#bibleget-settings-notification").fadeOut("slow");
+  });
+}
+
 jQuery(document).ready(function ($) {
   fval = jQuery("#versionselect").val();
   if (fval !== null && fval.length > 0) {
@@ -81,9 +87,7 @@ jQuery(document).ready(function ($) {
             )
             .fadeIn("slow");
         }
-        jQuery(".bibleget-settings-notification-dismiss").click(function () {
-          jQuery("#bibleget-settings-notification").fadeOut("slow");
-        });
+        enableNotificationDismissal();
       },
       error: function (xhr) {
         jQuery("#bibleget-settings-notification")
@@ -92,9 +96,7 @@ jQuery(document).ready(function ($) {
             "Communication with the BibleGet server was not successful... ERROR: " +
               xhr.responseText
           );
-        jQuery(".bibleget-settings-notification-dismiss").click(function () {
-          jQuery("#bibleget-settings-notification").fadeOut("slow");
-        });
+        enableNotificationDismissal();
       },
     });
   });
@@ -122,9 +124,7 @@ jQuery(document).ready(function ($) {
             )
             .fadeIn("slow");
         }
-        jQuery(".bibleget-settings-notification-dismiss").click(function () {
-          jQuery("#bibleget-settings-notification").fadeOut("slow");
-        });
+        enableNotificationDismissal();
       },
       error: function (xhr) {
         jQuery("#bibleget-settings-notification")
@@ -133,9 +133,7 @@ jQuery(document).ready(function ($) {
             "Emptying of Bible quotes cache was not successful... ERROR: " +
               xhr.responseText
           );
-        jQuery(".bibleget-settings-notification-dismiss").click(function () {
-          jQuery("#bibleget-settings-notification").fadeOut("slow");
-        });
+        enableNotificationDismissal();
       },
     });
   });
