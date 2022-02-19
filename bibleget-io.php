@@ -904,10 +904,27 @@ function bibleGetProcessQueries($queries, $versions)
     return $goodqueries;
 }
 
+function checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) {
+    $currentPageUrl = bibleGetCurrentPageUrl();
+    foreach ($indexes as $jkey => $jindex) {
+        $bookidx = array_search($myidx, $jindex["book_num"]);
+        $chapters_verselimit = $jindex["verse_limit"][$bookidx];
+        $verselimit = intval($chapters_verselimit[intval($parts[0]) - 1]);
+        if ($highverse > $verselimit) {
+            /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+            $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
+            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
+            update_option('bibleget_error_admin_notices', $errs);
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * BibleGet Check Query Function
- * @param unknown $thisquery
- * @param unknown $indexes
+ * @param string $thisquery
+ * @param array $indexes
  * @param string $thisbook
  *
  * Performs complex integrity checks on the queries
@@ -1074,18 +1091,8 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                     }
                                     $highverse = intval(array_pop($matches[1]));
                                     // bibleGetWriteLog("highverse = ".$highverse);
-                                    foreach ($indexes as $jkey => $jindex) {
-                                        $bookidx = array_search($myidx, $jindex["book_num"]);
-                                        $chapters_verselimit = $jindex["verse_limit"][$bookidx];
-                                        $verselimit = intval($chapters_verselimit[intval($parts[0]) - 1]);
-                                        // bibleGetWriteLog("verselimit for ".$jkey." = ".$verselimit);
-                                        if ($highverse > $verselimit) {
-                                            /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                            $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
-                                            update_option('bibleget_error_admin_notices', $errs);
-                                            return false;
-                                        }
+                                    if ( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
+                                        return false;
                                     }
                                 }/* else {
                                     // bibleGetWriteLog("something is up with the regex check...");
@@ -1093,17 +1100,8 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                             } else {
                                 if (preg_match("/,([1-9][0-9]{0,2})/", $thisquery, $matches)) {
                                     $highverse = intval($matches[1]);
-                                    foreach ($indexes as $jkey => $jindex) {
-                                        $bookidx = array_search($myidx, $jindex["book_num"]);
-                                        $chapters_verselimit = $jindex["verse_limit"][$bookidx];
-                                        $verselimit = intval($chapters_verselimit[intval($parts[0]) - 1]);
-                                        if ($highverse > $verselimit) {
-                                            /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                            $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
-                                            update_option('bibleget_error_admin_notices', $errs);
-                                            return false;
-                                        }
+                                    if ( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
+                                        return false;
                                     }
                                 }
                             }
@@ -1115,17 +1113,8 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                                     );
                                 }
                                 $highverse = array_pop($matches[1]);
-                                foreach ($indexes as $jkey => $jindex) {
-                                    $bookidx = array_search($myidx, $jindex["book_num"]);
-                                    $chapters_verselimit = $jindex["verse_limit"][$bookidx];
-                                    $verselimit = intval($chapters_verselimit[intval($parts[0]) - 1]);
-                                    if ($highverse > $verselimit) {
-                                        /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                        $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                        $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
-                                        update_option('bibleget_error_admin_notices', $errs);
-                                        return false;
-                                    }
+                                if( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
+                                    return false;
                                 }
                             }
                         }
