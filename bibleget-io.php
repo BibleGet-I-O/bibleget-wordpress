@@ -296,8 +296,8 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
         }
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
         if ($finalquery != "") {
-
-            if (false === ($output = get_transient(TRANSIENT_PREFIX . md5($finalquery)))) {
+            $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
+            if (false === $output) {
                 // $output = $finalquery;
                 // return '<div class="bibleget-quote-div">' . $output . '</div>';
                 $output = bibleGetQueryServer($finalquery);
@@ -736,8 +736,8 @@ function bibleGet_renderGutenbergBlock($atts)
         }
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
         if ($finalquery != "") {
-
-            if (false === ($output = get_transient(TRANSIENT_PREFIX . md5($finalquery)))) {
+            $output = get_transient(TRANSIENT_PREFIX . md5($finalquery));
+            if (false === $output) {
                 // $output = $finalquery;
                 // return '<div class="bibleget-quote-div">' . $output . '</div>';
                 $output = bibleGetQueryServer($finalquery);
@@ -1073,7 +1073,8 @@ function bibleGetProcessQueries($queries, $versions)
     }
     $indexes = array();
     foreach ($versions as $key => $value) {
-        if ($temp = get_option("bibleget_" . $value . "IDX")) {
+        $temp = get_option("bibleget_" . $value . "IDX");
+        if ( $temp !== false ) {
             // bibleGetWriteLog("retrieving option["."bibleget_".$value."IDX"."] from wordpress options...");
             // bibleGetWriteLog($temp);
             if (is_object($temp)) {
@@ -1091,7 +1092,8 @@ function bibleGetProcessQueries($queries, $versions)
         } else {
             // bibleGetWriteLog("option["."bibleget_".$value."IDX"."] does not exist. Now attempting to set options...");
             bibleGetSetOptions();
-            if ($temp = get_option("bibleget_" . $value . "IDX")) {
+            $temp = get_option("bibleget_" . $value . "IDX");
+            if ( $temp !== false ) {
                 // bibleGetWriteLog("retrieving option["."bibleget_".$value."IDX"."] from wordpress options...");
                 // bibleGetWriteLog($temp);
                 // $temp1 = json_encode($temp);
@@ -1110,21 +1112,27 @@ function bibleGetProcessQueries($queries, $versions)
         $thisquery = bibleGetToProperCase($value); // shouldn't be necessary because already array_mapped, but better safe than sorry
         if ($key === 0) {
             if (!preg_match("/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery)) {
-                /* translators: do not change the placeholders <%s> */
-                $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("The first query <%s> in the querystring <%s> must start with a valid book indicator!", "bibleget-io"), $thisquery, implode(";", $queries)) . " (" . bibleGetCurrentPageUrl() . ")";
+                $notices[] = "BIBLEGET PLUGIN ERROR: " . 
+                    sprintf(
+                        /* translators: do not change the placeholders <%X$s> */
+                        __("The first query <%1$s> in the querystring <%2$s> must start with a valid book indicator!", "bibleget-io"),
+                        $thisquery,
+                        implode(";", $queries)
+                    ) .
+                    " (" . bibleGetCurrentPageUrl() . ")";
                 continue;
             }
         }
         $thisbook = bibleGetCheckQuery($thisquery, $indexes, $thisbook);
         // bibleGetWriteLog("value of thisbook after bibleGetCheckQuery = ".$thisbook);
         if ($thisbook !== false) {
-            //TODO: why are we returning $thisbook if we don't even use it here?
             array_push($goodqueries, $thisquery);
         } else {
-            return $thisbook;
             //TODO: double check if this really needs to return false here?
             //Does this prevent it from continuing integrity checks with the rest of the queries?
             //Shouldn't it just be "continue;"?
+            return false;
+            //continue;
         }
     }
     update_option('bibleget_error_admin_notices', $notices);
@@ -1652,13 +1660,15 @@ function bibleGetQueryClean($query)
  */
 function bibleget_admin_notices()
 {
-    if ($notices = get_option('bibleget_error_admin_notices')) {
+    $notices = get_option('bibleget_error_admin_notices');
+    if ( $notices !== false ) {
         foreach ($notices as $notice) {
             echo "<div class='notice is-dismissible error'><p>$notice</p></div>";
         }
         delete_option('bibleget_error_admin_notices');
     }
-    if ($notices = get_option('bibleget_admin_notices')) {
+    $notices = get_option('bibleget_admin_notices');
+    if ( $notices !== false ) {
         foreach ($notices as $notice) {
             echo "<div class='notice is-dismissible updated'><p>$notice</p></div>";
         }
@@ -1927,7 +1937,8 @@ function bibleGetWriteLog($log)
 {
     $debugfile = plugin_dir_path(__FILE__) . "debug.txt";
     $datetime = strftime("%Y%m%d %H:%M:%S", time());
-    if ($myfile = fopen($debugfile, "a")) {
+    $myfile = fopen($debugfile, "a");
+    if ($myfile !== false) {
         if (is_array($log) || is_object($log)) {
             if (!fwrite($myfile, "[" . $datetime . "] " . print_r($log, true) . "\n")) {
                 echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
