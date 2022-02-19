@@ -63,14 +63,14 @@ jQuery(document).ready(function ($) {
             .append(
               'Data from server retrieved successfully, now refreshing page... <span id="bibleget-countdown">3 secs...</span>'
             )
-            .fadeIn("slow", function () {
-              var seconds = 3;
-              interval1 = setInterval(function () {
+            .fadeIn("slow", () => {
+              let seconds = 3;
+              let interval1 = setInterval(function () {
                 jQuery("#bibleget-countdown").text(
                   --seconds + (seconds == 1 ? " sec..." : " secs...")
                 );
               }, 1000);
-              var timeout1 = setTimeout(function () {
+              setTimeout(() => {
                 clearInterval(interval1);
                 location.reload();
               }, 3000);
@@ -86,7 +86,7 @@ jQuery(document).ready(function ($) {
           jQuery("#bibleget-settings-notification").fadeOut("slow");
         });
       },
-      error: function (xhr, ajaxOptions, thrownError) {
+      error: function (xhr) {
         jQuery("#bibleget-settings-notification")
           .fadeIn("slow")
           .append(
@@ -127,7 +127,7 @@ jQuery(document).ready(function ($) {
           jQuery("#bibleget-settings-notification").fadeOut("slow");
         });
       },
-      error: function (xhr, ajaxOptions, thrownError) {
+      error: function (xhr) {
         jQuery("#bibleget-settings-notification")
           .fadeIn("slow")
           .append(
@@ -168,7 +168,6 @@ jQuery(document).ready(function ($) {
           })
         );
     } else {
-      var startIdx = 0; //starting index for this batch run
       var gfontsCount = gfontsBatch.job.gfontsWeblist.items.length;
       var batchLimit = 300; //general batch limit for each run, so that we don't block the server but yet we try to do a good number if we can
       var lastBatchLimit = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
@@ -345,7 +344,7 @@ var gfontsBatchRun = function (postdata) {
                 if (++postdata.currentRun == postdata.numRuns) {
                   postdata.batchLimit == postdata.lastBatchLimit;
                 }
-                postdata.startIdx = postdata.startIdx + postdata.batchLimit;
+                postdata.startIdx += postdata.batchLimit;
 
                 //Let's go for another round!
                 gfontsBatchRun(postdata);
