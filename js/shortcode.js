@@ -34,7 +34,13 @@
 						})
 					) 
 				) 
-			}).css({"display":"inline-block","position":"relative","left":function(index){ return "-"+jQuery(this).parent('.verseText').prev('.verseNum').outerWidth(true)+"px"; } });    
+			}).css({
+				"display": "inline-block",
+				"position": "relative",
+				"left": function() {
+					return "-"+jQuery(this).parent('.verseText').prev('.verseNum').outerWidth(true)+"px";
+				}
+			});    
 			//HERE IS THE LOGIC:
 			//IF the (first node) following a .verseText node is not a text node but an element node,
 			//AND it IS an element node with class pof,poif,po,poi,pol,pos,poil...
