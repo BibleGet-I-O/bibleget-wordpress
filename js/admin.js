@@ -46,7 +46,6 @@ jQuery(document).ready(function ($) {
       security: bibleGetOptionsFromServer.ajax_nonce,
       isajax: 1,
     };
-    var interval1 = null;
     jQuery.ajax({
       type: "POST",
       url: bibleGetOptionsFromServer.ajax_url,
@@ -268,7 +267,6 @@ jQuery(document).ready(function ($) {
 });
 
 var myProgressInterval = null;
-var myProgressValue = 0;
 var $gfontsBatchRunProgressbarOverlay;
 var $gfontsBatchRunProgressbar;
 var $gfontsBatchRunProgressbarWrapper;
@@ -385,15 +383,15 @@ var gfontsBatchRun = function (postdata) {
     },
     error: function (xhr, ajaxOptions, thrownError) {
       clearInterval(myProgressInterval);
+      let errArr = [
+        "Communication with the Google Fonts server was not successful... ERROR:",
+        thrownError,
+        xhr.responseText
+      ];
       jQuery("#bibleget-settings-notification")
         .fadeIn("slow")
-        .append(
-          "Communication with the Google Fonts server was not successful... ERROR: " +
-            thrownError +
-            " " +
-            xhr.responseText
-        );
-      jQuery(".bibleget-settings-notification-dismiss").click(function () {
+        .append(errArr.join(' '));
+      jQuery(".bibleget-settings-notification-dismiss").click(() => {
         jQuery("#bibleget-settings-notification").fadeOut("slow");
       });
     },
@@ -456,7 +454,7 @@ var bibleGetForceRefreshGFapiResults = function () {
             break;
         }
       },
-      error: function (xhr, ajaxOptions, thrownError) {
+      error: function (xhr) {
         jQuery("#bibleget-settings-notification")
           .fadeIn("slow")
           .append(
@@ -468,7 +466,7 @@ var bibleGetForceRefreshGFapiResults = function () {
         });
       },
     });
-  } else {
+  }/* else {
     //console.log('cannot force refresh gfonts list, nonce not found');
-  }
+  }*/
 };
