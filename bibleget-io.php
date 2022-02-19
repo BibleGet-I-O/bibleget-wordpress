@@ -991,6 +991,7 @@ function bibleGet_renderGutenbergBlock($atts)
  */
 function bibleGetQueryServer($finalquery)
 {
+    $currentPageUrl = bibleGetCurrentPageUrl();
     $errs = array();
     //We will make a secure connection to the BibleGet service endpoint,
     //if this server's OpenSSL and CURL versions support TLSv1.2
@@ -1038,19 +1039,31 @@ function bibleGetQueryServer($finalquery)
                 $errs = get_option('bibleget_error_admin_notices', array());
                 foreach ($error_rows as $error_row) {
                     $errormessage = bibleGetGetElementsByClass($error_row, 'td', 'errMessageVal');
-                    $errs[] = "BIBLEGET SERVER ERROR: " . "<span style=\"color:Red;\">" . $errormessage[0]->nodeValue . "</span><span style=\"color:DarkBlue;\">(" . bibleGetCurrentPageUrl() . ")</span>." . "<br />" . "<span style=\"color:Gray;font-style:italic;\">" . __("If this error continues, please notify the BibleGet plugin author at") . ": <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" . urlencode("The Wordpress Plugin is receiving this error message from the BibleGet Server:" . "\n\n" . $errormessage[0]->nodeValue . "\n\nKind regards,\n\n") . "\">bibleget.io@gmail.com</a>" . "</span>";
+                    $errs[] = "BIBLEGET SERVER ERROR: <span style=\"color:Red;\">" .
+                        $errormessage[0]->nodeValue .
+                        "</span><span style=\"color:DarkBlue;\">({$currentPageUrl})</span>.<br /><span style=\"color:Gray;font-style:italic;\">" .
+                        __("If this error continues, please notify the BibleGet plugin author at") .
+                        ": <a target=\"_blank\" href=\"mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=" .
+                        urlencode(
+                            "The Wordpress Plugin is receiving this error message from the BibleGet Server:\n\n" .
+                            $errormessage[0]->nodeValue .
+                            "\n\nKind regards,\n\n"
+                        ) .
+                        "\">bibleget.io@gmail.com</a></span>";
                 }
             }
             $output = preg_replace("/<div class=\"errors bibleQuote\">.*?<\/div>/s", '', $output);
         }
     } else {
-        $errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' . __("There was an error communicating with the BibleGet server, please wait a few minutes and try again", "bibleget-io") . ': &apos;' . curl_error($ch) . '&apos;: ' . $finalquery . '</span>';
+        $errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' .
+            __("There was an error communicating with the BibleGet server, please wait a few minutes and try again", "bibleget-io") .
+            ': &apos;' . curl_error($ch) . '&apos;: ' .
+            $finalquery .
+            '</span>';
         $output = false;
     }
     curl_close($ch);
-
     update_option('bibleget_error_admin_notices', $errs);
-
     return $output;
 }
 
@@ -1066,7 +1079,7 @@ function bibleGetQueryServer($finalquery)
 function bibleGetProcessQueries($queries, $versions)
 {
     $goodqueries = array();
-
+    $currentPageUrl = bibleGetCurrentPageUrl();
     $thisbook = null;
     if (get_option("bibleget_" . $versions[0] . "IDX") === false) {
         bibleGetSetOptions();
@@ -1119,7 +1132,7 @@ function bibleGetProcessQueries($queries, $versions)
                         $thisquery,
                         implode(";", $queries)
                     ) .
-                    " (" . bibleGetCurrentPageUrl() . ")";
+                    " ({$currentPageUrl})";
                 continue;
             }
         }
@@ -1417,7 +1430,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                             $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
                                 sprintf(
                                     /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                    __("Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>"),
+                                    __("Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>", "bibleget-io"),
                                     $matchesB_LEFT[0],
                                     $matchesB_RIGHT[0],
                                     $matchB[1]
@@ -1434,7 +1447,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                             $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
                                 sprintf(
                                     /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                    __("Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>"),
+                                    __("Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>", "bibleget-io"),
                                     $matchesA[0],
                                     $matchesA[1],
                                     $matchA[1]
@@ -1452,7 +1465,7 @@ function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
                             /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
                             $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
                                 sprintf(
-                                    __("Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>"),
+                                    __("Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>", "bibleget-io"),
                                     $ints[0],
                                     $ints[1],
                                     $match
@@ -1567,7 +1580,7 @@ function bibleGetGetMetaData($request)
 {
     // request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions
     $notices = get_option('bibleget_error_admin_notices', array());
-
+    $currentPageUrl = bibleGetCurrentPageUrl();
     $curl_version = curl_version();
     $ssl_version = str_replace('OpenSSL/', '', $curl_version['ssl_version']);
     if (version_compare($curl_version['version'], '7.34.0', '>=') && version_compare($ssl_version, '1.0.1', '>=')) {
@@ -1605,7 +1618,12 @@ function bibleGetGetMetaData($request)
         if (curl_errno($ch)) {
             $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
             /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-            $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>."), $optionsurl) . " (" . bibleGetCurrentPageUrl() . ")";
+            $notices[] = "BIBLEGET PLUGIN ERROR: " .
+                sprintf(
+                    __("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+                    $optionsurl
+                ) .
+                " ({$currentPageUrl})";
             update_option('bibleget_error_admin_notices', $notices);
             return false;
         } else {
@@ -1614,7 +1632,12 @@ function bibleGetGetMetaData($request)
             if ($info["http_code"] != 200) {
                 $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
                 /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-                $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>."), $optionsurl) . " (" . bibleGetCurrentPageUrl() . ")";
+                $notices[] = "BIBLEGET PLUGIN ERROR: " .
+                    sprintf(
+                        __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+                        $optionsurl
+                    ) .
+                    " ({$currentPageUrl})";
                 update_option('bibleget_error_admin_notices', $notices);
                 return false;
             }
@@ -1622,7 +1645,12 @@ function bibleGetGetMetaData($request)
     } elseif (curl_errno($ch)) {
         $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
         /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-        $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>."), $optionsurl) . " (" . bibleGetCurrentPageUrl() . ")";
+        $notices[] = "BIBLEGET PLUGIN ERROR: " .
+            sprintf(
+                __("There was a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+                $optionsurl
+            ) .
+            " ({$currentPageUrl})";
         update_option('bibleget_error_admin_notices', $notices);
         return false;
     } else {
@@ -1631,7 +1659,12 @@ function bibleGetGetMetaData($request)
         if ($info["http_code"] != 200) {
             $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
             /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-            $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>."), $optionsurl) . " (" . bibleGetCurrentPageUrl() . ")";
+            $notices[] = "BIBLEGET PLUGIN ERROR: " .
+                sprintf(
+                    __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+                    $optionsurl
+                ) .
+                " ({$currentPageUrl})";
             update_option('bibleget_error_admin_notices', $notices);
             return false;
         }
@@ -1645,7 +1678,12 @@ function bibleGetGetMetaData($request)
     } else {
         $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
         /* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-        $notices[] = "BIBLEGET PLUGIN ERROR: " . sprintf(__("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>."), $optionsurl) . " (" . bibleGetCurrentPageUrl() . ")";
+        $notices[] = "BIBLEGET PLUGIN ERROR: " .
+            sprintf(
+                __("There may have been a problem communicating with the BibleGet server. <a href=\"%s\" title=\"update metadata now\">Metadata needs to be manually updated</a>.", "bibleget-io"),
+                $optionsurl
+            ) .
+            " ({$currentPageUrl})";
         update_option('bibleget_error_admin_notices', $notices);
         return false;
     }
