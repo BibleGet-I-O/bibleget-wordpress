@@ -332,7 +332,6 @@
             for (var ky = 0; ky < $.fontselect.google_fonts.length; ky++) {
               if ($.fontselect.google_fonts[ky] == font) {
                 idx = ky;
-                //this.addFontLink(font); // this shouldn't be necessary because already taken care of in updateSelected()
                 fontType = "googlefont";
                 //console.log('CONSTRUCTOR >> we are starting off with a google font');
                 break;
@@ -344,7 +343,6 @@
         this.$original.attr("data-fonttype", fontType);
         //console.log('>>>> setting this.$original.data("fonttype") to:' +fontType);
         this.updateSelected(); //this will download the full font set for google fonts, which is useful so that preview text will be shown in this font
-        this.getVisibleFonts();
         this.bindEvents();
       }
 
@@ -367,10 +365,6 @@
           this.$element.addClass("font-select-active");
           this.$drop.show();
           this.moveToSelected();
-          this.visibleInterval = setInterval(
-            __bind(this.getVisibleFonts, this),
-            500
-          );
         }
 
         this.active = !this.active;
@@ -586,46 +580,6 @@
           };
         }
       };
-
-      Fontselect.prototype.getVisibleFonts = function () {
-        //if(this.$results.is(':hidden')) return;
-
-        var fs = this;
-        /*
-                var top = this.$results.scrollTop();
-                var bottom = top + this.$results.height();
-
-                if(this.options.lookahead){
-                    var li = $('li', this.$results).first().height();
-                    bottom += li*this.options.lookahead;
-                }
-                */
-        $("li", this.$results).each(function () {
-          //var ft = $(this).position().top+top;
-          //var fb = ft + $(this).height();
-
-          //if ((fb >= top) && (ft <= bottom)){
-          if ($(this).data("fonttype") == "googlefont") {
-            fs.addFontLink($(this).data("value"));
-          }
-          //}
-        });
-      };
-
-      //Fontselect.prototype.addFontLink = function (font) {
-        //var link = this.options.api + font + '&amp;text=' + encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
-        /*
-                var fontfilename = encodeURIComponent(this.toReadable(font).replace(/\s+/g, ''));
-                var link = '/css/gfonts_preview/' + fontfilename + '.css';
-                if(typeof FontSelect_Control !== 'undefined'){
-                    if(FontSelect_Control.hasOwnProperty('pluginUrl') && FontSelect_Control.pluginUrl != ''){
-                        if ($("link[href='" + FontSelect_Control.pluginUrl + link + "']").length === 0){
-                            $('link:last').after('<link href="' + FontSelect_Control.pluginUrl + link + '" rel="stylesheet" type="text/css">');
-                        }                    
-                    }
-                }
-                */
-      //};
 
       return Fontselect;
     })();
