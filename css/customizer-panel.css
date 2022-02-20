@@ -1,21 +1,27 @@
+.bibleGetRange {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+input[type="range"][id^=_customize-input-BGET] {
+    width: inherit;
+}
+
 .rangeBefore,.rangeAfter {
-	margin: 0 5px;
-	vertical-align: top;
-	display: inline-block;
-	width: 2em;
-} 
+    margin: 0 5px;
+}
 
 .rangeValue {
-	margin: 0 5px;
-	color: Green;
-	font-weight: bold;
-	position: relative;
-	top: -3px;
-	border: 1px solid Black;
-	border-radius: 3px;
-	padding: 3px;
-	background-color: White;
-	width: 2em;
-	text-align: center;
-	display: inline-block;
+    margin: 0 5px;
+    color: Green;
+    font-weight: bold;
+    position: relative;
+    border: 1px solid Black;
+    border-radius: 3px;
+    padding: 3px;
+    background-color: White;
+    width: 2em;
+    text-align: center;
+    display: inline-block;
 }

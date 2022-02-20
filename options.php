@@ -1037,7 +1037,7 @@ class BibleGet_Customize
         $bibleget_styles_general->FONT_SIZE_UNIT->title = __("Font size unit", "bibleget-io");
         $bibleget_styles_general->FONT_SIZE_UNIT->controltype = 'select';
         $bibleget_styles_general->FONT_SIZE_UNIT->choices = array('px' => 'px', 'em' => 'em', 'pt' => 'pt', 'inherit' => 'inherit');
-        $bibleget_styles_general->FONT_SIZE_UNIT->description = __('When set to "inherit" the font size will be according to the theme settings. When set to "em" the font size will be the above value / 10 (i.e. 12 will be 1.2em)', 'bibleget-io');
+        $bibleget_styles_general->FONT_SIZE_UNIT->description = __('When set to "inherit" the font size will be according to the theme settings.', 'bibleget-io');
 
         $bibleget_styles_general->TEXT_COLOR = new stdClass();
         $bibleget_styles_general->TEXT_COLOR->title = __("Font color", "bibleget-io");

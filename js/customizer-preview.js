@@ -274,6 +274,7 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
             break;
         }
         case 'VERSETEXTSTYLES_ITALIC': {
+            console.log('we are dealing with the italics styling');
             let fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
             jQuery('.bibleQuote.results .versesParagraph').css('font-style', fontstyle);
             break;
@@ -322,79 +323,51 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
     }
 }
 
-(() => {
-    /* Wouldn't it be great to be able to just iterate over the defined properties / attributes / options?
-     * Maybe we could, if we defined the function to bind such that it's the same as the Gutenberg block live preview functions?
-     * Making these functions another property of the defined properties / attributes? Would that be possible?
-     * Would probably require like an eval or something like that? I don't like the idea of eval though...
-     * In the meantime, we can still iterate over them and use a switch case to treat them one by one...
-    */
+
+if(
+    BibleGetGlobal !== null
+    && typeof BibleGetGlobal === 'object'
+    && BibleGetGlobal.hasOwnProperty('BGETProperties')
+    && BibleGetGlobal.hasOwnProperty('BGETConstants')
+    && BibleGetGlobal.hasOwnProperty('BGET') 
+) {
+    console.log('BibleGetGlobal is defined!');
     if(
-        BibleGetGlobal !== null
-        && typeof BibleGetGlobal === 'object'
-        && BibleGetGlobal.hasOwnProperty('BGETProperties')
-        && BibleGetGlobal.hasOwnProperty('BGETConstants')
-        && BibleGetGlobal.hasOwnProperty('BGET') 
+        typeof BibleGetGlobal.BGETProperties === 'object'
+        && typeof BibleGetGlobal.BGETConstants === 'object'
+        && typeof BibleGetGlobal.BGET === 'object'
     ) {
-        if(
-            typeof BibleGetGlobal.BGETProperties === 'object'
-            && typeof BibleGetGlobal.BGETConstants === 'object'
-            && typeof BibleGetGlobal.BGET === 'object'
-        ) {
-            const { BGETProperties, BGET } = BibleGetGlobal;
-            for(const key in BGETProperties ){
-                wp.customize( 'BGET['+key+']', (value) => {
-                    value.bind(function( newval ) {
-                        //keep our local store of properties/attributes/preferences updated
-                        BGET[key] = newval; 
-                        if( key.startsWith('PARAGRAPHSTYLES') ) {
-                            handleParagraphStyles(BibleGetGlobal,key);
-                        }
-                        else if( key.startsWith('VERSIONSTYLES') ) {
-                            handleVersionStyles(BibleGetGlobal,key);
-                        }
-                        else if( key.startsWith('BOOKCHAPTERSTYLES') ) {
-                            handleBookChapterStyles(BibleGetGlobal,key);
-                        }
-                        else if( key.startsWith('VERSENUMBERSTYLES') ) {
-                            handleVerseNumberStyles(BibleGetGlobal,key);
-                        }
-                        else if( key.startsWith('VERSETEXTSTYLES') ) {
-                            handleVerseTextStyles(BibleGetGlobal,key);
-                        }
-                        /* We don't use any of the Layout Prefs in the Customizer at least for now
-                            * considering that they change the structure of the Bible quote, not just the styling
-                            * Theoretically it would be possible even without a ServerSideRender (as in the case of the Gutenberg block)
-                            * if we were using a json response from the BibleGet server instead of an html response
-                            * or, even with the current html response, using DOM manipulation similarly to how the ServerSideRender
-                            * is manipulating the DOM. We'll see, one thing at a time
-                        switch(key){
-                            case 'LAYOUTPREFS_SHOWBIBLEVERSION':
-                            case 'LAYOUTPREFS_BIBLEVERSIONALIGNMENT':
-                            case 'LAYOUTPREFS_BIBLEVERSIONPOSITION':
-                            case 'LAYOUTPREFS_BIBLEVERSIONWRAP':
-                            case 'LAYOUTPREFS_BOOKCHAPTERALIGNMENT':
-                            case 'LAYOUTPREFS_BOOKCHAPTERPOSITION':
-                            case 'LAYOUTPREFS_BOOKCHAPTERWRAP':
-                            case 'LAYOUTPREFS_BOOKCHAPTERFORMAT':
-                            case 'LAYOUTPREFS_BOOKCHAPTERFULLQUERY':
-                            case 'LAYOUTPREFS_SHOWVERSENUMBERS':
-                            case 'VERSION':
-                            case 'QUERY':
-                            case 'POPUP':
-                            case 'FORCEVERSION':
-                            case 'FORCECOPYRIGHT':
-                        }
-                        */
-                    });
+        console.log('BibleGet has properties BGETProperties, BGETConstants and BGET');
+        const { BGETProperties, BGET } = BibleGetGlobal;
+        for(const key in BGETProperties ){
+            wp.customize( 'BGET['+key+']', (value) => {
+                value.bind(function( newval ) {
+                    //keep our local store of properties/attributes/preferences updated
+                    BGET[key] = newval; 
+                    if( key.startsWith('PARAGRAPHSTYLES') ) {
+                        handleParagraphStyles(BibleGetGlobal,key);
+                    }
+                    else if( key.startsWith('VERSIONSTYLES') ) {
+                        handleVersionStyles(BibleGetGlobal,key);
+                    }
+                    else if( key.startsWith('BOOKCHAPTERSTYLES') ) {
+                        handleBookChapterStyles(BibleGetGlobal,key);
+                    }
+                    else if( key.startsWith('VERSENUMBERSTYLES') ) {
+                        handleVerseNumberStyles(BibleGetGlobal,key);
+                    }
+                    else if( key.startsWith('VERSETEXTSTYLES') ) {
+                        console.log('we are dealing with a verse text style setting');
+                        handleVerseTextStyles(BibleGetGlobal,key);
+                    }
                 });
-            }
-        }
-        else{
-            alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BGETProperties property of the BibleGetGlobal object is not available');
+            });
         }
     }
     else{
-        alert('Live preview script does not seem to have been "localized" correctly with BibleGetGlobal object');
+        alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BGETProperties property of the BibleGetGlobal object is not available');
     }
-});
+}
+else{
+    alert('Live preview script does not seem to have been "localized" correctly with BibleGetGlobal object');
+}

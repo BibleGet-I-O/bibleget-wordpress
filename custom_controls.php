@@ -143,19 +143,19 @@ if (class_exists ( 'WP_Customize_Control' )) {
             }
             echo "<input type=\"hidden\" value=\"" . $this->value() . "\" " . $this->get_link() . " />";
             echo "<div class=\"bibleget-textalign button-group button-large\">";
-            echo "<label class=\"button " . $this->value() === 1 ? 'button-primary' : 'button-secondary' . "\">";
+            echo "<label class=\"button " . ($this->value() === 1 ? 'button-primary' : 'button-secondary') . "\">";
             echo "<span class=\"dashicons bget dashicons-editor-alignleft\"></span>";
             echo "<input class=\"ui-helper-hidden-accessible\" name=\"TEXTALIGN\" value=1 type=\"radio\" " . checked($this->value(),1,false) . " />";
             echo "</label>";
-            echo "<label class=\"button " . $this->value() === 2 ? 'button-primary' : 'button-secondary' . "\">";
+            echo "<label class=\"button " . ($this->value() === 2 ? 'button-primary' : 'button-secondary') . "\">";
             echo "<span class=\"dashicons bget dashicons-editor-aligncenter\"></span>";
             echo "<input class=\"ui-helper-hidden-accessible\" name=\"TEXTALIGN\" value=2 type=\"radio\" " . checked($this->value(),2,false) . " />";
             echo "</label>";
-            echo "<label class=\"button " . $this->value() === 3 ? 'button-primary' : 'button-secondary' . "\">";
+            echo "<label class=\"button " . ($this->value() === 3 ? 'button-primary' : 'button-secondary') . "\">";
             echo "<span class=\"dashicons bget dashicons-editor-alignright\"></span>";
             echo "<input class=\"ui-helper-hidden-accessible\" name=\"TEXTALIGN\" value=3 type=\"radio\" " . checked($this->value(),3,false) . " />";
             echo "</label>";
-            echo "<label class=\"button " . $this->value() === 4 ? 'button-primary' : 'button-secondary' . "\">";
+            echo "<label class=\"button " . ($this->value() === 4 ? 'button-primary' : 'button-secondary') . "\">";
             echo "<span class=\"dashicons bget dashicons-editor-justify\"></span>";
             echo "<input class=\"ui-helper-hidden-accessible\" name=\"TEXTALIGN\" value=4 type=\"radio\" " . checked($this->value(),4,false) . " />";
             echo "</label>";
