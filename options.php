@@ -608,8 +608,28 @@ class BibleGetSettingsPage
         }
     }
 
-    public function gfontsAPIkeyCheck()
-    {
+    private static function isLocalIp( $ip ) {
+        $isLocal = false;
+        if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $ipNum = ip2long($ip);
+            if(
+                ($ipNum >= 167772160    && $ipNum <= 184549375)     //10.0.0.0 – 10.255.255.255
+                ||
+                ($ipNum >= 2886729728   && $ipNum <= 2887778303)    //172.16.0.0 – 172.31.255.255
+                ||
+                ($ipNum >= 3232235520   && $ipNum <= 3232301055)    //192.168.0.0 – 192.168.255.255
+            ) {
+                $isLocal = true;
+            }
+        } else if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            if( $ip === "::1" ) {
+                $isLocal = true;
+            }
+        }
+        return $isLocal;
+    }
+
+    public function gfontsAPIkeyCheck() {
         $result = false;
         $this->gfontsAPI_errors = array(); //we want to start with a clean slate
 
@@ -630,7 +650,9 @@ class BibleGetSettingsPage
                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
                     curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                    curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                    if( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+                        curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                    }
                     if (ini_get('open_basedir') === false) {
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
                         curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
