@@ -202,7 +202,7 @@ jQuery(document).ready(function ($) {
       jQuery($gfontsBatchRunProgressbarWrapper).append(
         $gfontsBatchRunProgressbar
       );
-      jQuery($gfontsBatchRunProgressbarWrapper).append(`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to 7 minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`);
+      jQuery($gfontsBatchRunProgressbarWrapper).append(`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to 7 minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OUT OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`);
       performance.mark('processStart');
       //var inProgress = false;
 
