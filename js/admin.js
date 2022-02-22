@@ -148,8 +148,8 @@ jQuery(document).ready(function ($) {
     typeof gfontsBatch.job.gfontsWeblist == "object" &&
     gfontsBatch.job.gfontsWeblist.hasOwnProperty("items")
   ) {
-    console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
-    console.log(gfontsBatch);
+    //console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
+    //console.log(gfontsBatch);
     //check for errors in writing to the filesystem
     let wpFsErrors = JSON.parse(gfontsBatch.job.gfontsAPI_errors);
     if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
@@ -170,6 +170,7 @@ jQuery(document).ready(function ($) {
       var lastBatchLimit = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
       var numRuns = 0; //we'll set this in a minute
       var currentRun = 1; //of course we start from 1, the first run
+      var max_execution_time = gfontsBatch.job.max_execution_time;
 
       //Let's calculate how many times we will have to make the ajax call
       //  in order to complete the local download of all the requested miniaturized font files
@@ -177,13 +178,13 @@ jQuery(document).ready(function ($) {
       //  but hey let's be precise on each side, why not
       if (gfontsCount % batchLimit === 0) {
         numRuns = gfontsCount / batchLimit;
-        console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
+        //console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
       } else if (gfontsCount % batchLimit > 0) {
         numRuns = Math.floor(gfontsCount / batchLimit) + 1;
         lastBatchLimit = gfontsCount % batchLimit;
-        console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
-        console.log('gfontsCount = '+gfontsCount);
-        console.log('batchLimit = '+batchLimit);
+        //console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
+        //console.log('gfontsCount = '+gfontsCount);
+        //console.log('batchLimit = '+batchLimit);
       }
 
       //$gfontsBatchRunProgressbarOverlay, $gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global variables so don't use "var" here
@@ -201,7 +202,8 @@ jQuery(document).ready(function ($) {
       jQuery($gfontsBatchRunProgressbarWrapper).append(
         $gfontsBatchRunProgressbar
       );
-
+      jQuery($gfontsBatchRunProgressbarWrapper).append(`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to 7 minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`);
+      performance.mark('processStart');
       //var inProgress = false;
 
       $gfontsBatchRunProgressbar.progressbar({
@@ -222,7 +224,7 @@ jQuery(document).ready(function ($) {
               .add($gfontsBatchRunProgressbarOverlay)
               .fadeOut(1000);
           }, 1000);
-        },
+        }
       });
 
       postdata = {
@@ -234,6 +236,7 @@ jQuery(document).ready(function ($) {
         numRuns: numRuns,
         currentRun: currentRun,
         startIdx: 0,
+        max_execution_time: max_execution_time
       };
       //console.log(postdata);
       gfontsBatchRun(postdata);
@@ -265,6 +268,7 @@ jQuery(document).ready(function ($) {
 });
 
 var myProgressInterval = null;
+var myMaxExecutionTimer = null;
 var $gfontsBatchRunProgressbarOverlay;
 var $gfontsBatchRunProgressbar;
 var $gfontsBatchRunProgressbarWrapper;
@@ -278,22 +282,30 @@ var gfontsBatchRun = function (postdata) {
     beforeSend: function () {
       //jQuery("#bibleget_ajax_spinner").show();
       //$gfontsBatchRunProgressbar.progressbar("value");
+      performance.mark('batchStart');
       myProgressInterval = setInterval(
         updateGfontsBatchRunProgressbarProgress,
         1500,
         postdata.currentRun,
         postdata.numRuns
       );
+      myMaxExecutionTimer = setInterval(
+        updateExecutionCountdown,
+        500,
+        postdata.max_execution_time
+      );
+      jQuery('#batchRun').text(postdata.currentRun);
     },
     complete: function () {
       jQuery("#bibleget_ajax_spinner").hide();
     },
     success: function (returndata) {
       clearInterval(myProgressInterval);
+      clearInterval(myMaxExecutionTimer);
       var returndataJSON =
         typeof returndata !== "object" ? JSON.parse(returndata) : returndata;
-      console.log("gfontsBatchRun success, returndataJSON:");
-      console.log(returndataJSON);
+      //console.log("gfontsBatchRun success, returndataJSON:");
+      //console.log(returndataJSON);
       if (returndataJSON !== null && typeof returndataJSON === "object") {
         var thisRun = returndataJSON.hasOwnProperty("run")
           ? returndataJSON.run
@@ -381,6 +393,7 @@ var gfontsBatchRun = function (postdata) {
     },
     error: function (xhr, ajaxOptions, thrownError) {
       clearInterval(myProgressInterval);
+      clearInterval(myMaxExecutionTimer);
       let errArr = [
         "Communication with the Google Fonts server was not successful... ERROR:",
         thrownError,
@@ -411,6 +424,38 @@ var updateGfontsBatchRunProgressbarProgress = function (currentRun, numRuns) {
     $gfontsBatchRunProgressbar.progressbar("value", ++currentProgressBarValue);
   }
 };
+
+var updateExecutionCountdown = function(max_execution_time) {
+  let measure = performance.measure('currentExecutionTime','batchStart');
+  let measureTotal = performance.measure('totalExecutionTime','processStart');
+  let executionSeconds = Math.floor(measure.duration / 1000);
+  let totalExecutionSeconds = Math.floor(measureTotal.duration / 1000);
+  let totalExecutionString = '';
+  if(totalExecutionSeconds < 60) {
+    if( totalExecutionSeconds === 0 || totalExecutionSeconds > 1 ) {
+      totalExecutionString = `${totalExecutionSeconds} seconds`;
+    } else {
+      totalExecutionString = `${totalExecutionSeconds} second`;
+    }
+  } else {
+    let minutes = Math.floor( totalExecutionSeconds / 60 );
+    let seconds = totalExecutionSeconds % 60;
+    if( minutes > 1 ) {
+      totalExecutionString += `${minutes} minutes and `;
+    } else {
+      totalExecutionString += '1 minute and ';
+    }
+    if( seconds === 0 || seconds > 1 ) {
+      totalExecutionString += `${seconds} seconds`;
+    } else {
+      totalExecutionString += `${seconds} second`;
+    }
+  }
+  let executionLimitPercentage = Math.floor((executionSeconds / max_execution_time) * 100);
+  jQuery('.chart').css({background: `conic-gradient(red ${executionLimitPercentage}%, white 0)`});
+  jQuery('#current_execution_time').text(executionSeconds);
+  jQuery('#total_execution_time').text(totalExecutionString)
+}
 
 var bibleGetForceRefreshGFapiResults = function () {
   //send ajax request to the server to have the transient deleted

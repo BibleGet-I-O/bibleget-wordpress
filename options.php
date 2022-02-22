@@ -54,6 +54,7 @@ class BibleGetSettingsPage
             case "SUCCESS":
                 //the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
                 //error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
+                set_time_limit(180);
                 add_action("wp_ajax_store_gfonts_preview", array($this, 'store_gfonts_preview'));
                 add_action("wp_ajax_bibleget_refresh_gfonts", array($this, 'bibleGetForceRefreshGFontsResults'));
                 //enqueue and localize will be done in enqueue_scripts
@@ -339,7 +340,7 @@ class BibleGetSettingsPage
                     '//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css'
                 );
             }
-            $storeGfontsArr = array("job" => array("gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"), 'ajax_url' => admin_url('admin-ajax.php'), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key'], 'gfontsAPI_errors' => json_encode($this->gfontsAPI_errors)));
+            $storeGfontsArr = array("job" => array("gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"), 'ajax_url' => admin_url('admin-ajax.php'), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key'], 'gfontsAPI_errors' => json_encode($this->gfontsAPI_errors), 'max_execution_time' => ini_get('max_execution_time')));
             wp_localize_script('admin-js', 'gfontsBatch', $storeGfontsArr);
         }
     }
@@ -862,15 +863,13 @@ class BibleGetSettingsPage
 
             //LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
             $cssdirectory = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "css/gfonts_preview";
-            if (!file_exists($cssdirectory . "/gfonts_preview.css")) {
-                $cssfiles = array_diff(scandir($cssdirectory), array('..', '.'));
+            $cssfiles = array_diff(scandir($cssdirectory), array('..', '.', 'gfonts_preview.css'));
 
-                $minifier = new MatthiasMullie\Minify\CSS($cssdirectory . "/" . (array_shift($cssfiles)));
-                while (count($cssfiles) > 0) {
-                    $minifier->add($cssdirectory . "/" . (array_shift($cssfiles)));
-                }
-                $minifier->minify($cssdirectory . "/gfonts_preview.css");
+            $minifier = new MatthiasMullie\Minify\CSS($cssdirectory . "/" . (array_shift($cssfiles)));
+            while (count($cssfiles) > 0) {
+                $minifier->add($cssdirectory . "/" . (array_shift($cssfiles)));
             }
+            $minifier->minify($cssdirectory . "/gfonts_preview.css");
         }
 
         if (count($errorinfo) > 0) {

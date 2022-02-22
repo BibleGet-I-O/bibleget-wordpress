@@ -1,137 +1,138 @@
 h2#bibleget-h2:before {
-	content: '\f331';
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 29px/1 'dashicons';
-	vertical-align: middle;
-	margin-right: 0.3em;
+    content: "\f331";
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font: normal 29px/1 "dashicons";
+    vertical-align: middle;
+    margin-right: 0.3em;
 }
 
 .page-clear {
-	clear: both;
+    clear: both;
 }
 
-form input[type=color] {
-	height: 2em;
+form input[type="color"] {
+    height: 2em;
 }
 
 .bibleget-dynamic-data {
-	color: Blue;
-	background-color: #DDD;
-	padding: 2px 6px;
-	border: 2px inset White;
-	border-radius: 3px;
-	margin: 0 6px;
-	font-size: 1.1em;
-	font-family: sans-serif;
-	font-weight: bold;
+    color: Blue;
+    background-color: #ddd;
+    padding: 2px 6px;
+    border: 2px inset White;
+    border-radius: 3px;
+    margin: 0 6px;
+    font-size: 1.1em;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
 .bibleget-dynamic-data-wrapper {
-	border: 1px solid Blue;
-	border-radius: 6px;
-	padding: 9px;
-	background-color: White;
-	width: 50%;
-	color: Blue;
-	margin: 6px;
+    border: 1px solid Blue;
+    border-radius: 6px;
+    padding: 9px;
+    background-color: White;
+    width: 50%;
+    color: Blue;
+    margin: 6px;
 }
 /*
 #versionlangs-ol {
-	
+    
 }
 */
-#versionlangs-ol>li {
-	font-weight: bold;
+#versionlangs-ol > li {
+    font-weight: bold;
 }
 
-#versionlangs-ol>li>ul {
-	font-weight: normal;
+#versionlangs-ol > li > ul {
+    font-weight: normal;
 }
 
 #bibleget-donate {
-	text-align: center;
+    text-align: center;
 }
 
 #bibleget-donate button {
-	cursor: pointer;
-	padding: 12px;
+    cursor: pointer;
+    padding: 12px;
 }
 
 #bibleget-settings-container {
-	position: relative;
-	width: 100%;
-	height: 100%;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
-#bibleget-settings-contents, #bibleget_ajax_spinner {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
+#bibleget-settings-contents,
+#bibleget_ajax_spinner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 
 #bibleget-settings-contents .flexcontainer {
-	display: flex;
-	justify-content: space-evenly;
-	padding: 15px;
-	margin: 15px;
-	border: 1px solid lightgray;
-	border-radius: 6px;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 15px;
+    margin: 15px;
+    border: 1px solid lightgray;
+    border-radius: 6px;
 }
 
 #bibleget-settings-contents .flexcontainer .flexitem {
-	flex-grow: 1;
-	margin: 15px;
-	border-right: 1px solid gray;
+    flex-grow: 1;
+    margin: 15px;
+    border-right: 1px solid gray;
 }
 
 #bibleget-settings-contents .flexcontainer .flexitem:last-child {
-	border-right: 0;
+    border-right: 0;
 }
 
 #bibleget-settings-contents .flexcontainer .flexitem button {
-	display: block;
-	margin: 0 auto;
+    display: block;
+    margin: 0 auto;
 }
 
 #bibleget_ajax_spinner {
-	position: absolute;
-	background-color: rgba(0, 0, 0, 0.7);
-	text-align: center;
-	z-index: 10;
-	display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    z-index: 10;
+    display: none;
 }
 
 #bibleget_ajax_spinner img {
-	position: relative;
-	top: 50%;
-	margin-top: -16px;
+    position: relative;
+    top: 50%;
+    margin-top: -16px;
 }
 
 #bibleget-settings-notification {
-	display: none;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	height: 50px;
-	width: 50%;
-	margin-top: -25px;
-	margin-left: -25%;
-	z-index: 105;
-	text-align: center;
-	font-size: 14px;
-	font-weight: bold;
-	color: white;
-	background-color: #fff7f0;
-	padding: 15px;
-	border: 1px solid DarkGreen;
-	border-radius: 6px;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 50px;
+    width: 50%;
+    margin-top: -25px;
+    margin-left: -25%;
+    z-index: 105;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: #074e17;
+    padding: 15px;
+    border: 1px solid DarkGreen;
+    border-radius: 6px;
 }
 
 #bibleget-settings-notification span.bibleget-settings-notification-dismiss {
-    border: 2px solid #FFF;
+    border: 2px solid #fff;
     padding: 0 5px;
     cursor: pointer;
     float: right;
@@ -160,8 +161,8 @@ form input[type=color] {
     width: 100%;
 }
 
-#gfontsBatchRunProgressbar{
-    position:relative;
+#gfontsBatchRunProgressbar {
+    position: relative;
     width: 50%;
     margin: 0 auto;
 }
@@ -175,19 +176,23 @@ form input[type=color] {
 
 #gfontsBatchRunProgressbarLabel {
     position: relative;
-    color:#000;
+    color: #000;
     font-weight: bold;
     top: 4px;
     margin: 0 auto;
 }
 
-#biblegetio_reveal_server_variable,#biblegetForceRefreshGFapiResults,#biblegetGFapiKeyRetest {
+#biblegetio_reveal_server_variable,
+#biblegetForceRefreshGFapiResults,
+#biblegetGFapiKeyRetest {
     cursor: pointer;
     background-color: lightgray;
     padding: 4px 6px;
     display: inline-block;
 }
-#biblegetForceRefreshGFapiResults:hover,#biblegetGFapiKeyRetest:hover,#biblegetio_reveal_server_variable:hover {
+#biblegetForceRefreshGFapiResults:hover,
+#biblegetGFapiKeyRetest:hover,
+#biblegetio_reveal_server_variable:hover {
     background-color: white;
 }
 #biblegetio_hidden_server_variable {
@@ -197,10 +202,12 @@ form input[type=color] {
     visibility: visible;
 }
 
-#biblegetForceRefreshGFapiResults,#biblegetGFapiKeyRetest {
+#biblegetForceRefreshGFapiResults,
+#biblegetGFapiKeyRetest {
     color: blue;
 }
-#biblegetForceRefreshGFapiResults:hover,#biblegetGFapiKeyRetest:hover {
+#biblegetForceRefreshGFapiResults:hover,
+#biblegetGFapiKeyRetest:hover {
     text-decoration: underline;
 }
 
@@ -208,4 +215,39 @@ form input[type=color] {
     overflow-y: hidden;
     max-width: 100%;
     width: 30em;
+}
+
+.chart {
+    position: relative;
+    margin: 10px auto;
+    background: conic-gradient(red 0%, white 0);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    box-shadow: 12px 12px 12px black;
+}
+
+.chart_before {
+    margin: 20px auto 10px;
+    background-color: darkslategray;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    width: 400px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 12px 12px 12px black;
+}
+
+.chart_after {
+    margin: 0 auto;
+    background-color: gray;
+    padding: 10px;
+    color: rgb(228, 232, 238);
+    font-weight: bold;
+    width: 400px;
+    text-align: center;
+    border: 1px solid rgb(80, 80, 80);
+    border-radius: 12px;
+    box-shadow: 12px 12px 12px black;
 }
