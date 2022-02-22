@@ -2,6 +2,7 @@
 include_once( plugin_dir_path(__FILE__) . "includes/enums/BGET.php" );
 include_once( plugin_dir_path(__FILE__) . "includes/BGETPROPERTIES.php" );
 include_once( plugin_dir_path(__FILE__) . "includes/LangCodes.php" );
+include_once( plugin_dir_path(__FILE__) . "vendor/autoload.php" );
 
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
 class BibleGetSettingsPage
@@ -56,18 +57,6 @@ class BibleGetSettingsPage
                 add_action("wp_ajax_store_gfonts_preview", array($this, 'store_gfonts_preview'));
                 add_action("wp_ajax_bibleget_refresh_gfonts", array($this, 'bibleGetForceRefreshGFontsResults'));
                 //enqueue and localize will be done in enqueue_scripts
-
-                // Include CSS minifier by matthiasmullie
-                $minifierpath = WP_PLUGIN_DIR   . "/bibleget-io/minifier";
-                require_once $minifierpath      . '/minify/src/Minify.php';
-                require_once $minifierpath      . '/minify/src/CSS.php';
-                require_once $minifierpath      . '/minify/src/JS.php';
-                require_once $minifierpath      . '/minify/src/Exception.php';
-                require_once $minifierpath      . '/minify/src/Exceptions/BasicException.php';
-                require_once $minifierpath      . '/minify/src/Exceptions/FileImportException.php';
-                require_once $minifierpath      . '/minify/src/Exceptions/IOException.php';
-                require_once $minifierpath      . '/path-converter/src/ConverterInterface.php';
-                require_once $minifierpath      . '/path-converter/src/Converter.php';
                 break;
             /*
             case "CURL_ERROR":
@@ -720,13 +709,13 @@ class BibleGetSettingsPage
     {
         check_ajax_referer('store_gfonts_preview_nonce', 'security', TRUE); //no need for an "if", it will die if not valid
         //$this->gfonts_weblist contains $json_response, no need to retrieve from the javascript ajax data!
-        $returnInfo = new stdClass();
-        $thisfamily = "";
-        $familyurlname = "";
-        $familyfilename = "";
-        $errorinfo = array();
-        $gfontsDir = WP_PLUGIN_DIR . "/bibleget-io/gfonts_preview/";
-        $gfontsWeblist = new stdClass();
+        $thisfamily         = "";
+        $familyurlname      = "";
+        $familyfilename     = "";
+        $errorinfo          = [];
+        $gfontsDir          = WP_PLUGIN_DIR . "/bibleget-io/gfonts_preview/";
+        $gfontsWeblist      = new stdClass();
+        $returnInfo         = new stdClass();
 
         if (file_exists($gfontsDir . "gfontsWeblist.json")) {
             $gfontsWeblistFile = file_get_contents($gfontsDir . "gfontsWeblist.json");

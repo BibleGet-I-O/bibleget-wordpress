@@ -1,0 +1,16 @@
+{
+    "name": "johnrdorazio/bibleget-wordpress",
+    "description": "BibleGet plugin for WordPress",
+    "type": "wordpress-plugin",
+    "require": {
+        "matthiasmullie/minify": "^1.3"
+    },
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "John R. D'Orazio",
+            "email": "priest@johnromanodorazio.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

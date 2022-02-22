@@ -1,6 +1,6 @@
 <?php
 
-include_once( plugin_dir_path(__FILE__) . "includes/enums/BGET.php" );
+include_once( plugin_dir_path(__FILE__) . "enums/BGET.php" );
 
 class BGETPROPERTIES {
     public $OPTIONS;
