@@ -301,7 +301,7 @@ class BibleGetSettingsPage
                 /* initialize the API */
                 if (WP_Filesystem($creds)) {
                     global $wp_filesystem;
-                    $plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path(__FILE__));
+                    $plugin_path = str_replace('\\','/', plugin_dir_path( __FILE__ ) );
                     if (!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')) {
                         /* directory didn't exist, so let's create it */
                         if ($wp_filesystem->mkdir($plugin_path . 'gfonts_preview/') === false) {
@@ -620,7 +620,7 @@ class BibleGetSettingsPage
 
     public function gfontsAPIkeyCheck() {
         $result = false;
-        $this->gfontsAPI_errors = array(); //we want to start with a clean slate
+        $this->gfontsAPI_errors = []; //we want to start with a clean slate
 
         if (isset($this->options['googlefontsapi_key']) && $this->options['googlefontsapi_key'] != "") {
             $this->gfontsAPIkey = $this->options['googlefontsapi_key'];
@@ -653,10 +653,10 @@ class BibleGetSettingsPage
                         $json_response = json_decode($response);
                         if ($json_response !== null && json_last_error() === JSON_ERROR_NONE) {
                             //So far so good, let's keep these results for other functions to access
-
                             if (property_exists($json_response, "kind") && $json_response->kind == "webfonts#webfontList" && property_exists($json_response, "items")) {
                                 $this->gfonts_weblist = $json_response;
                                 $result = "SUCCESS";
+                            } else {
                             }
                         } else {
                             $result = "JSON_ERROR";
@@ -713,7 +713,7 @@ class BibleGetSettingsPage
         $familyurlname      = "";
         $familyfilename     = "";
         $errorinfo          = [];
-        $gfontsDir          = WP_PLUGIN_DIR . "/bibleget-io/gfonts_preview/";
+        $gfontsDir          = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "gfonts_preview/";
         $gfontsWeblist      = new stdClass();
         $returnInfo         = new stdClass();
 
@@ -721,17 +721,19 @@ class BibleGetSettingsPage
             $gfontsWeblistFile = file_get_contents($gfontsDir . "gfontsWeblist.json");
             $gfontsWeblist = json_decode($gfontsWeblistFile);
         }
-        if (isset($_POST["gfontsCount"], $_POST["batchLimit"], $_POST["startIdx"], $_POST["lastBatchLimit"], $_POST["numRuns"], $_POST["currentRun"]) && property_exists($gfontsWeblist, "items")) {
-            $gfontsCount = intval($_POST["gfontsCount"]);
+        if (
+            isset($_POST["gfontsCount"], $_POST["batchLimit"], $_POST["startIdx"], $_POST["lastBatchLimit"], $_POST["numRuns"], $_POST["currentRun"])
+            && property_exists($gfontsWeblist, "items")) {
+            //$gfontsCount = intval($_POST["gfontsCount"]);
             $batchLimit = intval($_POST["batchLimit"]);
             $startIdx = intval($_POST["startIdx"]);
-            $lastBatchLimit = intval($_POST["lastBatchLimit"]);
-            $numRuns = intval($_POST["numRuns"]);
+            //$lastBatchLimit = intval($_POST["lastBatchLimit"]);
+            //$numRuns = intval($_POST["numRuns"]);
             $currentRun = intval($_POST["currentRun"]);
             $totalFonts = (count($gfontsWeblist->items) > 0) ? count($gfontsWeblist->items) : false;
             $errorinfo[] = "totalFonts according to the server script = " . $totalFonts;
         } else {
-            $errorinfo[] = "We do not seem to have received all the necessary data... Request received: " . print_r($_POST, true);
+            $errorinfo[] = "We do not seem to have received all the necessary data... Request received: " . json_encode($_POST);
             echo json_encode($errorinfo);
             wp_die();
         }
@@ -742,7 +744,7 @@ class BibleGetSettingsPage
             /* initialize the API */
             if (WP_Filesystem($creds)) {
                 global $wp_filesystem;
-                $plugin_path = str_replace(ABSPATH, $wp_filesystem->abspath(), plugin_dir_path(__FILE__));
+                $plugin_path = str_replace('\\','/', plugin_dir_path( __FILE__ ) );
 
                 foreach ($gfontsWeblist->items as $idx => $googlefont) {
                     if ($idx >= $startIdx && $idx < ($startIdx + $batchLimit)) {
@@ -758,7 +760,9 @@ class BibleGetSettingsPage
                             curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 2);
                             curl_setopt($ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
                             curl_setopt($ch2, CURLOPT_RETURNTRANSFER, TRUE);
-                            curl_setopt($ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                            if( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+                                curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                            }
                             if (ini_get('open_basedir') === false) {
                                 curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, TRUE);
                                 curl_setopt($ch2, CURLOPT_AUTOREFERER, TRUE);
@@ -777,7 +781,9 @@ class BibleGetSettingsPage
                                     curl_setopt($ch3, CURLOPT_SSL_VERIFYHOST, 2);
                                     curl_setopt($ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
                                     curl_setopt($ch3, CURLOPT_RETURNTRANSFER, TRUE);
-                                    curl_setopt($ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                                    if( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+                                        curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+                                    }
                                     //declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
                                     //however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
                                     curl_setopt($ch3, CURLOPT_HTTPHEADER, array("Accept: font/woff2", "Content-type: font/ttf"));
@@ -791,7 +797,7 @@ class BibleGetSettingsPage
                                     $returnInfo->httpStatus3 = $status3;
                                     if ($response3 && !curl_errno($ch3) && $status3 == 200) {
                                         if ($wp_filesystem) {
-                                            //                                 if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
+                                            //if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
                                             if (!$wp_filesystem->put_contents(
                                                 $gfontsDir . "{$familyfilename}.{$fnttype}",
                                                 $response3,
@@ -855,7 +861,7 @@ class BibleGetSettingsPage
             $returnInfo->state = "COMPLETE";
 
             //LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
-            $cssdirectory = WP_PLUGIN_DIR . "/bibleget-io/css/gfonts_preview";
+            $cssdirectory = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "css/gfonts_preview";
             if (!file_exists($cssdirectory . "/gfonts_preview.css")) {
                 $cssfiles = array_diff(scandir($cssdirectory), array('..', '.'));
 

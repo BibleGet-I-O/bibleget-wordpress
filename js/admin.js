@@ -148,12 +148,12 @@ jQuery(document).ready(function ($) {
     typeof gfontsBatch.job.gfontsWeblist == "object" &&
     gfontsBatch.job.gfontsWeblist.hasOwnProperty("items")
   ) {
-    //console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
-    //console.log(gfontsBatch);
+    console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
+    console.log(gfontsBatch);
     //check for errors in writing to the filesystem
     let wpFsErrors = JSON.parse(gfontsBatch.job.gfontsAPI_errors);
-    console.log(wpFsErrors);
     if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
+      console.log(wpFsErrors);
       jQuery("#googlefontsapi_key")
         .closest("td")
         .append(
@@ -175,15 +175,15 @@ jQuery(document).ready(function ($) {
       //  in order to complete the local download of all the requested miniaturized font files
       //Perhaps lastBatchLimit variable is superfluous because PHP will check bounds,
       //  but hey let's be precise on each side, why not
-      if (gfontsCount % batchLimit == 0) {
+      if (gfontsCount % batchLimit === 0) {
         numRuns = gfontsCount / batchLimit;
-        //console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
+        console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
       } else if (gfontsCount % batchLimit > 0) {
         numRuns = Math.floor(gfontsCount / batchLimit) + 1;
         lastBatchLimit = gfontsCount % batchLimit;
-        //console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
-        //console.log('gfontsCount = '+gfontsCount);
-        //console.log('batchLimit = '+batchLimit);
+        console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
+        console.log('gfontsCount = '+gfontsCount);
+        console.log('batchLimit = '+batchLimit);
       }
 
       //$gfontsBatchRunProgressbarOverlay, $gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global variables so don't use "var" here
