@@ -657,7 +657,6 @@ class BibleGetSettingsPage
                             if (property_exists($json_response, "kind") && $json_response->kind == "webfonts#webfontList" && property_exists($json_response, "items")) {
                                 $this->gfonts_weblist = $json_response;
                                 $result = "SUCCESS";
-                            } else {
                             }
                         } else {
                             $result = "JSON_ERROR";
@@ -1194,23 +1193,7 @@ class BibleGet_Customize
         return false;
     }
 
-    /**
-     * This hooks into 'customize_register' (available as of WP 3.4) and allows
-     * you to add new sections and controls to the Theme Customize screen.
-     *
-     * Note: To enable instant preview, we have to actually write a bit of custom
-     * javascript. See live_preview() for more.
-     *
-     * @see add_action('customize_register',$func)
-     * @param \WP_Customize_Manager $wp_customize
-     * @link http://ottopress.com/2012/how-to-leverage-the-theme-customizer-in-your-own-themes/
-     * @since BibleGet I/O 3.6
-     */
-    public static function register( $wp_customize ) {
-
-        self::init();
-        require_once 'custom_controls.php';
-
+    public static function addPanelsAndSections( $wp_customize ) {
         $wp_customize->add_panel(
             'bibleget_style_options',
             array(
@@ -1281,7 +1264,25 @@ class BibleGet_Customize
                 'panel'                => 'bibleget_style_options'
             )
         );
+    }
 
+    /**
+     * This hooks into 'customize_register' (available as of WP 3.4) and allows
+     * you to add new sections and controls to the Theme Customize screen.
+     *
+     * Note: To enable instant preview, we have to actually write a bit of custom
+     * javascript. See live_preview() for more.
+     *
+     * @see add_action('customize_register',$func)
+     * @param \WP_Customize_Manager $wp_customize
+     * @link http://ottopress.com/2012/how-to-leverage-the-theme-customizer-in-your-own-themes/
+     * @since BibleGet I/O 3.6
+     */
+    public static function register( $wp_customize ) {
+
+        self::init();
+        include_once( plugin_dir_path(__FILE__) . 'includes/custom_controls.php' );
+        self::addPanelsAndSections( $wp_customize );
         $bibleget_style_settings_cc = 0;
         foreach (self::$bibleget_style_settings as $style_setting => $style_setting_obj) {
             //separate case for FONT_STYLE !
