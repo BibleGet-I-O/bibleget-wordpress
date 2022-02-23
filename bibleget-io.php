@@ -43,7 +43,9 @@ define("METADATA_API",  "https://query.bibleget.io/v3/metadata.php");
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
 include_once(plugin_dir_path(__FILE__) . "includes/LangCodes.php" );
-require_once(plugin_dir_path(__FILE__) . "options.php");
+include_once(plugin_dir_path(__FILE__) . "includes/BibleGetSettingsPage.php");
+include_once(plugin_dir_path(__FILE__) . "includes/BGETPROPERTIES.php");
+include_once(plugin_dir_path(__FILE__) . "includes/BibleGet_Customize.php");
 
 /**
  * BibleGet_on_activation
