@@ -261,7 +261,11 @@ class QueryValidator {
     }
 
     private function isValidBookForVariant( $variant ) {
-        return ( in_array( $this->currentBook, $this->indexes[$variant]["biblebooks"] ) || in_array( $this->currentBook, $this->indexes[$variant]["abbreviations"] ) );
+        return (
+            in_array( $this->currentBook, $this->indexes[$variant]["biblebooks"] )
+            ||
+            in_array( $this->currentBook, $this->indexes[$variant]["abbreviations"] )
+        );
     }
 
     private function validateBibleBook() {

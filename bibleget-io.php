@@ -287,7 +287,12 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
     } else {
         $queries = bibleGetQueryClean($atts['QUERY']);
     }
+    return processQueries( $queries, $atts, true, $content );
+}
+add_shortcode('bibleget', 'bibleget_shortcode');
 
+
+function processQueries( $queries, $atts, $isShortcode = false, $content = null ) {
     if (is_array($queries)) {
         ensureIndexesSet( $atts['VERSION'] );
         ensureBibleBooksSet();
@@ -308,16 +313,27 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
 
         $output = processOutput( $finalquery );
 
-        wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
-        wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
-
-        //it shouldn't be necessary to call update_option here,
-        //because even though it's theoretically possible now to set all options inside the shortcode
-        //it would be so impractical that I cannot see anyone actual doing it
-        //and it would probably be confusing to be saving the main query parameters such as "version"
-        //which is being used here as an override compared to any saved options;
-        //same really goes for any parameter used here, it would be used as an ovverride if anything
-        //update_option("BGET",$a);
+        if( $isShortcode ) {
+            wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
+            wp_enqueue_script('htmlentities-script', plugins_url('js/he.min.js', __FILE__), array('jquery'), '1.0', true);
+            //it shouldn't be necessary to call update_option here,
+            //because even though it's theoretically possible now to set all options inside the shortcode
+            //it would be so impractical that I cannot see anyone actual doing it
+            //and it would probably be confusing to be saving the main query parameters such as "version"
+            //which is being used here as an override compared to any saved options;
+            //same really goes for any parameter used here, it would be used as an ovverride if anything
+            //update_option("BGET",$a);
+        } else {
+            //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
+            $a = get_option('BGET');
+            $optionsNoUpdateFromBlock = ['POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION'];
+            foreach ($atts as $key => $value) {
+                if (!in_array($key, $optionsNoUpdateFromBlock)) {
+                    $a[$key] = $value;
+                }
+            }
+            update_option("BGET", $a);
+        }
 
         $domDocumentProcessed = processDomDocument( $atts, $output, $content );
         return $domDocumentProcessed;
@@ -326,9 +342,8 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
         $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $a['query'] . '&gt;<br />' . $queries . '</span>';
         return '<div class="bibleget-quote-div">' . $output . '</div>';
     }
-}
-add_shortcode('bibleget', 'bibleget_shortcode');
 
+}
 
 function processDomDocument( $atts, $output, $content = null ) {
     $nonDefaultLayout = false; //set this flag to true as soon as we see that we have a layout pref that isn't default value, so we will know to update the $output accordingly
@@ -738,44 +753,7 @@ function bibleGet_renderGutenbergBlock($atts) {
     }
 
     $queries = bibleGetQueryClean($atts['QUERY']);
-
-    if (is_array($queries)) {
-
-        ensureIndexesSet( $atts['VERSION'] );
-        ensureBibleBooksSet();
-        $currentPageUrl = bibleGetCurrentPageUrl();
-    
-        $queryValidator = new QueryValidator( $queries, $atts['VERSION'], $currentPageUrl );
-        if(false === $queryValidator->ValidateQueries()) {
-            $output = __("Bible Quote failure... (error processing query, please check syntax)", "bibleget-io");
-            return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
-        }
-
-        $notices = get_option('bibleget_error_admin_notices', array());
-        $notices = array_merge( $notices, $queryValidator->errs );
-        update_option('bibleget_error_admin_notices', $notices);
-
-        $finalquery = processFinalQuery( $queryValidator->validatedQueries, $atts );
-        // bibleGetWriteLog("value of finalquery = ".$finalquery);
-
-        $output = processOutput( $finalquery );
-        //we should avoid saving some attributes to options, when they are obviously per block settings and not universal settings
-        $a = get_option('BGET');
-        $optionsNoUpdateFromBlock = ['POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION'];
-        foreach ($atts as $key => $value) {
-            if (!in_array($key, $optionsNoUpdateFromBlock)) {
-                $a[$key] = $value;
-            }
-        }
-        update_option("BGET", $a);
-
-        $domDocumentProcessed = processDomDocument( $atts, $output );
-        return $domDocumentProcessed;
-    } else {
-        /* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
-        $output = '<span style="color:Red;font-weight:bold;">' . __("There are errors in the shortcode, please check carefully your query syntax:", "bibleget-io") . ' &lt;' . $atts['QUERY'] . '&gt;<br />' . $queries . '</span>';
-        return '<div class="bibleget-quote-div">' . $output . '</div>';
-    }
+    return processQueries( $queries, $atts );
 }
 
 /**
