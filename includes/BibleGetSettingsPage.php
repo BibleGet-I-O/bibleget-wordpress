@@ -265,7 +265,7 @@ class BibleGetSettingsPage
     public function admin_print_styles($hook)
     {
         if ($hook == 'settings_page_bibleget-settings-admin') {
-            wp_enqueue_style('admin-css', plugins_url('css/admin.css', __FILE__));
+            wp_enqueue_style('admin-css', plugins_url('../css/admin.css', __FILE__));
         }
     }
 
@@ -276,7 +276,7 @@ class BibleGetSettingsPage
             return;
         }
 
-        wp_register_script('admin-js', plugins_url('js/admin.js', __FILE__), array('jquery'));
+        wp_register_script('admin-js', plugins_url('../js/admin.js', __FILE__), array('jquery'));
         $thisoptions = get_option('bibleget_settings');
         $myoptions = array();
         if ($thisoptions) {
@@ -301,22 +301,22 @@ class BibleGetSettingsPage
                 if (WP_Filesystem($creds)) {
                     global $wp_filesystem;
                     $plugin_path = str_replace('\\','/', plugin_dir_path( __FILE__ ) );
-                    if (!$wp_filesystem->is_dir($plugin_path . 'gfonts_preview/')) {
+                    if (!$wp_filesystem->is_dir($plugin_path . '../gfonts_preview/')) {
                         /* directory didn't exist, so let's create it */
-                        if ($wp_filesystem->mkdir($plugin_path . 'gfonts_preview/') === false) {
+                        if ($wp_filesystem->mkdir($plugin_path . '../gfonts_preview/') === false) {
                             $this->gfontsAPI_errors[] = "Could not create directory gfonts_preview";
                         }
                     }
-                    if (!$wp_filesystem->is_dir($plugin_path . 'css/gfonts_preview/')) {
+                    if (!$wp_filesystem->is_dir($plugin_path . '../css/gfonts_preview/')) {
                         /* directory didn't exist, so let's create it */
-                        if ($wp_filesystem->mkdir($plugin_path . 'css/gfonts_preview/') === false) {
+                        if ($wp_filesystem->mkdir($plugin_path . '../css/gfonts_preview/') === false) {
                             $this->gfontsAPI_errors[] = "Could not create directory css/gfonts_preview";
                         }
                     }
 
                     //let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
                     if ($wp_filesystem->put_contents(
-                        $plugin_path . 'gfonts_preview/gfontsWeblist.json',
+                        $plugin_path . '../gfonts_preview/gfontsWeblist.json',
                         json_encode($this->gfonts_weblist),
                         FS_CHMOD_FILE // predefined mode settings for WP files
                     ) === false) {
@@ -443,9 +443,9 @@ class BibleGetSettingsPage
             } else {
                 $locale_lang = $locale;
             }
-            if (file_exists(plugins_url('images/btn_donateCC_LG' . ($locale_lang ? '-' . $locale_lang : '') . '.gif', __FILE__))) {
-                $donate_img = plugins_url('images/btn_donateCC_LG' . ($locale_lang ? '-' . $locale_lang : '') . '.gif', __FILE__);
-            } else $donate_img = plugins_url('images/btn_donateCC_LG.gif', __FILE__);
+            if (file_exists(plugins_url('../images/btn_donateCC_LG' . ($locale_lang ? '-' . $locale_lang : '') . '.gif', __FILE__))) {
+                $donate_img = plugins_url('../images/btn_donateCC_LG' . ($locale_lang ? '-' . $locale_lang : '') . '.gif', __FILE__);
+            } else $donate_img = plugins_url('../images/btn_donateCC_LG.gif', __FILE__);
             ?>
             <div id="bibleget-donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58"><button><img src="<?php echo $donate_img; ?>" /></button></a></div>
         </div>
@@ -711,7 +711,7 @@ class BibleGetSettingsPage
         $familyurlname      = "";
         $familyfilename     = "";
         $errorinfo          = [];
-        $gfontsDir          = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "gfonts_preview/";
+        $gfontsDir          = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "../gfonts_preview/";
         $gfontsWeblist      = new stdClass();
         $returnInfo         = new stdClass();
 
@@ -795,22 +795,22 @@ class BibleGetSettingsPage
                                     $returnInfo->httpStatus3 = $status3;
                                     if ($response3 && !curl_errno($ch3) && $status3 == 200) {
                                         if ($wp_filesystem) {
-                                            //if(!file_exists($plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype}") ){
+                                            //if(!file_exists($plugin_path . "../gfonts_preview/{$familyfilename}.{$fnttype}") ){
                                             if (!$wp_filesystem->put_contents(
                                                 $gfontsDir . "{$familyfilename}.{$fnttype}",
                                                 $response3,
                                                 FS_CHMOD_FILE
                                             )) {
-                                                $errorinfo[] = "Cannot write file " . $plugin_path . "gfonts_preview/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
+                                                $errorinfo[] = "Cannot write file " . $plugin_path . "../gfonts_preview/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
                                             } else {
-                                                $gfont_stylesheet = preg_replace('/url\((.*?)\)/', 'url(' . esc_url(plugins_url("gfonts_preview/{$familyfilename}.{$fnttype}", __FILE__)) . ')', $response2);
-                                                if (!file_exists($plugin_path . "css/gfonts_preview/{$familyfilename}.css")) {
+                                                $gfont_stylesheet = preg_replace('/url\((.*?)\)/', 'url(' . esc_url(plugins_url("../gfonts_preview/{$familyfilename}.{$fnttype}", __FILE__)) . ')', $response2);
+                                                if (!file_exists($plugin_path . "../css/gfonts_preview/{$familyfilename}.css")) {
                                                     if (!$wp_filesystem->put_contents(
-                                                        $plugin_path . "css/gfonts_preview/{$familyfilename}.css",
+                                                        $plugin_path . "../css/gfonts_preview/{$familyfilename}.css",
                                                         $gfont_stylesheet,
                                                         FS_CHMOD_FILE
                                                     )) {
-                                                        $errorinfo[] = "Cannot write file " . $plugin_path . "css/gfonts_preview/{$familyfilename}.css with wordpress filesystem api, sorry";
+                                                        $errorinfo[] = "Cannot write file " . $plugin_path . "../css/gfonts_preview/{$familyfilename}.css with wordpress filesystem api, sorry";
                                                     }
                                                 }
                                             }
@@ -859,7 +859,7 @@ class BibleGetSettingsPage
             $returnInfo->state = "COMPLETE";
 
             //LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
-            $cssdirectory = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "css/gfonts_preview";
+            $cssdirectory = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "../css/gfonts_preview";
             $cssfiles = array_diff(scandir($cssdirectory), array('..', '.', 'gfonts_preview.css'));
 
             $minifier = new MatthiasMullie\Minify\CSS($cssdirectory . "/" . (array_shift($cssfiles)));

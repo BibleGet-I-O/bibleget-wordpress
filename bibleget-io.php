@@ -46,14 +46,15 @@ include_once(plugin_dir_path(__FILE__) . "includes/LangCodes.php" );
 include_once(plugin_dir_path(__FILE__) . "includes/BibleGetSettingsPage.php");
 include_once(plugin_dir_path(__FILE__) . "includes/BGETPROPERTIES.php");
 include_once(plugin_dir_path(__FILE__) . "includes/BibleGet_Customize.php");
+include_once(plugin_dir_path(__FILE__) . "includes/QueryValidator.php");
+
 
 /**
  * BibleGet_on_activation
  * Function that is triggered upon activation of the plugin
  * Will set default options and will try to do a bit of cleanup from older versions
  */
-function BibleGet_on_activation()
-{
+function BibleGet_on_activation() {
     if (!current_user_can('activate_plugins')) {
         return;
     }
@@ -72,8 +73,7 @@ function BibleGet_on_activation()
  * Function that is triggered on plugin deactivation
  * Does not delete options, in case the user decides to activate again
  */
-function BibleGet_on_deactivation()
-{
+function BibleGet_on_deactivation() {
     if (!current_user_can('activate_plugins'))
         return;
     $plugin = isset($_REQUEST['plugin']) ? $_REQUEST['plugin'] : '';
@@ -89,8 +89,7 @@ function BibleGet_on_deactivation()
  * Function that is triggered when the plugin is uninstalled
  * Will remove any options that have been set
  */
-function BibleGet_on_uninstall()
-{
+function BibleGet_on_uninstall() {
     if (!current_user_can('activate_plugins')) {
         return;
     }
@@ -152,8 +151,7 @@ register_deactivation_hook(__FILE__, 'BibleGet_on_deactivation');
  * Load plugin textdomain.
  *
  */
-function bibleget_load_textdomain()
-{
+function bibleget_load_textdomain() {
     $domain = 'bibleget-io';
     // The "plugin_locale" filter is also used in load_plugin_textdomain()
     $locale = apply_filters('plugin_locale', get_locale(), $domain);
@@ -169,8 +167,7 @@ add_action('plugins_loaded', 'bibleget_load_textdomain');
  * Let WordPress know that we have text domain translations
  * inside of our gutenberg block javascript file
  */
-function bibleget_set_script_translations()
-{
+function bibleget_set_script_translations() {
     wp_set_script_translations('bibleget-gutenberg-block', 'bibleget-io');
 }
 add_action('init', 'bibleget_set_script_translations');
@@ -224,6 +221,21 @@ function processShortcodeAttributes(&$atts) {
     return $BGET;
 }
 
+function ensureIndexesSet( $versions ) {
+    foreach( $versions as $version ) {
+        if (get_option("bibleget_" . $version . "IDX") === false) {
+            bibleGetSetOptions();
+        }
+    }
+}
+
+function ensureBibleBooksSet() {
+    for ($i = 0; $i < 73; $i++) {
+        if (get_option("bibleget_biblebooks" . $i) === false) {
+            bibleGetSetOptions();
+        }
+    }
+}
 
 /**
  * BibleGet Shortcode
@@ -277,16 +289,21 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '') {
     }
 
     if (is_array($queries)) {
-        $goodqueries = bibleGetProcessQueries($queries, $atts['VERSION']);
-        // bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
-        // bibleGetWriteLog($goodqueries);
-        if ($goodqueries === false) {
-            /* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
+        ensureIndexesSet( $atts['VERSION'] );
+        ensureBibleBooksSet();
+        $currentPageUrl = bibleGetCurrentPageUrl();
+    
+        $queryValidator = new QueryValidator( $queries, $atts['VERSION'], $currentPageUrl );
+        if(false === $queryValidator->ValidateQueries()) {
             $output = __("Bible Quote failure... (error processing query, please check syntax)", "bibleget-io");
             return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
         }
 
-        $finalquery = processFinalQuery( $goodqueries, $atts );
+        $notices = get_option('bibleget_error_admin_notices', array());
+        $notices = array_merge( $notices, $queryValidator->errs );
+        update_option('bibleget_error_admin_notices', $notices);
+
+        $finalquery = processFinalQuery( $queryValidator->validatedQueries, $atts );
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
 
         $output = processOutput( $finalquery );
@@ -537,8 +554,7 @@ function processDomDocument( $atts, $output, $content = null ) {
  * Transforming the shortcode into a block
  *
  */
-function bibleget_gutenberg()
-{
+function bibleget_gutenberg() {
     // Skip block registration if Gutenberg is not enabled/merged.
     if (!function_exists('register_block_type')) {
         return;
@@ -587,7 +603,8 @@ function bibleget_gutenberg()
 
     $haveGFonts = $optionsInfo->gfontsAPIkeyCheck();
     $GFonts = null;
-    $gfontsFilePath = WP_PLUGIN_DIR . "/bibleget-io/gfonts_preview/gfontsWeblist.json";
+    $gfontsDir = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "gfonts_preview/";
+    $gfontsFilePath = $gfontsDir . "gfontsWeblist.json";
     if($haveGFonts === "SUCCESS" && file_exists($gfontsFilePath) ){
         $GFonts = json_decode(file_get_contents($gfontsFilePath) );
     }
@@ -616,8 +633,7 @@ function bibleget_gutenberg()
 add_action('init', 'bibleget_gutenberg');
 
 
-function bibleGetGutenbergScripts($hook)
-{
+function bibleGetGutenbergScripts($hook) {
     if ($hook != "post.php" && $hook != "post-new.php") {
         return;
     }
@@ -692,8 +708,7 @@ function processFinalQuery( $goodqueries, $atts ) {
 /**
  * Gutenberg Render callback
  */
-function bibleGet_renderGutenbergBlock($atts)
-{
+function bibleGet_renderGutenbergBlock($atts) {
     $output = ''; //this will be whatever html we are returning to be rendered
     // Determine bible version(s)
     $atts["VERSION"] = (!empty($atts["VERSION"]) ? $atts["VERSION"] : ["NABRE"]);
@@ -725,16 +740,22 @@ function bibleGet_renderGutenbergBlock($atts)
     $queries = bibleGetQueryClean($atts['QUERY']);
 
     if (is_array($queries)) {
-        $goodqueries = bibleGetProcessQueries($queries, $atts["VERSION"]);
-        // bibleGetWriteLog("value of goodqueries after bibleGetProcessQueries:");
-        // bibleGetWriteLog($goodqueries);
-        if ($goodqueries === false) {
-            /* translators: the word 'placeholder' in this context refers to the fact that this message will displayed in place of the bible quote because of an unsuccessful request to the BibleGet server */
+
+        ensureIndexesSet( $atts['VERSION'] );
+        ensureBibleBooksSet();
+        $currentPageUrl = bibleGetCurrentPageUrl();
+    
+        $queryValidator = new QueryValidator( $queries, $atts['VERSION'], $currentPageUrl );
+        if(false === $queryValidator->ValidateQueries()) {
             $output = __("Bible Quote failure... (error processing query, please check syntax)", "bibleget-io");
             return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
         }
 
-        $finalquery = processFinalQuery( $goodqueries, $atts );
+        $notices = get_option('bibleget_error_admin_notices', array());
+        $notices = array_merge( $notices, $queryValidator->errs );
+        update_option('bibleget_error_admin_notices', $notices);
+
+        $finalquery = processFinalQuery( $queryValidator->validatedQueries, $atts );
         // bibleGetWriteLog("value of finalquery = ".$finalquery);
 
         $output = processOutput( $finalquery );
@@ -763,8 +784,7 @@ function bibleGet_renderGutenbergBlock($atts)
  * After a query has been checked for integrity, this will send the query request to the BibleGet Server
  * Returns the response from the BibleGet Server
  */
-function bibleGetQueryServer($finalquery)
-{
+function bibleGetQueryServer($finalquery) {
     $currentPageUrl = bibleGetCurrentPageUrl();
     $errs = array();
     //We will make a secure connection to the BibleGet service endpoint,
@@ -838,441 +858,17 @@ function bibleGetQueryServer($finalquery)
 }
 
 
-/**
- * BibleGet Process Queries
- * @param unknown $queries
- * @param unknown $versions
- * Prepares the queries for integrity checks and prepares the relative indexes for the requested versions
- * After filtering the queries through an integrity check function, returns the good queries that can be sent to the BibleGet Server
- */
-
-function bibleGetProcessQueries($queries, $versions)
-{
-    $goodqueries = array();
-    $currentPageUrl = bibleGetCurrentPageUrl();
-    $thisbook = null;
-    if (get_option("bibleget_" . $versions[0] . "IDX") === false) {
-        bibleGetSetOptions();
-    }
-    $indexes = array();
-    foreach ($versions as $key => $value) {
-        $temp = get_option("bibleget_" . $value . "IDX");
-        if ( $temp !== false ) {
-            // bibleGetWriteLog("retrieving option["."bibleget_".$value."IDX"."] from wordpress options...");
-            // bibleGetWriteLog($temp);
-            if (is_object($temp)) {
-                // bibleGetWriteLog("temp variable is an object, now converting to an array with key '".$value."'...");
-                $indexes[$value] = json_decode(json_encode($temp), true);
-                // bibleGetWriteLog($indexes[$value]);
-            } elseif (is_array($temp)) {
-                // bibleGetWriteLog("temp variable is an array, hurray!");
-                $indexes[$value] = $temp;
-                // bibleGetWriteLog($indexes[$value]);
-            }/* else {
-                // bibleGetWriteLog("temp variable is neither an object or an array. What the heck is it?");
-                // bibleGetWriteLog($temp);
-            }*/
-        } else {
-            // bibleGetWriteLog("option["."bibleget_".$value."IDX"."] does not exist. Now attempting to set options...");
-            bibleGetSetOptions();
-            $temp = get_option("bibleget_" . $value . "IDX");
-            if ( $temp !== false ) {
-                // bibleGetWriteLog("retrieving option["."bibleget_".$value."IDX"."] from wordpress options...");
-                // bibleGetWriteLog($temp);
-                // $temp1 = json_encode($temp);
-                $indexes[$value] = json_decode($temp, true);
-            }/* else {
-                // bibleGetWriteLog("Could not either set or get option["."bibleget_".$value."IDX"."]");
-            }*/
-        }
-    }
-    // bibleGetWriteLog("indexes array should now be populated:");
-    // bibleGetWriteLog($indexes);
-
-    $notices = get_option('bibleget_error_admin_notices', array());
-
-    foreach ($queries as $key => $value) {
-        $thisquery = bibleGetToProperCase($value); // shouldn't be necessary because already array_mapped, but better safe than sorry
-        if ($key === 0) {
-            if (!preg_match("/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery)) {
-                $notices[] = "BIBLEGET PLUGIN ERROR: " . 
-                    sprintf(
-                        /* translators: do not change the placeholders <%X$s> */
-                        __("The first query <%1$s> in the querystring <%2$s> must start with a valid book indicator!", "bibleget-io"),
-                        $thisquery,
-                        implode(";", $queries)
-                    ) .
-                    " ({$currentPageUrl})";
-                continue;
-            }
-        }
-        $thisbook = bibleGetCheckQuery($thisquery, $indexes, $thisbook);
-        // bibleGetWriteLog("value of thisbook after bibleGetCheckQuery = ".$thisbook);
-        if ($thisbook !== false) {
-            array_push($goodqueries, $thisquery);
-        } else {
-            //TODO: double check if this really needs to return false here?
-            //Does this prevent it from continuing integrity checks with the rest of the queries?
-            //Shouldn't it just be "continue;"?
-            return false;
-            //continue;
-        }
-    }
-    update_option('bibleget_error_admin_notices', $notices);
-    return $goodqueries;
-}
-
-function checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) {
-    $currentPageUrl = bibleGetCurrentPageUrl();
-    foreach ($indexes as $jkey => $jindex) {
-        $bookidx = array_search($myidx, $jindex["book_num"]);
-        $chapters_verselimit = $jindex["verse_limit"][$bookidx];
-        $verselimit = intval($chapters_verselimit[intval($parts[0]) - 1]);
-        if ($highverse > $verselimit) {
-            /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-            $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $highverse, $thisbook, $parts[0], $jkey, $verselimit) . " ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $errs);
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
- * BibleGet Check Query Function
- * @param string $thisquery
- * @param array $indexes
- * @param string $thisbook
- *
- * Performs complex integrity checks on the queries
- * Gives feedback on the malformed queries to help the user get their query right
- * Returns false if the query is not healthy enough to send to the BibleGet Server
- * Else returns the current Bible Book that the query refers to
- */
-function bibleGetCheckQuery($thisquery, $indexes, $thisbook = "")
-{
-    // bibleGetWriteLog("value of thisquery = ".$thisquery);
-    $errorMessages = array();
-    /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-    $errorMessages[0] = __("There cannot be more commas than there are dots.", "bibleget-io");
-    $errorMessages[1] = __("You must have a valid chapter following the book indicator!", "bibleget-io");
-    $errorMessages[2] = __("The book indicator is not valid. Please check the documentation for a list of valid book indicators.", "bibleget-io");
-    /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-    $errorMessages[3] = __("You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.", "bibleget-io");
-    /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-    $errorMessages[4] = __("A dot must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io");
-    /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-    $errorMessages[5] = __("A comma must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io");
-    $errorMessages[6] = __("A dash must be preceded and followed by 1 to 3 digits of which the first digit cannot be zero.", "bibleget-io");
-    $errorMessages[7] = __("If there is a chapter-verse construct following a dash, there must also be a chapter-verse construct preceding the same dash.", "bibleget-io");
-    /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-    $errorMessages[8] = __("There are multiple dashes in the query, but there are not enough dots. There can only be one more dash than dots.", "bibleget-io");
-    /* translators: the expressions %1$d, %2$d, and %3$s must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-    $errorMessages[9] = __('The values concatenated by the dot must be consecutive, instead %1$d >= %2$d in the expression <%3$s>', "bibleget-io");
-    $errorMessages[10] = __("A query that doesn't start with a book indicator must however start with a valid chapter indicator!", "bibleget-io");
-
-    $errs = get_option('bibleget_error_admin_notices', array());
-    $dummy = array(); // to avoid error messages on systems with PHP < 5.4 which required third parameter in preg_match_all
-
-    $currentPageUrl = bibleGetCurrentPageUrl();
-
-    if (preg_match("/^([1-3]{0,1}((\p{L}\p{M}*)+))/", $thisquery, $res)) {
-        $thisbook = $res[0];
-        if (!preg_match("/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery) || preg_match_all("/^[1-3]{0,1}((\p{L}\p{M}*)+)/", $thisquery, $dummy) != preg_match_all("/^[1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2}/", $thisquery, $dummy)) {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[1] . " ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $errs);
-            return false;
-        }
-
-        $validBookIndex = (int) bibleGetIsValidBook($thisbook);
-        if ($validBookIndex != -1) {
-            $thisquery = str_replace($thisbook, "", $thisquery);
-
-            if (strpos($thisquery, ".")) {
-                if (!strpos($thisquery, ",") || strpos($thisquery, ",") > strpos($thisquery, ".")) {
-                    // error message: You cannot use a dot without first using a comma. A dot is a liason between verses, which are separated from the chapter by a comma.
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[3] . " ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-                if (substr_count($thisquery, ",") > substr_count($thisquery, ".")) {
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[0] . " ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-
-                // if(preg_match_all("/(?=[1-9][0-9]{0,2}\.[1-9][0-9]{0,2})/",$query) != substr_count($query,".") ){
-                // if(preg_match_all("/(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/",$query) < substr_count($query,".") ){
-                if (preg_match_all("/(?<![0-9])(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/", $thisquery, $dummy) != substr_count($thisquery, ".")) {
-                    // error message: A dot must be preceded and followed by 1 to 3 digits etc.
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[4] . " ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-                if (preg_match_all("/(?<![0-9])(?=([1-9][0-9]{0,2}\.[1-9][0-9]{0,2}))/", $thisquery, $dummy)) {
-                    foreach ($dummy[1] as $match) {
-                        $ints = explode('.', $match);
-                        if (intval($ints[0]) >= intval($ints[1])) {
-                            $str = sprintf($errorMessages[9], $ints[0], $ints[1], $match);
-                            $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $str . " ({$currentPageUrl})";
-                            update_option('bibleget_error_admin_notices', $errs);
-                            return false;
-                        }
-                    }
-                }
-            }
-            if (strpos($thisquery, ",")) {
-                if (preg_match_all("/[1-9][0-9]{0,2}\,[1-9][0-9]{0,2}/", $thisquery, $dummy) != substr_count($thisquery, ",")) {
-                    // error message: A comma must be preceded and followed by 1 to 3 digits etc.
-                    // echo "There are ".preg_match_all("/(?=[1-9][0-9]{0,2}\,[1-9][0-9]{0,2})/",$query)." matches for commas preceded and followed by valid 1-3 digit sequences;<br>";
-                    // echo "There are ".substr_count($query,",")." matches for commas in this query.";
-                    $errs[] = "BIBLEGET ERROR: malformed query <" . $thisquery . ">: " . $errorMessages[5] . " ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                } else {
-                    if (preg_match_all("/([1-9][0-9]{0,2})\,/", $thisquery, $matches)) {
-                        if (!is_array($matches[1])) {
-                            $matches[1] = array(
-                                $matches[1]
-                            );
-                        }
-                        $myidx = $validBookIndex + 1;
-                        // bibleGetWriteLog("myidx = ".$myidx);
-                        foreach ($matches[1] as $match) {
-                            foreach ($indexes as $jkey => $jindex) {
-                                // bibleGetWriteLog("jindex array contains:");
-                                // bibleGetWriteLog($jindex);
-                                $bookidx = array_search($myidx, $jindex["book_num"]);
-                                // bibleGetWriteLog("bookidx for ".$jkey." = ".$bookidx);
-                                $chapter_limit = $jindex["chapter_limit"][$bookidx];
-                                // bibleGetWriteLog("chapter_limit for ".$jkey." = ".$chapter_limit);
-                                // bibleGetWriteLog( "match for " . $jkey . " = " . $match );
-                                if ($match > $chapter_limit) {
-                                    /* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                    $msg = __('A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io");
-                                    $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $match, $thisbook, $jkey, $chapter_limit) . " ({$currentPageUrl})";
-                                    update_option('bibleget_error_admin_notices', $errs);
-                                    return false;
-                                }
-                            }
-                        }
-
-                        $commacount = substr_count($thisquery, ",");
-                        // bibleGetWriteLog("commacount = ".$commacount);
-                        if ($commacount > 1) {
-                            if (!strpos($thisquery, '-')) {
-                                /* translators: 'commas', 'dots', and 'dashes' refer to the bible citation notation; in some notations(such as english notation) colons are used instead of commas, and commas are used instead of dots */
-                                $errs[] = "BIBLEGET ERROR: " .
-                                    __("You cannot have more than one comma and not have a dash!", "bibleget-io") .
-                                    " <{$thisquery}> ({$currentPageUrl})";
-                                update_option('bibleget_error_admin_notices', $errs);
-                                return false;
-                            }
-                            $parts = explode("-", $thisquery);
-                            if (count($parts) != 2) {
-                                $errs[] = "BIBLEGET ERROR: " .
-                                    __("You seem to have a malformed querystring, there should be only one dash.", "bibleget-io") .
-                                    " <{$thisquery}> ({$currentPageUrl})";
-                                update_option('bibleget_error_admin_notices', $errs);
-                                return false;
-                            }
-                            foreach ($parts as $part) {
-                                $pp = array_map("intval", explode(",", $part));
-                                foreach ($indexes as $jkey => $jindex) {
-                                    $bookidx = array_search($myidx, $jindex["book_num"]);
-                                    $chapters_verselimit = $jindex["verse_limit"][$bookidx];
-                                    $verselimit = intval($chapters_verselimit[$pp[0] - 1]);
-                                    if ($pp[1] > $verselimit) {
-                                        /* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                        $msg = __('A verse in the query is out of bounds: there is no verse <%1$d> in the book <%2$s> at chapter <%3$d> in the requested version <%4$s>, the last possible verse is <%5$d>', "bibleget-io");
-                                        $errs[] = "BIBLEGET ERROR: " .
-                                            sprintf($msg, $pp[1], $thisbook, $pp[0], $jkey, $verselimit) .
-                                            " ({$currentPageUrl})";
-                                        update_option('bibleget_error_admin_notices', $errs);
-                                        return false;
-                                    }
-                                }
-                            }
-                        } elseif ($commacount == 1) {
-                            // bibleGetWriteLog("commacount has been detected as 1, now exploding on comma the query[".$thisquery."]");
-                            $parts = explode(",", $thisquery);
-                            // bibleGetWriteLog($parts);
-                            // bibleGetWriteLog("checking for presence of dashes in the right-side of the comma...");
-                            if (strpos($parts[1], '-')) {
-                                // bibleGetWriteLog("a dash has been detected in the right-side of the comma(".$parts[1].")");
-                                if (preg_match_all("/[,\.][1-9][0-9]{0,2}\-([1-9][0-9]{0,2})/", $thisquery, $matches)) {
-                                    if (!is_array($matches[1])) {
-                                        $matches[1] = array(
-                                            $matches[1]
-                                        );
-                                    }
-                                    $highverse = intval(array_pop($matches[1]));
-                                    // bibleGetWriteLog("highverse = ".$highverse);
-                                    if ( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
-                                        return false;
-                                    }
-                                }/* else {
-                                    // bibleGetWriteLog("something is up with the regex check...");
-                                }*/
-                            } else {
-                                if (preg_match("/,([1-9][0-9]{0,2})/", $thisquery, $matches)) {
-                                    $highverse = intval($matches[1]);
-                                    if ( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
-                                        return false;
-                                    }
-                                }
-                            }
-
-                            if (preg_match_all("/\.([1-9][0-9]{0,2})$/", $thisquery, $matches)) {
-                                if (!is_array($matches[1])) {
-                                    $matches[1] = array(
-                                        $matches[1]
-                                    );
-                                }
-                                $highverse = array_pop($matches[1]);
-                                if( checkVerseOutOfBounds( $highverse, $indexes, $myidx, $parts, $thisbook ) ) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                $chapters = explode("-", $thisquery);
-                foreach ($chapters as $zchapter) {
-                    foreach ($indexes as $jkey => $jindex) {
-                        $myidx = $validBookIndex + 1;
-                        $bookidx = array_search($myidx, $jindex["book_num"]);
-                        $chapter_limit = $jindex["chapter_limit"][$bookidx];
-                        if (intval($zchapter) > $chapter_limit) {
-                            /* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                            $msg = __('A chapter in the query is out of bounds: there is no chapter <%1$d> in the book <%2$s> in the requested version <%3$s>, the last possible chapter is <%4$d>', "bibleget-io");
-                            $errs[] = "BIBLEGET ERROR: " . sprintf($msg, $zchapter, $thisbook, $jkey, $chapter_limit) . " ({$currentPageUrl})";
-                            update_option('bibleget_error_admin_notices', $errs);
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            if (strpos($thisquery, "-")) {
-                if (preg_match_all("/[1-9][0-9]{0,2}\-[1-9][0-9]{0,2}/", $thisquery, $dummy) != substr_count($thisquery, "-")) {
-                    // error message: A dash must be preceded and followed by 1 to 3 digits etc.
-                    // echo "There are ".preg_match("/(?=[1-9][0-9]{0,2}\-[1-9][0-9]{0,2})/",$query)." matches for dashes preceded and followed by valid 1-3 digit sequences;<br>";
-                    // echo "There are ".substr_count($query,"-")." matches for dashes in this query.";
-                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[6]} ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-                if (preg_match("/\-[1-9][0-9]{0,2}\,/", $thisquery) && (!preg_match("/\,[1-9][0-9]{0,2}\-/", $thisquery) || preg_match_all("/(?=\,[1-9][0-9]{0,2}\-)/", $thisquery, $dummy) > preg_match_all("/(?=\-[1-9][0-9]{0,2}\,)/", $thisquery, $dummy))) {
-                    // error message: there must be as many comma constructs preceding dashes as there are following dashes
-                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[7]} ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-                if (substr_count($thisquery, "-") > 1 && (!strpos($thisquery, ".") || (substr_count($thisquery, "-") - 1 > substr_count($thisquery, ".")))) {
-                    // error message: there cannot be multiple dashes in a query if there are not as many dots minus 1.
-                    $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: {$errorMessages[8]} ({$currentPageUrl})";
-                    update_option('bibleget_error_admin_notices', $errs);
-                    return false;
-                }
-
-                // if there's a comma before
-                if (preg_match("/([1-9][0-9]{0,2}\,[1-9][0-9]{0,2}\-[1-9][0-9]{0,2})/", $thisquery, $matchA)) {
-                    // if there's a comma after, we're dealing with chapter,verse to chapter,verse
-                    if (preg_match("/([1-9][0-9]{0,2}\,[1-9][0-9]{0,2}\-[1-9][0-9]{0,2}\,[1-9][0-9]{0,2})/", $thisquery, $matchB)) {
-                        $matchesB = explode("-", $matchB[1]);
-                        $matchesB_LEFT = explode(",", $matchesB[0]);
-                        $matchesB_RIGHT = explode(",", $matchesB[1]);
-                        if ($matchesB_LEFT[0] >= $matchesB_RIGHT[0]) {
-                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
-                                sprintf(
-                                    /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                    __("Chapters must be consecutive. Instead the first chapter indicator <%s> is greater than or equal to the second chapter indicator <%s> in the expression <%s>", "bibleget-io"),
-                                    $matchesB_LEFT[0],
-                                    $matchesB_RIGHT[0],
-                                    $matchB[1]
-                                ) .
-                                " ({$currentPageUrl})";
-                            update_option('bibleget_error_admin_notices', $errs);
-                            return false;
-                        }
-                    }  // if there's no comma after, we're dealing with chapter,verse to verse
-                    else {
-                        $matchesA_temp = explode(",", $matchA[1]);
-                        $matchesA = explode("-", $matchesA_temp[1]);
-                        if ($matchesA[0] >= $matchesA[1]) {
-                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
-                                sprintf(
-                                    /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                                    __("Verses in the same chapter must be consecutive. Instead verse <%s> is greater than verse <%s> in the expression <%s>", "bibleget-io"),
-                                    $matchesA[0],
-                                    $matchesA[1],
-                                    $matchA[1]
-                                ) .
-                                " ({$currentPageUrl})";
-                            update_option('bibleget_error_admin_notices', $errs);
-                            return false;
-                        }
-                    }
-                }
-                if (preg_match_all("/\.([1-9][0-9]{0,2}\-[1-9][0-9]{0,2})/", $thisquery, $matches)) {
-                    foreach ($matches[1] as $match) {
-                        $ints = explode("-", $match);
-                        if ($ints[0] >= $ints[1]) {
-                            /* translators: do not change the placeholders <%s>, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-                            $errs[] = "BIBLEGET ERROR: malformed query <{$thisquery}>: " .
-                                sprintf(
-                                    __("Verses concatenated by a dash must be consecutive, instead <%s> is greater than or equal to <%s> in the expression <%s>", "bibleget-io"),
-                                    $ints[0],
-                                    $ints[1],
-                                    $match
-                                ) .
-                                " ({$currentPageUrl})";
-                            update_option('bibleget_error_admin_notices', $errs);
-                            return false;
-                        }
-                    }
-                }
-                /*
-                 * if(preg_match_all("/(?<![0-9])(?=([1-9][0-9]{0,2}\-[1-9][0-9]{0,2}))/",$query,$dummy)){
-                 * foreach($dummy[1] as $match){
-                 * $ints = explode('.',$match);
-                 * if(intval($ints[0]) >= intval($ints[1]) ){
-                 * $errs[] = "ERROR in query <".$query.">: i valori concatenati dal punto devono essere consecutivi, invece ".$ints[0]." >= ".$ints[1]." nell'espressione <".$match.">";
-                 * }
-                 * }
-                 * }
-                 */
-            }
-            return $thisbook;
-        } else {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[2] . " <{$thisquery}> ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $errs);
-            return false;
-        }
-    } else {
-        if (!preg_match("/^[1-9][0-9]{0,2}/", $thisquery)) {
-            $errs[] = "BIBLEGET ERROR: " . $errorMessages[10] . " <{$thisquery}> ({$currentPageUrl})";
-            update_option('bibleget_error_admin_notices', $errs);
-            return false;
-        }
-    }
-    return $thisbook;
-}
 
 /* Mighty fine and dandy helper function I created! */
 /**
  * BibleGet To ProperCase
- * @param unknown $txt
+ * @param string $txt
  *
  * Helper function that modifies the query so that it is in a correct Proper Case,
  * taking into account numbers at the beginning of the string
  * Can handle any kind of Unicode string in any language
  */
-function bibleGetToProperCase($txt)
-{
+function bibleGetToProperCase($txt) {
     // echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";
     preg_match("/\p{L}/u", $txt, $mList, PREG_OFFSET_CAPTURE);
     $idx = intval($mList[0][1]);
@@ -1295,16 +891,15 @@ function bibleGetToProperCase($txt)
  *
  * Helper function that will return the index of a bible book from a two-dimensional index array
  */
-function bibleGetIdxOf($needle, $haystack)
-{
+function bibleGetIdxOf($needle, $haystack) {
     foreach ($haystack as $index => $value) {
-        if (is_array($haystack[$index])) {
-            foreach ($haystack[$index] as $index2 => $value2) {
-                if (in_array($needle, $haystack[$index][$index2])) {
+        if (is_array($value)) {
+            foreach ($value as $value2) {
+                if (in_array($needle, $value2)) {
                     return $index;
                 }
             }
-        } else if (in_array($needle, $haystack[$index])) {
+        } else if (in_array($needle, $value)) {
             return $index;
         }
     }
@@ -1312,24 +907,6 @@ function bibleGetIdxOf($needle, $haystack)
 }
 
 
-
-/**
- * FUNCTION bibleGetIsValidBook
- * @param unknown $book
- */
-function bibleGetIsValidBook($book)
-{
-    $biblebooks = array();
-    if (get_option("bibleget_biblebooks0") === false) {
-        bibleGetSetOptions();
-    }
-    for ($i = 0; $i < 73; $i++) {
-        $usrprop = "bibleget_biblebooks" . $i;
-        $jsbook = json_decode(get_option($usrprop), true);
-        array_push($biblebooks, $jsbook);
-    }
-    return bibleGetIdxOf($book, $biblebooks);
-}
 
 function setCommunicationError( $notices, $err ) {
     $optionsurl = admin_url("options-general.php?page=bibleget-settings-admin");
@@ -1350,8 +927,7 @@ function setCommunicationError( $notices, $err ) {
  * FUNCTION bibleGetGetMetaData
  * @var request
  */
-function bibleGetGetMetaData($request)
-{
+function bibleGetGetMetaData($request) {
     // request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions
     $notices = get_option('bibleget_error_admin_notices', array());
     $currentPageUrl = bibleGetCurrentPageUrl();
@@ -1462,8 +1038,7 @@ function bibleGetQueryClean($query) {
 /**
  *
  */
-function bibleget_admin_notices()
-{
+function bibleget_admin_notices() {
     $notices = get_option('bibleget_error_admin_notices');
     if ( $notices !== false ) {
         foreach ($notices as $notice) {
@@ -1485,8 +1060,7 @@ add_action('admin_notices', 'bibleget_admin_notices');
 /**
  *
  */
-function bibleGetDeleteOptions()
-{
+function bibleGetDeleteOptions() {
     // DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
     for ($i = 0; $i < 73; $i++) {
         delete_option("bibleget_biblebooks" . $i);
@@ -1567,6 +1141,8 @@ function bibleGetSetOptions() {
                     $temp["book_num"] = $value->book_num;
                     $temp["chapter_limit"] = $value->chapter_limit;
                     $temp["verse_limit"] = $value->verse_limit;
+                    $temp["biblebooks"] = $value->biblebooks;
+                    $temp["abbreviations"] = $value->abbreviations;
                     // $versionindex_str = json_encode($temp);
                     // bibleGetWriteLog("creating new option:["."bibleget_".$versabbr."IDX"."] with value:");
                     // bibleGetWriteLog($temp);
@@ -1587,8 +1163,7 @@ function bibleGetSetOptions() {
 }
 add_action('wp_ajax_refresh_bibleget_server_data', 'bibleGetSetOptions');
 
-function flushBibleQuotesCache()
-{
+function flushBibleQuotesCache() {
     global $wpdb;
     //The following SELECT should select both the transient and the transient_timeout
     //This will also remove the Google Fonts API key transient if it uses the same prefix...
@@ -1609,8 +1184,7 @@ function flushBibleQuotesCache()
 
 add_action('wp_ajax_flush_bible_quotes_cache', 'flushBibleQuotesCache');
 
-function searchByKeyword()
-{
+function searchByKeyword() {
     $keyword = $_POST['keyword'];
     $version = $_POST['version'];
     $request = "query=keywordsearch&return=json&appid=wordpress&domain=" . urlencode(site_url()) . "&pluginversion=" . BIBLEGETPLUGINVERSION . "&version=" . $version . "&keyword=" . $keyword;
@@ -1647,8 +1221,7 @@ function searchByKeyword()
 
 add_action("wp_ajax_searchByKeyword", "searchByKeyword");
 
-function updateBGET()
-{
+function updateBGET() {
     $options = $_POST['options'];
     $BGET = get_option('BGET');
     foreach ($options as $option => $array) {
@@ -1735,10 +1308,9 @@ add_action('customize_preview_init', array(
  *
  * @param unknown $log
  */
-function bibleGetWriteLog($log)
-{
+function bibleGetWriteLog($log) {
     $debugfile = plugin_dir_path(__FILE__) . "debug.txt";
-    $datetime = strftime("%Y%m%d %H:%M:%S", time());
+    $datetime = date("Y-m-d H:i:s", time());
     $myfile = fopen($debugfile, "a");
     if ($myfile !== false) {
         if (is_array($log) || is_object($log)) {
@@ -1763,8 +1335,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'bibleGetAddActio
  *
  * @param unknown $links
  */
-function bibleGetAddActionLinks($links)
-{
+function bibleGetAddActionLinks($links) {
     $mylinks = array(
         '<a href="' . admin_url('options-general.php?page=bibleget-settings-admin') . '">' . __('Settings') . '</a>'
     );
@@ -1778,8 +1349,7 @@ function bibleGetAddActionLinks($links)
  * @param unknown $tagName
  * @param unknown $className
  */
-function bibleGetGetElementsByClass(&$parentNode, $tagName, $className)
-{
+function bibleGetGetElementsByClass(&$parentNode, $tagName, $className) {
     $nodes = array();
 
     $childNodeList = $parentNode->getElementsByTagName($tagName);
@@ -1797,8 +1367,7 @@ function bibleGetGetElementsByClass(&$parentNode, $tagName, $className)
 /**
  *
  */
-function bibleGetCurrentPageUrl()
-{
+function bibleGetCurrentPageUrl() {
     $pageURL = 'http';
     if (isset($_SERVER["HTTPS"])) {
         if ($_SERVER["HTTPS"] == "on") {
