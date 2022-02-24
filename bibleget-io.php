@@ -175,33 +175,8 @@ function bibleget_set_script_translations()
 }
 add_action('init', 'bibleget_set_script_translations');
 
-/**
- * BibleGet Shortcode
- * @param array $atts
- * @param string $content
- * Creates the shortcode useful for injecting Bible Verses into a page
- * Example usage:
- * [bibleget query="Matthew1:1-5" version="CEI2008"]
- * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
- * [bibleget]Matthew1:1-5[/bibleget]
- */
-function bibleget_shortcode($atts = [], $content = null, $tag = '')
-{
 
-    //add possibility of using "versions" parameter instead of "version"
-    if (isset($atts["versions"])) {
-        $atts["version"] = explode(",", $atts["versions"]);
-    } else if (isset($atts["version"])) {
-        $atts["version"] = explode(",", $atts["version"]);
-    }
-
-    $vversions = get_option("bibleget_versions", array());
-    if (count($vversions) < 1) {
-        bibleGetSetOptions();
-        $vversions = get_option("bibleget_versions", array());
-    }
-    $validversions = array_keys($vversions);
-
+function processShortcodeAttributes(&$atts) {
     // retrieve all layout options based on BGETPROPERTIES, and use defaults from there,
     // so that shortcode Bible quotes will be consistent with Gutenberg block Bible quotes
     $BGET = [];
@@ -246,7 +221,36 @@ function bibleget_shortcode($atts = [], $content = null, $tag = '')
             }
         }
     }
+    return $BGET;
+}
 
+
+/**
+ * BibleGet Shortcode
+ * @param array $atts
+ * @param string $content
+ * Creates the shortcode useful for injecting Bible Verses into a page
+ * Example usage:
+ * [bibleget query="Matthew1:1-5" version="CEI2008"]
+ * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
+ * [bibleget]Matthew1:1-5[/bibleget]
+ */
+function bibleget_shortcode($atts = [], $content = null, $tag = '') {
+    //add possibility of using "versions" parameter instead of "version"
+    if (isset($atts["versions"])) {
+        $atts["version"] = explode(",", $atts["versions"]);
+    } else if (isset($atts["version"])) {
+        $atts["version"] = explode(",", $atts["version"]);
+    }
+
+    $vversions = get_option("bibleget_versions", array());
+    if (count($vversions) < 1) {
+        bibleGetSetOptions();
+        $vversions = get_option("bibleget_versions", array());
+    }
+    $validversions = array_keys($vversions);
+
+    $BGET = processShortcodeAttributes( $atts );
     $a = shortcode_atts($BGET, $atts, $tag);
     //now to maintain consistency with our Gutenberg block code etc., let's retransform the keys to uppercase
     //and use $atts instead of $a
@@ -315,9 +319,10 @@ function processDomDocument( $atts, $output, $content = null ) {
     $domDocument->loadHTML('<!DOCTYPE HTML><head></head><body>' . mb_convert_encoding($output, 'HTML-ENTITIES', 'UTF-8') . '</body>');
     if ($domDocument) {
         $xPath = new DOMXPath($domDocument);
-        $results    = $xPath->query('//div[contains(@class,"results")]')->item(0);          //$domDocument->getElementById('results');
-        $errors     = $xPath->query('//div[contains(@class,"errors")]')->item(0);           //$domDocument->getElementById('errors');
-        $info       = $xPath->query('//input[contains(@class,"BibleGetInfo")]')->item(0);   //$domDocument->getElementById('BibleGetInfo');
+        $results    = $xPath->query('//div[contains(@class,"results")]')->item(0);
+        $errors     = $xPath->query('//div[contains(@class,"errors")]')->item(0);
+        $info       = $xPath->query('//input[contains(@class,"BibleGetInfo")]')->item(0);
+
         if ($atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false) {
             $nonDefaultLayout = true;
             $bibleVersionEls = $xPath->query('//p[contains(@class,"bibleVersion")]');
@@ -589,23 +594,23 @@ function bibleget_gutenberg()
 
     $myvars = [
         'ajax_url' => admin_url('admin-ajax.php'),
-        'bibleget_admin_url' => admin_url("options-general.php?page=bibleget-settings-admin"),
-        'langCodes' => LANGCODES,
-        'currentLangISO' => get_bloginfo ( 'language' ),
-        'versionsByLang' => $versionsByLang,
-        'biblebooks' => $bibleGetBooksInLang,
-        'BGETProperties' => $BGETPROPERTIES->OPTIONS,
-        'BGETConstants' => $BGETConstants,
-        'haveGFonts' => $haveGFonts,
-        'GFonts' => $GFonts
+        'bibleget_admin_url'    => admin_url("options-general.php?page=bibleget-settings-admin"),
+        'langCodes'             => LANGCODES,
+        'currentLangISO'        => get_bloginfo ( 'language' ),
+        'versionsByLang'        => $versionsByLang,
+        'biblebooks'            => $bibleGetBooksInLang,
+        'BGETProperties'        => $BGETPROPERTIES->OPTIONS,
+        'BGETConstants'         => $BGETConstants,
+        'haveGFonts'            => $haveGFonts,
+        'GFonts'                => $GFonts
     ];
     wp_localize_script('bibleget-gutenberg-block', 'BibleGetGlobal', $myvars);
 
     register_block_type('bibleget/bible-quote', array(
-        'editor_script'        => 'bibleget-gutenberg-block',
-        'editor_style'        => 'bibleget-gutenberg-editor',
-        'render_callback'    => 'bibleGet_renderGutenbergBlock',
-        'attributes' => $BGETPROPERTIES->OPTIONS
+        'editor_script'         => 'bibleget-gutenberg-block',
+        'editor_style'          => 'bibleget-gutenberg-editor',
+        'render_callback'       => 'bibleGet_renderGutenbergBlock',
+        'attributes'            => $BGETPROPERTIES->OPTIONS
     ));
 }
 add_action('init', 'bibleget_gutenberg');
@@ -625,7 +630,7 @@ function bibleGetGutenbergScripts($hook)
             wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
         }
     }
-    if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css'  ) ){
+    if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css' ) ){
         wp_enqueue_style( 'bibleget-fontselect-preview',
             plugins_url ('css/gfonts_preview/gfonts_preview.css', __FILE__ )
         );
@@ -1425,11 +1430,10 @@ function bibleGetGetMetaData($request)
 
 /**
  *
- * @param unknown $query
+ * @param string $query
  * @return number
  */
-function bibleGetQueryClean($query)
-{
+function bibleGetQueryClean($query) {
     // enforce query rules
     if ($query === '') {
         return __("You cannot send an empty query.", "bibleget-io");
@@ -1506,9 +1510,7 @@ function bibleGetDeleteOptions()
 /**
  *
  */
-function bibleGetSetOptions()
-{
-
+function bibleGetSetOptions() {
     $BGET = [];
     $BGETOPTIONS = new BGETPROPERTIES();
     foreach ($BGETOPTIONS->OPTIONS as $option => $array) {
