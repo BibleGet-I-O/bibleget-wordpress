@@ -317,7 +317,7 @@ function processQueries( $queries, $atts, $isShortcode = false, $content = null 
 
 		if( $isShortcode ) {
 			wp_enqueue_script('bibleget-script', plugins_url('js/shortcode.js', __FILE__), array('jquery'), '1.0', true);
-			wp_enqueue_script('htmlentities-script', plugins_url('//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', __FILE__), array('jquery'), '1.2.0', true);
+			wp_enqueue_script('htmlentities-script', '//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', array('jquery'), '1.2.0', true);
 			//it shouldn't be necessary to call update_option here,
 			//because even though it's theoretically possible now to set all options inside the shortcode
 			//it would be so impractical that I cannot see anyone actual doing it
@@ -657,7 +657,7 @@ function bibleGetGutenbergScripts($hook) {
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_style('wp-jquery-ui-dialog');
 	wp_enqueue_style('bibleget-popup', plugins_url('css/popup.css', __FILE__));
-	wp_enqueue_script('htmlentities-script', plugins_url('//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', __FILE__), array('jquery'), '1.2.0', true);
+	wp_enqueue_script('htmlentities-script', '//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', array('jquery'), '1.2.0', true);
 	if (!wp_style_is('fontawesome', 'enqueued')) {
 		if ( false === isFontAwesomeEnqueued() ) {
 			wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
