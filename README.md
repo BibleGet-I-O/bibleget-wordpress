@@ -13,9 +13,9 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 | Donate link       | https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58                                         |
 | Tags              | bible, block, shortcode, quote, citation, verses, bibbia, citazione, versetti, biblia, cita, versiculos, versets, citation |
 | Requires at least | WordPress 5.6                                                                                                              |
-| Tested up to      | WordPress 5.9                                                                                                              |
+| Tested up to      | WordPress 6.4                                                                                                              |
 | Requires PHP      | 7.4                                                                                                                        |
-| Stable tag        | 7.5                                                                                                                        |
+| Stable tag        | 7.6                                                                                                                       |
 | License           | GPLv2 or later                                                                                                             |
 | License URI       | http://www.gnu.org/licenses/gpl-2.0.html                                                                                   |
 
