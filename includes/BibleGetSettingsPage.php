@@ -759,7 +759,7 @@ class BibleGetSettingsPage
 							curl_setopt($ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 							curl_setopt($ch2, CURLOPT_RETURNTRANSFER, TRUE);
 							if( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
-								curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+								curl_setopt($ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
 							}
 							if (ini_get('open_basedir') === false) {
 								curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, TRUE);
@@ -780,7 +780,7 @@ class BibleGetSettingsPage
 									curl_setopt($ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 									curl_setopt($ch3, CURLOPT_RETURNTRANSFER, TRUE);
 									if( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
-										curl_setopt($ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
+										curl_setopt($ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR']);
 									}
 									//declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
 									//however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
