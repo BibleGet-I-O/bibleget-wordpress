@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.6
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 7.9
+Stable tag: 8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,7 @@ Once the preferred version is set you can simply use:
   * `[bibleget query="1 Cor 13"]`
 
 Other parameters available to the shortcode are:
+
   * `popup`: can have a value of `true` or `false`. Will determine whether the text of the Bible quote will show in a full block, or instead in a popup window upon clicking the Bible quote. Example: `[bibleget query="Romans 8:28" popup="true"]`
   * `preferorigin`: can have a value of `GREEK` or `HEBREW`, useful in those cases where there are multiple texts for the same book, chapter or verse in the same Bible edition, such as in the Book of Esther where both versions are included, one based on the original Greek text, and the other based on the original Hebrew text. Example: `[bibleget query="Esther 1:1" preferorigin="HEBREW"]`
   * `layoutprefs_showbibleversion`: can have a value of `true` or `false`. Example: `[bibleget query="Ezekiel 25:17" layoutprefs_showbibleversion="false"]`
@@ -147,6 +148,10 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Changelog ==
 
+= 8.0 =
+* Fix: bug when downloading previews for Google Fonts (typo in curl variables)
+* Fix: bug in using popup option for Bible quotes (incorrect loading of external javascripts)
+
 = 7.9 =
 * Fix: newer parameters such as `preferorigin` not working correctly for the shortcode
 * Better organized codebase, better readability and maintainability
@@ -154,6 +159,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 * Use composer on plugin build step to include external scripts while excluding unnecessary files
   (getting this to behave correctly with the github to svn actions is the reason why there's a jump from v7.5 to v7.9)
 * Load external javascript scripts from cdn rather than checking into the repo
+* verified compatibility with WordPress 6.4
 
 = 7.8 =
 * see v7.9
@@ -409,6 +415,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 8.0 =
+Bugfixes for Google Fonts previews and Bible quote popups
 
 = 7.9 =
 Fix newer parameters not working with the shortcode, and update Readme with info about these parameters
