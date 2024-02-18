@@ -153,7 +153,7 @@ jQuery(document).ready(function ($) {
     //check for errors in writing to the filesystem
     let wpFsErrors = JSON.parse(gfontsBatch.job.gfontsAPI_errors);
     if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
-      console.log(wpFsErrors);
+      //console.log(wpFsErrors);
       jQuery("#googlefontsapi_key")
         .closest("td")
         .append(
@@ -315,10 +315,10 @@ var gfontsBatchRun = function (postdata) {
           returndataJSON.errorinfo !== false &&
           returndataJSON.errorinfo.length > 0
         ) {
-          console.log(
-            "Some errors were returned from ajax process run " + thisRun
-          );
-          console.log(returndataJSON.errorinfo);
+          //console.log(
+          //  "Some errors were returned from ajax process run " + thisRun
+          //);
+          //console.log(returndataJSON.errorinfo);
           if (
             (returndataJSON.hasOwnProperty("httpStatus2") &&
               returndataJSON.httpStatus2 == 504) ||
@@ -341,13 +341,13 @@ var gfontsBatchRun = function (postdata) {
               );
 
               if (thisRun && thisRun < postdata.numRuns) {
-                console.log(
-                  "gfontsBatchRun was asked to do run " +
-                    postdata.currentRun +
-                    ", and has let us know that it has in fact completed run " +
-                    thisRun +
-                    ", now starting the next run"
-                );
+                // console.log(
+                //   "gfontsBatchRun was asked to do run " +
+                //     postdata.currentRun +
+                //     ", and has let us know that it has in fact completed run " +
+                //     thisRun +
+                //     ", now starting the next run"
+                // );
                 //check if we're doing the last run or not
                 if (++postdata.currentRun == postdata.numRuns) {
                   postdata.batchLimit == postdata.lastBatchLimit;
@@ -357,38 +357,38 @@ var gfontsBatchRun = function (postdata) {
                 //Let's go for another round!
                 gfontsBatchRun(postdata);
               } else {
-                console.log(
-                  "We seem to have finished our job ahead of time? Please double check: numRuns= " +
-                    postdata.numRuns +
-                    ", thisRun = " +
-                    thisRun
-                );
+                // console.log(
+                //   "We seem to have finished our job ahead of time? Please double check: numRuns= " +
+                //     postdata.numRuns +
+                //     ", thisRun = " +
+                //     thisRun
+                // );
               }
               break;
             case "COMPLETE":
               $gfontsBatchRunProgressbar.progressbar("value", 100);
 
-              if (thisRun == postdata.numRuns) {
-                console.log("gfontsBatchRun has finished the job!");
-              } else {
-                console.log(
-                  "gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= " +
-                    postdata.numRuns +
-                    ", thisRun = " +
-                    thisRun
-                );
-              }
+              // if (thisRun == postdata.numRuns) {
+              //   console.log("gfontsBatchRun has finished the job!");
+              // } else {
+              //   console.log(
+              //     "gfontsBatchRun is telling us that we have finished our job, but this might not be the case: numRuns= " +
+              //       postdata.numRuns +
+              //       ", thisRun = " +
+              //       thisRun
+              //   );
+              // }
               break;
           }
-        } else {
-          console.log(
-            "gfontsBatchRun: Now why do we not have any stateful info?"
-          );
+        // } else {
+        //   console.log(
+        //     "gfontsBatchRun: Now why do we not have any stateful info?"
+        //   );
         }
-      } else {
-        console.log(
-          "gfontsBatchRun: Now why do we not have any kind of feedback from the server side script?"
-        );
+      // } else {
+      //   console.log(
+      //     "gfontsBatchRun: Now why do we not have any kind of feedback from the server side script?"
+      //   );
       }
     },
     error: function (xhr, ajaxOptions, thrownError) {

@@ -274,7 +274,7 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
             break;
         }
         case 'VERSETEXTSTYLES_ITALIC': {
-            console.log('we are dealing with the italics styling');
+            //console.log('we are dealing with the italics styling');
             let fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
             jQuery('.bibleQuote.results .versesParagraph').css('font-style', fontstyle);
             break;
@@ -331,13 +331,13 @@ if(
     && BibleGetGlobal.hasOwnProperty('BGETConstants')
     && BibleGetGlobal.hasOwnProperty('BGET') 
 ) {
-    console.log('BibleGetGlobal is defined!');
+    //console.log('BibleGetGlobal is defined!');
     if(
         typeof BibleGetGlobal.BGETProperties === 'object'
         && typeof BibleGetGlobal.BGETConstants === 'object'
         && typeof BibleGetGlobal.BGET === 'object'
     ) {
-        console.log('BibleGet has properties BGETProperties, BGETConstants and BGET');
+        //console.log('BibleGet has properties BGETProperties, BGETConstants and BGET');
         const { BGETProperties, BGET } = BibleGetGlobal;
         for(const key in BGETProperties ){
             wp.customize( 'BGET['+key+']', (value) => {
@@ -357,7 +357,7 @@ if(
                         handleVerseNumberStyles(BibleGetGlobal,key);
                     }
                     else if( key.startsWith('VERSETEXTSTYLES') ) {
-                        console.log('we are dealing with a verse text style setting');
+                        //console.log('we are dealing with a verse text style setting');
                         handleVerseTextStyles(BibleGetGlobal,key);
                     }
                 });

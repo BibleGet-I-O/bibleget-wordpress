@@ -208,7 +208,7 @@ const getKeyByValue = function (object, value) {
       onChange: props.onChange,
       options: filteredOptions,
       onFilterValueChange: inputValue => {
-        console.log('onFilterValueChange: inputValue = ' + inputValue);
+        //console.log('onFilterValueChange: inputValue = ' + inputValue);
         setTimeout(() => {
           //console.log('we found ' + jQuery('.BGET_FONTPICKER ul').length + ' BGET_FONTPICKER dropdown lists');
           if(jQuery('.BGET_FONTPICKER ul').length){
@@ -1470,7 +1470,7 @@ const getKeyByValue = function (object, value) {
       }
 
       const setFontFamily = PARAGRAPHSTYLES_FONTFAMILY => {
-        console.log('setFontFamily was called');
+        //console.log('setFontFamily was called');
         let fontType = 'websafe';
         if ( BibleGetGlobal.haveGFonts === "SUCCESS"
             && typeof BibleGetGlobal.GFonts === 'object'
@@ -1925,9 +1925,9 @@ const getKeyByValue = function (object, value) {
               }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-              console.log(
-                "there has been an error: " + textStatus + " :: " + errorThrown
-              );
+              // console.log(
+              //   "there has been an error: " + textStatus + " :: " + errorThrown
+              // );
             },
           });
         }
