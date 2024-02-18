@@ -2,6 +2,7 @@
 .gitignore
 .distignore
 .github
+.git
 .wordpress-org
 composer.json
 composer.lock
