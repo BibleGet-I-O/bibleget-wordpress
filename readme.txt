@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.6
 Tested up to: 5.9
 Requires PHP: 7.4
-Stable tag: 7.5
+Stable tag: 7.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,8 +147,16 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Changelog ==
 
-= 7.6 =
+= 7.8 =
 * Fix: newer parameters such as `preferorigin` not working correctly for the shortcode
+* Better organized codebase, better readability and maintainability
+* Use composer on plugin build step to include external scripts while excluding unnecessary files
+
+= 7.7 =
+* see v7.8
+
+= 7.6 =
+* see v7.8
 
 = 7.5 =
 * Fix: check `GFonts` for null value (like when Google Fonts previews are not installed or updated)
@@ -396,7 +404,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Upgrade Notice ==
 
-= 7.6 =
+= 7.8 =
 Fix newer parameters not working with the shortcode, and update Readme with info about these parameters
 
 = 7.5 =
