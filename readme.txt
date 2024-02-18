@@ -5,9 +5,9 @@ Plugin URI: https://www.bibleget.io
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58
 Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, versetti, biblia, cita, versiculos, versets, citation
 Requires at least: 5.6
-Tested up to: 5.9
+Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 7.8
+Stable tag: 7.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,16 +147,22 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Changelog ==
 
-= 7.8 =
+= 7.9 =
 * Fix: newer parameters such as `preferorigin` not working correctly for the shortcode
 * Better organized codebase, better readability and maintainability
+* Spaces to tabs in codebase as per WP coding convention
 * Use composer on plugin build step to include external scripts while excluding unnecessary files
+  (getting this to behave correctly with the github to svn actions is the reason why there's a jump from v7.5 to v7.9)
+* Load external javascript scripts from cdn rather than checking into the repo
+
+= 7.8 =
+* see v7.9
 
 = 7.7 =
-* see v7.8
+* see v7.9
 
 = 7.6 =
-* see v7.8
+* see v7.9
 
 = 7.5 =
 * Fix: check `GFonts` for null value (like when Google Fonts previews are not installed or updated)
@@ -404,7 +410,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 == Upgrade Notice ==
 
-= 7.8 =
+= 7.9 =
 Fix newer parameters not working with the shortcode, and update Readme with info about these parameters
 
 = 7.5 =
