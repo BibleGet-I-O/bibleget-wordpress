@@ -3,12 +3,12 @@
  * Plugin Name: BibleGet I/O
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
- * Version: 7.9
+ * Version: 8.0
  * Requires at least: 5.6
  * Requires PHP: 7.4
  * Author: John Romano D'Orazio
  * Author URI: https://www.johnromanodorazio.com/
- * License: GPLv3
+ * License: GPLv2 or later
  * Text Domain: bibleget-io
  * Domain Path: /languages/
  *
@@ -30,7 +30,7 @@
  */
 
 
-define("BIBLEGETPLUGINVERSION", "v7_9");
+define("BIBLEGETPLUGINVERSION", "v8_0");
 
 if (!defined('ABSPATH')) {
 	die("You cannot access this file directly.");
