@@ -50,7 +50,7 @@ wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 					}
 					control.settings.valign_setting.set(2);
 				}
-				
+
 			} else {
 				jQuery(this).parent().removeClass('button-primary').addClass('button-secondary');
 				//console.log('a checkbox was unchecked, which has a value of :'+this.value);

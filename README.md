@@ -15,7 +15,7 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 | Requires at least | WordPress 5.6                                                                                                              |
 | Tested up to      | WordPress 6.4                                                                                                              |
 | Requires PHP      | 7.4                                                                                                                        |
-| Stable tag        | 7.8                                                                                                                        |
+| Stable tag        | 7.9                                                                                                                        |
 | License           | GPLv2 or later                                                                                                             |
 | License URI       | http://www.gnu.org/licenses/gpl-2.0.html                                                                                   |
 
