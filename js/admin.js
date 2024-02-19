@@ -165,12 +165,11 @@ jQuery(document).ready(function ($) {
 					})
 				);
 		} else {
-			var gfontsCount = gfontsBatch.job.gfontsWeblist.items.length;
-			var batchLimit = 300; //general batch limit for each run, so that we don't block the server but yet we try to do a good number if we can
-			var lastBatchLimit = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
-			var numRuns = 0; //we'll set this in a minute
-			var currentRun = 1; //of course we start from 1, the first run
-			var max_execution_time = gfontsBatch.job.max_execution_time;
+			const max_execution_time = gfontsBatch.job.max_execution_time;
+			const gfontsCount = gfontsBatch.job.gfontsWeblist.items.length;
+			const batchLimit = 300; //general batch limit for each run, so that we don't block the server but yet we try to do a good number if we can
+			let lastBatchLimit = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
+			let numRuns = 0; //we'll set this in a minute
 
 			//Let's calculate how many times we will have to make the ajax call
 			//  in order to complete the local download of all the requested miniaturized font files
@@ -234,7 +233,7 @@ jQuery(document).ready(function ($) {
 				batchLimit: batchLimit,
 				lastBatchLimit: lastBatchLimit,
 				numRuns: numRuns,
-				currentRun: currentRun,
+				currentRun: 1, //of course we start from 1, the first run
 				startIdx: 0,
 				max_execution_time: max_execution_time
 			};
@@ -267,13 +266,13 @@ jQuery(document).ready(function ($) {
 	);
 });
 
-var myProgressInterval = null;
-var myMaxExecutionTimer = null;
-var $gfontsBatchRunProgressbarOverlay;
-var $gfontsBatchRunProgressbar;
-var $gfontsBatchRunProgressbarWrapper;
+let myProgressInterval = null;
+let myMaxExecutionTimer = null;
+let $gfontsBatchRunProgressbarOverlay;
+let $gfontsBatchRunProgressbar;
+let $gfontsBatchRunProgressbarWrapper;
 
-var gfontsBatchRun = function (postdata) {
+let gfontsBatchRun = function (postdata) {
 	jQuery.ajax({
 		type: "POST",
 		url: gfontsBatch.job.ajax_url,
@@ -302,12 +301,13 @@ var gfontsBatchRun = function (postdata) {
 		success: function (returndata) {
 			clearInterval(myProgressInterval);
 			clearInterval(myMaxExecutionTimer);
-			var returndataJSON =
-				typeof returndata !== "object" ? JSON.parse(returndata) : returndata;
+			let returndataJSON = typeof returndata !== "object"
+				? JSON.parse(returndata)
+				: returndata;
 			//console.log("gfontsBatchRun success, returndataJSON:");
 			//console.log(returndataJSON);
 			if (returndataJSON !== null && typeof returndataJSON === "object") {
-				var thisRun = returndataJSON.hasOwnProperty("run")
+				let thisRun = returndataJSON.hasOwnProperty("run")
 					? returndataJSON.run
 					: false;
 				if (
@@ -333,8 +333,8 @@ var gfontsBatchRun = function (postdata) {
 				if (returndataJSON.hasOwnProperty("state")) {
 					switch (returndataJSON.state) {
 						case "RUN_PROCESSED":
-							var maxUpdatePerRun = 100 / postdata.numRuns;
-							var maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
+							let maxUpdatePerRun = 100 / postdata.numRuns;
+							let maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
 							$gfontsBatchRunProgressbar.progressbar(
 								"value",
 								Math.floor(maxedOutUpdateThisRun)
@@ -409,23 +409,23 @@ var gfontsBatchRun = function (postdata) {
 	});
 };
 
-var updateGfontsBatchRunProgressbarProgress = function (currentRun, numRuns) {
+const updateGfontsBatchRunProgressbarProgress = function (currentRun, numRuns) {
 	//console.log('half second tick and $gfontsBatchRunProgressbar.progressbar("value") = '+$gfontsBatchRunProgressbar.progressbar("value"));
 	//console.log('half second tick and currentRun = '+currentRun+', numRuns = '+numRuns);
-	var maxUpdatePerRun = Math.floor(100 / parseInt(numRuns)); //if we do 4 runs, we will update no more than 25% of the progressbar for each run
+	let maxUpdatePerRun = Math.floor(100 / parseInt(numRuns)); //if we do 4 runs, we will update no more than 25% of the progressbar for each run
 	//console.log('half second tick and maxUpdatePerRun = '+maxUpdatePerRun+', (maxUpdatePerRun * currentRun) = '+(maxUpdatePerRun * currentRun));
 	if (
 		$gfontsBatchRunProgressbar.progressbar("value") <
 		maxUpdatePerRun * parseInt(currentRun)
 	) {
-		var currentProgressBarValue = parseInt(
+		let currentProgressBarValue = parseInt(
 			$gfontsBatchRunProgressbar.progressbar("value")
 		);
 		$gfontsBatchRunProgressbar.progressbar("value", Math.floor(++currentProgressBarValue));
 	}
 };
 
-var updateExecutionCountdown = function(max_execution_time) {
+const updateExecutionCountdown = function(max_execution_time) {
 	let measure = performance.measure('currentExecutionTime','batchStart');
 	let measureTotal = performance.measure('totalExecutionTime','processStart');
 	let executionSeconds = Math.floor(measure.duration / 1000);
@@ -457,7 +457,7 @@ var updateExecutionCountdown = function(max_execution_time) {
 	jQuery('#total_execution_time').text(totalExecutionString)
 }
 
-var bibleGetForceRefreshGFapiResults = function () {
+const bibleGetForceRefreshGFapiResults = function () {
 	//send ajax request to the server to have the transient deleted
 	//console.log('we should have an nonce for this action: '+gfontsBatch.gfontsRefreshNonce);
 	if (
@@ -470,7 +470,7 @@ var bibleGetForceRefreshGFapiResults = function () {
 		gfontsBatch.job.hasOwnProperty("gfontsApiKey") &&
 		gfontsBatch.job.gfontsApiKey != ""
 	) {
-		var postProps = {
+		const postProps = {
 			action: "bibleget_refresh_gfonts",
 			security: gfontsBatch.job.gfontsRefreshNonce,
 			gfontsApiKey: gfontsBatch.job.gfontsApiKey,
