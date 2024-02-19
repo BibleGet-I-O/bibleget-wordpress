@@ -337,7 +337,7 @@ var gfontsBatchRun = function (postdata) {
 							var maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
 							$gfontsBatchRunProgressbar.progressbar(
 								"value",
-								maxedOutUpdateThisRun
+								Math.floor(maxedOutUpdateThisRun)
 							);
 
 							if (thisRun && thisRun < postdata.numRuns) {
@@ -421,7 +421,7 @@ var updateGfontsBatchRunProgressbarProgress = function (currentRun, numRuns) {
 		var currentProgressBarValue = parseInt(
 			$gfontsBatchRunProgressbar.progressbar("value")
 		);
-		$gfontsBatchRunProgressbar.progressbar("value", ++currentProgressBarValue);
+		$gfontsBatchRunProgressbar.progressbar("value", Math.floor(++currentProgressBarValue));
 	}
 };
 
