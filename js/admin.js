@@ -310,6 +310,8 @@ const gfontsBatchRun = (postdata) => {
 				const thisRun = returndataJSON.hasOwnProperty("run")
 					? returndataJSON.run
 					: false;
+				const maxUpdatePerRun = 100 / postdata.numRuns;
+				const maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
 				if (
 					returndataJSON.hasOwnProperty("errorinfo") &&
 					returndataJSON.errorinfo !== false &&
@@ -333,13 +335,10 @@ const gfontsBatchRun = (postdata) => {
 				if (returndataJSON.hasOwnProperty("state")) {
 					switch (returndataJSON.state) {
 						case "RUN_PROCESSED":
-							const maxUpdatePerRun = 100 / postdata.numRuns;
-							const maxedOutUpdateThisRun = maxUpdatePerRun * thisRun;
 							$gfontsBatchRunProgressbar.progressbar(
 								"value",
 								Math.floor(maxedOutUpdateThisRun)
 							);
-
 							if (thisRun && thisRun < postdata.numRuns) {
 								// console.log(
 								//   "gfontsBatchRun was asked to do run " +
@@ -349,8 +348,8 @@ const gfontsBatchRun = (postdata) => {
 								//     ", now starting the next run"
 								// );
 								//check if we're doing the last run or not
-								if (++postdata.currentRun == postdata.numRuns) {
-									postdata.batchLimit == postdata.lastBatchLimit;
+								if (++postdata.currentRun === postdata.numRuns) {
+									postdata.batchLimit = postdata.lastBatchLimit;
 								}
 								postdata.startIdx += postdata.batchLimit;
 
