@@ -3,7 +3,7 @@ wp.customize.controlConstructor['textalign'] = wp.customize.Control.extend({
 	ready : function() {
 		'use strict';
 
-		var control = this,
+		const control = this,
 			checkboxes = jQuery('input:radio', control.container);
 
 		checkboxes.on('change', function() {

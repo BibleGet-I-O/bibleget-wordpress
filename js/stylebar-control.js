@@ -1,16 +1,16 @@
 // Array Remove - By John Resig (MIT Licensed)
-Array.prototype.remove = function(from, to) {
-	var rest = this.slice((to || from) + 1 || this.length);
+/*Array.prototype.remove = function(from, to) {
+	const rest = this.slice((to || from) + 1 || this.length);
 	this.length = from < 0 ? this.length + from : from;
 	return this.push.apply(this, rest);
 };
-
+*/
 wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 
 	ready : function() {
 		'use strict';
 
-		var control = this, 
+		const control = this, 
 			checkboxes = jQuery('input:checkbox', control.container);
 
 		// console.log("stylebar control constructor extension script is
@@ -43,7 +43,7 @@ wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 					control.settings.valign_setting.set(1);
 				}
 				else if(jQuery(this).hasClass('subscript')){
-					let $superscript = jQuery('input:checkbox.superscript', control.container);
+					const $superscript = jQuery('input:checkbox.superscript', control.container);
 					if ($superscript.prop('checked') && $superscript.prop('checked') === true) {
 						$superscript.prop('checked', false);
 						$superscript.parent().removeClass('button-primary').addClass('button-secondary');
@@ -55,13 +55,13 @@ wp.customize.controlConstructor['stylebar'] = wp.customize.Control.extend({
 				jQuery(this).parent().removeClass('button-primary').addClass('button-secondary');
 				//console.log('a checkbox was unchecked, which has a value of :'+this.value);
 				if(jQuery(this).hasClass('superscript')){
-					let $subscript = jQuery('input:checkbox.subscript', control.container);
+					const $subscript = jQuery('input:checkbox.subscript', control.container);
 					if ($subscript.prop('checked') === false) {
 						control.settings.valign_setting.set(3);
 					}
 				}
 				else if(jQuery(this).hasClass('subscript')){
-					let $superscript = jQuery('input:checkbox.superscript', control.container);
+					const $superscript = jQuery('input:checkbox.superscript', control.container);
 					if ($superscript.prop('checked') === false) {
 						control.settings.valign_setting.set(3);
 					}

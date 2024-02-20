@@ -4,18 +4,17 @@
  * here. Your javascript should grab settings from customizer controls, and 
  * then make any necessary changes to the page using jQuery.
  */
-let vsdecorations = [],
-	bcdecorations = [],
-	vndecorations = [],
-	vtdecorations = [];
+const vsdecorations = [],
+	bcdecorations   = [],
+	vndecorations   = [],
+	vtdecorations   = [];
 
 const handleParagraphStyles = (BibleGetGlobal,key) => {
 	const { BGET, BGETConstants } = BibleGetGlobal;
 	switch(key){
 		case 'PARAGRAPHSTYLES_FONTFAMILY': {
-			let fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
-			let font = BGET[key].replace(/\+/g, ' ');
-			font = font.split(':');
+			const fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
+			const font = BGET[key].replace(/\+/g, ' ').split(':');
 			if(fontType == 'googlefont'){
 				let link = 'https://fonts.googleapis.com/css?family=' + BGET[key];
 				if (jQuery("link[href*='" + font + "']").length > 0){
@@ -79,36 +78,36 @@ const handleVersionStyles = (BibleGetGlobal, key) => {
 	const { BGET } = BibleGetGlobal;
 	switch( key ) {
 		case 'VERSIONSTYLES_BOLD': {
-			let fontweight = BGET.VERSIONSTYLES_BOLD ? 'bold' : 'normal';
+			const fontweight = BGET.VERSIONSTYLES_BOLD ? 'bold' : 'normal';
 			jQuery('.bibleQuote.results .bibleVersion').css('font-weight',fontweight);
 			break;
 		}
 		case 'VERSIONSTYLES_ITALIC': {
-			let fontstyle = BGET.VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
+			const fontstyle = BGET.VERSIONSTYLES_ITALIC ? 'italic' : 'normal';
 			jQuery('.bibleQuote.results .bibleVersion').css('font-style',fontstyle);
 			break;
 		}
 		case 'VERSIONSTYLES_UNDERLINE': {
-			let idx = vsdecorations.indexOf('underline');
+			const idx = vsdecorations.indexOf('underline');
 			if(BGET.VERSIONSTYLES_UNDERLINE && idx === -1) {
 				vsdecorations.push('underline');
 			}
 			else if(!BGET.VERSIONSTYLES_UNDERLINE && idx !== -1) {
 				vsdecorations.splice(idx,1);
 			}
-			let textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
+			const textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
 			jQuery('.bibleQuote.results .bibleVersion').css('text-decoration',textdecoration);
 			break;
 		}
 		case 'VERSIONSTYLES_STRIKETHROUGH': {
-			let idx = vsdecorations.indexOf('line-through');
+			const idx = vsdecorations.indexOf('line-through');
 			if(BGET.VERSIONSTYLES_STRIKETHROUGH && idx === -1) {
 				vsdecorations.push('line-through');
 			}
 			else if(!BGET.VERSIONSTYLES_STRIKETHROUGH && idx !== -1) {
 				vsdecorations.splice(idx,1);
 			}
-			let textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
+			const textdecoration = vsdecorations.length === 0 ? 'none' : vsdecorations.join(' ');
 			jQuery('.bibleQuote.results .bibleVersion').css('text-decoration',textdecoration);
 			break;
 		}
@@ -118,10 +117,9 @@ const handleVersionStyles = (BibleGetGlobal, key) => {
 		case 'VERSIONSTYLES_FONTSIZE':
 		//nobreak;
 		case 'VERSIONSTYLES_FONTSIZEUNIT': {
-			let fontsize = BGET.VERSIONSTYLES_FONTSIZE;
-			if(BGET.VERSIONSTYLES_FONTSIZEUNIT == 'em'){
-				fontsize /= 10;
-			}
+			const fontsize = BGET.VERSIONSTYLES_FONTSIZEUNIT === 'em'
+				? BGET.VERSIONSTYLES_FONTSIZE / 10
+				: BGET.VERSENUMBERSTYLES_FONTSIZE;
 			jQuery('.bibleQuote.results .bibleVersion').css('font-size', fontsize+BGET.VERSIONSTYLES_FONTSIZEUNIT );
 			break;
 		}
@@ -137,36 +135,36 @@ const handleBookChapterStyles = (BibleGetGlobal,key) => {
 	const { BGET } = BibleGetGlobal;
 	switch( key ) {
 		case 'BOOKCHAPTERSTYLES_BOLD': {
-			let fontweight = BGET.BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
+			const fontweight = BGET.BOOKCHAPTERSTYLES_BOLD ? 'bold' : 'normal';
 			jQuery('.bibleQuote.results .bookChapter').css('font-weight', fontweight);
 			break;
 		}
 		case 'BOOKCHAPTERSTYLES_ITALIC': {
-			let fontstyle = BGET.BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
+			const fontstyle = BGET.BOOKCHAPTERSTYLES_ITALIC ? 'italic' : 'normal';
 			jQuery('.bibleQuote.results .bookChapter').css('font-style', fontstyle);
 			break;
 		}
 		case 'BOOKCHAPTERSTYLES_UNDERLINE': {
-			let idx = bcdecorations.indexOf('underline');
+			const idx = bcdecorations.indexOf('underline');
 			if(BGET.BOOKCHAPTERSTYLES_UNDERLINE && idx === -1) {
 				bcdecorations.push('underline');
 			}
 			else if(!BGET.BOOKCHAPTERSTYLES_UNDERLINE && idx !== -1) {
 				bcdecorations.splice(idx,1);
 			}
-			let textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
+			const textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
 			jQuery('.bibleQuote.results .bookChapter').css('text-decoration',textdecoration);
 			break;
 		}
 		case 'BOOKCHAPTERSTYLES_STRIKETHROUGH': {
-			let idx = bcdecorations.indexOf('line-through');
+			const idx = bcdecorations.indexOf('line-through');
 			if(BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH && idx === -1) {
 				bcdecorations.push('line-through');
 			}
 			else if(!BGET.BOOKCHAPTERSTYLES_STRIKETHROUGH && idx !== -1) {
 				bcdecorations.splice(idx,1);
 			}
-			let textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
+			const textdecoration = bcdecorations.length === 0 ? 'none' : bcdecorations.join(' ');
 			jQuery('.bibleQuote.results .bookChapter').css('text-decoration',textdecoration);
 			break;
 		}
@@ -176,10 +174,9 @@ const handleBookChapterStyles = (BibleGetGlobal,key) => {
 		case 'BOOKCHAPTERSTYLES_FONTSIZE':
 		//nobreak;
 		case 'BOOKCHAPTERSTYLES_FONTSIZEUNIT': {
-			let fontsize = BGET.BOOKCHAPTERSTYLES_FONTSIZE;
-			if(BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT == 'em'){
-				fontsize /= 10;
-			}
+			const fontsize = BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'em'
+				? BGET.BOOKCHAPTERSTYLES_FONTSIZE / 10
+				: BGET.BOOKCHAPTERSTYLES_FONTSIZE;
 			jQuery('.bibleQuote.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
 			break;
 		}
@@ -195,36 +192,36 @@ const handleVerseNumberStyles = (BibleGetGlobal,key) => {
 	const { BGET, BGETConstants } = BibleGetGlobal;
 	switch(key) {
 		case 'VERSENUMBERSTYLES_BOLD': {
-			let fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
+			const fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
 			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-weight', fontweight);
 			break;
 		}
 		case 'VERSENUMBERSTYLES_ITALIC': {
-			let fontstyle = BGET.VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
+			const fontstyle = BGET.VERSENUMBERSTYLES_ITALIC ? 'italic' : 'normal';
 			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-style', fontstyle);
 			break;
 		}
 		case 'VERSENUMBERSTYLES_UNDERLINE': {
-			let idx = vndecorations.indexOf('underline');
+			const idx = vndecorations.indexOf('underline');
 			if(BGET.VERSENUMBERSTYLES_UNDERLINE && idx === -1){
 				vndecorations.push('underline');
 			}
 			else if (!BGET.VERSENUMBERSTYLES_UNDERLINE && idx !== -1 ) {
 				vndecorations.splice(idx,1);
 			}
-			let textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
+			const textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
 			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
 			break;
 		}
 		case 'VERSENUMBERSTYLES_STRIKETHROUGH': {
-			let idx = vndecorations.indexOf('line-through');
+			const idx = vndecorations.indexOf('line-through');
 			if(BGET.VERSENUMBERSTYLES_STRIKETHROUGH && idx === -1) {
 				vndecorations.push('line-through');
 			}
 			else if(!BGET.VERSENUMBERSTYLES_STRIKETHROUGH && idx !== -1 ) {
 				vndecorations.splice(idx,1);
 			}
-			let textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
+			const textdecoration = vndecorations.length === 0 ? 'none' : vndecorations.join(' ');
 			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('text-decoration',textdecoration);
 			break;
 		}
@@ -234,15 +231,14 @@ const handleVerseNumberStyles = (BibleGetGlobal,key) => {
 		case 'VERSENUMBERSTYLES_FONTSIZE':
 		//nobreak;
 		case 'VERSENUMBERSTYLES_FONTSIZEUNIT': {
-			let fontsize = BGET.VERSENUMBERSTYLES_FONTSIZE;
-			if(BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'){
-				fontsize /= 10;
-			}
+			const fontsize = BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'
+				? BGET.VERSENUMBERSTYLES_FONTSIZE / 10
+				: BGET.VERSENUMBERSTYLES_FONTSIZE;
 			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
 			break;
 		}
 		case 'VERSENUMBERSTYLES_VALIGN': {
-			let styles = {};
+			const styles = {};
 			switch(BGET.VERSENUMBERSTYLES_VALIGN) {
 				case BGETConstants.VALIGN.SUPERSCRIPT:
 					styles['vertical-align'] = 'baseline';
@@ -269,36 +265,36 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
 	const { BGET } = BibleGetGlobal;
 	switch( key ) {
 		case 'VERSETEXTSTYLES_BOLD': {
-			let fontweight = BGET.VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
+			const fontweight = BGET.VERSETEXTSTYLES_BOLD ? 'bold' : 'normal';
 			jQuery('.bibleQuote.results .versesParagraph').css('font-weight', fontweight);
 			break;
 		}
 		case 'VERSETEXTSTYLES_ITALIC': {
 			//console.log('we are dealing with the italics styling');
-			let fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
+			const fontstyle = BGET.VERSETEXTSTYLES_ITALIC ? 'italic' : 'normal';
 			jQuery('.bibleQuote.results .versesParagraph').css('font-style', fontstyle);
 			break;
 		}
 		case 'VERSETEXTSTYLES_UNDERLINE': {
-			let idx = vtdecorations.indexOf('underline');
+			const idx = vtdecorations.indexOf('underline');
 			if(BGET.VERSETEXTSTYLES_UNDERLINE && idx === -1) { 
 				vtdecorations.push('underline');
 			} else if(!BGET.VERSETEXTSTYLES_UNDERLINE && idx !== -1) {
 				vtdecorations.splice(idx,1);
 			}
-			let textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
+			const textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
 			jQuery('.bibleQuote.results .versesParagraph').css('text-decoration',textdecoration);
 			break;
 		}
 		case 'VERSETEXTSTYLES_STRIKETHROUGH': {
-			let idx = vtdecorations.indexOf('line-through');
+			const idx = vtdecorations.indexOf('line-through');
 			if(BGET.VERSETEXTSTYLES_STRIKETHROUGH && idx === -1) {
 				vtdecorations.push('line-through');
 			}
 			else if(!BGET.VERSETEXTSTYLES_STRIKETHROUGH && idx !== -1 ) {
 				vtdecorations.splice(idx,1);
 			}
-			let textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
+			const textdecoration = vtdecorations.length === 0 ? 'none' : vtdecorations.join(' ');
 			jQuery('.bibleQuote.results .versesParagraph').css('text-decoration',textdecoration);
 			break;
 		}
@@ -308,10 +304,9 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
 		case 'VERSETEXTSTYLES_FONTSIZE':
 		//nobreak;
 		case 'VERSETEXTSTYLES_FONTSIZEUNIT': {
-			let fontsize = BGET.VERSETEXTSTYLES_FONTSIZE;
-			if(BGET.VERSETEXTSTYLES_FONTSIZEUNIT == 'em') {
-				fontsize /= 10;
-			}
+			const fontsize = BGET.VERSETEXTSTYLES_FONTSIZEUNIT === 'em'
+				? BGET.VERSETEXTSTYLES_FONTSIZE / 10
+				: BGET.VERSETEXTSTYLES_FONTSIZE;
 			jQuery('.bibleQuote.results .versesParagraph').css('font-size', fontsize+BGET.VERSETEXTSTYLES_FONTSIZEUNIT );
 			break;
 		}

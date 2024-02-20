@@ -14,7 +14,7 @@
  *
  */
 
-class Fontselect {
+class FontSelect {
 	static __bind = (fn, me) => () => fn.apply(me, arguments);
 	constructor( original, o, f ) {
 		this.$original = $( original );
@@ -23,14 +23,14 @@ class Fontselect {
 		this.active = false;
 		this.setupHtml();
 
-		var font = this.$original.val();
-		var fontType = null;
-		//console.log('Fontselect initialize >> this.$original.val() = ' + font);
+		const font = this.$original.val();
+		const fontType = null;
+		//console.log('FontSelect initialize >> this.$original.val() = ' + font);
 		if ( font ) {
 			//console.log('yes we have an initial font value...');
 			//check if this font is in the websafe_fonts or in the google_fonts and act accordingly
-			var idx = -1;
-			for ( var key = 0; key < $.fontselect.websafe_fonts.length; key++ ) {
+			let idx = -1;
+			for ( let key = 0; key < $.fontselect.websafe_fonts.length; key++ ) {
 				//console.log('key = ' + key);
 				//console.log('$.fontselect.websafe_fonts[key] = ' + $.fontselect.websafe_fonts[key]);
 				if ( $.fontselect.websafe_fonts[ key ].hasOwnProperty( "fontFamily" ) &&
@@ -43,7 +43,7 @@ class Fontselect {
 			}
 			if ( idx == -1 ) {
 				//font was not found among the websafe_fonts so is probably a google font
-				for ( var ky = 0; ky < $.fontselect.google_fonts.length; ky++ ) {
+				for ( let ky = 0; ky < $.fontselect.google_fonts.length; ky++ ) {
 					if ( $.fontselect.google_fonts[ ky ] == font ) {
 						idx = ky;
 						fontType = "googlefont";
@@ -82,8 +82,8 @@ class Fontselect {
 		this.active = !this.active;
 	}
 	selectFont() {
-		var font = $( "li.active", this.$results ).data( "value" );
-		var fontType = $( "li.active", this.$results ).data( "fonttype" );
+		const font = $( "li.active", this.$results ).data( "value" );
+		const fontType = $( "li.active", this.$results ).data( "fonttype" );
 		this.$original.data( "fonttype", fontType );
 		this.$original.attr( "data-fonttype", fontType );
 		//console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
@@ -92,7 +92,8 @@ class Fontselect {
 		this.toggleDrop();
 	}
 	moveToSelected() {
-		var $li, font = this.$original.val();
+		const font = this.$original.val();
+		let $li;
 		//console.log("value of font: " + font);
 		if ( font ) {
 			//console.log("now finding the corresponding li element...");
@@ -102,7 +103,7 @@ class Fontselect {
 			$li = $( "li", this.$results ).first();
 		}
 		$li.addClass( "active" );
-		var pos = $li.position().top;
+		const pos = $li.position().top;
 		//console.log("this li's position is: " + pos);
 		if ( pos > 100 ) this.$results.scrollTop( $li.position().top );
 	}
@@ -114,14 +115,14 @@ class Fontselect {
 		$( ev.currentTarget ).removeClass( "active" );
 	}
 	updateSelected() {
-		var font = this.$original.val();
-		var fontType = this.$original.data( "fonttype" );
+		const font = this.$original.val();
+		const fontType = this.$original.data( "fonttype" );
 		//console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
-		if ( fontType == "googlefont" ) {
+		if ( fontType === "googlefont" ) {
 			$( "span", this.$element )
 				.text( this.toReadable( font ) )
 				.css( this.toStyle( font ) );
-			var link = this.options.api + font;
+			const link = this.options.api + font;
 
 			if ( $( "link[href*='" + font + "']" ).length > 0 ) {
 				$( "link[href*='" + font + "']" ).attr( "href", link );
@@ -130,7 +131,7 @@ class Fontselect {
 					'<link href="' + link + '" rel="stylesheet" type="text/css">'
 				);
 			}
-		} else if ( fontType == "websafe" ) {
+		} else if ( fontType === "websafe" ) {
 			$( "span", this.$element ).text( font ).css( {
 				"font-family": font,
 				"font-weight": "normal",
@@ -169,19 +170,19 @@ class Fontselect {
 	}
 	fontsAsHtml() {
 		//console.log('fontsAsHtml >> where is the culprit');
-		var l = this.fonts.length, ll = $.fontselect.websafe_fonts.length;
+		const l = this.fonts.length,
+			ll  = $.fontselect.websafe_fonts.length;
 		//console.log('this.fonts.length = ' +l);
 		//console.log('$.fontselect.websafe_fonts.length = '+ll);
-		var r, s, h = "";
-		for ( var idx = 0; idx < ll; idx++ ) {
+		let r, s, h = "";
+		for ( let idx = 0; idx < ll; idx++ ) {
 			if ( $.fontselect.websafe_fonts[ idx ].hasOwnProperty( "fontFamily" ) ) {
 				//console.log('of course I have property fontFamily, silly!');
-				var flbk = "";
+				let flbk = "";
 				if ( $.fontselect.websafe_fonts[ idx ].hasOwnProperty( "fallback" ) ) {
-					flbk =
-						"&apos;" + $.fontselect.websafe_fonts[ idx ].fallback + "&apos;,";
+					flbk = "&apos;" + $.fontselect.websafe_fonts[ idx ].fallback + "&apos;,";
 				}
-				var $style = "font-family:&apos;" +
+				let $style = "font-family:&apos;" +
 					$.fontselect.websafe_fonts[ idx ].fontFamily +
 					"&apos;," +
 					flbk +
@@ -205,7 +206,7 @@ class Fontselect {
 		}
 		h +=
 			'<div style="border-top:3px groove White;border-bottom:3px groove White;box-shadow:0px -2px 6px Black,0px 2px 3px Black;margin:9px auto 3px auto;padding:3px 0px;text-align:center;background-color:Gray;color:White;width:96%;">Google Web Fonts</div>';
-		for ( var i = 0; i < l; i++ ) {
+		for ( let i = 0; i < l; i++ ) {
 			r = this.toReadable( this.fonts[ i ] );
 			s = this.toStyle( this.fonts[ i ] );
 			//console.log('r >> ' + r);
@@ -230,19 +231,19 @@ class Fontselect {
 		return h;
 	}
 	toReadable( font ) {
-		var t = font.split( ":" );
-		var rdbl = t[ 0 ].replace( /[+]/g, " " );
+		const t = font.split( ":" );
+		const rdbl = t[ 0 ].replace( /[+]/g, " " );
 		if ( t[ 1 ] !== undefined &&
 			t[ 1 ].length > 0 &&
 			/^([0-9]*)([a-z]*)$/.test( t[ 1 ] ) ) {
-			var q = t[ 1 ].match( /^([0-9]*)([a-z]*)$/ );
+			let q = t[ 1 ].match( /^([0-9]*)([a-z]*)$/ );
 			q.splice( 0, 1 );
 			return rdbl + " " + q.join( " " );
 		}
 		return rdbl;
 	}
 	toStyle( font ) {
-		var t = font.split( ":" );
+		const t = font.split( ":" );
 		if ( t[ 1 ] !== undefined && /[a-z]/.test( t[ 1 ] ) ) {
 			//console.log("value of t[1]:");
 			//console.log(t[1]);
@@ -279,7 +280,7 @@ class Fontselect {
 }
 
 
-(function ($) {
+(($) => {
 	$.fontselect = {
 		google_fonts: [
 			"Aclonica",
@@ -574,7 +575,7 @@ class Fontselect {
 						"https://fonts.googleapis.com/css2?key=" +
 						FontSelect_Control.bibleget_settings.googlefontsapi_key +
 						"&amp;family=";
-					var $ths = this;
+					const $ths = this;
 					jQuery.ajax({
 						url: "https://www.googleapis.com/webfonts/v1/webfonts",
 						data: {
@@ -584,9 +585,9 @@ class Fontselect {
 						type: "get",
 						success: function (data) {
 							//console.log(data);
-							var webfontList = data.items;
+							const webfontList = data.items;
 							$.fontselect.google_fonts = [];
-							for (var it = 0; it < webfontList.length; it++) {
+							for (let it = 0; it < webfontList.length; it++) {
 								$.fontselect.google_fonts[it] = webfontList[it].family.replace(
 									/ /g,
 									"+"
@@ -594,7 +595,7 @@ class Fontselect {
 							}
 							//console.log('new fontselect.google_fonts:');
 							//console.log($.fontselect.google_fonts);
-							return new Fontselect($ths, settings, $.fontselect.google_fonts);
+							return new FontSelect($ths, settings, $.fontselect.google_fonts);
 						}/*,
 						error: function (jqXHR, textStatus, errorThrown) {
 							//console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
@@ -603,7 +604,7 @@ class Fontselect {
 				}
 				//console.log(bibleget_settings);
 			} else {
-				return new Fontselect(this, settings, $.fontselect.google_fonts);
+				return new FontSelect(this, settings, $.fontselect.google_fonts);
 			}
 		});
 	};

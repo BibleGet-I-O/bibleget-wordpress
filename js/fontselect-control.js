@@ -1,5 +1,5 @@
-jQuery(function($){
-	$('#bibleget-googlefonts').fontselect({ lookahead: 200 }).change(function(){
+jQuery(($) => {
+	$('#bibleget-googlefonts').fontselect({ lookahead: 200 }).change(() => {
 		//console.log('fontselect-control.js BEGIN');
 		//console.log($(this).val());
 		//var font = $(this).val().replace(/\+/g, ' ');
