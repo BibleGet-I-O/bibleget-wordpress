@@ -338,7 +338,18 @@ class BibleGetSettingsPage
 					'//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css'
 				);
 			}
-			$storeGfontsArr = array("job" => array("gfontsPreviewJob" => (bool) true, "gfontsNonce" => wp_create_nonce("store_gfonts_preview_nonce"), "gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"), 'ajax_url' => admin_url('admin-ajax.php'), 'gfontsWeblist' => $this->gfonts_weblist, 'gfontsApiKey' => $this->options['googlefontsapi_key'], 'gfontsAPI_errors' => json_encode($this->gfontsAPI_errors), 'max_execution_time' => ini_get('max_execution_time')));
+			$storeGfontsArr = array(
+				"job" => array(
+					"gfontsPreviewJob"   => (bool) true,
+					"gfontsNonce"        => wp_create_nonce("store_gfonts_preview_nonce"),
+					"gfontsRefreshNonce" => wp_create_nonce("refresh_gfonts_results_nonce"),
+					"ajax_url"           => admin_url("admin-ajax.php"),
+					"gfontsWeblist"      => $this->gfonts_weblist,
+					"gfontsApiKey"       => $this->options["googlefontsapi_key"],
+					"gfontsAPI_errors"   => json_encode($this->gfontsAPI_errors),
+					"max_execution_time" => ini_get("max_execution_time")
+				)
+			);
 			wp_localize_script('admin-js', 'gfontsBatch', $storeGfontsArr);
 		}
 	}
