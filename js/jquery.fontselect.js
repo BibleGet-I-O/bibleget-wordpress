@@ -10,7 +10,7 @@
  * Modified by John Romano D'Orazio, https://www.johnromanodorazio.com
  * Modification Date June 12, 2017
  * Modification Date March 25, 2020
- *
+ * Modification Date February 22, 2024
  *
  */
 
@@ -19,22 +19,22 @@ class FontSelect {
 	constructor( original, o, f ) {
 		this.$original = jQuery( original );
 		this.options = o;
-		this.fonts = f;
+		this.f = f;
 		this.active = false;
 		this.setupHtml();
 
 		const font = this.$original.val();
-		const fontType = null;
+		let fontType = null;
 		//console.log('FontSelect initialize >> this.$original.val() = ' + font);
 		if ( font ) {
 			//console.log('yes we have an initial font value...');
 			//check if this font is in the websafe_fonts or in the google_fonts and act accordingly
 			let idx = -1;
-			for ( let key = 0; key < $.fontselect.websafe_fonts.length; key++ ) {
+			for ( let key = 0; key < f.websafe_fonts.length; key++ ) {
 				//console.log('key = ' + key);
-				//console.log('$.fontselect.websafe_fonts[key] = ' + $.fontselect.websafe_fonts[key]);
-				if ( $.fontselect.websafe_fonts[ key ].hasOwnProperty( "fontFamily" ) &&
-					$.fontselect.websafe_fonts[ key ].fontFamily == font ) {
+				//console.log('f.websafe_fonts[key] = ' + f.websafe_fonts[key]);
+				if ( f.websafe_fonts[ key ].hasOwnProperty( "fontFamily" ) &&
+					f.websafe_fonts[ key ].fontFamily == font ) {
 					idx = key;
 					fontType = "websafe";
 					//console.log('CONSTRUCTOR >> we are starting off with a websafe font');
@@ -43,8 +43,8 @@ class FontSelect {
 			}
 			if ( idx == -1 ) {
 				//font was not found among the websafe_fonts so is probably a google font
-				for ( let ky = 0; ky < $.fontselect.google_fonts.length; ky++ ) {
-					if ( $.fontselect.google_fonts[ ky ] == font ) {
+				for ( let ky = 0; ky < f.google_fonts.length; ky++ ) {
+					if ( f.google_fonts[ ky ] == font ) {
 						idx = ky;
 						fontType = "googlefont";
 						//console.log('CONSTRUCTOR >> we are starting off with a google font');
@@ -61,12 +61,12 @@ class FontSelect {
 	}
 	bindEvents() {
 		jQuery( "li", this.$results )
-			.click( __bind( this.selectFont, this ) )
-			.mouseenter( __bind( this.activateFont, this ) )
-			.mouseleave( __bind( this.deactivateFont, this ) );
+			.click( FontSelect.__bind( this.selectFont, this ) )
+			.mouseenter( FontSelect.__bind( this.activateFont, this ) )
+			.mouseleave( FontSelect.__bind( this.deactivateFont, this ) );
 
-		jQuery( "span", this.$select ).click( __bind( this.toggleDrop, this ) );
-		this.$arrow.click( __bind( this.toggleDrop, this ) );
+		jQuery( "span", this.$select ).click( FontSelect.__bind( this.toggleDrop, this ) );
+		this.$arrow.click( FontSelect.__bind( this.toggleDrop, this ) );
 	}
 	toggleDrop() {
 		if ( this.active ) {
@@ -170,34 +170,34 @@ class FontSelect {
 	}
 	fontsAsHtml() {
 		//console.log('fontsAsHtml >> where is the culprit');
-		const l = this.fonts.length,
-			ll  = $.fontselect.websafe_fonts.length;
-		//console.log('this.fonts.length = ' +l);
-		//console.log('$.fontselect.websafe_fonts.length = '+ll);
+		const l = this.f.google_fonts.length,
+			ll  = this.f.websafe_fonts.length;
+		//console.log('this.f.google_fonts.length = ' +l);
+		//console.log('this.f.websafe_fonts.length = '+ll);
 		let r, s, h = "";
 		for ( let idx = 0; idx < ll; idx++ ) {
-			if ( $.fontselect.websafe_fonts[ idx ].hasOwnProperty( "fontFamily" ) ) {
+			if ( this.f.websafe_fonts[ idx ].hasOwnProperty( "fontFamily" ) ) {
 				//console.log('of course I have property fontFamily, silly!');
 				let flbk = "";
-				if ( $.fontselect.websafe_fonts[ idx ].hasOwnProperty( "fallback" ) ) {
-					flbk = "&apos;" + $.fontselect.websafe_fonts[ idx ].fallback + "&apos;,";
+				if ( this.f.websafe_fonts[ idx ].hasOwnProperty( "fallback" ) ) {
+					flbk = "&apos;" + this.f.websafe_fonts[ idx ].fallback + "&apos;,";
 				}
 				let $style = "font-family:&apos;" +
-					$.fontselect.websafe_fonts[ idx ].fontFamily +
+					this.f.websafe_fonts[ idx ].fontFamily +
 					"&apos;," +
 					flbk +
 					"&apos;" +
-					( $.fontselect.websafe_fonts[ idx ].hasOwnProperty( "genericFamily" )
-						? $.fontselect.websafe_fonts[ idx ].genericFamily
+					( this.f.websafe_fonts[ idx ].hasOwnProperty( "genericFamily" )
+						? this.f.websafe_fonts[ idx ].genericFamily
 						: "" ) +
 					"&apos;;";
 				h +=
 					'<li data-fonttype="websafe" data-value="' +
-					$.fontselect.websafe_fonts[ idx ].fontFamily +
+					this.f.websafe_fonts[ idx ].fontFamily +
 					'" style="' +
 					$style +
 					'">' +
-					$.fontselect.websafe_fonts[ idx ].fontFamily +
+					this.f.websafe_fonts[ idx ].fontFamily +
 					"</li>";
 			}
 			//else{
@@ -207,13 +207,13 @@ class FontSelect {
 		h +=
 			'<div style="border-top:3px groove White;border-bottom:3px groove White;box-shadow:0px -2px 6px Black,0px 2px 3px Black;margin:9px auto 3px auto;padding:3px 0px;text-align:center;background-color:Gray;color:White;width:96%;">Google Web Fonts</div>';
 		for ( let i = 0; i < l; i++ ) {
-			r = this.toReadable( this.fonts[ i ] );
-			s = this.toStyle( this.fonts[ i ] );
+			r = this.toReadable( this.f.google_fonts[ i ] );
+			s = this.toStyle( this.f.google_fonts[ i ] );
 			//console.log('r >> ' + r);
 			//console.log('s >> ' + s);
 			h +=
 				'<li data-fonttype="googlefont" data-value="' +
-				this.fonts[ i ] +
+				this.f.google_fonts[ i ] +
 				'" style="font-family: ' +
 				s[ "font-family" ] +
 				"; font-weight: " +
@@ -595,7 +595,7 @@ class FontSelect {
 							}
 							//console.log('new fontselect.google_fonts:');
 							//console.log($.fontselect.google_fonts);
-							return new FontSelect($ths, settings, $.fontselect.google_fonts);
+							return new FontSelect($ths, settings, $.fontselect);
 						}/*,
 						error: function (jqXHR, textStatus, errorThrown) {
 							//console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
@@ -604,7 +604,7 @@ class FontSelect {
 				}
 				//console.log(bibleget_settings);
 			} else {
-				return new FontSelect(this, settings, $.fontselect.google_fonts);
+				return new FontSelect(this, settings, $.fontselect);
 			}
 		});
 	};
