@@ -15,9 +15,9 @@
  */
 
 class FontSelect {
-	static __bind = (fn, me) => () => fn.apply(me, arguments);
+	static __bind = (fn, me) => (...args) => fn.apply(me, args);
 	constructor( original, o, f ) {
-		this.$original = $( original );
+		this.$original = jQuery( original );
 		this.options = o;
 		this.fonts = f;
 		this.active = false;
@@ -60,12 +60,12 @@ class FontSelect {
 		this.bindEvents();
 	}
 	bindEvents() {
-		$( "li", this.$results )
+		jQuery( "li", this.$results )
 			.click( __bind( this.selectFont, this ) )
 			.mouseenter( __bind( this.activateFont, this ) )
 			.mouseleave( __bind( this.deactivateFont, this ) );
 
-		$( "span", this.$select ).click( __bind( this.toggleDrop, this ) );
+		jQuery( "span", this.$select ).click( __bind( this.toggleDrop, this ) );
 		this.$arrow.click( __bind( this.toggleDrop, this ) );
 	}
 	toggleDrop() {
@@ -82,8 +82,8 @@ class FontSelect {
 		this.active = !this.active;
 	}
 	selectFont() {
-		const font = $( "li.active", this.$results ).data( "value" );
-		const fontType = $( "li.active", this.$results ).data( "fonttype" );
+		const font = jQuery( "li.active", this.$results ).data( "value" );
+		const fontType = jQuery( "li.active", this.$results ).data( "fonttype" );
 		this.$original.data( "fonttype", fontType );
 		this.$original.attr( "data-fonttype", fontType );
 		//console.log('selectFont >> this.$original.data("fonttype") = ' + this.$original.data('fonttype'));
@@ -97,10 +97,10 @@ class FontSelect {
 		//console.log("value of font: " + font);
 		if ( font ) {
 			//console.log("now finding the corresponding li element...");
-			$li = $( "li[data-value='" + font + "']", this.$results );
+			$li = jQuery( "li[data-value='" + font + "']", this.$results );
 			//console.log($li);
 		} else {
-			$li = $( "li", this.$results ).first();
+			$li = jQuery( "li", this.$results ).first();
 		}
 		$li.addClass( "active" );
 		const pos = $li.position().top;
@@ -108,31 +108,31 @@ class FontSelect {
 		if ( pos > 100 ) this.$results.scrollTop( $li.position().top );
 	}
 	activateFont( ev ) {
-		$( "li.active", this.$results ).removeClass( "active" );
-		$( ev.currentTarget ).addClass( "active" );
+		jQuery( "li.active", this.$results ).removeClass( "active" );
+		jQuery( ev.currentTarget ).addClass( "active" );
 	}
 	deactivateFont( ev ) {
-		$( ev.currentTarget ).removeClass( "active" );
+		jQuery( ev.currentTarget ).removeClass( "active" );
 	}
 	updateSelected() {
 		const font = this.$original.val();
 		const fontType = this.$original.data( "fonttype" );
 		//console.log('updateSelected >> this.$original.data("fonttype") = ' + fontType);
 		if ( fontType === "googlefont" ) {
-			$( "span", this.$element )
+			jQuery( "span", this.$element )
 				.text( this.toReadable( font ) )
 				.css( this.toStyle( font ) );
 			const link = this.options.api + font;
 
-			if ( $( "link[href*='" + font + "']" ).length > 0 ) {
-				$( "link[href*='" + font + "']" ).attr( "href", link );
+			if ( jQuery( "link[href*='" + font + "']" ).length > 0 ) {
+				jQuery( "link[href*='" + font + "']" ).attr( "href", link );
 			} else {
-				$( "link:last" ).after(
+				jQuery( "link:last" ).after(
 					'<link href="' + link + '" rel="stylesheet" type="text/css">'
 				);
 			}
 		} else if ( fontType === "websafe" ) {
-			$( "span", this.$element ).text( font ).css( {
+			jQuery( "span", this.$element ).text( font ).css( {
 				"font-family": font,
 				"font-weight": "normal",
 				"font-style": "normal",
@@ -144,22 +144,22 @@ class FontSelect {
 		//console.log('this.options.style: '+this.options.style);
 		//console.log('this.options.placeholder: '+this.options.placeholder);
 		this.$original.empty().hide();
-		this.$element = $( "<div>", { class: this.options.style } );
-		this.$arrow = $( "<div><b></b></div>" );
-		this.$select = $(
+		this.$element = jQuery( "<div>", { class: this.options.style } );
+		this.$arrow = jQuery( "<div><b></b></div>" );
+		this.$select = jQuery(
 			"<a><span>" + this.options.placeholder + "</span></a>"
 		);
-		this.$drop = $( "<div>", { class: "fs-drop" } );
-		this.$results = $( "<ul>", { class: "fs-results" } );
+		this.$drop = jQuery( "<div>", { class: "fs-drop" } );
+		this.$results = jQuery( "<ul>", { class: "fs-results" } );
 		this.$original.after(
 			this.$element
 				.append( this.$select.append( this.$arrow ) )
 				.append( this.$drop )
 		);
-		this.$fontsAsHtml = $( this.fontsAsHtml() );
+		this.$fontsAsHtml = jQuery( this.fontsAsHtml() );
 		this.$drop.append( this.$results.append( this.$fontsAsHtml ) ).hide();
 
-		this.$prefetch = $( "<div>", { class: "font-select-prefetch" } );
+		this.$prefetch = jQuery( "<div>", { class: "font-select-prefetch" } );
 		this.$results_prefetch = this.$results.clone();
 		this.$fontsAsHtml_prefetch = this.$fontsAsHtml.clone();
 		this.$prefetch.append(
@@ -550,7 +550,7 @@ class FontSelect {
 		writable: false,
 	});
 
-	$.fn.fontselect = (options) => {
+	$.fn.fontselect = function(options) {
 
 		const settings = {
 			style: "font-select",
@@ -576,7 +576,7 @@ class FontSelect {
 						FontSelect_Control.bibleget_settings.googlefontsapi_key +
 						"&amp;family=";
 					const $ths = this;
-					jQuery.ajax({
+					$.ajax({
 						url: "https://www.googleapis.com/webfonts/v1/webfonts",
 						data: {
 							key: FontSelect_Control.bibleget_settings.googlefontsapi_key,
