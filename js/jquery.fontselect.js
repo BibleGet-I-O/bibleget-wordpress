@@ -16,6 +16,27 @@
 
 class FontSelect {
 	static __bind = (fn, me) => (...args) => fn.apply(me, args);
+	static init = (settings) => {
+		if (typeof FontSelect_Control !== "undefined") {
+			if (
+				FontSelect_Control.hasOwnProperty("bibleget_settings") &&
+				FontSelect_Control.bibleget_settings.hasOwnProperty(
+					"googlefontsapi_key"
+				) &&
+				FontSelect_Control.bibleget_settings.googlefontsapi_key != ""
+			) {
+				settings.api =
+					"https://fonts.googleapis.com/css2?key=" +
+					FontSelect_Control.bibleget_settings.googlefontsapi_key +
+					"&amp;family=";
+				return fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${FontSelect_Control.bibleget_settings.googlefontsapi_key}`).then(response => {
+					if(response.ok) {
+						return response.json();
+					}
+				});
+			}
+		}
+	}
 	constructor( original, o, f ) {
 		this.$original = jQuery( original );
 		this.options = o;
@@ -280,7 +301,15 @@ class FontSelect {
 }
 
 
-(($) => {
+(async ($) => {
+
+	const settings = {
+		style: "font-select",
+		placeholder: "Select a font",
+		lookahead: 2,
+		api: "https://fonts.googleapis.com/css?family=",
+	};
+
 	$.fontselect = {
 		google_fonts: [
 			"Aclonica",
@@ -482,6 +511,12 @@ class FontSelect {
 		],
 	};
 
+	//console.log('length of google fonts before api call: ' + $.fontselect.google_fonts.length);
+	$.fontselect.google_fonts = await FontSelect.init(settings).then(data => {
+		return data.items.map(item => item.family.replace(/ /g, "+"));
+	});
+	//console.log('length of google fonts after api call: ' + $.fontselect.google_fonts.length);
+
 	Object.defineProperty($.fontselect, "version", {
 		value: "1.0",
 		writable: false,
@@ -551,61 +586,11 @@ class FontSelect {
 	});
 
 	$.fn.fontselect = function(options) {
-
-		const settings = {
-			style: "font-select",
-			placeholder: "Select a font",
-			lookahead: 2,
-			api: "https://fonts.googleapis.com/css?family=",
-		};
-
-		return this.each(function () {
+		return this.each(function() {
 			if (options) {
 				$.extend(settings, options);
 			}
-			if (typeof FontSelect_Control !== "undefined") {
-				if (
-					FontSelect_Control.hasOwnProperty("bibleget_settings") &&
-					FontSelect_Control.bibleget_settings.hasOwnProperty(
-						"googlefontsapi_key"
-					) &&
-					FontSelect_Control.bibleget_settings.googlefontsapi_key != ""
-				) {
-					settings.api =
-						"https://fonts.googleapis.com/css2?key=" +
-						FontSelect_Control.bibleget_settings.googlefontsapi_key +
-						"&amp;family=";
-					const $ths = this;
-					$.ajax({
-						url: "https://www.googleapis.com/webfonts/v1/webfonts",
-						data: {
-							key: FontSelect_Control.bibleget_settings.googlefontsapi_key,
-						},
-						dataType: "json",
-						type: "get",
-						success: function (data) {
-							//console.log(data);
-							const webfontList = data.items;
-							$.fontselect.google_fonts = [];
-							for (let it = 0; it < webfontList.length; it++) {
-								$.fontselect.google_fonts[it] = webfontList[it].family.replace(
-									/ /g,
-									"+"
-								);
-							}
-							//console.log('new fontselect.google_fonts:');
-							//console.log($.fontselect.google_fonts);
-							return new FontSelect($ths, settings, $.fontselect);
-						}/*,
-						error: function (jqXHR, textStatus, errorThrown) {
-							//console.log('error retrieving google fonts list :: '+textStatus+': '+errorThrown);
-						}*/
-					});
-				}
-				//console.log(bibleget_settings);
-			} else {
-				return new FontSelect(this, settings, $.fontselect);
-			}
+			return new FontSelect(this, settings, $.fontselect);
 		});
 	};
 })(jQuery);
