@@ -37,10 +37,10 @@ class FontSelect {
 			}
 		}
 	}
-	constructor( original, o, f ) {
+	constructor( original, f ) {
 		this.$original = jQuery( original );
-		this.options = o;
 		this.f = f;
+		this.options = f.settings;
 		this.active = false;
 		this.setupHtml();
 
@@ -303,13 +303,6 @@ class FontSelect {
 
 (async ($) => {
 
-	const settings = {
-		style: "font-select",
-		placeholder: "Select a font",
-		lookahead: 2,
-		api: "https://fonts.googleapis.com/css?family=",
-	};
-
 	$.fontselect = {
 		google_fonts: [
 			"Aclonica",
@@ -509,12 +502,16 @@ class FontSelect {
 			"Yeseva+One",
 			"Zeyada",
 		],
+		settings: {
+			style: "font-select",
+			placeholder: "Select a font",
+			lookahead: 2,
+			api: "https://fonts.googleapis.com/css?family=",
+		}
 	};
 
 	//console.log('length of google fonts before api call: ' + $.fontselect.google_fonts.length);
-	$.fontselect.google_fonts = await FontSelect.init(settings).then(data => {
-		return data.items.map(item => item.family.replace(/ /g, "+"));
-	});
+	$.fontselect.google_fonts = await FontSelect.init($.fontselect.settings).then( data => data.items.map( item => item.family.replace(/ /g, "+") ) );
 	//console.log('length of google fonts after api call: ' + $.fontselect.google_fonts.length);
 
 	Object.defineProperty($.fontselect, "version", {
@@ -588,9 +585,9 @@ class FontSelect {
 	$.fn.fontselect = function(options) {
 		return this.each(function() {
 			if (options) {
-				$.extend(settings, options);
+				$.extend($.fontselect.settings, options);
 			}
-			return new FontSelect(this, settings, $.fontselect);
+			return new FontSelect(this, $.fontselect);
 		});
 	};
 })(jQuery);
