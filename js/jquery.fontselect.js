@@ -224,7 +224,7 @@ class FontSelect {
 					"</li>";
 			}
 			//else{
-			//    console.log('why on earth do I not have a fontFamily property? '+idx);
+				//console.log('why on earth do I not have a fontFamily property? '+idx);
 			//}
 		}
 		h +=
@@ -515,8 +515,8 @@ class FontSelect {
 
 	//console.log('length of google fonts before api call: ' + $.fontselect.google_fonts.length);
 	$.fontselect.google_fonts = await FontSelect.init($.fontselect.settings).then( data => data.items.map( item => item.family.replace(/ /g, "+") ), reject => reject ).catch(ex => {
-		console.log('Google Font API key not detected, using fallback list...');
-		console.warn(ex);
+		//console.log('Google Font API key not detected, using fallback list...');
+		//console.warn(ex);
 	}) || google_fonts;
 	//console.log('length of google fonts after api call: ' + $.fontselect.google_fonts.length);
 
