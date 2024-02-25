@@ -170,9 +170,12 @@ add_action('plugins_loaded', 'bibleget_load_textdomain');
  * inside of our gutenberg block javascript file
  */
 function bibleget_set_script_translations() {
-	wp_set_script_translations('bibleget-gutenberg-block', 'bibleget-io');
+	$script_handle = generate_block_asset_handle( 'bibleget/bible-quote', 'editorScript' );
+	wp_set_script_translations($script_handle, 'bibleget-io');
+	//wp_set_script_translations( $script_handle, 'bibleget-io', plugin_dir_path( __FILE__ ) . 'languages' );
 }
-add_action('init', 'bibleget_set_script_translations');
+//add_action('init', 'bibleget_set_script_translations');
+add_action( 'enqueue_block_editor_assets', 'bibleget_set_script_translations' );
 
 
 function processShortcodeAttributes(&$atts) {
