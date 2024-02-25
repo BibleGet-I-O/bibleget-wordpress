@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.6
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 8.1
+Stable tag: 8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,11 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 8.2 =
+* Fix: focus lost from block controls making it almost impossible to use them
+* Enhancement: create fallback for Google Fonts when API key not used, and which works for the Font select control both in the Customizer and the Block editor
+* Enhancement: clean up js code using more arrow functions
 
 = 8.1 =
 * Fix: Font Select in Customizer was still broken after modernizing the plugin's javascript
@@ -418,6 +423,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 8.2 =
+Bugfix for controls in the Block editor which were losing focus as soon as a change was made
 
 = 8.1 =
 Bugfix for Font Select in Customizer
