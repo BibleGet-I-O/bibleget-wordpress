@@ -61,14 +61,10 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		return createElement(
 			"optgroup",
 			{ label: label },
-			options.map(function (item, index) {
+			options.map((item) => {
 				return createElement(
 					Option,
-					Object.assign(
-						{},
-						{ key: `${item.label.replace(/\s/g, "")}-${index}` },
-						item
-					)
+					item
 				);
 			})
 		);
@@ -96,24 +92,16 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				onChange: handleOnChange,
 				value: value,
 			},
-			options.map(function (item, index) {
+			options.map((item) => {
 				if ("options" in item) {
 					return createElement(
 						OptionGroup,
-						Object.assign(
-							{},
-							{ key: `${item.label.replace(/\s/g, "")}-${index}` },
-							item
-						)
+						item
 					);
 				}
 				return createElement(
 					Option,
-					Object.assign(
-						{},
-						{ key: `${item.label.replace(/\s/g, "")}-${index}` },
-						item
-					)
+					item
 				);
 			})
 		);
@@ -186,7 +174,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 	];
 
 	const fontOptions = [];
-	websafe_fonts.forEach((fontObj, idx) =>
+	websafe_fonts.forEach((fontObj) =>
 		fontOptions.push({
 			label: fontObj.fontFamily + " [websafe]",
 			value: fontObj.fontFamily,
@@ -1505,8 +1493,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					})
 						.appendTo("body")
 						.dialog({
-							close: function () {
-								$(this).dialog("destroy").remove();
+							close: () => {
+								dlg.dialog("destroy").remove();
 							},
 							dialogClass: "bibleGetSearchDlg",
 						});
@@ -1528,8 +1516,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					})
 						.appendTo("body")
 						.dialog({
-							close: function () {
-								$(this).dialog("destroy").remove();
+							close: () => {
+								dlg.dialog("destroy").remove();
 							},
 							dialogClass: "bibleGetSearchDlg",
 						});
@@ -1576,8 +1564,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 									})
 										.appendTo("body")
 										.dialog({
-											close: function () {
-												$(this).dialog("destroy").remove();
+											close: () => {
+												dlgNoResults.dialog("destroy").remove();
 											},
 											dialogClass: "bibleGetSearchDlg",
 											//position: { my: 'center', at: 'center' },
@@ -1703,7 +1691,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 													$("#searchResultsContainer").on(
 														"click",
 														"button",
-														function () {
+														(ev) => {
+															const tgt = ev.currentTarget;
 															//First check the context of the button that was clicked: control panel or searchResultsContents
 															let $filterLabel,
 																$orderbyLabel,
@@ -1711,7 +1700,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 																$FILTER_BY,
 																REFRESH = false;
 															switch (
-																$(this)
+																$(tgt)
 																	.parents(".searchResultsFlexChild")
 																	.attr("id")
 															) {
@@ -1746,7 +1735,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 																			? $("#keywordFilter").val()
 																			: "";
 
-																	switch ($(this).attr("id")) {
+																	switch ($(tgt).attr("id")) {
 																		case "ORDER_RESULTS_BY":
 																			REFRESH = true;
 																			if (
@@ -1830,24 +1819,22 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 																	break;
 																case "searchResultsContents":
 																	//alert('button was clicked! it is in the context of the searchResultsContents');
-																	//alert($(this).next().prop('tagName') );
+																	//alert($(tgt).next().prop('tagName') );
 																	if (
-																		$(this).next("input[type=hidden]").length !=
-																		0
+																		$(tgt).next("input[type=hidden]").length != 0
 																	) {
 																		//showSpinner();
-																		let currentRef = $(this)
+																		let currentRef = $(tgt)
 																			.parent("td")
 																			.next("td")
 																			.text();
 																		if (
-																			$quotesArr.includes(bookChapterVerse) ===
-																			false
+																			$quotesArr.includes(bookChapterVerse) === false
 																		) {
-																			$(this)
+																			$(tgt)
 																				.addClass("disabled")
 																				.prop("disabled", true);
-																			let $inputval = $(this)
+																			let $inputval = $(tgt)
 																				.next("input[type=hidden]")
 																				.val();
 																			let $resultsStr = decodeURIComponent(
@@ -1876,9 +1863,9 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 														}
 													);
 												},
-												close: function () {
+												close: () => {
 													$("#searchResultsContainer").off("click");
-													$(this).dialog("destroy").remove();
+													dlg.dialog("destroy").remove();
 												},
 												dialogClass: "bibleGetSearchDlg",
 												position: { my: "center top", at: "center top" },
@@ -3325,8 +3312,9 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		},
 	});
 
-	$(document).on("click", ".bibleget-popup-trigger", function () {
-		const popup_content = he.decode($(this).attr("data-popupcontent"));
+	$(document).on("click", ".bibleget-popup-trigger", (ev) => {
+		const tgt = ev.currentTarget;
+		const popup_content = he.decode($(tgt).attr("data-popupcontent"));
 		const dlg = $(
 			'<div class="bibleget-quote-div bibleget-popup">' +
 				popup_content +
@@ -3335,7 +3323,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 			autoOpen: true,
 			width: $(window).width() * 0.8,
 			maxHeight: $(window).height() * 0.8,
-			title: $(this).text(),
+			title: $(tgt).text(),
 			create: () => {
 				// style fix for WordPress admin
 				$(".ui-dialog-titlebar-close").addClass("ui-button");
@@ -3344,7 +3332,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				//autodestruct so we don't clutter with multiple dialog instances
 				dlg.dialog("destroy");
 				$(".bibleget-quote-div.bibleget-popup").remove();
-			},
+			}
 		});
 		return false;
 	});
