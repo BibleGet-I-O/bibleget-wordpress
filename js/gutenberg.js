@@ -9,7 +9,7 @@ const BGET = BibleGetGlobal.BGETConstants;
 
 const getKeyByValue = (object, value) => Object.keys(object).find((key) => object[key] === value);
 
-((blocks, element, i18n, editor, components, ServerSideRender, $) => {
+(async (blocks, element, i18n, editor, components, ServerSideRender, $) => {
 	//define the same attributes as the shortcode, but now in JSON format
 	const { registerBlockType } = blocks; //Blocks API
 	const { createElement, Fragment, useState } = element; //React.createElement
@@ -120,7 +120,10 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 	};
 
 	const websafe_fonts = [
-		{ fontFamily: "Arial", fallback: "Helvetica", genericFamily: "sans-serif" },
+		{
+			fontFamily: "Arial",
+			fallback: "Helvetica",
+			genericFamily: "sans-serif" },
 		{
 			fontFamily: "Arial Black",
 			fallback: "Gadget",
@@ -136,8 +139,15 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 			fallback: "Courier",
 			genericFamily: "monospace",
 		},
-		{ fontFamily: "Georgia", genericFamily: "serif" },
-		{ fontFamily: "Impact", fallback: "Charcoal", genericFamily: "sans-serif" },
+		{
+			fontFamily: "Georgia",
+			genericFamily: "serif"
+		},
+		{
+			fontFamily:"Impact",
+			fallback: "Charcoal",
+			genericFamily: "sans-serif"
+		},
 		{
 			fontFamily: "Lucida Console",
 			fallback: "Monaco",
@@ -153,7 +163,11 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 			fallback: "Palatino",
 			genericFamily: "serif",
 		},
-		{ fontFamily: "Tahoma", fallback: "Geneva", genericFamily: "sans-serif" },
+		{
+			fontFamily: "Tahoma",
+			fallback: "Geneva",
+			genericFamily: "sans-serif"
+		},
 		{
 			fontFamily: "Times New Roman",
 			fallback: "Times",
@@ -164,7 +178,11 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 			fallback: "Helvetica",
 			genericFamily: "sans-serif",
 		},
-		{ fontFamily: "Verdana", fallback: "Geneva", genericFamily: "sans-serif" },
+		{
+			fontFamily: "Verdana",
+			fallback: "Geneva",
+			genericFamily: "sans-serif"
+		}
 	];
 
 	const fontOptions = [];
@@ -183,6 +201,9 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		&& BibleGetGlobal.GFonts.items.length > 0
 	) {
 		BibleGetGlobal.GFonts.items.forEach(value => fontOptions.push({ label: value.family, value: value.family.replace(/ /g,"+") }) );
+	} else {
+		const googlefonts_fallback = await fetch('../wp-content/plugins/bibleget-io/js/googlefonts-fallback.json').then(result => result.json());
+		googlefonts_fallback.forEach(value => fontOptions.push({ label: value.replace(/\+/g," "), value: value }));
 	}
 
 	const FontSelectCtl = (props) => {
