@@ -3,12 +3,11 @@
     "apiVersion": 3,
     "name": "bibleget/bible-quote",
     "title": "Bible quote",
-    "category": "text",
-    "parent": [ "core/group" ],
+    "category": "widgets",
     "icon": "book-alt",
     "description": "Insert Bible quotes from a choice of Bible versions into your articles or pages",
     "keywords": [ "bible", "quote", "citation", "verses", "gospel" ],
-    "version": "8.2",
+    "version": "8.3",
     "textdomain": "bibleget-io",
     "attributes": {
         "PARAGRAPHSTYLES_FONTFAMILY": {
