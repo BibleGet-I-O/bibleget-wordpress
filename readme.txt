@@ -7,7 +7,7 @@ Tags: bible, block, shortcode, quote, citation, verses, bibbia, citazione, verse
 Requires at least: 5.6
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 8.2
+Stable tag: 8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 # must be lowercase "screenshot-#.ext" where # corresponds to the list number above
 
 == Changelog ==
+
+= 8.3 =
+* Fix: Google Fonts preview data was not persisting between updates
 
 = 8.2 =
 * Fix: focus lost from block controls making it almost impossible to use them
@@ -423,6 +426,9 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 
 
 == Upgrade Notice ==
+
+= 8.3 =
+Allow Google Fonts preview data to persist between plugin updates
 
 = 8.2 =
 Bugfix for controls in the Block editor which were losing focus as soon as a change was made
