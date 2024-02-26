@@ -89,10 +89,10 @@ if (class_exists ( 'WP_Customize_Control' )) {
 					plugins_url ( '../css/fontselect-control.css', __FILE__ ) // Define the path to the CSS file
 					);
 
-			if( file_exists( plugin_dir_path( __FILE__ ) . '../css/gfonts_preview/gfonts_preview.css'  ) ){
-				wp_enqueue_style( 'bibleget-fontselect-preview',
-					plugins_url ('../css/gfonts_preview/gfonts_preview.css', __FILE__ )
-				);
+			$gfontsDir = str_replace('\\','/', wp_upload_dir()["basedir"] ) . "/gfonts_preview/";
+			$gfontsPreviewCSS = esc_url( wp_upload_dir()["baseurl"] . '/gfonts_preview/css/gfonts_preview.css' );
+			if( file_exists( $gfontsDir . 'css/gfonts_preview.css' ) ){
+				wp_enqueue_style( 'bibleget-fontselect-preview', $gfontsPreviewCSS );
 			}
 			else{
 				echo '<!-- gfonts_preview.css not found -->';

@@ -143,6 +143,17 @@ function BibleGet_on_uninstall() {
 		//echo 'cacheNotFlushed';
 	}
 	*/
+	if (get_filesystem_method() === 'direct') {
+		$gfontsDir = str_replace('\\','/', wp_upload_dir()["basedir"] ) . "/gfonts_preview/";
+		$creds     = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
+		/* initialize the API */
+		if (WP_Filesystem($creds)) {
+			global $wp_filesystem;
+			if ($wp_filesystem->is_dir($gfontsDir)) {
+				$wp_filesystem->rmdir($gfontsDir,true);
+			}
+		}
+	}
 }
 
 
@@ -666,10 +677,10 @@ function bibleGetGutenbergScripts($hook) {
 			wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
 		}
 	}
-	if( file_exists( plugin_dir_path( __FILE__ ) . 'css/gfonts_preview/gfonts_preview.css' ) ){
-		wp_enqueue_style( 'bibleget-fontselect-preview',
-			plugins_url ('css/gfonts_preview/gfonts_preview.css', __FILE__ )
-		);
+	$gfontsPreviewCSS = str_replace('\\','/', wp_upload_dir()["basedir"] ) . "/gfonts_preview/css/gfonts_preview.css";
+	$gfontsPreviewURL = wp_upload_dir()["baseurl"] . "/gfonts_preview/css/gfonts_preview.css";
+	if( file_exists( $gfontsPreviewCSS ) ){
+		wp_enqueue_style( 'bibleget-fontselect-preview', $gfontsPreviewURL );
 	}
 }
 

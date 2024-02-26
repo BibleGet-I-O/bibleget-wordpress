@@ -181,7 +181,7 @@ class BibleGetSettingsPage
 		if ($lang === null) {
 			$lang = $this->locale;
 		}
-		if (strlen($lang) == 2) {
+		if (strlen($lang) === 2) {
 			//we have a two-letter ISO code, we need to get the full language name in English
 			if (extension_loaded('intl') === true) {
 				$lang = Locale::getDisplayLanguage($lang, "en");
@@ -264,7 +264,7 @@ class BibleGetSettingsPage
 
 	public function admin_print_styles($hook)
 	{
-		if ($hook == 'settings_page_bibleget-settings-admin') {
+		if ($hook === 'settings_page_bibleget-settings-admin') {
 			wp_enqueue_style('admin-css', plugins_url('../css/admin.css', __FILE__));
 		}
 	}
@@ -288,35 +288,40 @@ class BibleGetSettingsPage
 		wp_localize_script('admin-js', 'bibleGetOptionsFromServer', $obj);
 		wp_enqueue_script('admin-js');
 
-		if ($this->gfontsAPIkeyCheckResult == "SUCCESS") {
+		if ($this->gfontsAPIkeyCheckResult === "SUCCESS") {
 			//We only want the transient to be set from the bibleget settings page, so we wait until now
 			// instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
 			set_transient(md5($this->options['googlefontsapi_key']), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS); // 90 giorni
 
-			$plugin_path = "";
 			// bibleGetWriteLog("about to initialize creation of admin page...");
 			if (get_filesystem_method() === 'direct') {
-				$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
+				$gfontsDir = str_replace('\\','/', wp_upload_dir()["basedir"] ) . "/gfonts_preview/";
+				$creds     = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
 				/* initialize the API */
 				if (WP_Filesystem($creds)) {
 					global $wp_filesystem;
-					$plugin_path = str_replace('\\','/', plugin_dir_path( __FILE__ ) );
-					if (!$wp_filesystem->is_dir($plugin_path . '../gfonts_preview/')) {
+					if (!$wp_filesystem->is_dir($gfontsDir)) {
 						/* directory didn't exist, so let's create it */
-						if ($wp_filesystem->mkdir($plugin_path . '../gfonts_preview/') === false) {
+						if ($wp_filesystem->mkdir($gfontsDir) === false) {
 							$this->gfontsAPI_errors[] = "Could not create directory gfonts_preview";
-						}
-					}
-					if (!$wp_filesystem->is_dir($plugin_path . '../css/gfonts_preview/')) {
-						/* directory didn't exist, so let's create it */
-						if ($wp_filesystem->mkdir($plugin_path . '../css/gfonts_preview/') === false) {
-							$this->gfontsAPI_errors[] = "Could not create directory css/gfonts_preview";
+						} else {
+							//let's make sure the necessary subfolders are also created
+							if(!$wp_filesystem->is_dir($gfontsDir . "ttf/")) {
+								if( $wp_filesystem->mkdir($gfontsDir . "ttf/") === false ) {
+									$this->gfontsAPI_errors[] = "Could not create directory gfonts_preview/ttf";
+								}
+							}
+							if(!$wp_filesystem->is_dir($gfontsDir . "css/")) {
+								if( $wp_filesystem->mkdir($gfontsDir . "css/") === false ) {
+									$this->gfontsAPI_errors[] = "Could not create directory gfonts_preview/css";
+								}
+							}
 						}
 					}
 
 					//let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
 					if ($wp_filesystem->put_contents(
-						$plugin_path . '../gfonts_preview/gfontsWeblist.json',
+						$gfontsDir . 'gfontsWeblist.json',
 						json_encode($this->gfonts_weblist),
 						FS_CHMOD_FILE // predefined mode settings for WP files
 					) === false) {
@@ -329,7 +334,19 @@ class BibleGetSettingsPage
 				$this->gfontsAPI_errors[] = "You do not have direct access permissions to the wordpress filesystem";
 			}
 			if(count($this->gfontsAPI_errors) > 0 ){
-				add_action( 'admin_notices', function(){ printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( 'notice notice-error' ), esc_html( __( 'Impossible to write data to the BibleGet plugin directory, please check permissions!', 'bibleget-io' ) ) ); } );
+				add_action(
+					'admin_notices',
+					function(){ 
+						printf(
+							'<div class="%1$s"><p>%2$s</p></div>',
+							esc_attr( 'notice notice-error' ),
+							esc_html(
+								__( 'Impossible to write data to the BibleGet plugin directory, please check permissions!', 'bibleget-io' )
+								. "\n" . implode("\n",$this->gfontsAPI_errors)
+							)
+						);
+					}
+				);
 			}
 			wp_enqueue_script('jquery-ui-progressbar');
 			if (!wp_style_is('jquery-ui-css', 'registered') || !wp_style_is('jquery-ui-css', 'enqueued')) {
@@ -570,7 +587,7 @@ class BibleGetSettingsPage
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
 					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __("CURL ERROR WHEN SENDING REQUEST", "bibleget-io") . '</span><br />';
 					foreach ($this->gfontsAPI_errors as $er) {
-						if ($er == 403) {
+						if ($er === 403) {
 							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
 							echo __("This server's IP address has not been given access to the Google Fonts API using this key.", "bibleget-io");
 							echo " " . __("Please verify that access has been given to the correct IP addresses.", "bibleget-io");
@@ -658,12 +675,12 @@ class BibleGetSettingsPage
 					}
 					$response = curl_exec($ch);
 					$status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-					if ($response && !curl_errno($ch) && $status == 200) {
+					if ($response && !curl_errno($ch) && $status === 200) {
 						//let's see what was returned, and if it's what we're looking for
 						$json_response = json_decode($response);
 						if ($json_response !== null && json_last_error() === JSON_ERROR_NONE) {
 							//So far so good, let's keep these results for other functions to access
-							if (property_exists($json_response, "kind") && $json_response->kind == "webfonts#webfontList" && property_exists($json_response, "items")) {
+							if (property_exists($json_response, "kind") && $json_response->kind === "webfonts#webfontList" && property_exists($json_response, "items")) {
 								$this->gfonts_weblist = $json_response;
 								$result = "SUCCESS";
 							}
@@ -679,7 +696,7 @@ class BibleGetSettingsPage
 							$this->gfontsAPI_errors[] = curl_error($ch);
 						}
 						if ($status != 200) {
-							if ($status == 403) {
+							if ($status === 403) {
 								$this->gfontsAPI_errors[] = $status;
 							} else {
 								/* translators: refers to the status of the http response during communication with the Google Fonts API */
@@ -722,17 +739,25 @@ class BibleGetSettingsPage
 		$familyurlname      = "";
 		$familyfilename     = "";
 		$errorinfo          = [];
-		$gfontsDir          = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "../gfonts_preview/";
+		$gfontsDir          = str_replace('\\','/', wp_upload_dir()["basedir"] ) . "/gfonts_preview/";
+		$gfontsWeblistFile  = $gfontsDir . "gfontsWeblist.json";
 		$gfontsWeblist      = new stdClass();
 		$returnInfo         = new stdClass();
 
-		if (file_exists($gfontsDir . "gfontsWeblist.json")) {
-			$gfontsWeblistFile = file_get_contents($gfontsDir . "gfontsWeblist.json");
-			$gfontsWeblist = json_decode($gfontsWeblistFile);
+		if (file_exists($gfontsWeblistFile)) {
+			$gfontsWeblistFileContents = file_get_contents($gfontsWeblistFile);
+			$gfontsWeblist = json_decode($gfontsWeblistFileContents);
 		}
 		if (
-			isset($_POST["gfontsCount"], $_POST["batchLimit"], $_POST["startIdx"], $_POST["lastBatchLimit"], $_POST["numRuns"], $_POST["currentRun"])
-			&& property_exists($gfontsWeblist, "items")) {
+			isset(
+				$_POST["gfontsCount"],
+				$_POST["batchLimit"],
+				$_POST["startIdx"],
+				$_POST["lastBatchLimit"],
+				$_POST["numRuns"],
+				$_POST["currentRun"]
+			) && property_exists($gfontsWeblist, "items"))
+		{
 			//$gfontsCount = intval($_POST["gfontsCount"]);
 			$batchLimit = intval($_POST["batchLimit"]);
 			$startIdx = intval($_POST["startIdx"]);
@@ -747,13 +772,11 @@ class BibleGetSettingsPage
 			wp_die();
 		}
 
-		$plugin_path = "";
 		if (get_filesystem_method() === 'direct') {
 			$creds = request_filesystem_credentials(site_url() . '/wp-admin/', '', false, false, array());
 			/* initialize the API */
 			if (WP_Filesystem($creds)) {
 				global $wp_filesystem;
-				$plugin_path = str_replace('\\','/', plugin_dir_path( __FILE__ ) );
 
 				foreach ($gfontsWeblist->items as $idx => $googlefont) {
 					if ($idx >= $startIdx && $idx < ($startIdx + $batchLimit)) {
@@ -763,7 +786,7 @@ class BibleGetSettingsPage
 						$errorinfo[] = "Now dealing with font-family " . $thisfamily;
 						$fnttype = 'ttf'; //'woff', 'woff2', 'ttf'
 
-						if (!file_exists($gfontsDir . "{$familyfilename}.{$fnttype}")) { //$idx < $idxlimit &&
+						if (!file_exists($gfontsDir . "ttf/{$familyfilename}.{$fnttype}")) { //$idx < $idxlimit &&
 							$ch2 = curl_init("https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}");
 							curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, TRUE);
 							curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 2);
@@ -779,12 +802,12 @@ class BibleGetSettingsPage
 							$response2 = curl_exec($ch2);
 							$status2 = (int) curl_getinfo($ch2, CURLINFO_HTTP_CODE);
 							$returnInfo->httpStatus2 = $status2;
-							if ($response2 && !curl_errno($ch2) && $status2 == 200) {
-								if (preg_match('/url\((.*?)\)/', $response2, $match) == 1) {
+							if ($response2 && !curl_errno($ch2) && $status2 === 200) {
+								if (preg_match('/url\((.*?)\)/', $response2, $match) === 1) {
 									$thisfonturl = $match[1];
 									$errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
 
-									//                         $ch3_headers = [];
+									//$ch3_headers = [];
 									$ch3 = curl_init($thisfonturl);
 									curl_setopt($ch3, CURLOPT_SSL_VERIFYPEER, TRUE);
 									curl_setopt($ch3, CURLOPT_SSL_VERIFYHOST, 2);
@@ -801,27 +824,28 @@ class BibleGetSettingsPage
 										curl_setopt($ch3, CURLOPT_AUTOREFERER, TRUE);
 									}
 									$response3 = curl_exec($ch3);
-									//                $errorinfo[] = print_r($ch3_headers,TRUE);
+									//$errorinfo[] = print_r($ch3_headers,TRUE);
 									$status3 = (int) curl_getinfo($ch3, CURLINFO_HTTP_CODE);
 									$returnInfo->httpStatus3 = $status3;
-									if ($response3 && !curl_errno($ch3) && $status3 == 200) {
+									if ($response3 && !curl_errno($ch3) && $status3 === 200) {
 										if ($wp_filesystem) {
-											//if(!file_exists($plugin_path . "../gfonts_preview/{$familyfilename}.{$fnttype}") ){
+											//if(!file_exists($gfontsDir . "ttf/{$familyfilename}.{$fnttype}") ){
 											if (!$wp_filesystem->put_contents(
-												$gfontsDir . "{$familyfilename}.{$fnttype}",
+												$gfontsDir . "ttf/{$familyfilename}.{$fnttype}",
 												$response3,
 												FS_CHMOD_FILE
 											)) {
-												$errorinfo[] = "Cannot write file " . $plugin_path . "../gfonts_preview/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
+												$errorinfo[] = "Cannot write file " . $gfontsDir . "ttf/{$familyfilename}.{$fnttype} with wordpress filesystem api, sorry";
 											} else {
-												$gfont_stylesheet = preg_replace('/url\((.*?)\)/', 'url(' . esc_url(plugins_url("../gfonts_preview/{$familyfilename}.{$fnttype}", __FILE__)) . ')', $response2);
-												if (!file_exists($plugin_path . "../css/gfonts_preview/{$familyfilename}.css")) {
+												$uploadURL = wp_upload_dir()["baseurl"];
+												$gfont_stylesheet = preg_replace('/url\((.*?)\)/', 'url(' . esc_url("{$uploadURL}/gfonts_preview/ttf/{$familyfilename}.{$fnttype}") . ')', $response2);
+												if (!file_exists($gfontsDir . "css/{$familyfilename}.css")) {
 													if (!$wp_filesystem->put_contents(
-														$plugin_path . "../css/gfonts_preview/{$familyfilename}.css",
+														$gfontsDir . "css/{$familyfilename}.css",
 														$gfont_stylesheet,
 														FS_CHMOD_FILE
 													)) {
-														$errorinfo[] = "Cannot write file " . $plugin_path . "../css/gfonts_preview/{$familyfilename}.css with wordpress filesystem api, sorry";
+														$errorinfo[] = "Cannot write file " . $gfontsDir . "css/{$familyfilename}.css with wordpress filesystem api, sorry";
 													}
 												}
 											}
@@ -862,7 +886,7 @@ class BibleGetSettingsPage
 		}
 
 
-		//         echo print_r($errorinfo);
+		//echo print_r($errorinfo);
 		if (($startIdx + ($batchLimit - 1)) < ($totalFonts - 1)) {
 			$returnInfo->state = "RUN_PROCESSED";
 			$returnInfo->run = $currentRun;
@@ -870,9 +894,8 @@ class BibleGetSettingsPage
 			$returnInfo->state = "COMPLETE";
 
 			//LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
-			$cssdirectory = str_replace('\\','/', plugin_dir_path( __FILE__ ) ) . "../css/gfonts_preview";
+			$cssdirectory = $gfontsDir . "css";
 			$cssfiles = array_diff(scandir($cssdirectory), array('..', '.', 'gfonts_preview.css'));
-
 			$minifier = new MatthiasMullie\Minify\CSS($cssdirectory . "/" . (array_shift($cssfiles)));
 			while (count($cssfiles) > 0) {
 				$minifier->add($cssdirectory . "/" . (array_shift($cssfiles)));
