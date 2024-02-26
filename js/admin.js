@@ -63,7 +63,7 @@ jQuery(document).ready(($) => {
 				jQuery("#bibleget_ajax_spinner").hide();
 			},
 			success: (returndata) => {
-				if (returndata == "datarefreshed") {
+				if (returndata === "datarefreshed") {
 					jQuery("#bibleget-settings-notification")
 						.append(
 							'Data from server retrieved successfully, now refreshing page... <span id="bibleget-countdown">3 secs...</span>'
@@ -72,7 +72,7 @@ jQuery(document).ready(($) => {
 							let seconds = 3;
 							let interval1 = setInterval(() => {
 								jQuery("#bibleget-countdown").text(
-									--seconds + (seconds == 1 ? " sec..." : " secs...")
+									--seconds + (seconds === 1 ? " sec..." : " secs...")
 								);
 							}, 1000);
 							setTimeout(() => {
@@ -113,7 +113,7 @@ jQuery(document).ready(($) => {
 				jQuery("#bibleget_ajax_spinner").hide();
 			},
 			success: (returndata) => {
-				if (returndata == "cacheflushed") {
+				if (returndata === "cacheflushed") {
 					jQuery("#bibleget-settings-notification")
 						.append("Bible quotes cache emptied successfully")
 						.fadeIn("slow");
@@ -145,7 +145,7 @@ jQuery(document).ready(($) => {
 		gfontsBatch.job.hasOwnProperty("gfontsPreviewJob") &&
 		gfontsBatch.job.gfontsPreviewJob === true &&
 		gfontsBatch.job.hasOwnProperty("gfontsWeblist") &&
-		typeof gfontsBatch.job.gfontsWeblist == "object" &&
+		typeof gfontsBatch.job.gfontsWeblist === "object" &&
 		gfontsBatch.job.gfontsWeblist.hasOwnProperty("items")
 	) {
 		//console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
@@ -159,7 +159,7 @@ jQuery(document).ready(($) => {
 				.append(
 					$("<div>", {
 						html:
-							"!!! Impossible to write data to the BibleGet plugin directory, please check permissions!",
+							"!!! Impossible to write data to the BibleGet plugin directory, please check permissions!<br>" + wpFsErrors.join('<br>'),
 						style:
 							"color: white; background-color: red; padding: 3px 9px; display: inline-block; font-weight: bold; font-family: sans-serif;",
 					})
@@ -185,6 +185,8 @@ jQuery(document).ready(($) => {
 				//console.log('gfontsCount = '+gfontsCount);
 				//console.log('batchLimit = '+batchLimit);
 			}
+			//We actually need to run one more time than the batchlimit, in order for the minify stage to take place
+			numRuns++;
 
 			//$gfontsBatchRunProgressbarOverlay, $gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global variables so don't use "var" here
 			$gfontsBatchRunProgressbarOverlay = jQuery("<div>", {
@@ -323,9 +325,9 @@ const gfontsBatchRun = (postdata) => {
 					//console.log(returndataJSON.errorinfo);
 					if (
 						(returndataJSON.hasOwnProperty("httpStatus2") &&
-							returndataJSON.httpStatus2 == 504) ||
+							returndataJSON.httpStatus2 === 504) ||
 						(returndataJSON.hasOwnProperty("httpStatus3") &&
-							returndataJSON.httpStatus3 == 504)
+							returndataJSON.httpStatus3 === 504)
 					) {
 						//there was a timeout at some point during the communication with the Google Fonts server
 						//we haven't finished yet, but let's try not to get stuck
@@ -367,7 +369,7 @@ const gfontsBatchRun = (postdata) => {
 						case "COMPLETE":
 							$gfontsBatchRunProgressbar.progressbar("value", 100);
 
-							// if (thisRun == postdata.numRuns) {
+							// if (thisRun === postdata.numRuns) {
 							//   console.log("gfontsBatchRun has finished the job!");
 							// } else {
 							//   console.log(
@@ -460,14 +462,14 @@ const bibleGetForceRefreshGFapiResults = () => {
 	//send ajax request to the server to have the transient deleted
 	//console.log('we should have an nonce for this action: '+gfontsBatch.gfontsRefreshNonce);
 	if (
-		typeof gfontsBatch != "undefined" &&
-		typeof gfontsBatch == "object" &&
+		typeof gfontsBatch !== "undefined" &&
+		typeof gfontsBatch === "object" &&
 		gfontsBatch.hasOwnProperty("job") &&
-		typeof gfontsBatch.job == "object" &&
+		typeof gfontsBatch.job === "object" &&
 		gfontsBatch.job.hasOwnProperty("gfontsRefreshNonce") &&
-		gfontsBatch.job.gfontsRefreshNonce != "" &&
+		gfontsBatch.job.gfontsRefreshNonce !== "" &&
 		gfontsBatch.job.hasOwnProperty("gfontsApiKey") &&
-		gfontsBatch.job.gfontsApiKey != ""
+		gfontsBatch.job.gfontsApiKey !== ""
 	) {
 		const postProps = {
 			action: "bibleget_refresh_gfonts",
