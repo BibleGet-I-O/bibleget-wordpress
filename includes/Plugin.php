@@ -41,7 +41,7 @@ class Plugin {
 	public static function on_uninstall() {
 		// Check if we have a Google Fonts API key transient, if so remove it.
 		$bibleget_options = get_option( 'bibleget_settings' );
-		if ( isset( $bibleget_options['googlefontsapi_key'] ) && $bibleget_options['googlefontsapi_key'] !== '' ) {
+		if ( isset( $bibleget_options['googlefontsapi_key'] ) && '' !== $bibleget_options['googlefontsapi_key'] ) {
 			if ( get_transient( md5( $bibleget_options['googlefontsapi_key'] ) ) ) {
 				delete_transient( md5( $bibleget_options['googlefontsapi_key'] ) );
 			}
@@ -104,7 +104,11 @@ class Plugin {
 		// wp_set_script_translations( $script_handle, 'bibleget-io', "bibleget-io/languages" );
 	}
 
-
+	/**
+	 * Process shortcode attributes
+	 *
+	 * @param array $atts Attributes defined on the shortcode.
+	 */
 	private static function process_shortcode_attributes( &$atts ) {
 		// retrieve all layout options based on BibleGet_Properties, and use defaults from there,
 		// so that shortcode Bible quotes will be consistent with Gutenberg block Bible quotes.
@@ -153,17 +157,25 @@ class Plugin {
 		return $bget;
 	}
 
+	/**
+	 * Ensure that indexes have been set for each of the given Bible versions
+	 *
+	 * @param array $versions Current supported Bible versions.
+	 */
 	private static function ensure_indexes_set( $versions ) {
 		foreach ( $versions as $version ) {
-			if ( get_option( 'bibleget_' . $version . 'IDX' ) === false ) {
+			if ( false === get_option( 'bibleget_' . $version . 'IDX' ) ) {
 				self::set_options();
 			}
 		}
 	}
 
+	/**
+	 * Ensure that we have set indexes for Bible books
+	 */
 	private static function ensure_biblebooks_set() {
 		for ( $i = 0; $i < 73; $i++ ) {
-			if ( get_option( 'bibleget_biblebooks' . $i ) === false ) {
+			if ( false === get_option( 'bibleget_biblebooks' . $i ) ) {
 				self::set_options();
 			}
 		}
@@ -176,9 +188,9 @@ class Plugin {
 	 * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
 	 * [bibleget]Matthew1:1-5[/bibleget]
 	 *
-	 * @param array  $atts
-	 * @param string $content
-	 * @param string $tag
+	 * @param array  $atts Shortcode attributes.
+	 * @param string $content Shortcode content between opening and closing tag.
+	 * @param string $tag Shortcode tag.
 	 */
 	public static function shortcode( $atts = array(), $content = null, $tag = '' ) {
 		// add possibility of using "versions" parameter instead of "version".
@@ -204,9 +216,9 @@ class Plugin {
 			$atts[ strtoupper( $key ) ] = $value;
 		}
 
-		if ( $atts['FORCEVERSION'] !== true ) {
+		if ( true !== $atts['FORCEVERSION'] ) {
 			foreach ( $atts['VERSION'] as $version ) {
-				if ( ! in_array( $version, $validversions ) ) {
+				if ( ! in_array( $version, $validversions, true ) ) {
 					$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
 					/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
 					$output = '<span style="color:Red;font-weight:bold;">' . sprintf( __( 'The requested version "%1$s" is not valid, please check the list of valid versions in the <a href="%2$s">settings page</a>', 'bibleget-io' ), $version, $optionsurl ) . '</span>';
@@ -215,7 +227,7 @@ class Plugin {
 			}
 		}
 
-		if ( $content !== null && $content !== '' ) {
+		if ( null !== $content && '' !== $content ) {
 			$queries = self::bibleget_query_clean( $content );
 		} else {
 			$queries = self::bibleget_query_clean( $atts['QUERY'] );
@@ -294,7 +306,7 @@ class Plugin {
 			$errors  = $xpath->query( '//div[contains(@class,"errors")]' )->item( 0 );
 			$info    = $xpath->query( '//input[contains(@class,"BibleGetInfo")]' )->item( 0 );
 
-			if ( $atts['LAYOUTPREFS_SHOWBIBLEVERSION'] === false && $results !== false ) {
+			if ( false === $atts['LAYOUTPREFS_SHOWBIBLEVERSION'] && false !== $results ) {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
@@ -302,7 +314,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN['LEFT'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN['LEFT'] && false !== $results ) {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
@@ -311,7 +323,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] !== BGET::POS['TOP'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] !== BGET::POS['TOP'] && false !== $results ) {
 				$non_default_layout  = true;
 				$bible_version_els   = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				$bible_version_cnt   = $bible_version_els->count();
@@ -336,7 +348,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !== BGET::WRAP['NONE'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !== BGET::WRAP['NONE'] && false !== $results ) {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
@@ -353,7 +365,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] !== BGET::ALIGN['LEFT'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] !== BGET::ALIGN['LEFT'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -362,7 +374,7 @@ class Plugin {
 				}
 			}
 
-			if ( ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT['BIBLELANG'] ) && $results !== false ) {
+			if ( ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT['BIBLELANG'] ) && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				if ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['USERLANG'] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['USERLANGABBREV'] ) {
@@ -375,7 +387,7 @@ class Plugin {
 						// get the index of the current language from the available languages
 						$biblebookslangs = get_option( 'bibleget_languages' );
 						$currentLangIdx  = array_search( $language_name, $biblebookslangs );
-						if ( $currentLangIdx === false ) {
+						if ( false === $currentLangIdx ) {
 							$currentLangIdx = array_search( 'English', $biblebookslangs );
 						}
 						$lclbook         = trim( explode( '|', $jsbook[ $currentLangIdx ][0] )[0] );
@@ -412,7 +424,7 @@ class Plugin {
 			=> if pos is bottominline it will change the p to a span and then we won't know what to look for
 			=> if we have already wrapped then the fullreference will be appended to the parentheses or the brackets!
 			*/
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] === true && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] === true && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -431,7 +443,7 @@ class Plugin {
 			}
 
 			/* Make sure to deal with wrap before you deal with pos, because if pos is bottominline it will change the p to a span and then we won't know what to look for */
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] !== BGET::WRAP['NONE'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] !== BGET::WRAP['NONE'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -448,7 +460,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS['TOP'] && $results !== false ) {
+			if ( $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS['TOP'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				switch ( $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] ) {
@@ -470,7 +482,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_SHOWVERSENUMBERS'] === BGET::VISIBILITY['HIDE'] && $results !== false ) {
+			if ( BGET::VISIBILITY['HIDE'] === $atts['LAYOUTPREFS_SHOWVERSENUMBERS'] && false !== $results ) {
 				$non_default_layout = true;
 				$verse_number_els   = $xpath->query( '//span[contains(@class,"verseNum")]' );
 				foreach ( $verse_number_els as $verse_number_el ) {
@@ -479,22 +491,22 @@ class Plugin {
 			}
 
 			// If any of the Layout options were not the default options, then we need to update our $output with the new html layout.
-			if ( $non_default_layout === true ) {
+			if ( true === $non_default_layout ) {
 				$output = $dom_document->saveHTML( $results );
-				if ( $errors !== null ) {
+				if ( null !== $errors ) {
 					$output .= $dom_document->saveHTML( $errors );
 				}
-				if ( $info !== null ) {
+				if ( null !== $info ) {
 					$output .= $dom_document->saveHTML( $info );
 				}
 			}
 		}
 
-		if ( $atts['POPUP'] === true ) {
+		if ( true === $atts['POPUP'] ) {
 			wp_enqueue_script( 'jquery-ui-dialog' );
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 			wp_enqueue_style( 'bibleget-popup', plugins_url( '../css/popup.css', __FILE__ ) );
-			if ( $content !== null && $content !== '' ) {
+			if ( null !== $content && '' !== $content ) {
 				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars( $output ) . '">' . $content . '</a>';
 			} else {
 				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars( $output ) . '">' . $atts['QUERY'] . '</a>';
@@ -650,10 +662,10 @@ class Plugin {
 		} elseif ( $atts['PREFERORIGIN'] === BGET::PREFERORIGIN['HEBREW'] ) {
 			$finalquery .= '&preferorigin=HEBREW';
 		}
-		if ( $atts['FORCEVERSION'] === true ) {
+		if ( true === $atts['FORCEVERSION'] ) {
 			$finalquery .= '&forceversion=true';
 		}
-		if ( $atts['FORCECOPYRIGHT'] === true ) {
+		if ( true === $atts['FORCECOPYRIGHT'] ) {
 			$finalquery .= '&forcecopyright=true';
 		}
 		return $finalquery;
@@ -680,7 +692,7 @@ class Plugin {
 		}
 		$validversions = array_keys( $vversions );
 		// echo "<div style=\"border:10px solid Blue;\">".print_r($validversions)."</div>";
-		if ( $atts['FORCEVERSION'] !== true ) {
+		if ( true !== $atts['FORCEVERSION'] ) {
 			foreach ( $atts['VERSION'] as $version ) {
 				if ( ! in_array( $version, $validversions ) ) {
 					$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
@@ -720,7 +732,7 @@ class Plugin {
 
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
-		if ( ini_get( 'open_basedir' ) === false ) {
+		if ( false === ini_get( 'open_basedir' ) ) {
 			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
 		}
@@ -742,7 +754,7 @@ class Plugin {
 				$errorshtml = new \DOMDocument();
 				$errorshtml->loadHTML( '<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>' . $matches[0][0] . '</body>' );
 				$error_rows = $errorshtml->getElementsByTagName( 'tr' );
-				if ( $error_rows !== null && $error_rows->length > 0 ) {
+				if ( null !== $error_rows && $error_rows->length > 0 ) {
 					$errs = get_option( 'bibleget_error_admin_notices', array() );
 					foreach ( $error_rows as $error_row ) {
 						$errormessage = self::get_elements_by_class( $error_row, 'td', 'errMessageVal' );
@@ -863,7 +875,7 @@ class Plugin {
 
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
-		if ( ini_get( 'open_basedir' ) === false ) {
+		if ( false === ini_get( 'open_basedir' ) ) {
 			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
 		}
@@ -1127,7 +1139,7 @@ class Plugin {
 		curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 		curl_setopt( $ch, CURLOPT_POST, 1 );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request );
-		if ( ini_get( 'open_basedir' ) === false ) {
+		if ( false === ini_get( 'open_basedir' ) ) {
 			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
 		}
