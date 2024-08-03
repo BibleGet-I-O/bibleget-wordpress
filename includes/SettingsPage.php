@@ -106,7 +106,7 @@ class SettingsPage {
 				// get two letter ISO code from the english language name
 				$biblebooksLocale = array_search( $biblebookslang, LangCodes::ISO_639_1 );
 				// get the translated display name that corresponds to the two letter ISO code
-				$lang = Locale::getDisplayLanguage( $biblebooksLocale, $this->locale );
+				$lang = \Locale::getDisplayLanguage( $biblebooksLocale, $this->locale );
 				array_push( $biblebookslangsArr, $lang );
 			} else { // and if we can't get the two letter ISO code for this language, we will just use the english version we have
 				array_push( $biblebookslangsArr, $biblebookslang );
@@ -193,7 +193,7 @@ class SettingsPage {
 		if ( strlen( $lang ) === 2 ) {
 			// we have a two-letter ISO code, we need to get the full language name in English
 			if ( extension_loaded( 'intl' ) === true ) {
-				$lang = Locale::getDisplayLanguage( $lang, 'en' );
+				$lang = \Locale::getDisplayLanguage( $lang, 'en' );
 			} else {
 				$lang = LangCodes::ISO_639_1[ $lang ]; // this gives the english correspondent of the two letter ISO code.
 			}
