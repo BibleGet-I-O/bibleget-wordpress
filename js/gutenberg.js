@@ -1536,7 +1536,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						type: "post",
 						url: BibleGetGlobal.ajax_url,
 						data: {
-							action: "searchByKeyword",
+							action: "search_by_keyword",
 							keyword: keyword,
 							version: attributes.VERSION[0],
 						},
@@ -2702,8 +2702,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 									{value: BGET.BORDERSTYLE.RIDGE, 	label: 'ridge' },
 									{value: BGET.BORDERSTYLE.INSET,		label: 'inset' },
 									{value: BGET.BORDERSTYLE.OUTSET, 	label: 'outset' }
-								] 
-								* Being automated means being able to control consistency. 
+								]
+								* Being automated means being able to control consistency.
 								* Any change to the source ENUMS in PHP will be reflected here automatically, no manual intervention required
 								*/
 							}),

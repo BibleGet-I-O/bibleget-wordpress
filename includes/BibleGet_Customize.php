@@ -11,17 +11,17 @@ require_once plugin_dir_path( __FILE__ ) . 'BGETPROPERTIES.php';
 class BibleGet_Customize {
 
 	private static $websafe_fonts;
-	private static $BGETOPTIONS;
+	private static $bget_properties;
 	private static $bibleget_style_settings;
-	public static $BGETPROPERTIES;
+	public static $bget_properties;
 
 	private static function initializeOptions() {
-		self::$BGETOPTIONS    = get_option( 'BGET', array() );
-		self::$BGETPROPERTIES = new BGETPROPERTIES();
+		self::$bget_properties    = get_option( 'BGET', array() );
+		self::$bget_properties = new BGETPROPERTIES();
 		// load default values for settings if user hasn't already defined a value
-		foreach ( self::$BGETPROPERTIES->OPTIONS as $option => $array ) {
-			if ( ! isset( self::$BGETOPTIONS[ $option ] ) ) {
-				self::$BGETOPTIONS[ $option ] = $array['default'];
+		foreach ( self::$bget_properties->OPTIONS as $option => $array ) {
+			if ( ! isset( self::$bget_properties[ $option ] ) ) {
+				self::$bget_properties[ $option ] = $array['default'];
 			}
 		}
 	}
@@ -435,7 +435,7 @@ class BibleGet_Customize {
 		if ( false === self::$bibleget_style_settings instanceof stdClass || false === property_exists( self::$bibleget_style_settings, 'BGET[PARAGRAPHSTYLES_FONTFAMILY]' ) ) {
 			self::init();
 		}
-		if ( false === self::$BGETPROPERTIES instanceof BGETPROPERTIES || false === property_exists( self::$BGETPROPERTIES, 'OPTIONS' ) ) {
+		if ( false === self::$bget_properties instanceof BGETPROPERTIES || false === property_exists( self::$bget_properties, 'OPTIONS' ) ) {
 			self::initializeOptions();
 		}
 		include_once plugin_dir_path( __FILE__ ) . 'custom_controls.php';
@@ -447,7 +447,7 @@ class BibleGet_Customize {
 				foreach ( $style_setting_obj->settings as $setting ) {
 					$settingID         = str_replace( 'BGET[', '', $setting );
 					$settingID         = str_replace( ']', '', $settingID );
-					$casttype          = self::$BGETPROPERTIES->OPTIONS[ $settingID ]['type'];
+					$casttype          = self::$bget_properties->OPTIONS[ $settingID ]['type'];
 					$sanitize_callback = '';
 					switch ( $casttype ) {
 						case 'boolean':
@@ -460,7 +460,7 @@ class BibleGet_Customize {
 					$wp_customize->add_setting(
 						$setting,
 						array(
-							'default'           => self::$BGETPROPERTIES->OPTIONS[ $settingID ]['default'],
+							'default'           => self::$bget_properties->OPTIONS[ $settingID ]['default'],
 							'type'              => 'option',
 							'capability'        => 'manage_options',
 							'transport'         => 'postMessage',
@@ -485,7 +485,7 @@ class BibleGet_Customize {
 			} else {
 				$settingID         = str_replace( 'BGET[', '', $style_setting );
 				$settingID         = str_replace( ']', '', $settingID );
-				$casttype          = self::$BGETPROPERTIES->OPTIONS[ $settingID ]['type'];
+				$casttype          = self::$bget_properties->OPTIONS[ $settingID ]['type'];
 				$sanitize_callback = '';
 				switch ( $casttype ) {
 					case 'integer':
@@ -508,7 +508,7 @@ class BibleGet_Customize {
 				$wp_customize->add_setting(
 					$style_setting, // No need to use a SERIALIZED name, as `theme_mod` settings already live under one db record
 					array(
-						'default'           => self::$BGETPROPERTIES->OPTIONS[ $settingID ]['default'], // Default setting/value to save
+						'default'           => self::$bget_properties->OPTIONS[ $settingID ]['default'], // Default setting/value to save
 						'type'              => 'option', // Is this an 'option' or a 'theme_mod'?
 						'capability'        => 'manage_options', // Optional. Special permissions for accessing this setting.
 						'transport'         => 'postMessage', // What triggers a refresh of the setting? 'refresh' or 'postMessage' (instant)?
@@ -648,7 +648,7 @@ class BibleGet_Customize {
 
 	public static function buildCustomizerStylesheet() {
 		$is_googlefont = false;
-		$fontfamily    = self::$BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY'];
+		$fontfamily    = self::$bget_properties['PARAGRAPHSTYLES_FONTFAMILY'];
 		if ( ! empty( $fontfamily ) ) {
 			// let's check if it's a websafe font or a google font
 			if ( self::get_font_index( $fontfamily ) === false ) {
@@ -670,27 +670,27 @@ class BibleGet_Customize {
 			);
 			echo $cssrule;
 		} else {
-			self::generate_options_css( '.bibleQuote.results', 'font-family', self::$BGETOPTIONS['PARAGRAPHSTYLES_FONTFAMILY'] );
+			self::generate_options_css( '.bibleQuote.results', 'font-family', self::$bget_properties['PARAGRAPHSTYLES_FONTFAMILY'] );
 		}
 		echo PHP_EOL;
 		echo '.bibleQuote.results p { margin: 0; }';
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'border-width', self::$BGETOPTIONS['PARAGRAPHSTYLES_BORDERWIDTH'], '', 'px' );
+		self::generate_options_css( '.bibleQuote.results', 'border-width', self::$bget_properties['PARAGRAPHSTYLES_BORDERWIDTH'], '', 'px' );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'border-radius', self::$BGETOPTIONS['PARAGRAPHSTYLES_BORDERRADIUS'], '', 'px' );
+		self::generate_options_css( '.bibleQuote.results', 'border-radius', self::$bget_properties['PARAGRAPHSTYLES_BORDERRADIUS'], '', 'px' );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'border-color', self::$BGETOPTIONS['PARAGRAPHSTYLES_BORDERCOLOR'], '', '' );
+		self::generate_options_css( '.bibleQuote.results', 'border-color', self::$bget_properties['PARAGRAPHSTYLES_BORDERCOLOR'], '', '' );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'border-style', BGET::CSSRULE['BORDERSTYLE'][ self::$BGETOPTIONS['PARAGRAPHSTYLES_BORDERSTYLE'] ], '', '' );
+		self::generate_options_css( '.bibleQuote.results', 'border-style', BGET::CSSRULE['BORDERSTYLE'][ self::$bget_properties['PARAGRAPHSTYLES_BORDERSTYLE'] ], '', '' );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'background-color', self::$BGETOPTIONS['PARAGRAPHSTYLES_BACKGROUNDCOLOR'], '', '' );
+		self::generate_options_css( '.bibleQuote.results', 'background-color', self::$bget_properties['PARAGRAPHSTYLES_BACKGROUNDCOLOR'], '', '' );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results', 'width', self::$BGETOPTIONS['PARAGRAPHSTYLES_WIDTH'], '', '%' );
+		self::generate_options_css( '.bibleQuote.results', 'width', self::$bget_properties['PARAGRAPHSTYLES_WIDTH'], '', '%' );
 		echo PHP_EOL;
 
-		$parStylesMarginTopBottom     = self::$BGETOPTIONS['PARAGRAPHSTYLES_MARGINTOPBOTTOM'];
-		$parStylesMarginLeftRight     = self::$BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHT'];
-		$parStylesMarginLeftRightUnit = self::$BGETOPTIONS['PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT'];
+		$parStylesMarginTopBottom     = self::$bget_properties['PARAGRAPHSTYLES_MARGINTOPBOTTOM'];
+		$parStylesMarginLeftRight     = self::$bget_properties['PARAGRAPHSTYLES_MARGINLEFTRIGHT'];
+		$parStylesMarginLeftRightUnit = self::$bget_properties['PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT'];
 		$cssrule                      = sprintf(
 			'%s { %s: %s %s; }',
 			'.bibleQuote.results',
@@ -701,8 +701,8 @@ class BibleGet_Customize {
 		echo $cssrule;
 		echo PHP_EOL;
 
-		$parStylesPaddingTopBottom = self::$BGETOPTIONS['PARAGRAPHSTYLES_PADDINGTOPBOTTOM'];
-		$parStylesPaddingLeftRight = self::$BGETOPTIONS['PARAGRAPHSTYLES_PADDINGLEFTRIGHT'];
+		$parStylesPaddingTopBottom = self::$bget_properties['PARAGRAPHSTYLES_PADDINGTOPBOTTOM'];
+		$parStylesPaddingLeftRight = self::$bget_properties['PARAGRAPHSTYLES_PADDINGLEFTRIGHT'];
 		$cssrule                   = sprintf(
 			'%s { %s: %s %s; }',
 			'.bibleQuote.results',
@@ -713,15 +713,15 @@ class BibleGet_Customize {
 		echo $cssrule;
 		echo PHP_EOL;
 
-		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'text-align', BGET::CSSRULE['ALIGN'][ self::$BGETOPTIONS['PARAGRAPHSTYLES_PARAGRAPHALIGN'] ] );
+		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'text-align', BGET::CSSRULE['ALIGN'][ self::$bget_properties['PARAGRAPHSTYLES_PARAGRAPHALIGN'] ] );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results p.bibleVersion', 'color', self::$BGETOPTIONS['VERSIONSTYLES_TEXTCOLOR'] );
+		self::generate_options_css( '.bibleQuote.results p.bibleVersion', 'color', self::$bget_properties['VERSIONSTYLES_TEXTCOLOR'] );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results .bookChapter', 'color', self::$BGETOPTIONS['BOOKCHAPTERSTYLES_TEXTCOLOR'] );
+		self::generate_options_css( '.bibleQuote.results .bookChapter', 'color', self::$bget_properties['BOOKCHAPTERSTYLES_TEXTCOLOR'] );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'color', self::$BGETOPTIONS['VERSETEXTSTYLES_TEXTCOLOR'] );
+		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'color', self::$bget_properties['VERSETEXTSTYLES_TEXTCOLOR'] );
 		echo PHP_EOL;
-		self::generate_options_css( '.bibleQuote.results p.versesParagraph span.verseNum', 'color', self::$BGETOPTIONS['VERSENUMBERSTYLES_TEXTCOLOR'] );
+		self::generate_options_css( '.bibleQuote.results p.versesParagraph span.verseNum', 'color', self::$bget_properties['VERSENUMBERSTYLES_TEXTCOLOR'] );
 		echo PHP_EOL;
 		echo '.bibleQuote.results p.versesParagraph span.verseNum { margin: 0px 3px; }';
 		echo PHP_EOL;
@@ -739,8 +739,8 @@ class BibleGet_Customize {
 		);
 		$i             = 0;
 		foreach ( $fontsizerules as $fontsizerule => $css_selector ) {
-			$fontSize     = self::$BGETOPTIONS[ $fontsizerule ];
-			$fontSizeUnit = self::$BGETOPTIONS[ $fontsizeunits[ $i++ ] ];
+			$fontSize     = self::$bget_properties[ $fontsizerule ];
+			$fontSizeUnit = self::$bget_properties[ $fontsizeunits[ $i++ ] ];
 			if ( $fontSizeUnit == 'em' ) {
 				$fontSize /= 10;
 			}
@@ -767,10 +767,10 @@ class BibleGet_Customize {
 		foreach ( $fontstylerules as $fontstylerule => $css_selector ) {
 			$cssrule = '';
 			// $mod = get_theme_mod($fontstylerule, self::$bibleget_style_settings->$fontstylerule->dfault);
-			$bold          = self::$BGETOPTIONS[ $fontstylerule . 'BOLD' ];
-			$italic        = self::$BGETOPTIONS[ $fontstylerule . 'ITALIC' ];
-			$underline     = self::$BGETOPTIONS[ $fontstylerule . 'UNDERLINE' ];
-			$strikethrough = self::$BGETOPTIONS[ $fontstylerule . 'STRIKETHROUGH' ];
+			$bold          = self::$bget_properties[ $fontstylerule . 'BOLD' ];
+			$italic        = self::$bget_properties[ $fontstylerule . 'ITALIC' ];
+			$underline     = self::$bget_properties[ $fontstylerule . 'UNDERLINE' ];
+			$strikethrough = self::$bget_properties[ $fontstylerule . 'STRIKETHROUGH' ];
 			// $fval = array();
 			// if (!empty($mod)) {
 			// $fval = explode(',', $mod);
@@ -804,7 +804,7 @@ class BibleGet_Customize {
 			}
 
 			if ( $fontstylerule == 'VERSENUMBERSTYLES_' ) {
-				switch ( self::$BGETOPTIONS['VERSENUMBERSTYLES_VALIGN'] ) {
+				switch ( self::$bget_properties['VERSENUMBERSTYLES_VALIGN'] ) {
 					case BGET::VALIGN['SUPERSCRIPT'];
 						$cssrule .= 'vertical-align: baseline; position: relative; top: -0.6em;';
 						break;
@@ -835,14 +835,14 @@ class BibleGet_Customize {
 		echo PHP_EOL;
 
 		// $linespacing_verses = get_theme_mod('linespacing_verses', self::$bibleget_style_settings->linespacing_verses->dfault);
-		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'line-height', self::$BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'] . 'em' );
-		// $linespacing_verses = self::$BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'].'em';
-		// $poetic_linespacing = (self::$BGETOPTIONS['PARAGRAPHSTYLES_LINEHEIGHT'] + 1.0).'em';
-		$fontsize_versenumber = self::$BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZE'];
-		if ( self::$BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'] == 'em' ) {
+		self::generate_options_css( '.bibleQuote.results p.versesParagraph', 'line-height', self::$bget_properties['PARAGRAPHSTYLES_LINEHEIGHT'] . 'em' );
+		// $linespacing_verses = self::$bget_properties['PARAGRAPHSTYLES_LINEHEIGHT'].'em';
+		// $poetic_linespacing = (self::$bget_properties['PARAGRAPHSTYLES_LINEHEIGHT'] + 1.0).'em';
+		$fontsize_versenumber = self::$bget_properties['VERSENUMBERSTYLES_FONTSIZE'];
+		if ( self::$bget_properties['VERSENUMBERSTYLES_FONTSIZEUNIT'] == 'em' ) {
 			$fontsize_versenumber /= 10;
 		}
-		$fontsize_versenumber .= self::$BGETOPTIONS['VERSENUMBERSTYLES_FONTSIZEUNIT'];
+		$fontsize_versenumber .= self::$bget_properties['VERSENUMBERSTYLES_FONTSIZEUNIT'];
 		// $fontsize_versenumber = get_theme_mod('versenumber_fontsize', self::$bibleget_style_settings->versenumber_fontsize->dfault);
 		echo '.bibleQuote.results p.versesParagraph span.sm { text-transform: lowercase; font-variant: small-caps; } ';
 		echo PHP_EOL;
@@ -875,7 +875,7 @@ class BibleGet_Customize {
 
 		// $bibleversionalign = get_theme_mod('bibleversionalign', 'left');
 		$bibleversionalign = 'left';
-		switch ( intval( self::$BGETOPTIONS['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] ) ) {
+		switch ( intval( self::$bget_properties['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] ) ) {
 			case BGET::ALIGN['CENTER']:
 				$bibleversionalign = 'center';
 				break;
@@ -888,7 +888,7 @@ class BibleGet_Customize {
 
 		// $bookchapteralign = get_theme_mod('bookchapteralign', 'left');
 		$bookchapteralign = 'left';
-		switch ( intval( self::$BGETOPTIONS['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] ) ) {
+		switch ( intval( self::$bget_properties['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] ) ) {
 			case BGET::ALIGN['CENTER']:
 				$bookchapteralign = 'center';
 				break;
@@ -916,7 +916,7 @@ class BibleGet_Customize {
 		if ( false === self::$bibleget_style_settings instanceof stdClass || false === property_exists( self::$bibleget_style_settings, 'BGET[PARAGRAPHSTYLES_FONTFAMILY]' ) ) {
 			self::init();
 		}
-		if ( false === self::$BGETPROPERTIES instanceof BGETPROPERTIES || false === property_exists( self::$BGETPROPERTIES, 'OPTIONS' ) ) {
+		if ( false === self::$bget_properties instanceof BGETPROPERTIES || false === property_exists( self::$bget_properties, 'OPTIONS' ) ) {
 			self::initializeOptions();
 		}
 		self::buildCustomizerStylesheet();
@@ -960,20 +960,20 @@ class BibleGet_Customize {
 
 		// and these are our constants, as close as I can get to ENUMS
 		// hey with this operation they transform quite nicely for the client side javascript!
-		$BGETreflection    = new ReflectionClass( 'BGET' );
-		$BGETinstanceprops = $BGETreflection->getConstants();
-		$BGETConstants     = array();
-		foreach ( $BGETinstanceprops as $key => $value ) {
-			$BGETConstants[ $key ] = $value;
+		$bgetreflection    = new ReflectionClass( 'BGET' );
+		$bgetinstanceprops = $bgetreflection->getConstants();
+		$bget_constants     = array();
+		foreach ( $bgetinstanceprops as $key => $value ) {
+			$bget_constants[ $key ] = $value;
 		}
 		wp_localize_script(
 			'bibleget-customizerpreview',
 			'BibleGetGlobal',
 			array(
 				'ajax_url'       => admin_url( 'admin-ajax.php' ),
-				'BGETProperties' => self::$BGETPROPERTIES->OPTIONS,
-				'BGETConstants'  => $BGETConstants,
-				'BGET'           => self::$BGETPROPERTIES->BGETOPTIONS,
+				'BGETProperties' => self::$bget_properties->OPTIONS,
+				'BGETConstants'  => $bget_constants,
+				'BGET'           => self::$bget_properties->BGETOPTIONS,
 			)
 		);
 	}

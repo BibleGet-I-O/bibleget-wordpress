@@ -24,7 +24,7 @@ jQuery(document).ready(($) => {
 		jQuery.ajax({
 			url: ajaxurl,
 			data: {
-				action: "updateBGET",
+				action: "update_bget",
 				options: { VERSION: { value: fval, type: "array" } },
 			},
 			method: "POST",

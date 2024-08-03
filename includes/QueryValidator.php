@@ -38,7 +38,7 @@ class QueryValidator {
 	private $currentBook       = '';
 	private $currentQuery      = '';
 	private $currentFullQuery  = '';
-	private $currentPageUrl    = '';
+	private $current_page_url    = '';
 	private $errorMessages     = array();
 	private $initialQueries    = array();
 	private $versionsRequested = array();
@@ -49,7 +49,7 @@ class QueryValidator {
 	public $errs               = array();
 
 
-	function __construct( $queries, $versions, $currentPageUrl ) {
+	function __construct( $queries, $versions, $current_page_url ) {
 		$this->initialQueries    = $queries;
 		$this->versionsRequested = $versions;
 		$this->errorMessages     = array(
@@ -82,7 +82,7 @@ class QueryValidator {
 			$this->biblebooks[ $i ] = $jsbook;
 		}
 
-		$this->currentPageUrl = $currentPageUrl;
+		$this->currentPageUrl = $current_page_url;
 	}
 
 	private static function stringWithUpperAndLowerCaseVariants( $str ) {

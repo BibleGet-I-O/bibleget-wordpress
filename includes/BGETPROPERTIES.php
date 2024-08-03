@@ -4,7 +4,7 @@ require_once plugin_dir_path( __FILE__ ) . 'enums/BGET.php';
 
 class BGETPROPERTIES {
 	public $OPTIONS;
-	public $BGETOPTIONS;
+	public $bget_properties;
 
 	const OPTIONSDEFAULTS = array(
 		'PARAGRAPHSTYLES_FONTFAMILY'          => 'Times New Roman',
