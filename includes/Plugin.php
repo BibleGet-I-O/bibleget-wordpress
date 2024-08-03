@@ -117,7 +117,7 @@ class Plugin {
 
 			// while we are building our default values, we will also enforce type on $atts so we know we are speaking the same language.
 			if ( isset( $atts[ $option ] ) ) {
-				$r = new \ReflectionClass( 'BGET' );
+				$r = new \ReflectionClass( 'BibleGet\Enums\BGET' );
 				if ( str_ends_with( $option_ucase, 'ALIGNMENT' ) ) {
 					$option_ucase = 'ALIGN';
 				} elseif ( str_ends_with( $option_ucase, 'WRAP' ) ) {
