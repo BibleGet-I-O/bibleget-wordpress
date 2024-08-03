@@ -1,5 +1,8 @@
 <?php
 /**
+ * WordPress BibleGet I/O Plugin
+ * Copyright(C) 2014-2020, John Romano D'Orazio - priest@johnromanodorazio.com
+ *
  * Plugin Name: BibleGet I/O
  * Plugin URI: https://www.bibleget.io/
  * Description: Easily insert Bible quotes from a choice of Bible versions into your articles or pages with the "Bible quote" block or with the shortcode [bibleget].
@@ -11,9 +14,6 @@
  * License: GPLv2 or later
  * Text Domain: bibleget-io
  * Domain Path: /languages/
- *
- * WordPress BibleGet I/O Plugin
- * Copyright(C) 2014-2020, John Romano D'Orazio - priest@johnromanodorazio.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package BibleGet_IO
  */
-
 
 define( 'BIBLEGETPLUGINVERSION', 'v8_3' );
 
@@ -103,7 +104,7 @@ function BibleGet_on_uninstall() {
 
 	// Important: Check if the file is the one
 	// that was registered during the uninstall hook.
-	if ( ! wp_doing_ajax() && __FILE__ != WP_UNINSTALL_PLUGIN ) {
+	if ( ! wp_doing_ajax() && __FILE__ !== WP_UNINSTALL_PLUGIN ) {
 		return;
 	}
 
@@ -112,7 +113,7 @@ function BibleGet_on_uninstall() {
 
 	// Check if we have a Google Fonts API key transient, if so remove it
 	$BibleGetOptions = get_option( 'bibleget_settings' );
-	if ( isset( $BibleGetOptions['googlefontsapi_key'] ) && $BibleGetOptions['googlefontsapi_key'] != '' ) {
+	if ( isset( $BibleGetOptions['googlefontsapi_key'] ) && $BibleGetOptions['googlefontsapi_key'] !== '' ) {
 		if ( get_transient( md5( $BibleGetOptions['googlefontsapi_key'] ) ) ) {
 			delete_transient( md5( $BibleGetOptions['googlefontsapi_key'] ) );
 		}
@@ -299,7 +300,7 @@ function bibleget_shortcode( $atts = array(), $content = null, $tag = '' ) {
 		}
 	}
 
-	if ( $content !== null && $content != '' ) {
+	if ( $content !== null && $content !== '' ) {
 		$queries = bibleGetQueryClean( $content );
 	} else {
 		$queries = bibleGetQueryClean( $atts['QUERY'] );
@@ -668,7 +669,7 @@ add_action( 'init', 'bibleget_gutenberg' );
 
 
 function bibleGetGutenbergScripts( $hook ) {
-	if ( $hook != 'post.php' && $hook != 'post-new.php' ) {
+	if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) {
 		return;
 	}
 	wp_enqueue_script( 'jquery-ui-dialog' );
@@ -823,7 +824,7 @@ function bibleGetQueryServer( $finalquery ) {
 			$errorshtml = new DOMDocument();
 			$errorshtml->loadHTML( '<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>' . $matches[0][0] . '</body>' );
 			$error_rows = $errorshtml->getElementsByTagName( 'tr' );
-			if ( $error_rows != null && $error_rows->length > 0 ) {
+			if ( $error_rows !== null && $error_rows->length > 0 ) {
 				$errs = get_option( 'bibleget_error_admin_notices', array() );
 				foreach ( $error_rows as $error_row ) {
 					$errormessage = bibleGetGetElementsByClass( $error_row, 'td', 'errMessageVal' );
@@ -954,7 +955,7 @@ function bibleGetGetMetaData( $request ) {
 	}
 
 	$response = curl_exec( $ch );
-	if ( curl_errno( $ch ) && ( curl_errno( $ch ) === 77 || curl_errno( $ch ) === 60 ) && $url == METADATA_API . '?query=' . $request . '&return=json' ) {
+	if ( curl_errno( $ch ) && ( curl_errno( $ch ) === 77 || curl_errno( $ch ) === 60 ) && $url === METADATA_API . '?query=' . $request . '&return=json' ) {
 		// error 60: SSL certificate problem: unable to get local issuer certificate
 		// error 77: error setting certificate verify locations CAPath: none
 		// curl.cainfo needs to be set in php.ini to point to the curl pem bundle available at https://curl.haxx.se/ca/cacert.pem
@@ -968,7 +969,7 @@ function bibleGetGetMetaData( $request ) {
 		} else {
 			$info = curl_getinfo( $ch );
 			// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-			if ( $info['http_code'] != 200 && $info['http_code'] != 304 ) {
+			if ( $info['http_code'] !== 200 && $info['http_code'] !== 304 ) {
 				setCommunicationError( $notices, 2 );
 				return false;
 			}
@@ -979,7 +980,7 @@ function bibleGetGetMetaData( $request ) {
 	} else {
 		$info = curl_getinfo( $ch );
 		// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-		if ( $info['http_code'] != 200 && $info['http_code'] != 304 ) {
+		if ( $info['http_code'] !== 200 && $info['http_code'] !== 304 ) {
 			setCommunicationError( $notices, 2 );
 			return false;
 		}
@@ -1023,7 +1024,7 @@ function bibleGetQueryClean( $query ) {
 	if ( strpos( $query, ':' ) && strpos( $query, '.' ) ) {
 		return __( 'Mixed notations have been detected. Please use either english notation or european notation.', 'bibleget-io' ) . '<' . $query . '>';
 	} elseif ( strpos( $query, ':' ) ) { // if english notation is detected, translate it to european notation
-		if ( strpos( $query, ',' ) != -1 ) {
+		if ( strpos( $query, ',' ) !== -1 ) {
 			$query = str_replace( ',', '.', $query );
 		}
 		$query = str_replace( ':', ',', $query );
@@ -1158,7 +1159,7 @@ function bibleGetSetOptions() {
 	}
 
 	// we only want the script to die if it's an ajax request...
-	if ( isset( $_POST['isajax'] ) && $_POST['isajax'] == 1 ) {
+	if ( isset( $_POST['isajax'] ) && $_POST['isajax'] === 1 ) {
 		$notices   = get_option( 'bibleget_admin_notices', array() );
 		$notices[] = 'BIBLEGET PLUGIN NOTICE: ' . __( 'BibleGet Server data has been successfully renewed.', 'bibleget-io' );
 		update_option( 'bibleget_admin_notices', $notices );
@@ -1215,7 +1216,7 @@ function searchByKeyword() {
 		echo json_encode( $error );
 	}
 	// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-	elseif ( $info['http_code'] != 200 ) {
+	elseif ( $info['http_code'] !== 200 ) {
 		echo json_encode( $info );
 	} elseif ( $output ) {
 		echo $output;
@@ -1248,7 +1249,7 @@ function updateBGET() {
 				break;
 			case 'array':
 				$BGET[ $option ] = is_array( $array['value'] ) ? array_map( 'esc_html', $array['value'] ) : ( strpos( ',', $array['value'] ) ? explode( ',', $array['value'] ) : array() );
-				if ( count( $BGET[ $option ] ) === 0 && $option == 'VERSION' ) {
+				if ( count( $BGET[ $option ] ) === 0 && $option === 'VERSION' ) {
 					$BGET[ $option ] = array( 'NABRE' );
 				}
 				break;
@@ -1385,12 +1386,12 @@ function bibleGetGetElementsByClass( &$parentNode, $tagName, $className ) {
 function bibleGetCurrentPageUrl() {
 	$pageURL = 'http';
 	if ( isset( $_SERVER['HTTPS'] ) ) {
-		if ( $_SERVER['HTTPS'] == 'on' ) {
+		if ( $_SERVER['HTTPS'] === 'on' ) {
 			$pageURL .= 's';
 		}
 	}
 	$pageURL .= '://';
-	if ( $_SERVER['SERVER_PORT'] != '80' ) {
+	if ( $_SERVER['SERVER_PORT'] !== '80' ) {
 		$pageURL .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
 	} else {
 		$pageURL .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
