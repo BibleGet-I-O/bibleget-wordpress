@@ -126,17 +126,17 @@ function BibleGet_on_uninstall() {
 
 	// remove all leftover transients that cache the Bible quotes
 	// not really all that necessary because they will clear within 7 days,
-	// but just for sake of completeness and neatness
+	// but just for sake of completeness and neatness.
 	global $wpdb;
 	// The following SELECT should select both the transient and the transient_timeout
 	// This will also remove the Google Fonts API key transient if it uses the same prefix...
 	// I guess we'll just have to not use our defined prefix on the Google Fonts API key transient
-	// in order avoid this
+	// in order avoid this.
 	$sql = "DELETE
 			FROM  $wpdb->options
 			WHERE `option_name` LIKE '%transient_%" . TRANSIENT_PREFIX . "%'
 			";
-	// We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere
+	// We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere.
 	$wpdb->query( $sql );
 	/*
 	if ($wpdb->query($sql) !== false) {
@@ -167,9 +167,9 @@ register_deactivation_hook( __FILE__, 'BibleGet_on_deactivation' );
  */
 function bibleget_load_textdomain() {
 	$domain = 'bibleget-io';
-	// The "plugin_locale" filter is also used in load_plugin_textdomain()
+	// The "plugin_locale" filter is also used in load_plugin_textdomain().
 	$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-	// Allow users to add their own custom translations by dropping them in the WordPress 'languages' directory
+	// Allow users to add their own custom translations by dropping them in the WordPress 'languages' directory.
 	load_textdomain( $domain, WP_LANG_DIR . '/plugins/' . $domain . '-' . $locale . '.mo' );
 
 	load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
