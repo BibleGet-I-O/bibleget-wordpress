@@ -231,7 +231,7 @@ class Plugin {
 			$current_page_url = self::current_page_url();
 
 			$query_validator = new QueryValidator( $queries, $atts['VERSION'], $current_page_url );
-			if ( false === $query_validator->ValidateQueries() ) {
+			if ( false === $query_validator->validate_queries() ) {
 				$output = __( 'Bible Quote failure... (error processing query, please check syntax)', 'bibleget-io' );
 				return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
 			}
@@ -240,8 +240,10 @@ class Plugin {
 			$notices = array_merge( $notices, $query_validator->errs );
 			update_option( 'bibleget_error_admin_notices', $notices );
 
-			$finalquery = self::process_final_query( $query_validator->validatedQueries, $atts );
-			// self::bibleget_write_log("value of finalquery = ".$finalquery);
+			$finalquery = self::process_final_query( $query_validator->validated_queries, $atts );
+			if ( WP_DEBUG ) {
+				self::write_log( "value of finalquery = $finalquery" );
+			}
 
 			$output = self::process_output( $finalquery );
 
@@ -993,7 +995,7 @@ class Plugin {
 
 
 	/**
-	 *
+	 * Sets cached information about Bible books and Bible versions
 	 */
 	private static function set_options() {
 		$bget            = array();
@@ -1005,8 +1007,11 @@ class Plugin {
 
 		$metadata = self::get_metadata( 'biblebooks' );
 		if ( $metadata !== false ) {
-			// self::bibleget_write_log("Retrieved biblebooks metadata...");
-			// self::bibleget_write_log($metadata);
+			if ( WP_DEBUG ) {
+				self::write_log( "Retrieved biblebooks metadata..." );
+				self::write_log( $metadata );
+			}
+
 			if ( property_exists( $metadata, 'results' ) ) {
 				$biblebooks = $metadata->results;
 				foreach ( $biblebooks as $key => $value ) {
@@ -1027,8 +1032,11 @@ class Plugin {
 		$metadata       = self::get_metadata( 'bibleversions' );
 		$versionsabbrev = array();
 		if ( $metadata !== false ) {
-			// self::bibleget_write_log("Retrieved bibleversions metadata");
-			// self::bibleget_write_log($metadata);
+			if ( WP_DEBUG ) {
+				self::write_log( "Retrieved bibleversions metadata" );
+				self::write_log( $metadata );
+			}
+
 			if ( property_exists( $metadata, 'validversions_fullname' ) ) {
 				$bibleversions     = $metadata->validversions_fullname;
 				$versionsabbrev    = array_keys( get_object_vars( $bibleversions ) );
@@ -1036,16 +1044,22 @@ class Plugin {
 				$bbversions        = json_decode( $bibleversions_str, true );
 				update_option( 'bibleget_versions', $bbversions );
 			}
-			// self::bibleget_write_log("versionsabbrev should now be populated:");
-			// self::bibleget_write_log($versionsabbrev);
+
+			if ( WP_DEBUG ) {
+				self::write_log( "versionsabbrev should now be populated:" );
+				self::write_log( $versionsabbrev );
+			}
 		}
 
 		if ( count( $versionsabbrev ) > 0 ) {
 			$versionsstr = implode( ',', $versionsabbrev );
 			$metadata    = self::get_metadata( 'versionindex&versions=' . $versionsstr );
 			if ( $metadata !== false ) {
-				// self::bibleget_write_log("Retrieved versionindex metadata");
-				// self::bibleget_write_log($metadata);
+				if ( WP_DEBUG ) {
+					self::write_log( "Retrieved versionindex metadata" );
+					self::write_log( $metadata );
+				}
+
 				if ( property_exists( $metadata, 'indexes' ) ) {
 					foreach ( $metadata->indexes as $versabbr => $value ) {
 						$temp                  = array();
@@ -1055,8 +1069,11 @@ class Plugin {
 						$temp['biblebooks']    = $value->biblebooks;
 						$temp['abbreviations'] = $value->abbreviations;
 						// $versionindex_str = json_encode($temp);
-						// self::bibleget_write_log("creating new option:["."bibleget_".$versabbr."IDX"."] with value:");
-						// self::bibleget_write_log($temp);
+						if ( WP_DEBUG ) {
+							self::write_log( "creating new option <bibleget_{$versabbr}IDX> with value:" );
+							self::write_log( $temp );
+						}
+
 						update_option( 'bibleget_' . $versabbr . 'IDX', $temp );
 					}
 				}
@@ -1170,7 +1187,7 @@ class Plugin {
 	 *
 	 * @param string $log
 	 */
-	public static function bibleget_write_log( $log ) {
+	public static function write_log( $log ) {
 		$debugfile = plugin_dir_path( __FILE__ ) . '../debug.txt';
 		$datetime  = date( 'Y-m-d H:i:s', time() );
 		$myfile    = fopen( $debugfile, 'a' );
@@ -1192,7 +1209,8 @@ class Plugin {
 	/**
 	 * Add action links
 	 *
-	 * @param unknown $links
+	 * @param array $links Action links that are already defined.
+	 * @return array
 	 */
 	public static function add_action_links( $links ) {
 		$mylinks = array(

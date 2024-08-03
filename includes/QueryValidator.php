@@ -3,8 +3,6 @@
 namespace BibleGet;
 
 /**
- * QUERY_VALIDATOR class
- *
  * Performs a series of validation checks to make sure the query in the request is a valid Bible quote
  *
  * Blessed Carlo Acutis, pray for us
@@ -17,10 +15,9 @@ namespace BibleGet;
  * PROJECT WEBSITE: https://www.bibleget.io
  * PROJECT EMAIL:   admin@bibleget.io | bibleget.io@gmail.com
  *
- * Copyright John Romano D'Orazio 2014-2021
+ * Copyright John Romano D'Orazio 2014-2024
  * Licensed under Apache License 2.0
  */
-
 class QueryValidator {
 
 	const QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR                  = 0;
@@ -35,27 +32,28 @@ class QueryValidator {
 	const NON_CONSECUTIVE_VERSES_NOT_ASCENDING_ORDER                          = 9;
 	const MUST_AT_LEAST_START_WITH_VALID_CHAPTER                              = 10;
 
-	private $bookIdxBase       = -1;
-	private $nonZeroBookIdx    = -1;
-	private $currentVariant    = '';
-	private $currentBook       = '';
-	private $currentQuery      = '';
-	private $currentFullQuery  = '';
-	private $current_page_url    = '';
-	private $errorMessages     = array();
-	private $initialQueries    = array();
-	private $versionsRequested = array();
-	private $indexes           = array();
-	private $biblebooks        = array();
-	public $validatedQueries   = array();
-	public $validatedVariants  = array();
-	public $errs               = array();
+	private $book_idx_base      = -1;
+	private $non_zero_book_idx  = -1;
+	private $current_variant    = '';
+	private $current_book       = '';
+	private $current_query      = '';
+	private $current_full_query = '';
+	private $current_page_url   = '';
+	private $error_messages     = array();
+	private $initial_queries    = array();
+	private $versions_requested = array();
+	private $indexes            = array();
+	private $biblebooks         = array();
+	public $validated_queries   = array();
+	public $validated_variants  = array();
+	public $errs                = array();
 
 
 	function __construct( $queries, $versions, $current_page_url ) {
-		$this->initialQueries    = $queries;
-		$this->versionsRequested = $versions;
-		$this->errorMessages     = array(
+		$this->initial_queries    = $queries;
+		$this->versions_requested = $versions;
+		$this->error_messages     = array(
+			/* translators: 1 = single bible quote reference, 2 = full query string with all bible quote references */
 			__( 'The first query <%1$s> in the querystring <%2$s> must start with a valid book indicator!', 'bibleget-io' ),
 			__( 'You must have a valid chapter following the book indicator!', 'bibleget-io' ),
 			__( 'The book indicator is not valid. Please check the documentation for a list of valid book indicators.', 'bibleget-io' ),
@@ -65,7 +63,7 @@ class QueryValidator {
 			__( 'A request for a range of verses must contain two valid verse numbers on either side of a verse range indicator.', 'bibleget-io' ),
 			__( 'If there is a chapter-verse construct following a dash, there must also be a chapter-verse construct preceding the same dash.', 'bibleget-io' ),
 			__( 'Multiple verse ranges have been requested, but there are not enough non-consecutive verse indicators. Multiple verse ranges assume there are non-consecutive verse indicators that connect them.', 'bibleget-io' ),
-			/* translators: the expressions %1$d, %2$d, and %3$s must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
+			/* translators: 1 = bible verse, 2 = bible verse, 3 = bible quote reference */
 			__( 'Non consecutive verses must be in ascending order, instead %1$d >= %2$d in the expression <%3$s>', 'bibleget-io' ),
 			__( "A query that doesn't start with a book indicator must however start with a valid chapter indicator!", 'bibleget-io' ),
 		);
@@ -85,14 +83,14 @@ class QueryValidator {
 			$this->biblebooks[ $i ] = $jsbook;
 		}
 
-		$this->currentPageUrl = $current_page_url;
+		$this->current_page_url = $current_page_url;
 	}
 
-	private static function stringWithUpperAndLowerCaseVariants( $str ) {
+	private static function string_with_upper_and_lower_case_variants( $str ) {
 		return preg_match( '/\p{L&}/u', $str );
 	}
 
-	private static function idxOf( $needle, $haystack ) {
+	private static function idx_of( $needle, $haystack ) {
 		foreach ( $haystack as $index => $value ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $value2 ) {
@@ -108,8 +106,8 @@ class QueryValidator {
 	}
 
 
-	private static function matchBookInQuery( $query ) {
-		if ( self::stringWithUpperAndLowerCaseVariants( $query ) ) {
+	private static function match_book_in_query( $query ) {
+		if ( self::string_with_upper_and_lower_case_variants( $query ) ) {
 			if ( preg_match( '/^([1-4]{0,1}((\p{Lu}\p{Ll}*)+))/u', $query, $res ) ) {
 				return $res;
 			} else {
@@ -122,14 +120,14 @@ class QueryValidator {
 		}
 	}
 
-	private static function validateRuleAgainstQuery( $rule, $query ) {
+	private static function validate_rule_against_query( $rule, $query ) {
 		$validation = false;
 		switch ( $rule ) {
 			case self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR:
 				$validation = ( preg_match( '/^[1-4]{0,1}\p{Lu}\p{Ll}*/u', $query ) || preg_match( '/^[1-4]{0,1}(\p{L}\p{M}*)+/u', $query ) );
 				break;
 			case self::VALID_CHAPTER_MUST_FOLLOW_BOOK:
-				if ( self::stringWithUpperAndLowerCaseVariants( $query ) ) {
+				if ( self::string_with_upper_and_lower_case_variants( $query ) ) {
 					$validation = ( preg_match( '/^[1-3]{0,1}\p{Lu}\p{Ll}*/u', $query ) == preg_match( '/^[1-3]{0,1}\p{Lu}\p{Ll}*[1-9][0-9]{0,2}/u', $query ) );
 				} else {
 					$validation = ( preg_match( '/^[1-3]{0,1}( \p{L}\p{M}* )+/u', $query ) == preg_match( '/^[1-3]{0,1}(\p{L}\p{M}*)+[1-9][0-9]{0,2}/u', $query ) );
@@ -161,27 +159,27 @@ class QueryValidator {
 		return $validation;
 	}
 
-	private static function queryContainsNonConsecutiveVerses( $query ) {
+	private static function query_contains_non_consecutive_verses( $query ) {
 		return strpos( $query, '.' ) !== false;
 	}
 
-	private static function forceArray( $element ) {
+	private static function force_array( $element ) {
 		if ( ! is_array( $element ) ) {
 			$element = array( $element );
 		}
 		return $element;
 	}
 
-	private static function getAllVersesAfterDiscontinuousVerseIndicator( $query ) {
+	private static function get_all_verses_after_discontinuous_verse_indicator( $query ) {
 		if ( preg_match_all( '/\.([1-9][0-9]{0,2})$/', $query, $discontinuousVerses ) ) {
-			$discontinuousVerses[1] = self::forceArray( $discontinuousVerses[1] );
+			$discontinuousVerses[1] = self::force_array( $discontinuousVerses[1] );
 			return $discontinuousVerses;
 		} else {
 			return array( array(), array() );
 		}
 	}
 
-	private static function getVerseAfterChapterVerseSeparator( $query ) {
+	private static function get_verse_after_chapter_verse_separator( $query ) {
 		if ( preg_match( '/,([1-9][0-9]{0,2})/', $query, $verse ) ) {
 			return $verse;
 		} else {
@@ -189,26 +187,26 @@ class QueryValidator {
 		}
 	}
 
-	private static function chunkContainsChapterVerseConstruct( $chunk ) {
+	private static function chunk_contains_chapter_verse_construct( $chunk ) {
 		return strpos( $chunk, ',' ) !== false;
 	}
 
-	private static function getAllChapterIndicators( $query ) {
+	private static function get_all_chapter_indicators( $query ) {
 		if ( preg_match_all( '/([1-9][0-9]{0,2})\,/', $query, $chapterIndicators ) ) {
-			$chapterIndicators[1] = self::forceArray( $chapterIndicators[1] );
+			$chapterIndicators[1] = self::force_array( $chapterIndicators[1] );
 			return $chapterIndicators;
 		} else {
 			return array( '', array() );
 		}
 	}
 
-	private function validateAndSetBook( $matchedBook ) {
+	private function validate_and_set_book( $matchedBook ) {
 		if ( $matchedBook !== false ) {
-			$this->currentBook = $matchedBook[0];
-			if ( $this->validateBibleBook() === false ) {
+			$this->current_book = $matchedBook[0];
+			if ( $this->validate_bible_book() === false ) {
 				return false;
 			} else {
-				$this->currentQuery = str_replace( $this->currentBook, '', $this->currentQuery );
+				$this->current_query = str_replace( $this->current_book, '', $this->current_query );
 				return true;
 			}
 		} else {
@@ -216,42 +214,42 @@ class QueryValidator {
 		}
 	}
 
-	private function validateChapterVerseConstructs() {
-		$chapterVerseConstructCount = substr_count( $this->currentQuery, ',' );
+	private function validate_chapter_verse_constructs() {
+		$chapterVerseConstructCount = substr_count( $this->current_query, ',' );
 		if ( $chapterVerseConstructCount > 1 ) {
-			return $this->validateMultipleVerseSeparators();
+			return $this->validate_multiple_verse_separators();
 		} elseif ( $chapterVerseConstructCount == 1 ) {
-			$parts = explode( ',', $this->currentQuery );
+			$parts = explode( ',', $this->current_query );
 			if ( strpos( $parts[1], '-' ) ) {
-				if ( $this->validateRightHandSideOfVerseSeparator( $parts ) === false ) {
+				if ( $this->validate_right_hand_side_of_verse_separator( $parts ) === false ) {
 					return false;
 				}
-			} elseif ( $this->validateVersesAfterChapterVerseSeparators( $parts ) === false ) {
+			} elseif ( $this->validate_verses_after_chapter_verse_separator( $parts ) === false ) {
 					return false;
 			}
 
-			$discontinuousVerses = self::getAllVersesAfterDiscontinuousVerseIndicator( $this->currentQuery );
+			$discontinuousVerses = self::get_all_verses_after_discontinuous_verse_indicator( $this->current_query );
 			$highverse           = array_pop( $discontinuousVerses[1] );
-			if ( $this->highVerseOutOfBounds( $highverse, $parts ) ) {
+			if ( $this->high_verse_out_of_bounds( $highverse, $parts ) ) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private function queryViolatesAnyRuleOf( $query, $rules ) {
+	private function query_violates_any_rule_of( $query, $rules ) {
 		foreach ( $rules as $rule ) {
-			if ( self::validateRuleAgainstQuery( $rule, $query ) === false ) {
+			if ( self::validate_rule_against_query( $rule, $query ) === false ) {
 				if ( $rule === self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR ) {
 					$this->errs = 'BIBLEGET PLUGIN ERROR: ' .
 						sprintf(
-							$this->errorMessages[ $rule ],
+							$this->error_messages[ $rule ],
 							$query,
-							implode( ';', $this->initialQueries )
+							implode( ';', $this->initial_queries )
 						) .
-						" ({$this->currentPageUrl})";
+						" ({$this->current_page_url})";
 				} else {
-					$this->errs[] = 'BIBLEGET PLUGIN ERROR: ' . $this->errorMessages[ $rule ];
+					$this->errs[] = 'BIBLEGET PLUGIN ERROR: ' . $this->error_messages[ $rule ];
 				}
 				return true;
 			}
@@ -259,46 +257,46 @@ class QueryValidator {
 		return false;
 	}
 
-	private function isValidBookForVariant( $variant ) {
+	private function is_valid_book_variant( $variant ) {
 		return (
-			in_array( $this->currentBook, $this->indexes[ $variant ]['biblebooks'] )
+			in_array( $this->current_book, $this->indexes[ $variant ]['biblebooks'] )
 			||
-			in_array( $this->currentBook, $this->indexes[ $variant ]['abbreviations'] )
+			in_array( $this->current_book, $this->indexes[ $variant ]['abbreviations'] )
 		);
 	}
 
-	private function validateBibleBook() {
+	private function validate_bible_book() {
 		$bookIsValid = false;
-		foreach ( $this->versionsRequested as $variant ) {
-			if ( $this->isValidBookForVariant( $variant ) ) {
-				$bookIsValid          = true;
-				$this->currentVariant = $variant;
-				$this->bookIdxBase    = self::idxOf( $this->currentBook, $this->biblebooks );
+		foreach ( $this->versions_requested as $variant ) {
+			if ( $this->is_valid_book_variant( $variant ) ) {
+				$bookIsValid           = true;
+				$this->current_variant = $variant;
+				$this->book_idx_base   = self::idx_of( $this->current_book, $this->biblebooks );
 				break;
 			}
 		}
 		if ( ! $bookIsValid ) {
-			$this->bookIdxBase = self::idxOf( $this->currentBook, $this->biblebooks );
-			if ( $this->bookIdxBase !== false ) {
+			$this->book_idx_base = self::idx_of( $this->current_book, $this->biblebooks );
+			if ( $this->book_idx_base !== false ) {
 				$bookIsValid = true;
 			} else {
-				$this->errs[] = sprintf( 'The book %s is not a valid Bible book. Please check the documentation for a list of correct Bible book names, whether full or abbreviated.', $this->currentBook );
+				$this->errs[] = sprintf( 'The book %s is not a valid Bible book. Please check the documentation for a list of correct Bible book names, whether full or abbreviated.', $this->current_book );
 			}
 		}
-		$this->nonZeroBookIdx = $this->bookIdxBase + 1;
+		$this->non_zero_book_idx = $this->book_idx_base + 1;
 		return $bookIsValid;
 	}
 
-	private function validateChapterIndicators( $chapterIndicators ) {
+	private function validate_chapter_indicators( $chapterIndicators ) {
 
 		foreach ( $chapterIndicators[1] as $chapterIndicator ) {
 			foreach ( $this->indexes as $jkey => $jindex ) {
-				$bookidx       = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+				$bookidx       = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 				$chapter_limit = $jindex['chapter_limit'][ $bookidx ];
 				if ( $chapterIndicator > $chapter_limit ) {
 					/* translators: the expressions <%1$d>, <%2$s>, <%3$s>, and <%4$d> must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
 					$msg          = 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book %2$s in the requested version %3$s, the last possible chapter is <%4$d>';
-					$this->errs[] = sprintf( $msg, $chapterIndicator, $this->currentBook, $jkey, $chapter_limit );
+					$this->errs[] = sprintf( $msg, $chapterIndicator, $this->current_book, $jkey, $chapter_limit );
 					return false;
 				}
 			}
@@ -307,12 +305,12 @@ class QueryValidator {
 		return true;
 	}
 
-	private function validateMultipleVerseSeparators() {
-		if ( ! strpos( $this->currentQuery, '-' ) ) {
+	private function validate_multiple_verse_separators() {
+		if ( ! strpos( $this->current_query, '-' ) ) {
 			$this->errs[] = 'You cannot have more than one comma and not have a dash!';
 			return false;
 		}
-		$parts = explode( '-', $this->currentQuery );
+		$parts = explode( '-', $this->current_query );
 		if ( count( $parts ) != 2 ) {
 			$this->errs[] = 'You seem to have a malformed querystring, there should be only one dash.';
 			return false;
@@ -320,12 +318,12 @@ class QueryValidator {
 		foreach ( $parts as $part ) {
 			$pp = array_map( 'intval', explode( ',', $part ) );
 			foreach ( $this->indexes as $jkey => $jindex ) {
-				$bookidx             = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+				$bookidx             = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 				$chapters_verselimit = $jindex['verse_limit'][ $bookidx ];
 				$verselimit          = intval( $chapters_verselimit[ $pp[0] - 1 ] );
 				if ( $pp[1] > $verselimit ) {
 					$msg          = 'A verse in the query is out of bounds: there is no verse <%1$d> in the book %2$s at chapter <%3$d> in the requested version %4$s, the last possible verse is <%5$d>';
-					$this->errs[] = sprintf( $msg, $pp[1], $this->currentBook, $pp[0], $jkey, $verselimit );
+					$this->errs[] = sprintf( $msg, $pp[1], $this->current_book, $pp[0], $jkey, $verselimit );
 					return false;
 				}
 			}
@@ -333,20 +331,20 @@ class QueryValidator {
 		return true;
 	}
 
-	private function validateRightHandSideOfVerseSeparator( $parts ) {
-		if ( preg_match_all( '/[,\.][1-9][0-9]{0,2}\-([1-9][0-9]{0,2})/', $this->currentQuery, $matches ) ) {
-			$matches[1] = self::forceArray( $matches[1] );
+	private function validate_right_hand_side_of_verse_separator( $parts ) {
+		if ( preg_match_all( '/[,\.][1-9][0-9]{0,2}\-([1-9][0-9]{0,2})/', $this->current_query, $matches ) ) {
+			$matches[1] = self::force_array( $matches[1] );
 			$highverse  = intval( array_pop( $matches[1] ) );
 
 			foreach ( $this->indexes as $jkey => $jindex ) {
-				$bookidx             = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+				$bookidx             = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 				$chapters_verselimit = $jindex['verse_limit'][ $bookidx ];
 				$verselimit          = intval( $chapters_verselimit[ intval( $parts[0] ) - 1 ] );
 
 				if ( $highverse > $verselimit ) {
 					/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
 					$msg          = 'A verse in the query is out of bounds: there is no verse <%1$d> in the book %2$s at chapter <%3$d> in the requested version %4$s, the last possible verse is <%5$d>';
-					$this->errs[] = sprintf( $msg, $highverse, $this->currentBook, $parts[0], $jkey, $verselimit );
+					$this->errs[] = sprintf( $msg, $highverse, $this->current_book, $parts[0], $jkey, $verselimit );
 					return false;
 				}
 			}
@@ -354,48 +352,48 @@ class QueryValidator {
 		return true;
 	}
 
-	private function validateVersesAfterChapterVerseSeparators( $parts ) {
-		$versesAfterChapterVerseSeparators = self::getVerseAfterChapterVerseSeparator( $this->currentQuery );
+	private function validate_verses_after_chapter_verse_separator( $parts ) {
+		$versesAfterChapterVerseSeparators = self::get_verse_after_chapter_verse_separator( $this->current_query );
 
 		$highverse = intval( $versesAfterChapterVerseSeparators[1] );
 		foreach ( $this->indexes as $jkey => $jindex ) {
-			$bookidx             = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+			$bookidx             = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 			$chapters_verselimit = $jindex['verse_limit'][ $bookidx ];
 			$verselimit          = intval( $chapters_verselimit[ intval( $parts[0] ) - 1 ] );
 			if ( $highverse > $verselimit ) {
 				/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
 				$msg          = 'A verse in the query is out of bounds: there is no verse <%1$d> in the book %2$s at chapter <%3$d> in the requested version %4$s, the last possible verse is <%5$d>';
-				$this->errs[] = sprintf( $msg, $highverse, $this->currentBook, $parts[0], $jkey, $verselimit );
+				$this->errs[] = sprintf( $msg, $highverse, $this->current_book, $parts[0], $jkey, $verselimit );
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private function highVerseOutOfBounds( $highverse, $parts ) {
+	private function high_verse_out_of_bounds( $highverse, $parts ) {
 		foreach ( $this->indexes as $jkey => $jindex ) {
-			$bookidx             = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+			$bookidx             = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 			$chapters_verselimit = $jindex['verse_limit'][ $bookidx ];
 			$verselimit          = intval( $chapters_verselimit[ intval( $parts[0] ) - 1 ] );
 			if ( $highverse > $verselimit ) {
 				/* translators: the expressions <%1$d>, <%2$s>, <%3$d>, <%4$s> and %5$d must be left as is, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
 				$msg          = 'A verse in the query is out of bounds: there is no verse <%1$d> in the book %2$s at chapter <%3$d> in the requested version %4$s, the last possible verse is <%5$d>';
-				$this->errs[] = sprintf( $msg, $highverse, $this->currentBook, $parts[0], $jkey, $verselimit );
+				$this->errs[] = sprintf( $msg, $highverse, $this->current_book, $parts[0], $jkey, $verselimit );
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private function chapterOutOfBounds( $chapters ) {
+	private function chapter_out_of_bounds( $chapters ) {
 		foreach ( $chapters as $zchapter ) {
 			foreach ( $this->indexes as $jkey => $jindex ) {
 
-				$bookidx       = array_search( $this->nonZeroBookIdx, $jindex['book_num'] );
+				$bookidx       = array_search( $this->non_zero_book_idx, $jindex['book_num'] );
 				$chapter_limit = $jindex['chapter_limit'][ $bookidx ];
 				if ( intval( $zchapter ) > $chapter_limit ) {
 					$msg          = 'A chapter in the query is out of bounds: there is no chapter <%1$d> in the book %2$s in the requested version %3$s, the last possible chapter is <%4$d>';
-					$this->errs[] = sprintf( $msg, $zchapter, $this->currentBook, $jkey, $chapter_limit );
+					$this->errs[] = sprintf( $msg, $zchapter, $this->current_book, $jkey, $chapter_limit );
 					return true;
 				}
 			}
@@ -403,68 +401,68 @@ class QueryValidator {
 		return false;
 	}
 
-	public function ValidateQueries() {
+	public function validate_queries() {
 		// at least the first query must start with a book reference, which may have a number from 1 to 3 at the beginning
 		// echo "matching against: ".$queries[0]."<br />";
-		if ( $this->queryViolatesAnyRuleOf( $this->initialQueries[0], array( self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR ) ) ) {
+		if ( $this->query_violates_any_rule_of( $this->initial_queries[0], array( self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR ) ) ) {
 			return false;
 		}
 
-		foreach ( $this->initialQueries as $query ) {
-			$this->currentFullQuery = $query;
-			$this->currentQuery     = $query;
+		foreach ( $this->initial_queries as $query ) {
+			$this->current_full_query = $query;
+			$this->current_query     = $query;
 
-			if ( $this->queryViolatesAnyRuleOf( $this->currentQuery, array( self::VALID_CHAPTER_MUST_FOLLOW_BOOK ) ) ) {
+			if ( $this->query_violates_any_rule_of( $this->current_query, array( self::VALID_CHAPTER_MUST_FOLLOW_BOOK ) ) ) {
 				return false;
 			}
 
-			$matchedBook = self::matchBookInQuery( $this->currentQuery );
-			if ( $this->validateAndSetBook( $matchedBook ) === false ) {
+			$matchedBook = self::match_book_in_query( $this->current_query );
+			if ( $this->validate_and_set_book( $matchedBook ) === false ) {
 				continue;
 			}
 
-			if ( self::queryContainsNonConsecutiveVerses( $this->currentQuery ) ) {
+			if ( self::query_contains_non_consecutive_verses( $this->current_query ) ) {
 				$rules = array(
 					self::VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_CHAPTER_VERSE_SEPARATOR,
 					self::VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS,
 				);
-				if ( $this->queryViolatesAnyRuleOf( $this->currentQuery, $rules ) ) {
+				if ( $this->query_violates_any_rule_of( $this->current_query, $rules ) ) {
 					continue;
 				}
 			}
 
-			if ( self::chunkContainsChapterVerseConstruct( $this->currentQuery ) ) {
-				if ( $this->queryViolatesAnyRuleOf( $this->currentQuery, array( self::CHAPTER_VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS ) ) ) {
+			if ( self::chunk_contains_chapter_verse_construct( $this->current_query ) ) {
+				if ( $this->query_violates_any_rule_of( $this->current_query, array( self::CHAPTER_VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS ) ) ) {
 					continue;
 				} else {
-					$chapterIndicators = self::getAllChapterIndicators( $this->currentQuery );
-					if ( $this->validateChapterIndicators( $chapterIndicators ) === false ) {
+					$chapterIndicators = self::get_all_chapter_indicators( $this->current_query );
+					if ( $this->validate_chapter_indicators( $chapterIndicators ) === false ) {
 						continue;
 					}
 
-					if ( $this->validateChapterVerseConstructs() === false ) {
+					if ( $this->validate_chapter_verse_constructs() === false ) {
 						continue;
 					}
 				}
 			} else {
-				$chapters = explode( '-', $this->currentQuery );
-				if ( $this->chapterOutOfBounds( $chapters ) ) {
+				$chapters = explode( '-', $this->current_query );
+				if ( $this->chapter_out_of_bounds( $chapters ) ) {
 					continue;
 				}
 			}
 
-			if ( strpos( $this->currentQuery, '-' ) ) {
+			if ( strpos( $this->current_query, '-' ) ) {
 				$rules = array(
 					self::VERSE_RANGE_MUST_CONTAIN_VALID_VERSE_NUMBERS,
 					self::CORRESPONDING_CHAPTER_VERSE_CONSTRUCTS_IN_VERSE_RANGE_OVER_CHAPTERS,
 					self::CORRESPONDING_VERSE_SEPARATORS_FOR_MULTIPLE_VERSE_RANGES,
 				);
-				if ( $this->queryViolatesAnyRuleOf( $this->currentQuery, $rules ) ) {
+				if ( $this->query_violates_any_rule_of( $this->current_query, $rules ) ) {
 					continue;
 				}
 			}
-			$this->validatedVariants[] = $this->currentVariant;
-			$this->validatedQueries[]  = $this->currentFullQuery;
+			$this->validated_variants[] = $this->current_variant;
+			$this->validated_queries[]  = $this->current_full_query;
 
 		} //END FOREACH
 		return true;

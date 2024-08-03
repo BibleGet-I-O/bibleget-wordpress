@@ -297,7 +297,7 @@ class SettingsPage {
 			// instead of doing it in the gfonts_api_key_check (which is called on any admin interface)
 			set_transient( md5( $this->options['googlefontsapi_key'] ), $this->gfonts_api_key_check_result, 90 * 24 * HOUR_IN_SECONDS ); // 90 giorni
 
-			// bibleget_write_log("about to initialize creation of admin page...");
+			// write_log("about to initialize creation of admin page...");
 			if ( get_filesystem_method() === 'direct' ) {
 				$gfonts_dir = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
 				$creds     = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, array() );
