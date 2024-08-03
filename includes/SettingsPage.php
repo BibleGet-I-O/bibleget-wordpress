@@ -3,6 +3,7 @@
 namespace BibleGet;
 
 use BibleGet\Enums\LangCodes;
+use BibleGet\Plugin;
 use MatthiasMullie\Minify\CSS;
 
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
@@ -95,7 +96,7 @@ class SettingsPage {
 
 		$biblebookslangs = get_option( 'bibleget_languages' );
 		if ( $biblebookslangs === false || ! is_array( $biblebookslangs ) || count( $biblebookslangs ) < 1 ) {
-			bibleget_set_options(); // these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
+			Plugin::set_options(); // these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
 			$biblebookslangs = get_option( 'bibleget_languages' );
 		}
 
@@ -125,7 +126,7 @@ class SettingsPage {
 		$versionsbylang = array();
 		$langs          = array();
 		if ( count( $versions ) < 1 ) {
-			bibleget_set_options(); // global function defined in bibleget-io.php
+			Plugin::set_options(); // global function defined in bibleget-io.php
 			$versions = get_option( 'bibleget_versions', array() );
 		}
 		foreach ( $versions as $abbr => $versioninfo ) {

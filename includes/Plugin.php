@@ -997,7 +997,7 @@ class Plugin {
 	/**
 	 * Sets cached information about Bible books and Bible versions
 	 */
-	private static function set_options() {
+	public static function set_options() {
 		$bget            = array();
 		$bget_properties = new Properties();
 		foreach ( $bget_properties->options as $option => $array ) {
