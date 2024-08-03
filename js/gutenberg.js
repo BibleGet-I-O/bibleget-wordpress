@@ -232,7 +232,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		title: __("Bible quote", "bibleget-io"), // Block title.
 		category: "widgets",
 		icon: "book-alt",
-		attributes: BibleGetGlobal.BGETProperties,
+		attributes: BibleGetGlobal.BibleGet_Properties,
 		transforms: {
 			from: [
 				{
@@ -269,7 +269,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			//Function to update the query with Bible reference
 			const changeQuery = (QUERY) => {
-				//BibleGetGlobal.BGETProperties['QUERY'].default = QUERY;
+				//BibleGetGlobal.BibleGet_Properties['QUERY'].default = QUERY;
 				return setAttributes({ QUERY });
 			}
 
@@ -284,7 +284,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					);
 					return false;
 				}
-				//BibleGetGlobal.BGETProperties['VERSION'].default = VERSION;
+				//BibleGetGlobal.BibleGet_Properties['VERSION'].default = VERSION;
 				return setAttributes({ VERSION });
 			}
 
@@ -299,12 +299,12 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			//Function to update whether the Bible quote will be showed in a popup or not
 			const changePopup = (POPUP) => {
-				//BibleGetGlobal.BGETProperties['POPUP'].default = POPUP;
+				//BibleGetGlobal.BibleGet_Properties['POPUP'].default = POPUP;
 				return setAttributes({ POPUP });
 			}
 
 			const changeBibleVersionVisibility = (LAYOUTPREFS_SHOWBIBLEVERSION) => {
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_SHOWBIBLEVERSION"
 				].default = LAYOUTPREFS_SHOWBIBLEVERSION;
 				return setAttributes({ LAYOUTPREFS_SHOWBIBLEVERSION });
@@ -324,7 +324,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BIBLEVERSIONALIGNMENT"
 				].default = LAYOUTPREFS_BIBLEVERSIONALIGNMENT;
 				return setAttributes({ LAYOUTPREFS_BIBLEVERSIONALIGNMENT });
@@ -332,7 +332,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			const changeBibleVersionPos = (ev) => {
 				const LAYOUTPREFS_BIBLEVERSIONPOSITION = parseInt(ev.currentTarget.value);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BIBLEVERSIONPOSITION"
 				].default = LAYOUTPREFS_BIBLEVERSIONPOSITION;
 				return setAttributes({ LAYOUTPREFS_BIBLEVERSIONPOSITION });
@@ -340,7 +340,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			const changeBibleVersionWrap = (ev) => {
 				const LAYOUTPREFS_BIBLEVERSIONWRAP = parseInt(ev.currentTarget.value);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BIBLEVERSIONWRAP"
 				].default = LAYOUTPREFS_BIBLEVERSIONWRAP;
 				return setAttributes({ LAYOUTPREFS_BIBLEVERSIONWRAP });
@@ -358,7 +358,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERALIGNMENT"
 				].default = LAYOUTPREFS_BOOKCHAPTERALIGNMENT;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERALIGNMENT });
@@ -366,7 +366,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			const changeBookChapterPos = (ev) => {
 				let LAYOUTPREFS_BOOKCHAPTERPOSITION = parseInt(ev.currentTarget.value);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERPOSITION"
 				].default = LAYOUTPREFS_BOOKCHAPTERPOSITION;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERPOSITION });
@@ -374,14 +374,14 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 
 			const changeBookChapterWrap = (ev) => {
 				let LAYOUTPREFS_BOOKCHAPTERWRAP = parseInt(ev.currentTarget.value);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERWRAP"
 				].default = LAYOUTPREFS_BOOKCHAPTERWRAP;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERWRAP });
 			}
 
 			const changeShowFullReference = (LAYOUTPREFS_BOOKCHAPTERFULLQUERY) => {
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERFULLQUERY"
 				].default = LAYOUTPREFS_BOOKCHAPTERFULLQUERY;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERFULLQUERY });
@@ -406,7 +406,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						? BGET.FORMAT.BIBLELANGABBREV
 						: BGET.FORMAT.BIBLELANG;
 				}
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERFORMAT"
 				].default = LAYOUTPREFS_BOOKCHAPTERFORMAT;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
@@ -431,14 +431,14 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						? BGET.FORMAT.USERLANGABBREV
 						: BGET.FORMAT.BIBLELANGABBREV;
 				}
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_BOOKCHAPTERFORMAT"
 				].default = LAYOUTPREFS_BOOKCHAPTERFORMAT;
 				return setAttributes({ LAYOUTPREFS_BOOKCHAPTERFORMAT });
 			}
 
 			const changeVerseNumberVisibility = (LAYOUTPREFS_SHOWVERSENUMBERS) => {
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_SHOWVERSENUMBERS"
 				].default = LAYOUTPREFS_SHOWVERSENUMBERS;
 				return setAttributes({ LAYOUTPREFS_SHOWVERSENUMBERS });
@@ -454,7 +454,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"px; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_BORDERWIDTH"
 				].default = PARAGRAPHSTYLES_BORDERWIDTH;
 				return setAttributes({ PARAGRAPHSTYLES_BORDERWIDTH });
@@ -470,7 +470,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"px; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_BORDERRADIUS"
 				].default = PARAGRAPHSTYLES_BORDERRADIUS;
 				return setAttributes({ PARAGRAPHSTYLES_BORDERRADIUS });
@@ -487,7 +487,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						".bibleQuote.results { border-style: " + borderstyle + "; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_BORDERSTYLE"
 				].default = PARAGRAPHSTYLES_BORDERSTYLE;
 				return setAttributes({ PARAGRAPHSTYLES_BORDERSTYLE });
@@ -504,7 +504,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_BORDERCOLOR"
 				].default = PARAGRAPHSTYLES_BORDERCOLOR;
 				return setAttributes({ PARAGRAPHSTYLES_BORDERCOLOR });
@@ -521,7 +521,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_BACKGROUNDCOLOR"
 				].default = PARAGRAPHSTYLES_BACKGROUNDCOLOR;
 				return setAttributes({ PARAGRAPHSTYLES_BACKGROUNDCOLOR });
@@ -554,7 +554,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_MARGINTOPBOTTOM"
 				].default = PARAGRAPHSTYLES_MARGINTOPBOTTOM;
 				return setAttributes({ PARAGRAPHSTYLES_MARGINTOPBOTTOM });
@@ -587,7 +587,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_MARGINLEFTRIGHT"
 				].default = PARAGRAPHSTYLES_MARGINLEFTRIGHT;
 				return setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHT });
@@ -617,7 +617,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT"
 				].default = PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT;
 				return setAttributes({ PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT });
@@ -636,7 +636,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"px; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_PADDINGTOPBOTTOM"
 				].default = PARAGRAPHSTYLES_PADDINGTOPBOTTOM;
 				return setAttributes({ PARAGRAPHSTYLES_PADDINGTOPBOTTOM });
@@ -655,7 +655,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"px; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_PADDINGLEFTRIGHT"
 				].default = PARAGRAPHSTYLES_PADDINGLEFTRIGHT;
 				return setAttributes({ PARAGRAPHSTYLES_PADDINGLEFTRIGHT });
@@ -673,7 +673,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"em; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_LINEHEIGHT"
 				].default = PARAGRAPHSTYLES_LINEHEIGHT;
 				return setAttributes({ PARAGRAPHSTYLES_LINEHEIGHT });
@@ -687,7 +687,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						".bibleQuote.results { width: " + PARAGRAPHSTYLES_WIDTH + "%; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"PARAGRAPHSTYLES_WIDTH"
 				].default = PARAGRAPHSTYLES_WIDTH;
 				return setAttributes({ PARAGRAPHSTYLES_WIDTH });
@@ -747,22 +747,22 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
 				switch (target) {
 					case BGET.TEXTSTYLE.BOLD:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSIONSTYLES_BOLD"
 						].default = VERSIONSTYLES_BOLD;
 						return setAttributes({ VERSIONSTYLES_BOLD });
 					case BGET.TEXTSTYLE.ITALIC:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSIONSTYLES_ITALIC"
 						].default = VERSIONSTYLES_ITALIC;
 						return setAttributes({ VERSIONSTYLES_ITALIC });
 					case BGET.TEXTSTYLE.UNDERLINE:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSIONSTYLES_UNDERLINE"
 						].default = VERSIONSTYLES_UNDERLINE;
 						return setAttributes({ VERSIONSTYLES_UNDERLINE });
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSIONSTYLES_STRIKETHROUGH"
 						].default = VERSIONSTYLES_STRIKETHROUGH;
 						return setAttributes({ VERSIONSTYLES_STRIKETHROUGH });
@@ -784,7 +784,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSIONSTYLES_FONTSIZE"
 				].default = VERSIONSTYLES_FONTSIZE;
 				return setAttributes({ VERSIONSTYLES_FONTSIZE });
@@ -805,7 +805,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSIONSTYLES_FONTSIZEUNIT"
 				].default = VERSIONSTYLES_FONTSIZEUNIT;
 				return setAttributes({ VERSIONSTYLES_FONTSIZEUNIT });
@@ -822,7 +822,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSIONSTYLES_TEXTCOLOR"
 				].default = VERSIONSTYLES_TEXTCOLOR;
 				return setAttributes({ VERSIONSTYLES_TEXTCOLOR });
@@ -882,22 +882,22 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
 				switch (target) {
 					case BGET.TEXTSTYLE.BOLD:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"BOOKCHAPTERSTYLES_BOLD"
 						].default = BOOKCHAPTERSTYLES_BOLD;
 						return setAttributes({ BOOKCHAPTERSTYLES_BOLD });
 					case BGET.TEXTSTYLE.ITALIC:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"BOOKCHAPTERSTYLES_ITALIC"
 						].default = BOOKCHAPTERSTYLES_ITALIC;
 						return setAttributes({ BOOKCHAPTERSTYLES_ITALIC });
 					case BGET.TEXTSTYLE.UNDERLINE:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"BOOKCHAPTERSTYLES_UNDERLINE"
 						].default = BOOKCHAPTERSTYLES_UNDERLINE;
 						return setAttributes({ BOOKCHAPTERSTYLES_UNDERLINE });
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"BOOKCHAPTERSTYLES_STRIKETHROUGH"
 						].default = BOOKCHAPTERSTYLES_STRIKETHROUGH;
 						return setAttributes({ BOOKCHAPTERSTYLES_STRIKETHROUGH });
@@ -919,7 +919,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"BOOKCHAPTERSTYLES_FONTSIZE"
 				].default = BOOKCHAPTERSTYLES_FONTSIZE;
 				return setAttributes({ BOOKCHAPTERSTYLES_FONTSIZE });
@@ -940,7 +940,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"BOOKCHAPTERSTYLES_FONTSIZEUNIT"
 				].default = BOOKCHAPTERSTYLES_FONTSIZEUNIT;
 				return setAttributes({ BOOKCHAPTERSTYLES_FONTSIZEUNIT });
@@ -957,7 +957,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"BOOKCHAPTERSTYLES_TEXTCOLOR"
 				].default = BOOKCHAPTERSTYLES_TEXTCOLOR;
 				return setAttributes({ BOOKCHAPTERSTYLES_TEXTCOLOR });
@@ -1017,22 +1017,22 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
 				switch (target) {
 					case BGET.TEXTSTYLE.BOLD:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSENUMBERSTYLES_BOLD"
 						].default = VERSENUMBERSTYLES_BOLD;
 						return setAttributes({ VERSENUMBERSTYLES_BOLD });
 					case BGET.TEXTSTYLE.ITALIC:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSENUMBERSTYLES_ITALIC"
 						].default = VERSENUMBERSTYLES_ITALIC;
 						return setAttributes({ VERSENUMBERSTYLES_ITALIC });
 					case BGET.TEXTSTYLE.UNDERLINE:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSENUMBERSTYLES_UNDERLINE"
 						].default = VERSENUMBERSTYLES_UNDERLINE;
 						return setAttributes({ VERSENUMBERSTYLES_UNDERLINE });
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSENUMBERSTYLES_STRIKETHROUGH"
 						].default = VERSENUMBERSTYLES_STRIKETHROUGH;
 						return setAttributes({ VERSENUMBERSTYLES_STRIKETHROUGH });
@@ -1054,7 +1054,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSENUMBERSTYLES_FONTSIZE"
 				].default = VERSENUMBERSTYLES_FONTSIZE;
 				return setAttributes({ VERSENUMBERSTYLES_FONTSIZE });
@@ -1075,7 +1075,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSENUMBERSTYLES_FONTSIZEUNIT"
 				].default = VERSENUMBERSTYLES_FONTSIZEUNIT;
 				return setAttributes({ VERSENUMBERSTYLES_FONTSIZEUNIT });
@@ -1092,7 +1092,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSENUMBERSTYLES_TEXTCOLOR"
 				].default = VERSENUMBERSTYLES_TEXTCOLOR;
 				return setAttributes({ VERSENUMBERSTYLES_TEXTCOLOR });
@@ -1228,7 +1228,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					}
 				}
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSENUMBERSTYLES_VALIGN"
 				].default = VERSENUMBERSTYLES_VALIGN;
 				return setAttributes({ VERSENUMBERSTYLES_VALIGN });
@@ -1354,22 +1354,22 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
 				switch (target) {
 					case BGET.TEXTSTYLE.BOLD:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSETEXTSTYLES_BOLD"
 						].default = VERSETEXTSTYLES_BOLD;
 						return setAttributes({ VERSETEXTSTYLES_BOLD });
 					case BGET.TEXTSTYLE.ITALIC:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSETEXTSTYLES_ITALIC"
 						].default = VERSETEXTSTYLES_ITALIC;
 						return setAttributes({ VERSETEXTSTYLES_ITALIC });
 					case BGET.TEXTSTYLE.UNDERLINE:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSETEXTSTYLES_UNDERLINE"
 						].default = VERSETEXTSTYLES_UNDERLINE;
 						return setAttributes({ VERSETEXTSTYLES_UNDERLINE });
 					case BGET.TEXTSTYLE.STRIKETHROUGH:
-						BibleGetGlobal.BGETProperties[
+						BibleGetGlobal.BibleGet_Properties[
 							"VERSETEXTSTYLES_STRIKETHROUGH"
 						].default = VERSETEXTSTYLES_STRIKETHROUGH;
 						return setAttributes({ VERSETEXTSTYLES_STRIKETHROUGH });
@@ -1391,7 +1391,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSETEXTSTYLES_FONTSIZE"
 				].default = VERSETEXTSTYLES_FONTSIZE;
 				return setAttributes({ VERSETEXTSTYLES_FONTSIZE });
@@ -1412,7 +1412,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 					`$1${fontsizerule}$4`
 				);
 				jQuery("#bibleGetDynamicStylesheet").text(bbGetDynSS);
-				BibleGetGlobal.BGETProperties[
+				BibleGetGlobal.BibleGet_Properties[
 					"VERSETEXTSTYLES_FONTSIZEUNIT"
 				].default = VERSETEXTSTYLES_FONTSIZEUNIT;
 				return setAttributes({ VERSETEXTSTYLES_FONTSIZEUNIT });
@@ -1429,7 +1429,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 							"; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties["VERSETEXTSTYLES_TEXTCOLOR"].default = VERSETEXTSTYLES_TEXTCOLOR;
+				BibleGetGlobal.BibleGet_Properties["VERSETEXTSTYLES_TEXTCOLOR"].default = VERSETEXTSTYLES_TEXTCOLOR;
 				return setAttributes({ VERSETEXTSTYLES_TEXTCOLOR });
 			}
 
@@ -1460,7 +1460,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 						".bibleQuote.results { font-family: '" + fontFamilyRdbl + "'; }"
 					)
 				);
-				BibleGetGlobal.BGETProperties["PARAGRAPHSTYLES_FONTFAMILY"].default = PARAGRAPHSTYLES_FONTFAMILY;
+				BibleGetGlobal.BibleGet_Properties["PARAGRAPHSTYLES_FONTFAMILY"].default = PARAGRAPHSTYLES_FONTFAMILY;
 				return setAttributes({ PARAGRAPHSTYLES_FONTFAMILY });
 			}
 

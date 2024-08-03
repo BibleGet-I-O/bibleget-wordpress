@@ -1,7 +1,7 @@
 /**
  * This file adds some LIVE to the Theme Customizer live preview. To leverage
  * this, set your custom settings to 'postMessage' and then add your handling
- * here. Your javascript should grab settings from customizer controls, and 
+ * here. Your javascript should grab settings from customizer controls, and
  * then make any necessary changes to the page using jQuery.
  */
 const vsdecorations = [],
@@ -44,7 +44,7 @@ const handleParagraphStyles = (BibleGetGlobal,key) => {
 				jQuery('.bibleQuote.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px auto');
 			}
 			else{
-				jQuery('.bibleQuote.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHT+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT );            
+				jQuery('.bibleQuote.results').css('margin', BGET.PARAGRAPHSTYLES_MARGINTOPBOTTOM+'px '+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHT+BGET.PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT );
 			}
 		break;
 		case 'PARAGRAPHSTYLES_PARAGRAPHALIGN':
@@ -177,7 +177,7 @@ const handleBookChapterStyles = (BibleGetGlobal,key) => {
 			const fontsize = BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT === 'em'
 				? BGET.BOOKCHAPTERSTYLES_FONTSIZE / 10
 				: BGET.BOOKCHAPTERSTYLES_FONTSIZE;
-			jQuery('.bibleQuote.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT ); 
+			jQuery('.bibleQuote.results .bookChapter').css('font-size', fontsize+BGET.BOOKCHAPTERSTYLES_FONTSIZEUNIT );
 			break;
 		}
 		/*
@@ -234,7 +234,7 @@ const handleVerseNumberStyles = (BibleGetGlobal,key) => {
 			const fontsize = BGET.VERSENUMBERSTYLES_FONTSIZEUNIT == 'em'
 				? BGET.VERSENUMBERSTYLES_FONTSIZE / 10
 				: BGET.VERSENUMBERSTYLES_FONTSIZE;
-			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT ); 
+			jQuery('.bibleQuote.results .versesParagraph .verseNum').css('font-size', fontsize+BGET.VERSENUMBERSTYLES_FONTSIZEUNIT );
 			break;
 		}
 		case 'VERSENUMBERSTYLES_VALIGN': {
@@ -250,7 +250,7 @@ const handleVerseNumberStyles = (BibleGetGlobal,key) => {
 					styles['position'] = 'relative';
 					styles['top'] = '0.6em';
 					break;
-				case BGETConstants.VALIGN.NORMAL: 
+				case BGETConstants.VALIGN.NORMAL:
 					styles['vertical-align'] = 'baseline';
 					styles['position'] = 'static';
 					break;
@@ -277,7 +277,7 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
 		}
 		case 'VERSETEXTSTYLES_UNDERLINE': {
 			const idx = vtdecorations.indexOf('underline');
-			if(BGET.VERSETEXTSTYLES_UNDERLINE && idx === -1) { 
+			if(BGET.VERSETEXTSTYLES_UNDERLINE && idx === -1) {
 				vtdecorations.push('underline');
 			} else if(!BGET.VERSETEXTSTYLES_UNDERLINE && idx !== -1) {
 				vtdecorations.splice(idx,1);
@@ -322,23 +322,23 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
 if(
 	BibleGetGlobal !== null
 	&& typeof BibleGetGlobal === 'object'
-	&& BibleGetGlobal.hasOwnProperty('BGETProperties')
+	&& BibleGetGlobal.hasOwnProperty('BibleGet_Properties')
 	&& BibleGetGlobal.hasOwnProperty('BGETConstants')
-	&& BibleGetGlobal.hasOwnProperty('BGET') 
+	&& BibleGetGlobal.hasOwnProperty('BGET')
 ) {
 	//console.log('BibleGetGlobal is defined!');
 	if(
-		typeof BibleGetGlobal.BGETProperties === 'object'
+		typeof BibleGetGlobal.BibleGet_Properties === 'object'
 		&& typeof BibleGetGlobal.BGETConstants === 'object'
 		&& typeof BibleGetGlobal.BGET === 'object'
 	) {
-		//console.log('BibleGet has properties BGETProperties, BGETConstants and BGET');
-		const { BGETProperties, BGET } = BibleGetGlobal;
-		for(const key in BGETProperties ){
+		//console.log('BibleGet has properties BibleGet_Properties, BGETConstants and BGET');
+		const { BibleGet_Properties, BGET } = BibleGetGlobal;
+		for(const key in BibleGet_Properties ){
 			wp.customize( 'BGET['+key+']', (value) => {
 				value.bind(function( newval ) {
 					//keep our local store of properties/attributes/preferences updated
-					BGET[key] = newval; 
+					BGET[key] = newval;
 					if( key.startsWith('PARAGRAPHSTYLES') ) {
 						handleParagraphStyles(BibleGetGlobal,key);
 					}
@@ -360,7 +360,7 @@ if(
 		}
 	}
 	else{
-		alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BGETProperties property of the BibleGetGlobal object is not available');
+		alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BibleGet_Properties property of the BibleGetGlobal object is not available');
 	}
 }
 else{

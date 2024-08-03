@@ -1,8 +1,9 @@
 <?php
 
-define(
-	'LANGCODES',
-	array(
+namespace BibleGet\Enums;
+
+class LangCodes {
+	public const ISO_639_1 = array(
 		'af' => 'Afrikaans',
 		'ak' => 'Akan',
 		'sq' => 'Albanian',
@@ -126,5 +127,6 @@ define(
 		'yi' => 'Yiddish',
 		'yo' => 'Yoruba',
 		'zu' => 'Zulu',
-	)
-);
+	);
+
+}

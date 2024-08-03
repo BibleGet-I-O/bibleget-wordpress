@@ -1,9 +1,11 @@
 <?php
-require_once plugin_dir_path( __FILE__ ) . 'LangCodes.php';
-require_once plugin_dir_path( __FILE__ ) . '../vendor/autoload.php';
+
+namespace BibleGet;
+
+use BibleGet\Enums\LangCodes;
 
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
-class BibleGetSettingsPage {
+class SettingsPage {
 
 	/**
 	 * Values used in the fields callbacks
@@ -19,7 +21,7 @@ class BibleGetSettingsPage {
 	private $gfontsAPIkey;
 	private $gfontsAPIkeyTimeOut;
 	private $gfontsAPI_errors;
-	private $gfontsAPIkeyCheckResult;
+	private $gfonts_api_key_check_result;
 
 	/**
 	 * Start up
@@ -30,7 +32,7 @@ class BibleGetSettingsPage {
 		$this->options                 = get_option( 'bibleget_settings' );
 		$this->gfontsAPIkey            = '';
 		$this->gfontsAPIkeyTimeOut     = 0;
-		$this->gfontsAPIkeyCheckResult = false;
+		$this->gfonts_api_key_check_result = false;
 		$this->gfontsAPI_errors        = array();
 		$this->versionsbylang          = $this->prepareVersionsByLang(); // will now be an array with both versions and langs properties
 		$this->versionlangscount       = count( $this->versionsbylang['versions'] );
@@ -44,9 +46,9 @@ class BibleGetSettingsPage {
 
 		// if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
 		// so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
-		// this will change the transient set, it cannot happen in gfontsAPIkeyCheck which is called on any admin interface
+		// this will change the transient set, it cannot happen in gfonts_api_key_check which is called on any admin interface
 		// we will have to leave the transient set to admin_print_scripts
-		switch ( $this->gfontsAPIkeyCheck() ) { // can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfontsAPIkeyCheckResult
+		switch ( $this->gfonts_api_key_check() ) { // can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfonts_api_key_check_result
 			case 'SUCCESS':
 				// the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
 				// error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
@@ -97,7 +99,7 @@ class BibleGetSettingsPage {
 		foreach ( $biblebookslangs as $biblebookslang ) {
 			if ( extension_loaded( 'intl' ) === true ) {
 				// get two letter ISO code from the english language name
-				$biblebooksLocale = array_search( $biblebookslang, LANGCODES );
+				$biblebooksLocale = array_search( $biblebookslang, LangCodes::ISO_639_1 );
 				// get the translated display name that corresponds to the two letter ISO code
 				$lang = Locale::getDisplayLanguage( $biblebooksLocale, $this->locale );
 				array_push( $biblebookslangsArr, $lang );
@@ -115,7 +117,7 @@ class BibleGetSettingsPage {
 	}
 
 	public function prepareVersionsByLang() {
-		$versions       = get_option( 'bibleget_versions', array() ); // theoretically should be an array
+		$versions       = get_option( 'bibleget_versions', array() ); // theoretically should be an array.
 		$versionsbylang = array();
 		$langs          = array();
 		if ( count( $versions ) < 1 ) {
@@ -127,9 +129,9 @@ class BibleGetSettingsPage {
 			$fullname = $info[0];
 			$year     = $info[1];
 			if ( extension_loaded( 'intl' ) === true ) { // do our best to translate the language name
-				$lang = Locale::getDisplayLanguage( $info[2], $this->locale );
+				$lang = \Locale::getDisplayLanguage( $info[2], $this->locale );
 			} else { // but if we can't, just use the english version that we have
-				$lang = LANGCODES[ $info[2] ]; // this gives the english correspondent of the two letter ISO code
+				$lang = LangCodes::ISO_639_1[ $info[2] ]; // this gives the english correspondent of the two letter ISO code.
 			}
 
 			if ( isset( $versionsbylang[ $lang ] ) ) {
@@ -188,7 +190,7 @@ class BibleGetSettingsPage {
 			if ( extension_loaded( 'intl' ) === true ) {
 				$lang = Locale::getDisplayLanguage( $lang, 'en' );
 			} else {
-				$lang = LANGCODES[ $lang ]; // this gives the english correspondent of the two letter ISO code
+				$lang = LangCodes::ISO_639_1[ $lang ]; // this gives the english correspondent of the two letter ISO code
 			}
 		}
 
@@ -290,10 +292,10 @@ class BibleGetSettingsPage {
 		wp_localize_script( 'admin-js', 'bibleGetOptionsFromServer', $obj );
 		wp_enqueue_script( 'admin-js' );
 
-		if ( $this->gfontsAPIkeyCheckResult === 'SUCCESS' ) {
+		if ( $this->gfonts_api_key_check_result === 'SUCCESS' ) {
 			// We only want the transient to be set from the bibleget settings page, so we wait until now
-			// instead of doing it in the gfontsAPIkeyCheck (which is called on any admin interface)
-			set_transient( md5( $this->options['googlefontsapi_key'] ), $this->gfontsAPIkeyCheckResult, 90 * 24 * HOUR_IN_SECONDS ); // 90 giorni
+			// instead of doing it in the gfonts_api_key_check (which is called on any admin interface)
+			set_transient( md5( $this->options['googlefontsapi_key'] ), $this->gfonts_api_key_check_result, 90 * 24 * HOUR_IN_SECONDS ); // 90 giorni
 
 			// bibleget_write_log("about to initialize creation of admin page...");
 			if ( get_filesystem_method() === 'direct' ) {
@@ -561,8 +563,8 @@ class BibleGetSettingsPage {
 	public function googlefontsapikey_callback() {
 
 		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfontsAPIkey . '" size="50" /></label>';
-		if ( $this->gfontsAPIkeyCheckResult ) {
-			switch ( $this->gfontsAPIkeyCheckResult ) {
+		if ( $this->gfonts_api_key_check_result ) {
+			switch ( $this->gfonts_api_key_check_result ) {
 				case 'SUCCESS':
 					// Let's transform the transient timeout into a human readable format
 
@@ -651,7 +653,7 @@ class BibleGetSettingsPage {
 		return $isLocal;
 	}
 
-	public function gfontsAPIkeyCheck() {
+	public function gfonts_api_key_check() {
 		$result                 = false;
 		$this->gfontsAPI_errors = array(); // we want to start with a clean slate
 
@@ -736,7 +738,7 @@ class BibleGetSettingsPage {
 			//we don't have a previously saved api key, but really who cares
 		}*/
 
-		$this->gfontsAPIkeyCheckResult = $result;
+		$this->gfonts_api_key_check_result = $result;
 		return $result;
 	}
 
@@ -955,6 +957,6 @@ class BibleGetSettingsPage {
 	}
 
 	public function getGFontsAPIkeyCheckResult() {
-		return $this->gfontsAPIkeyCheckResult;
+		return $this->gfonts_api_key_check_result;
 	}
 }

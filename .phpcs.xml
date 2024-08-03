@@ -6,6 +6,10 @@
 			<property name="allowed_custom_properties" type="array" value="textContent,nextSibling"/>
 		</properties>
 	</rule>
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+	</rule>
 	<file>.</file>
 	<arg name="extensions" value="php"/>
 	<arg name="encoding" value="UTF-8"/>

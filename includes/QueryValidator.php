@@ -1,4 +1,7 @@
 <?php
+
+namespace BibleGet;
+
 /**
  * QUERY_VALIDATOR class
  *
