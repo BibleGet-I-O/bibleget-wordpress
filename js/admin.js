@@ -151,7 +151,7 @@ jQuery(document).ready(($) => {
 		//console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
 		//console.log(gfontsBatch);
 		//check for errors in writing to the filesystem
-		const wpFsErrors = JSON.parse(gfontsBatch.job.gfontsAPI_errors);
+		const wpFsErrors = JSON.parse(gfontsBatch.job.gfonts_api_errors);
 		if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
 			//console.log(wpFsErrors);
 			jQuery("#googlefontsapi_key")

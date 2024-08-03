@@ -535,8 +535,8 @@ class Plugin {
 		// we aren't actually going to create the settings page here,
 		// we're just using some of the same information that is used to create the settings page.
 		$options_info           = new SettingsPage();
-		$versions_by_lang       = $options_info->getVersionsByLang();
-		$bibleget_books_in_lang = $options_info->getBibleBookNamesInLang();
+		$versions_by_lang       = $options_info->get_versions_by_lang();
+		$bibleget_books_in_lang = $options_info->get_bible_book_names_in_lang();
 		// These are our default settings, we will use them for the Gutenberg block
 		// they could perhaps take the place of the properties defined for the Customizer.
 		$bget_properties = new Properties();

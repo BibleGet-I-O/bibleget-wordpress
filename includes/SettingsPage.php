@@ -3,6 +3,7 @@
 namespace BibleGet;
 
 use BibleGet\Enums\LangCodes;
+use MatthiasMullie\Minify\CSS;
 
 /** CREATE ADMIN MENU PAGE WITH SETTINGS */
 class SettingsPage {
@@ -18,29 +19,32 @@ class SettingsPage {
 	private $versionlangscount;
 	private $biblebookslangs;
 	private $gfonts_weblist;
-	private $gfontsAPIkey;
-	private $gfontsAPIkeyTimeOut;
-	private $gfontsAPI_errors;
+	private $gfonts_api_key;
+	private $gfonts_api_key_timeout;
+	private $gfonts_api_errors;
 	private $gfonts_api_key_check_result;
 
 	/**
-	 * Start up
+	 * Constructor
 	 */
 	public function __construct() {
-		$this->locale                  = substr( apply_filters( 'plugin_locale', get_locale(), 'bibleget-io' ), 0, 2 );
-		$this->gfonts_weblist          = new stdClass();
-		$this->options                 = get_option( 'bibleget_settings' );
-		$this->gfontsAPIkey            = '';
-		$this->gfontsAPIkeyTimeOut     = 0;
+		$this->locale                      = substr( apply_filters( 'plugin_locale', get_locale(), 'bibleget-io' ), 0, 2 );
+		$this->gfonts_weblist              = new \stdClass();
+		$this->options                     = get_option( 'bibleget_settings' );
+		$this->gfonts_api_key              = '';
+		$this->gfonts_api_key_timeout      = 0;
 		$this->gfonts_api_key_check_result = false;
-		$this->gfontsAPI_errors        = array();
-		$this->versionsbylang          = $this->prepareVersionsByLang(); // will now be an array with both versions and langs properties
-		$this->versionlangscount       = count( $this->versionsbylang['versions'] );
-		$this->versionsbylangcount     = $this->countVersionsByLang();
-		$this->biblebookslangs         = $this->prepareBibleBooksLangs();
+		$this->gfonts_api_errors           = array();
+		$this->versionsbylang              = $this->prepare_versions_by_lang(); // will now be an array with both versions and langs properties.
+		$this->versionlangscount           = count( $this->versionsbylang['versions'] );
+		$this->versionsbylangcount         = $this->count_versions_by_lang();
+		$this->biblebookslangs             = $this->prepare_bible_books_langs();
 	}
 
-	public function Init() {
+	/**
+	 * Initialize admin menu and settings and check gfonts api key
+	 */
+	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
@@ -50,11 +54,11 @@ class SettingsPage {
 		// we will have to leave the transient set to admin_print_scripts
 		switch ( $this->gfonts_api_key_check() ) { // can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfonts_api_key_check_result
 			case 'SUCCESS':
-				// the gfontsAPIkey is set, and transient has been set and successful curl call made to the google fonts API
-				// error_log('AJAX ACTION NOW BEING ADDED WITH THESE VALUES');
+				// the gfonts_api_key is set, and transient has been set and successful curl call made to the google fonts API.
+				// error_log( 'AJAX ACTION NOW BEING ADDED WITH THESE VALUES' );
 				set_time_limit( 180 );
 				add_action( 'wp_ajax_store_gfonts_preview', array( $this, 'store_gfonts_preview' ) );
-				add_action( 'wp_ajax_bibleget_refresh_gfonts', array( $this, 'bibleGetForceRefreshGFontsResults' ) );
+				add_action( 'wp_ajax_bibleget_refresh_gfonts', array( $this, 'force_refresh_gfonts_results' ) );
 				// enqueue and localize will be done in enqueue_scripts
 				break;
 			/*
@@ -65,7 +69,7 @@ class SettingsPage {
 			case "REQUEST_NOT_SENT":
 				break;
 			case false:
-				//the gfontsAPIkey is not set, so let's just not do anything, ok
+				//the gfonts_api_key is not set, so let's just not do anything, ok
 				break;
 			*/
 		}
@@ -75,18 +79,18 @@ class SettingsPage {
 		add_action( 'load-' . $this->options_page_hook, array( $this, 'bibleget_plugin_settings_save' ) );
 	}
 
-	public function getVersionsByLang() {
+	public function get_versions_by_lang() {
 		return $this->versionsbylang;
 	}
 
 	/**
-	 * Function prepareBibleBooksLangs
+	 * Function prepare_bible_books_langs
 	 *
 	 * returns the list of languages in which the BibleGet endpoint can understand the names of the books of the Bible
 	 * the language names are translated into the current locale
 	 * (For just the English names, use get_option("bibleget_languages") rather than this function )
 	 */
-	public function prepareBibleBooksLangs() {
+	public function prepare_bible_books_langs() {
 		$biblebookslangsArr = array();
 
 		$biblebookslangs = get_option( 'bibleget_languages' );
@@ -111,12 +115,12 @@ class SettingsPage {
 		if ( extension_loaded( 'intl' ) === true ) {
 			collator_asort( collator_create( 'root' ), $biblebookslangsArr );
 		} else {
-			array_multisort( array_map( 'self::Sortify', $biblebookslangsArr ), $biblebookslangsArr );
+			array_multisort( array_map( 'self::sortify', $biblebookslangsArr ), $biblebookslangsArr );
 		}
 		return $biblebookslangsArr;
 	}
 
-	public function prepareVersionsByLang() {
+	public function prepare_versions_by_lang() {
 		$versions       = get_option( 'bibleget_versions', array() ); // theoretically should be an array.
 		$versionsbylang = array();
 		$langs          = array();
@@ -154,7 +158,7 @@ class SettingsPage {
 		if ( extension_loaded( 'intl' ) === true ) {
 			collator_asort( collator_create( 'root' ), $langs );
 		} else {
-			array_multisort( array_map( 'self::Sortify', $langs ), $langs );
+			array_multisort( array_map( 'self::sortify', $langs ), $langs );
 		}
 
 		return array(
@@ -163,9 +167,10 @@ class SettingsPage {
 		);
 	}
 
-	public function countVersionsByLang() {
-		// count total languages and total versions
-
+	/**
+	 * Count total languages and total versions
+	 */
+	public function count_versions_by_lang() {
 		$counter = 0;
 		foreach ( $this->versionsbylang['versions'] as $lang => $versionbylang ) {
 			ksort( $this->versionsbylang['versions'][ $lang ] );
@@ -175,13 +180,12 @@ class SettingsPage {
 	}
 
 	/**
-	 * Function getBibleBookNamesInLang
+	 * Get translated names of Bible books
 	 *
-	 * @string $lang will typically be the language of the WordPress interface,
-	 * can be two letter ISO code or full language name
-	 * Returns stdClass object
+	 * @param string $lang Will typically be the language of the WordPress interface, can be two letter ISO code or full language name.
+	 * @return \stdClass
 	 */
-	public function getBibleBookNamesInLang( $lang = null ) {
+	public function get_bible_book_names_in_lang( $lang = null ) {
 		if ( $lang === null ) {
 			$lang = $this->locale;
 		}
@@ -190,11 +194,11 @@ class SettingsPage {
 			if ( extension_loaded( 'intl' ) === true ) {
 				$lang = Locale::getDisplayLanguage( $lang, 'en' );
 			} else {
-				$lang = LangCodes::ISO_639_1[ $lang ]; // this gives the english correspondent of the two letter ISO code
+				$lang = LangCodes::ISO_639_1[ $lang ]; // this gives the english correspondent of the two letter ISO code.
 			}
 		}
 
-		// we probably have a full language name now if we didn't before, let's get the index from the supported languages
+		// we probably have a full language name now if we didn't before, let's get the index from the supported languages.
 		if ( strlen( $lang ) > 2 ) {
 			$biblebookslangs = get_option( 'bibleget_languages' );
 			$idx             = array_search( $lang, $biblebookslangs );
@@ -202,7 +206,7 @@ class SettingsPage {
 				$idx = array_search( 'English', $biblebookslangs );
 			}
 			// we can start getting our return info ready
-			$bibleBooks           = new stdClass();
+			$bibleBooks           = new \stdClass();
 			$bibleBooks->fullname = array();
 			$bibleBooks->abbrev   = array();
 			for ( $i = 0; $i < 73; $i++ ) {
@@ -221,11 +225,11 @@ class SettingsPage {
 	public function add_plugin_page() {
 		// This page will be under "Settings"
 		$this->options_page_hook = add_options_page(
-			__( 'BibleGet I/O Settings', 'bibleget-io' ),    // $page_title
-			'BibleGet I/O',                                // $menu_title
-			'manage_options',                            // $capability
-			'bibleget-settings-admin',                    // $menu_slug (Page ID)
-			array( $this, 'create_admin_page' )            // Callback Function
+			__( 'BibleGet I/O Settings', 'bibleget-io' ),  // $page_title.
+			'BibleGet I/O',                                // $menu_title.
+			'manage_options',                              // $capability.
+			'bibleget-settings-admin',                     // $menu_slug (Page ID).
+			array( $this, 'create_admin_page' )            // Callback Function.
 		);
 	}
 
@@ -235,16 +239,16 @@ class SettingsPage {
 	public function register_settings() {
 
 		register_setting(
-			'bibleget_settings_options', // Option group
-			'bibleget_settings', // Option name
-			array( $this, 'sanitize' ) // Sanitize
+			'bibleget_settings_options', // Option group.
+			'bibleget_settings',         // Option name.
+			array( $this, 'sanitize' )   // Sanitize.
 		);
 
 		add_settings_section(
-			'bibleget_settings_section2', // ID
-			__( 'Preferences Settings', 'bibleget-io' ), // Title
-			array( $this, 'print_section_info2' ), // Callback
-			'bibleget-settings-admin' // Page
+			'bibleget_settings_section2',                // Section ID.
+			__( 'Preferences Settings', 'bibleget-io' ), // Title.
+			array( $this, 'print_section_info2' ),       // Callback.
+			'bibleget-settings-admin'                    // Page.
 		);
 
 		add_settings_field(
@@ -307,37 +311,37 @@ class SettingsPage {
 					if ( ! $wp_filesystem->is_dir( $gfonts_dir ) ) {
 						/* directory didn't exist, so let's create it */
 						if ( $wp_filesystem->mkdir( $gfonts_dir ) === false ) {
-							$this->gfontsAPI_errors[] = 'Could not create directory gfonts_preview';
+							$this->gfonts_api_errors[] = 'Could not create directory gfonts_preview';
 						} else {
 							// let's make sure the necessary subfolders are also created
 							if ( ! $wp_filesystem->is_dir( $gfonts_dir . 'ttf/' ) ) {
 								if ( $wp_filesystem->mkdir( $gfonts_dir . 'ttf/' ) === false ) {
-									$this->gfontsAPI_errors[] = 'Could not create directory gfonts_preview/ttf';
+									$this->gfonts_api_errors[] = 'Could not create directory gfonts_preview/ttf';
 								}
 							}
 							if ( ! $wp_filesystem->is_dir( $gfonts_dir . 'css/' ) ) {
 								if ( $wp_filesystem->mkdir( $gfonts_dir . 'css/' ) === false ) {
-									$this->gfontsAPI_errors[] = 'Could not create directory gfonts_preview/css';
+									$this->gfonts_api_errors[] = 'Could not create directory gfonts_preview/css';
 								}
 							}
 						}
 					}
 
-					// let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling
+					// let's also cache the results from the Google Fonts API in a local file so we don't have to keep calling.
 					if ( $wp_filesystem->put_contents(
 						$gfonts_dir . 'gfontsWeblist.json',
 						json_encode( $this->gfonts_weblist ),
-						FS_CHMOD_FILE // predefined mode settings for WP files
+						FS_CHMOD_FILE // predefined mode settings for WP files.
 					) === false ) {
-						$this->gfontsAPI_errors[] = 'Could not write file gfonts_preview/gfontsWeblist.json';
+						$this->gfonts_api_errors[] = 'Could not write file gfonts_preview/gfontsWeblist.json';
 					}
 				} else {
-					$this->gfontsAPI_errors[] = 'Could not initialize WordPress filesystem with these credentials';
+					$this->gfonts_api_errors[] = 'Could not initialize WordPress filesystem with these credentials';
 				}
 			} else {
-				$this->gfontsAPI_errors[] = 'You do not have direct access permissions to the WordPress filesystem';
+				$this->gfonts_api_errors[] = 'You do not have direct access permissions to the WordPress filesystem';
 			}
-			if ( count( $this->gfontsAPI_errors ) > 0 ) {
+			if ( count( $this->gfonts_api_errors ) > 0 ) {
 				add_action(
 					'admin_notices',
 					function () {
@@ -346,7 +350,7 @@ class SettingsPage {
 							esc_attr( 'notice notice-error' ),
 							esc_html(
 								__( 'Impossible to write data to the BibleGet plugin directory, please check permissions!', 'bibleget-io' )
-								. "\n" . implode( "\n", $this->gfontsAPI_errors )
+								. "\n" . implode( "\n", $this->gfonts_api_errors )
 							)
 						);
 					}
@@ -367,7 +371,7 @@ class SettingsPage {
 					'ajax_url'           => admin_url( 'admin-ajax.php' ),
 					'gfontsWeblist'      => $this->gfonts_weblist,
 					'gfontsApiKey'       => $this->options['googlefontsapi_key'],
-					'gfontsAPI_errors'   => json_encode( $this->gfontsAPI_errors ),
+					'gfonts_api_errors'   => json_encode( $this->gfonts_api_errors ),
 					'max_execution_time' => ini_get( 'max_execution_time' ),
 				),
 			);
@@ -382,7 +386,7 @@ class SettingsPage {
 
 		// populate $this->biblebookslangs and $this->versionsbylang and $this->versionsbylangcount
 		// based on current WordPress locale
-		// $this->versionsbylang = $this->getVersionsByLang(); //already done in constructor?
+		// $this->versionsbylang = $this->get_versions_by_lang(); //already done in constructor?
 
 		// HTML of the main section of the options page
 		?>
@@ -417,7 +421,7 @@ class SettingsPage {
 							// This if condition should be superfluous, but just to be sure nothing goes awry...
 						if ( $this->versionsbylangcount < 1 || $this->versionlangscount < 1 ) {
 							echo 'Seems like the version info was not yet initialized. Now attempting to initialize...';
-							$this->versionsbylang = $this->getVersionsByLang();
+							$this->versionsbylang = $this->get_versions_by_lang();
 						}
 							$b1      = '<b class="bibleget-dynamic-data">';
 							$b2      = '</b>';
@@ -523,7 +527,7 @@ class SettingsPage {
 	public function favorite_version_callback() {
 		// double check to see if the values have been set
 		if ( $this->versionsbylangcount < 1 || $this->versionlangscount < 1 ) {
-			$this->versionsbylang = $this->getVersionsByLang();
+			$this->versionsbylang = $this->get_versions_by_lang();
 		}
 
 		$counter = ( $this->versionsbylangcount + $this->versionlangscount );
@@ -562,17 +566,17 @@ class SettingsPage {
 
 	public function googlefontsapikey_callback() {
 
-		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfontsAPIkey . '" size="50" /></label>';
+		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfonts_api_key . '" size="50" /></label>';
 		if ( $this->gfonts_api_key_check_result ) {
 			switch ( $this->gfonts_api_key_check_result ) {
 				case 'SUCCESS':
 					// Let's transform the transient timeout into a human readable format
 
-					$d1 = new DateTime(); // timestamp set to current time
-					$d2 = new DateTime();
-					$d2->setTimestamp( $this->gfontsAPIkeyTimeOut );
+					$d1 = new \DateTime(); // timestamp set to current time
+					$d2 = new \DateTime();
+					$d2->setTimestamp( $this->gfonts_api_key_timeout );
 					$diff                 = $d2->diff( $d1 );
-					$gfontsAPIkeyTimeLeft = $diff->m . ' months, ' . $diff->d . ' days';
+					$gfonts_api_keyTimeLeft = $diff->m . ' months, ' . $diff->d . ' days';
 
 					$timeLeft = array();
 
@@ -583,18 +587,18 @@ class SettingsPage {
 						$timeLeft[] = ( $diff->d . ' ' . _n( 'day', 'days', $diff->d, 'bibleget-io' ) );
 					}
 
-					$gfontsAPIkeyTimeLeft = ( count( $timeLeft ) > 0 ) ? '[' . implode( ', ', $timeLeft ) . ']' : '[0 ' . _n( 'day', 'days', 2, 'bibleget-io' ) . ']';
+					$gfonts_api_keyTimeLeft = ( count( $timeLeft ) > 0 ) ? '[' . implode( ', ', $timeLeft ) . ']' : '[0 ' . _n( 'day', 'days', 2, 'bibleget-io' ) . ']';
 
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
 					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">' . __( 'VALID', 'bibleget-io' ) . '</span><br />';
-					echo ' <i>' . sprintf( __( 'Google Fonts API refresh scheduled in: %s', 'bibleget-io' ), $gfontsAPIkeyTimeLeft );
+					echo ' <i>' . sprintf( __( 'Google Fonts API refresh scheduled in: %s', 'bibleget-io' ), $gfonts_api_keyTimeLeft );
 					echo ' ' . sprintf( __( 'OR %1$s Click here %2$s to force refresh the list of fonts from the Google Fonts API', 'bibleget-io' ), '<span id="biblegetForceRefreshGFapiResults">', '</span>' );
 					echo '</i>';
 					break;
 				case 'CURL_ERROR':
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
 					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __( 'CURL ERROR WHEN SENDING REQUEST', 'bibleget-io' ) . '</span><br />';
-					foreach ( $this->gfontsAPI_errors as $er ) {
+					foreach ( $this->gfonts_api_errors as $er ) {
 						if ( $er === 403 ) {
 							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
 							echo __( "This server's IP address has not been given access to the Google Fonts API using this key.", 'bibleget-io' );
@@ -632,7 +636,7 @@ class SettingsPage {
 		}
 	}
 
-	private static function isLocalIp( $ip ) {
+	private static function is_local_ip( $ip ) {
 		$isLocal = false;
 		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
 			$ipNum = ip2long( $ip );
@@ -655,10 +659,10 @@ class SettingsPage {
 
 	public function gfonts_api_key_check() {
 		$result                 = false;
-		$this->gfontsAPI_errors = array(); // we want to start with a clean slate
+		$this->gfonts_api_errors = array(); // we want to start with a clean slate
 
 		if ( isset( $this->options['googlefontsapi_key'] ) && $this->options['googlefontsapi_key'] != '' ) {
-			$this->gfontsAPIkey = $this->options['googlefontsapi_key'];
+			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
 
 			// has this key been tested in the past 3 months at least?
 			$result = get_transient( md5( $this->options['googlefontsapi_key'] ) );
@@ -674,7 +678,7 @@ class SettingsPage {
 					curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
 					curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 					curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-					if ( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+					if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 						curl_setopt( $ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
 					}
 					if ( ini_get( 'open_basedir' ) === false ) {
@@ -698,17 +702,17 @@ class SettingsPage {
 					} else {
 						if ( ! $response ) {
 							/* translators: refers to the outcome of the communication with the Google Fonts API as a boolean value */
-							$this->gfontsAPI_errors[] = __( 'Response from curl request is false', 'bibleget-io' );
+							$this->gfonts_api_errors[] = __( 'Response from curl request is false', 'bibleget-io' );
 						}
 						if ( curl_errno( $ch ) ) {
-							$this->gfontsAPI_errors[] = curl_error( $ch );
+							$this->gfonts_api_errors[] = curl_error( $ch );
 						}
 						if ( $status != 200 ) {
 							if ( $status === 403 ) {
-								$this->gfontsAPI_errors[] = $status;
+								$this->gfonts_api_errors[] = $status;
 							} else {
 								/* translators: refers to the status of the http response during communication with the Google Fonts API */
-								$this->gfontsAPI_errors[] = __( 'Status', 'bibleget-io' ) . ' = ' . $status;
+								$this->gfonts_api_errors[] = __( 'Status', 'bibleget-io' ) . ' = ' . $status;
 							}
 						}
 						$result = 'CURL_ERROR';
@@ -731,7 +735,7 @@ class SettingsPage {
 				  LIKE '%_transient_timeout_$transientKey%'
 				"
 				);
-				$this->gfontsAPIkeyTimeOut = $transient_timeout[0];
+				$this->gfonts_api_key_timeout = $transient_timeout[0];
 			}
 		}/*
 		else {
@@ -751,8 +755,8 @@ class SettingsPage {
 		$errorinfo         = array();
 		$gfonts_dir         = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
 		$gfontsWeblistFile = $gfonts_dir . 'gfontsWeblist.json';
-		$gfontsWeblist     = new stdClass();
-		$returnInfo        = new stdClass();
+		$gfontsWeblist     = new \stdClass();
+		$returnInfo        = new \stdClass();
 
 		if ( file_exists( $gfontsWeblistFile ) ) {
 			$gfontsWeblistFileContents = file_get_contents( $gfontsWeblistFile );
@@ -801,7 +805,7 @@ class SettingsPage {
 							curl_setopt( $ch2, CURLOPT_SSL_VERIFYHOST, 2 );
 							curl_setopt( $ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 							curl_setopt( $ch2, CURLOPT_RETURNTRANSFER, true );
-							if ( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+							if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 								curl_setopt( $ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
 							}
 							if ( ini_get( 'open_basedir' ) === false ) {
@@ -822,7 +826,7 @@ class SettingsPage {
 									curl_setopt( $ch3, CURLOPT_SSL_VERIFYHOST, 2 );
 									curl_setopt( $ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
 									curl_setopt( $ch3, CURLOPT_RETURNTRANSFER, true );
-									if ( false === self::isLocalIp( $_SERVER['SERVER_ADDR'] ) ) {
+									if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 										curl_setopt( $ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
 									}
 									// declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
@@ -904,7 +908,7 @@ class SettingsPage {
 			// LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
 			$cssdirectory = $gfonts_dir . 'css';
 			$cssfiles     = array_diff( scandir( $cssdirectory ), array( '..', '.', 'gfonts_preview.css' ) );
-			$minifier     = new MatthiasMullie\Minify\CSS( $cssdirectory . '/' . ( array_shift( $cssfiles ) ) );
+			$minifier     = new CSS( $cssdirectory . '/' . ( array_shift( $cssfiles ) ) );
 			while ( count( $cssfiles ) > 0 ) {
 				$minifier->add( $cssdirectory . '/' . ( array_shift( $cssfiles ) ) );
 			}
@@ -925,7 +929,7 @@ class SettingsPage {
 	/**
 	 *
 	 */
-	public function bibleGetForceRefreshGFontsResults() {
+	public function force_refresh_gfonts_results() {
 		check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', true ); // no need for an "if", it will die if not valid
 		if ( isset( $_POST['gfontsApiKey'] ) && $_POST['gfontsApiKey'] != '' ) {
 			if ( get_transient( md5( $_POST['gfontsApiKey'] ) ) ) {
@@ -952,11 +956,11 @@ class SettingsPage {
 		}
 	}
 
-	public static function Sortify( $string ) {
+	public static function sortify( $string ) {
 		return preg_replace( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i', '$1' . chr( 255 ) . '$2', htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
 	}
 
-	public function getGFontsAPIkeyCheckResult() {
+	public function get_gfonts_api_key_check_result() {
 		return $this->gfonts_api_key_check_result;
 	}
 }

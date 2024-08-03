@@ -35,6 +35,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'You cannot access this file directly.' );
 }
 
+// error_reporting( E_ALL );
+// ini_set( 'display_errors', 'on' );
+
 use BibleGet\SettingsPage;
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
@@ -69,7 +72,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( 'BibleG
 
 if ( is_admin() ) {
 	$bibleget_settings_page = new SettingsPage();
-	$bibleget_settings_page->Init(); // only init will actually register and print out the settings and the options page.
+	$bibleget_settings_page->init(); // only init will actually register and print out the settings and the options page.
 }
 
 
