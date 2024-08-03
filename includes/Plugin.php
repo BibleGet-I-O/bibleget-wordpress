@@ -279,9 +279,15 @@ class Plugin {
 	}
 
 	private static function process_dom_document( $atts, $output, $content = null ) {
-		$non_default_layout = false; // set this flag to true as soon as we see that we have a layout pref that isn't default value, so we will know to update the $output accordingly
-		$dom_document      = new \DOMDocument();
-		$dom_document->loadHTML( '<!DOCTYPE HTML><head></head><body>' . mb_convert_encoding( $output, 'HTML-ENTITIES', 'UTF-8' ) . '</body>' );
+		// set this flag to true as soon as we see that we have a layout pref that isn't default value,
+		// so we will know to update the $output accordingly.
+		$non_default_layout = false;
+		$dom_document       = new \DOMDocument();
+		$dom_document->loadHTML(
+			'<!DOCTYPE HTML><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>'
+			. $output
+			. '</body>'
+		);
 		if ( $dom_document ) {
 			$xpath   = new \DOMXPath( $dom_document );
 			$results = $xpath->query( '//div[contains(@class,"results")]' )->item( 0 );
