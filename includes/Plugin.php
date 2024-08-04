@@ -228,14 +228,21 @@ class Plugin {
 		}
 
 		if ( null !== $content && '' !== $content ) {
-			$queries = self::bibleget_query_clean( $content );
+			$queries = self::sanitize_query( $content );
 		} else {
-			$queries = self::bibleget_query_clean( $atts['QUERY'] );
+			$queries = self::sanitize_query( $atts['QUERY'] );
 		}
 		return self::process_queries( $queries, $atts, true, $content );
 	}
 
-
+	/**
+	 * Process queries
+	 *
+	 * @param array       $queries Array of Bible quote references to process.
+	 * @param array       $atts Shortcode attributes.
+	 * @param bool        $is_shortcode Whether we are dealing with a shortcode.
+	 * @param string|null $content Shortcode or block contents.
+	 */
 	private static function process_queries( $queries, $atts, $is_shortcode = false, $content = null ) {
 		if ( is_array( $queries ) ) {
 			self::ensure_indexes_set( $atts['VERSION'] );
@@ -290,6 +297,14 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * Process DomDocument
+	 *
+	 * @param array       $atts Shortcode attributes.
+	 * @param string      $output Bible quote html to be processed.
+	 * @param string|null $content Shortcode content between opening and closing tag.
+	 * @return string
+	 */
 	private static function process_dom_document( $atts, $output, $content = null ) {
 		// set this flag to true as soon as we see that we have a layout pref that isn't default value,
 		// so we will know to update the $output accordingly.
@@ -314,7 +329,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] !== BGET::ALIGN['LEFT'] && false !== $results ) {
+			if ( BGET::ALIGN['LEFT'] !== $atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] && false !== $results ) {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
@@ -323,14 +338,14 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] !== BGET::POS['TOP'] && false !== $results ) {
+			if ( BGET::POS['TOP'] !== $atts['LAYOUTPREFS_BIBLEVERSIONPOSITION'] && false !== $results ) {
 				$non_default_layout  = true;
 				$bible_version_els   = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				$bible_version_cnt   = $bible_version_els->count();
 				$bible_version_stack = array();
 				switch ( $bible_version_cnt ) {
 					case 0:
-						// don't do anything
+						// don't do anything.
 						break;
 					case 1:
 						$bible_version_el = $bible_version_els->item( 0 );
@@ -348,7 +363,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] !== BGET::WRAP['NONE'] && false !== $results ) {
+			if ( BGET::WRAP['NONE'] !== $atts['LAYOUTPREFS_BIBLEVERSIONWRAP'] && false !== $results ) {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
@@ -365,7 +380,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] !== BGET::ALIGN['LEFT'] && false !== $results ) {
+			if ( BGET::ALIGN['LEFT'] !== $atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -374,10 +389,13 @@ class Plugin {
 				}
 			}
 
-			if ( ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] !== BGET::FORMAT['BIBLELANG'] ) && false !== $results ) {
+			if ( BGET::FORMAT['BIBLELANG'] !== $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
-				if ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['USERLANG'] || $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['USERLANGABBREV'] ) {
+				if (
+					BGET::FORMAT['USERLANG'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT']
+					|| BGET::FORMAT['USERLANGABBREV'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT']
+				) {
 					$locale        = substr( get_locale(), 0, 2 );
 					$language_name = \Locale::getDisplayLanguage( $locale, 'en' );
 					foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -386,19 +404,19 @@ class Plugin {
 						$jsbook  = json_decode( get_option( $usrprop ), true );
 						// get the index of the current language from the available languages
 						$biblebookslangs = get_option( 'bibleget_languages' );
-						$currentLangIdx  = array_search( $language_name, $biblebookslangs );
+						$currentLangIdx  = array_search( $language_name, $biblebookslangs, true );
 						if ( false === $currentLangIdx ) {
-							$currentLangIdx = array_search( 'English', $biblebookslangs );
+							$currentLangIdx = array_search( 'English', $biblebookslangs, true );
 						}
-						$lclbook         = trim( explode( '|', $jsbook[ $currentLangIdx ][0] )[0] );
-						$lclabbrev       = trim( explode( '|', $jsbook[ $currentLangIdx ][1] )[0] );
+						$lclbook           = trim( explode( '|', $jsbook[ $currentLangIdx ][0] )[0] );
+						$lclabbrev         = trim( explode( '|', $jsbook[ $currentLangIdx ][1] )[0] );
 						$book_chapter_text = $book_chapter_el->textContent;
 						// Remove book name from the string (check includes any possible spaces in the book name).
 						if ( preg_match( '/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $book_chapter_text, $res ) ) {
 							$book_chapter_text = str_replace( $res[0], '', $book_chapter_text );
 						}
 
-						if ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['USERLANGABBREV'] ) {
+						if ( BGET::FORMAT['USERLANGABBREV'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] ) {
 							// use abbreviated form in wp lang
 							$book_chapter_el->textContent = $lclabbrev . $book_chapter_text;
 						} else {
@@ -406,10 +424,10 @@ class Plugin {
 							$book_chapter_el->textContent = $lclbook . $book_chapter_text;
 						}
 					}
-				} elseif ( $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] === BGET::FORMAT['BIBLELANGABBREV'] ) {
+				} elseif ( BGET::FORMAT['BIBLELANGABBREV'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] ) {
 					// use abbreviated form in bible version lang.
 					foreach ( $book_chapter_els as $book_chapter_el ) {
-						$bookAbbrev      = $xpath->query( 'following-sibling::input[@class="bookAbbrev"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
+						$bookAbbrev        = $xpath->query( 'following-sibling::input[@class="bookAbbrev"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
 						$book_chapter_text = $book_chapter_el->textContent;
 						if ( preg_match( '/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $book_chapter_text, $res ) ) {
 							$book_chapter_text = str_replace( $res[0], '', $book_chapter_text );
@@ -424,13 +442,13 @@ class Plugin {
 			=> if pos is bottominline it will change the p to a span and then we won't know what to look for
 			=> if we have already wrapped then the fullreference will be appended to the parentheses or the brackets!
 			*/
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] === true && false !== $results ) {
+			if ( true === $atts['LAYOUTPREFS_BOOKCHAPTERFULLQUERY'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
-					$text          = $book_chapter_el->textContent;
+					$text           = $book_chapter_el->textContent;
 					$original_query = $xpath->query( 'following-sibling::input[@class="originalQuery"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
-					// remove book from the original query
+					// remove book from the original query.
 					if ( preg_match( '/^([1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2})/u', $original_query, $res ) ) {
 						$original_query = str_replace( $res[0], '', $original_query );
 					}
@@ -443,7 +461,7 @@ class Plugin {
 			}
 
 			/* Make sure to deal with wrap before you deal with pos, because if pos is bottominline it will change the p to a span and then we won't know what to look for */
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] !== BGET::WRAP['NONE'] && false !== $results ) {
+			if ( BGET::WRAP['NONE'] !== $atts['LAYOUTPREFS_BOOKCHAPTERWRAP'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
@@ -460,7 +478,7 @@ class Plugin {
 				}
 			}
 
-			if ( $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] !== BGET::POS['TOP'] && false !== $results ) {
+			if ( BGET::POS['TOP'] !== $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] && false !== $results ) {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				switch ( $atts['LAYOUTPREFS_BOOKCHAPTERPOSITION'] ) {
@@ -505,11 +523,20 @@ class Plugin {
 		if ( true === $atts['POPUP'] ) {
 			wp_enqueue_script( 'jquery-ui-dialog' );
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
-			wp_enqueue_style( 'bibleget-popup', plugins_url( '../css/popup.css', __FILE__ ) );
+			$dir       = __DIR__;
+			$popup_css = '../js/popup.css';
+			wp_enqueue_style(
+				'bibleget-popup',
+				plugins_url( '../css/popup.css', __FILE__ ),
+				array(),
+				filemtime( "$dir/$popup_css" )
+			);
 			if ( null !== $content && '' !== $content ) {
-				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars( $output ) . '">' . $content . '</a>';
+				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="'
+						. htmlspecialchars( $output ) . '">' . $content . '</a>';
 			} else {
-				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="' . htmlspecialchars( $output ) . '">' . $atts['QUERY'] . '</a>';
+				return '<a href="#" class="bibleget-popup-trigger" data-popupcontent="'
+						. htmlspecialchars( $output ) . '">' . $atts['QUERY'] . '</a>';
 			}
 		} else {
 			return '<div class="bibleget-quote-div">' . $output . '</div>';
@@ -525,8 +552,8 @@ class Plugin {
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
 		}
-		$dir = __DIR__;
 
+		$dir          = __DIR__;
 		$gutenberg_js = '../js/gutenberg.js';
 		wp_register_script(
 			'bibleget-gutenberg-block',
@@ -539,7 +566,8 @@ class Plugin {
 				'wp-components',
 				'jquery-ui-dialog',
 			),
-			filemtime( "$dir/$gutenberg_js" )
+			filemtime( "$dir/$gutenberg_js" ),
+			true
 		);
 
 		$gutenberg_css = '../css/gutenberg.css';
@@ -571,7 +599,7 @@ class Plugin {
 		$gfonts           = null;
 		$gfonts_dir       = str_replace( '\\', '/', plugin_dir_path( __FILE__ ) ) . '../gfonts_preview/';
 		$gfonts_file_path = $gfonts_dir . 'gfontsWeblist.json';
-		if ( $have_gfonts === 'SUCCESS' && file_exists( $gfonts_file_path ) ) {
+		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file_path ) ) {
 			$gfonts = json_decode( file_get_contents( $gfonts_file_path ) );
 		}
 
@@ -602,16 +630,35 @@ class Plugin {
 
 
 	public static function gutenberg_scripts( $hook ) {
-		if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
 		}
+
+		$dir       = __DIR__;
+		$popup_css = '../js/popup.css';
 		wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
-		wp_enqueue_style( 'bibleget-popup', plugins_url( '../css/popup.css', __FILE__ ) );
-		wp_enqueue_script( 'htmlentities-script', '//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', array( 'jquery' ), '1.2.0', true );
+		wp_enqueue_style(
+			'bibleget-popup',
+			plugins_url( '../css/popup.css', __FILE__ ),
+			array(),
+			filemtime( "$dir/$popup_css" )
+		);
+		wp_enqueue_script(
+			'htmlentities-script',
+			'//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js',
+			array( 'jquery' ),
+			'1.2.0',
+			true
+		);
 		if ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
 			if ( false === self::is_fontawesome_enqueued() ) {
-				wp_enqueue_style( 'fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
+				wp_enqueue_style(
+					'fontawesome',
+					'//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+					false,
+					'4.7.0'
+				);
 			}
 		}
 		$gfonts_preview_css = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/css/gfonts_preview.css';
@@ -657,9 +704,9 @@ class Plugin {
 		$finalquery .= implode( ';', $goodqueries );
 		$finalquery .= '&version=';
 		$finalquery .= implode( ',', $atts['VERSION'] );
-		if ( $atts['PREFERORIGIN'] === BGET::PREFERORIGIN['GREEK'] ) {
+		if ( BGET::PREFERORIGIN['GREEK'] === $atts['PREFERORIGIN'] ) {
 			$finalquery .= '&preferorigin=GREEK';
-		} elseif ( $atts['PREFERORIGIN'] === BGET::PREFERORIGIN['HEBREW'] ) {
+		} elseif ( BGET::PREFERORIGIN['HEBREW'] === $atts['PREFERORIGIN'] ) {
 			$finalquery .= '&preferorigin=HEBREW';
 		}
 		if ( true === $atts['FORCEVERSION'] ) {
@@ -673,6 +720,9 @@ class Plugin {
 
 	/**
 	 * Gutenberg Render callback
+	 *
+	 * @param array $atts Block attributes.
+	 * @return string
 	 */
 	public static function render_gutenberg_block( $atts ) {
 		$output = ''; // this will be whatever html we are returning to be rendered
@@ -703,15 +753,16 @@ class Plugin {
 			}
 		}
 
-		$queries = self::bibleget_query_clean( $atts['QUERY'] );
+		$queries = self::sanitize_query( $atts['QUERY'] );
 		return self::process_queries( $queries, $atts );
 	}
 
 	/**
-	 * After a query has been checked for integrity, this will send the query request to the BibleGet Server
-	 * Returns the response from the BibleGet Server
+	 * After a query has been checked for integrity, this will send the query request to the BibleGet API
+	 * and returns the response from the BibleGet API
 	 *
-	 * @param string $finalquery
+	 * @param string $finalquery Sanitized and processed query to send to the API.
+	 * @return string
 	 */
 	private static function bibleget_query_server( $finalquery ) {
 		$current_page_url = self::current_page_url();
@@ -793,19 +844,19 @@ class Plugin {
 	 * taking into account numbers at the beginning of the string
 	 * Can handle any kind of Unicode string in any language
 	 *
-	 * @param string $txt
+	 * @param string $txt Original query string.
 	 * @return string
 	 */
-	public static function bibleget_to_proper_case( $txt ) {
-		// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";
+	public static function to_proper_case( $txt ) {
+		// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";.
 		preg_match( '/\p{L}/u', $txt, $matches, PREG_OFFSET_CAPTURE );
 		$idx = intval( $matches[0][1] );
-		// echo "<div style=\"border:3px solid Purple;\">idx = $idx</div>";
+		// echo "<div style=\"border:3px solid Purple;\">idx = $idx</div>";.
 		$chr = mb_substr( $txt, $idx, 1, 'UTF-8' );
-		// echo "<div style=\"border:3px solid Pink;\">chr = $chr</div>";
+		// echo "<div style=\"border:3px solid Pink;\">chr = $chr</div>";.
 		if ( preg_match( '/\p{L&}/u', $chr ) ) {
 			$post = mb_substr( $txt, $idx + 1, mb_strlen( $txt ), 'UTF-8' );
-			// echo "<div style=\"border:3px solid Black;\">post = $post</div>";
+			// echo "<div style=\"border:3px solid Black;\">post = $post</div>";.
 			return mb_substr( $txt, 0, $idx, 'UTF-8' ) . mb_strtoupper( $chr, 'UTF-8' ) . mb_strtolower( $post, 'UTF-8' );
 		} else {
 			return $txt;
@@ -815,19 +866,19 @@ class Plugin {
 	/**
 	 * Helper function that will return the index of a bible book from a two-dimensional index array
 	 *
-	 * @param unknown $needle
-	 * @param unknown $haystack
-	 *
+	 * @param string $needle Needle.
+	 * @param array  $haystack Haystack.
+	 * @return string|int
 	 */
 	private static function bibleget_index_of( $needle, $haystack ) {
 		foreach ( $haystack as $index => $value ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $value2 ) {
-					if ( in_array( $needle, $value2 ) ) {
+					if ( in_array( $needle, $value2, true ) ) {
 						return $index;
 					}
 				}
-			} elseif ( in_array( $needle, $value ) ) {
+			} elseif ( in_array( $needle, $value, true ) ) {
 				return $index;
 			}
 		}
@@ -835,7 +886,12 @@ class Plugin {
 	}
 
 
-
+	/**
+	 * Set communication error
+	 *
+	 * @param array  $notices Current admin notifications.
+	 * @param string $err Error message to add to admin notifications.
+	 */
 	private static function set_communication_error( $notices, $err ) {
 		$options_url      = admin_url( 'options-general.php?page=bibleget-settings-admin' );
 		$current_page_url = self::current_page_url();
@@ -852,11 +908,13 @@ class Plugin {
 	}
 
 	/**
+	 * Retrieve metadata about Bible books and versions and indexes from the BibleGet API metadata endpoint
 	 *
-	 * @var request
+	 * @param string $request Which kind of metadata to request.
+	 * @return object|false
 	 */
 	private static function get_metadata( $request ) {
-		// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions
+		// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions.
 		$notices          = get_option( 'bibleget_error_admin_notices', array() );
 		$current_page_url = self::current_page_url();
 		$curl_version     = curl_version();
@@ -881,9 +939,9 @@ class Plugin {
 		}
 
 		$response = curl_exec( $ch );
-		if ( curl_errno( $ch ) && ( curl_errno( $ch ) === 77 || curl_errno( $ch ) === 60 ) && $url === self::METADATA_API . '?query=' . $request . '&return=json' ) {
-			// error 60: SSL certificate problem: unable to get local issuer certificate
-			// error 77: error setting certificate verify locations CAPath: none
+		if ( curl_errno( $ch ) && ( 77 === curl_errno( $ch ) || 60 === curl_errno( $ch ) ) && self::METADATA_API . '?query=' . $request . '&return=json' === $url ) {
+			// error 60: SSL certificate problem: unable to get local issuer certificate.
+			// error 77: error setting certificate verify locations CAPath: none.
 			// curl.cainfo needs to be set in php.ini to point to the curl pem bundle available at https://curl.haxx.se/ca/cacert.pem
 			// until that's fixed on the server environment let's resort to a simple http request.
 			$url = 'http://query.bibleget.io/v3/metadata.php?query=' . $request . '&return=json';
@@ -895,7 +953,7 @@ class Plugin {
 			} else {
 				$info = curl_getinfo( $ch );
 				// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-				if ( $info['http_code'] !== 200 && $info['http_code'] !== 304 ) {
+				if ( 200 !== $info['http_code'] && 304 !== $info['http_code'] ) {
 					self::set_communication_error( $notices, 2 );
 					return false;
 				}
@@ -906,7 +964,7 @@ class Plugin {
 		} else {
 			$info = curl_getinfo( $ch );
 			// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-			if ( $info['http_code'] !== 200 && $info['http_code'] !== 304 ) {
+			if ( 200 !== $info['http_code'] && 304 !== $info['http_code'] ) {
 				self::set_communication_error( $notices, 2 );
 				return false;
 			}
@@ -916,12 +974,12 @@ class Plugin {
 		$myjson = json_decode( $response );
 		if ( property_exists( $myjson, 'results' ) ) {
 			return $myjson;
-			// var verses = myjson.results;
+			// var verses = myjson.results;.
 		} else {
 			$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
-			/* translators: do not change the placeholders or the html markup, though you can translate the anchor title */
-			$notices[] = 'BIBLEGET PLUGIN ERROR: ' .
+			$notices[]  = 'BIBLEGET PLUGIN ERROR: ' .
 				sprintf(
+					/* translators: do not change the placeholders or the html markup, though you may translate the anchor title */
 					__( 'There may have been a problem communicating with the BibleGet server. <a href="%s" title="update metadata now">Metadata needs to be manually updated</a>.', 'bibleget-io' ),
 					$optionsurl
 				) .
@@ -933,13 +991,14 @@ class Plugin {
 
 
 	/**
+	 * Sanitize the query string
 	 *
-	 * @param string $query
-	 * @return number
+	 * @param string $query The query string to be sanitized before sending to the BibleGet API.
+	 * @return array|string
 	 */
-	private static function bibleget_query_clean( $query ) {
+	private static function sanitize_query( $query ) {
 		// enforce query rules.
-		if ( $query === '' ) {
+		if ( '' === $query ) {
 			return __( 'You cannot send an empty query.', 'bibleget-io' );
 		}
 		$query = trim( $query );
@@ -964,7 +1023,7 @@ class Plugin {
 			)
 		);
 
-		return array_map( array( 'BibleGet\Plugin', 'bibleget_to_proper_case' ), $queries );
+		return array_map( array( 'BibleGet\Plugin', 'to_proper_case' ), $queries );
 	}
 
 
@@ -973,14 +1032,14 @@ class Plugin {
 	 */
 	public static function admin_notices() {
 		$notices = get_option( 'bibleget_error_admin_notices' );
-		if ( $notices !== false ) {
+		if ( false !== $notices ) {
 			foreach ( $notices as $notice ) {
 				echo "<div class='notice is-dismissible error'><p>$notice</p></div>";
 			}
 			delete_option( 'bibleget_error_admin_notices' );
 		}
 		$notices = get_option( 'bibleget_admin_notices' );
-		if ( $notices !== false ) {
+		if ( false !== $notices ) {
 			foreach ( $notices as $notice ) {
 				echo "<div class='notice is-dismissible updated'><p>$notice</p></div>";
 			}
@@ -1024,7 +1083,7 @@ class Plugin {
 		update_option( 'BGET', $bget );
 
 		$metadata = self::get_metadata( 'biblebooks' );
-		if ( $metadata !== false ) {
+		if ( false !== $metadata ) {
 			if ( WP_DEBUG ) {
 				self::write_log( "Retrieved biblebooks metadata..." );
 				self::write_log( $metadata );
@@ -1040,7 +1099,7 @@ class Plugin {
 			}
 			if ( property_exists( $metadata, 'languages' ) ) {
 				// echo "<div style=\"border:3px solid Red;\">languages = ".print_r($metadata->languages,true)."</div>";
-				$languages = array_map( array( 'BibleGet\Plugin', 'bibleget_to_proper_case' ), $metadata->languages );
+				$languages = array_map( array( 'BibleGet\Plugin', 'to_proper_case' ), $metadata->languages );
 				// echo "<div style=\"border:3px solid Red;\">languages = ".print_r($languages,true)."</div>";
 				// $languages_str = json_encode($languages);
 				update_option( 'bibleget_languages', $languages );
@@ -1049,7 +1108,7 @@ class Plugin {
 
 		$metadata       = self::get_metadata( 'bibleversions' );
 		$versionsabbrev = array();
-		if ( $metadata !== false ) {
+		if ( false !== $metadata ) {
 			if ( WP_DEBUG ) {
 				self::write_log( "Retrieved bibleversions metadata" );
 				self::write_log( $metadata );
@@ -1072,7 +1131,7 @@ class Plugin {
 		if ( count( $versionsabbrev ) > 0 ) {
 			$versionsstr = implode( ',', $versionsabbrev );
 			$metadata    = self::get_metadata( 'versionindex&versions=' . $versionsstr );
-			if ( $metadata !== false ) {
+			if ( false !== $metadata ) {
 				if ( WP_DEBUG ) {
 					self::write_log( "Retrieved versionindex metadata" );
 					self::write_log( $metadata );
@@ -1119,7 +1178,7 @@ class Plugin {
 				WHERE `option_name` LIKE '%transient_%" . self::TRANSIENT_PREFIX . "%'
 				";
 		// We shouldn't have to do a $wpdb->prepare here because there is no kind of user input anywhere.
-		if ( $wpdb->query( $sql ) !== false ) {
+		if ( false !== $wpdb->query( $sql ) ) {
 			echo 'cacheflushed';
 		} else {
 			echo 'cacheNotFlushed';
@@ -1153,7 +1212,7 @@ class Plugin {
 			$error->message = curl_error( $ch );
 			$error->request = $request;
 			echo json_encode( $error );
-		} elseif ( $info['http_code'] !== 200 ) {
+		} elseif ( 200 !== $info['http_code'] ) {
 			echo json_encode( $info );
 		} elseif ( $output ) {
 			echo $output;
@@ -1209,7 +1268,7 @@ class Plugin {
 		$debugfile = plugin_dir_path( __FILE__ ) . '../debug.txt';
 		$datetime  = date( 'Y-m-d H:i:s', time() );
 		$myfile    = fopen( $debugfile, 'a' );
-		if ( $myfile !== false ) {
+		if ( false !== $myfile ) {
 			if ( is_array( $log ) || is_object( $log ) ) {
 				if ( ! fwrite( $myfile, '[' . $datetime . '] ' . print_r( $log, true ) . "\n" ) ) {
 					echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
@@ -1252,7 +1311,7 @@ class Plugin {
 		$child_node_list = $parent_node->getElementsByTagName( $tag_name );
 		for ( $i = 0; $i < $child_node_list->length; $i++ ) {
 			$temp = $child_node_list->item( $i );
-			if ( stripos( $temp->getAttribute( 'class' ), $class_name ) !== false ) {
+			if ( false !== stripos( $temp->getAttribute( 'class' ), $class_name ) ) {
 				$nodes[] = $temp;
 			}
 		}
