@@ -239,7 +239,7 @@ class Plugin {
 	 * Process queries
 	 *
 	 * @param array       $queries Array of Bible quote references to process.
-	 * @param array       $atts Shortcode attributes.
+	 * @param array       $atts Shortcode or block attributes.
 	 * @param bool        $is_shortcode Whether we are dealing with a shortcode.
 	 * @param string|null $content Shortcode or block contents.
 	 */
@@ -281,7 +281,7 @@ class Plugin {
 				$a                            = get_option( 'BGET' );
 				$options_no_update_from_block = [ 'POPUP', 'PREFERORIGIN', 'QUERY', 'VERSION' ];
 				foreach ( $atts as $key => $value ) {
-					if ( ! in_array( $key, $options_no_update_from_block ) ) {
+					if ( ! in_array( $key, $options_no_update_from_block, true ) ) {
 						$a[ $key ] = $value;
 					}
 				}
@@ -292,7 +292,10 @@ class Plugin {
 			return $dom_document_processed;
 		} else {
 			/* translators: do not translate "shortcode" unless the version of WordPress in your language uses a translated term to refer to shortcodes */
-			$output = '<span style="color:Red;font-weight:bold;">' . __( 'There are errors in the shortcode, please check carefully your query syntax:', 'bibleget-io' ) . ' &lt;' . $a['query'] . '&gt;<br />' . $queries . '</span>';
+			$output = '<span style="color:Red;font-weight:bold;">'
+				. __( 'There are errors in the shortcode, please check carefully your query syntax:', 'bibleget-io' )
+				. " $queries"
+				. '</span>';
 			return '<div class="bibleget-quote-div">' . $output . '</div>';
 		}
 	}
@@ -399,17 +402,17 @@ class Plugin {
 					$locale        = substr( get_locale(), 0, 2 );
 					$language_name = \Locale::getDisplayLanguage( $locale, 'en' );
 					foreach ( $book_chapter_els as $book_chapter_el ) {
-						$bookNum = (int) $xpath->query( 'following-sibling::input[@class="univBookNum"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
-						$usrprop = 'bibleget_biblebooks' . ( $bookNum - 1 );
-						$jsbook  = json_decode( get_option( $usrprop ), true );
-						// get the index of the current language from the available languages
-						$biblebookslangs = get_option( 'bibleget_languages' );
-						$currentLangIdx  = array_search( $language_name, $biblebookslangs, true );
-						if ( false === $currentLangIdx ) {
-							$currentLangIdx = array_search( 'English', $biblebookslangs, true );
+						$book_num = (int) $xpath->query( 'following-sibling::input[@class="univBookNum"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
+						$usrprop  = 'bibleget_biblebooks' . ( $book_num - 1 );
+						$jsbook   = json_decode( get_option( $usrprop ), true );
+						// get the index of the current language from the available languages.
+						$biblebookslangs  = get_option( 'bibleget_languages' );
+						$current_lang_idx = array_search( $language_name, $biblebookslangs, true );
+						if ( false === $current_lang_idx ) {
+							$current_lang_idx = array_search( 'English', $biblebookslangs, true );
 						}
-						$lclbook           = trim( explode( '|', $jsbook[ $currentLangIdx ][0] )[0] );
-						$lclabbrev         = trim( explode( '|', $jsbook[ $currentLangIdx ][1] )[0] );
+						$lclbook           = trim( explode( '|', $jsbook[ $current_lang_idx ][0] )[0] );
+						$lclabbrev         = trim( explode( '|', $jsbook[ $current_lang_idx ][1] )[0] );
 						$book_chapter_text = $book_chapter_el->textContent;
 						// Remove book name from the string (check includes any possible spaces in the book name).
 						if ( preg_match( '/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $book_chapter_text, $res ) ) {
@@ -417,22 +420,22 @@ class Plugin {
 						}
 
 						if ( BGET::FORMAT['USERLANGABBREV'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] ) {
-							// use abbreviated form in wp lang
+							// use abbreviated form in wp lang.
 							$book_chapter_el->textContent = $lclabbrev . $book_chapter_text;
 						} else {
-							// use full form in wp lang
+							// use full form in wp lang.
 							$book_chapter_el->textContent = $lclbook . $book_chapter_text;
 						}
 					}
 				} elseif ( BGET::FORMAT['BIBLELANGABBREV'] === $atts['LAYOUTPREFS_BOOKCHAPTERFORMAT'] ) {
 					// use abbreviated form in bible version lang.
 					foreach ( $book_chapter_els as $book_chapter_el ) {
-						$bookAbbrev        = $xpath->query( 'following-sibling::input[@class="bookAbbrev"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
+						$book_abbrev       = $xpath->query( 'following-sibling::input[@class="bookAbbrev"]', $book_chapter_el )->item( 0 )->getAttribute( 'value' );
 						$book_chapter_text = $book_chapter_el->textContent;
 						if ( preg_match( '/^([1-3I]{0,3}[\s]{0,1}((\p{L}\p{M}*)+))/u', $book_chapter_text, $res ) ) {
 							$book_chapter_text = str_replace( $res[0], '', $book_chapter_text );
 						}
-						$book_chapter_el->textContent = $bookAbbrev . $book_chapter_text;
+						$book_chapter_el->textContent = $book_abbrev . $book_chapter_text;
 					}
 				}
 			}
@@ -452,10 +455,6 @@ class Plugin {
 					if ( preg_match( '/^([1-3]{0,1}((\p{L}\p{M}*)+)[1-9][0-9]{0,2})/u', $original_query, $res ) ) {
 						$original_query = str_replace( $res[0], '', $original_query );
 					}
-					/*
-					if (preg_match("/^/u", $original_query, $res)) {
-					$original_query = str_replace($res[0], "", $original_query);
-					}*/
 					$book_chapter_el->textContent = $text . $original_query;
 				}
 			}
@@ -628,7 +627,11 @@ class Plugin {
 		);
 	}
 
-
+	/**
+	 * Enqueue scripts for the Bible quote block
+	 *
+	 * @param string $hook
+	 */
 	public static function gutenberg_scripts( $hook ) {
 		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
@@ -655,20 +658,30 @@ class Plugin {
 			if ( false === self::is_fontawesome_enqueued() ) {
 				wp_enqueue_style(
 					'fontawesome',
-					'//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+					'//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css',
 					false,
-					'4.7.0'
+					'6.4.2'
 				);
 			}
 		}
 		$gfonts_preview_css = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/css/gfonts_preview.css';
 		$gfonts_preview_url = wp_upload_dir()['baseurl'] . '/gfonts_preview/css/gfonts_preview.css';
 		if ( file_exists( $gfonts_preview_css ) ) {
-			wp_enqueue_style( 'bibleget-fontselect-preview', $gfonts_preview_url );
+			wp_enqueue_style(
+				'bibleget-fontselect-preview',
+				$gfonts_preview_url,
+				false,
+				filemtime( $gfonts_preview_css )
+			);
 		}
 	}
 
-
+	/**
+	 * Check whether Fontawesome has already been enqueued
+	 * to avoid enqueuing more than once
+	 *
+	 * @return bool
+	 */
 	private static function is_fontawesome_enqueued() {
 		global $wp_styles;
 		foreach ( $wp_styles->queue as $style ) {
@@ -685,6 +698,14 @@ class Plugin {
 		return false;
 	}
 
+	/**
+	 * Produce final html output of the Bible quote
+	 * first checking if we already have a cached result,
+	 * and if not, by sending a request to the API
+	 *
+	 * @param string $finalquery Query string to send to the API if we don't have an already cached result.
+	 * @return string
+	 */
 	private static function process_output( $finalquery ) {
 		$output = get_transient( self::TRANSIENT_PREFIX . md5( $finalquery ) );
 		if ( false === $output ) {
@@ -699,6 +720,13 @@ class Plugin {
 		return $output;
 	}
 
+	/**
+	 * Process final query: prepare the query string for the API call
+	 *
+	 * @param array $goodqueries Validated and sanitized Bible quotes to send in the query string to the API.
+	 * @param array $atts Query parameters to send in the query string to the API.
+	 * @return string
+	 */
 	private static function process_final_query( $goodqueries, $atts ) {
 		$finalquery  = 'query=';
 		$finalquery .= implode( ';', $goodqueries );
@@ -741,13 +769,18 @@ class Plugin {
 			$vversions = get_option( 'bibleget_versions', [] );
 		}
 		$validversions = array_keys( $vversions );
-		// echo "<div style=\"border:10px solid Blue;\">".print_r($validversions)."</div>";
 		if ( true !== $atts['FORCEVERSION'] ) {
 			foreach ( $atts['VERSION'] as $version ) {
-				if ( ! in_array( $version, $validversions ) ) {
+				if ( ! in_array( $version, $validversions, true ) ) {
 					$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
-					/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
-					$output = '<span style="color:Red;font-weight:bold;">' . sprintf( __( 'The requested version "%1$s" is not valid, please check the list of valid versions in the <a href="%2$s">settings page</a>', 'bibleget-io' ), $version, $optionsurl ) . '</span>';
+					$output     = '<span style="color:Red;font-weight:bold;">'
+						. sprintf(
+							/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
+							__( 'The requested version "%1$s" is not valid, please check the list of valid versions in the <a href="%2$s">settings page</a>', 'bibleget-io' ),
+							$version,
+							$optionsurl
+						)
+						. '</span>';
 					return '<div class="bibleget-quote-div">' . $output . '</div>';
 				}
 			}
@@ -772,7 +805,7 @@ class Plugin {
 		$curl_version = curl_version();
 		$ssl_version  = str_replace( 'OpenSSL/', '', $curl_version['ssl_version'] );
 		if ( version_compare( $curl_version['version'], '7.34.0', '>=' ) && version_compare( $ssl_version, '1.0.1', '>=' ) ) {
-			// we should be good to go for secure SSL communication supporting TLSv1_2
+			// we should be good to go for secure SSL communication supporting TLSv1_2.
 			$ch = curl_init( self::BIBLE_API . '?' . $finalquery . '&return=html&appid=wordpress&domain=' . urlencode( site_url() ) . '&pluginversion=' . self::VERSION );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
@@ -1017,8 +1050,8 @@ class Plugin {
 		$queries = array_values(
 			array_filter(
 				explode( ';', $query ),
-				function ( $var ) {
-					return $var !== '';
+				function ( $item ) {
+					return '' !== $item;
 				}
 			)
 		);
@@ -1052,33 +1085,33 @@ class Plugin {
 	 *
 	 */
 	private static function delete_options() {
-		// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO
+		// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO.
 		for ( $i = 0; $i < 73; $i++ ) {
 			delete_option( 'bibleget_biblebooks' . $i );
 		}
 
-		// DELETE BIBLEGET_LANGUAGES CACHED INFO
+		// DELETE BIBLEGET_LANGUAGES CACHED INFO.
 		delete_option( 'bibleget_languages' );
 
-		// DELETE BIBLEGET_VERSIONINDEX CACHED INFO
+		// DELETE BIBLEGET_VERSIONINDEX CACHED INFO.
 		$bibleversionsabbrev = array_keys( get_option( 'bibleget_versions', [] ) );
 		foreach ( $bibleversionsabbrev as $abbrev ) {
 			delete_option( 'bibleget_' . $abbrev . 'IDX' );
 		}
 
-		// DELETE BIBLEGET_VERSIONS CACHED INFO
+		// DELETE BIBLEGET_VERSIONS CACHED INFO.
 		delete_option( 'bibleget_versions' );
 	}
 
 
 	/**
-	 * Sets cached information about Bible books and Bible versions
+	 * Cache information about Bible books and Bible versions
 	 */
 	public static function set_options() {
 		$bget            = [];
 		$bget_properties = new Properties();
 		foreach ( $bget_properties->options as $option => $array ) {
-			$bget[ $option ] = $array['default']; // default will be based on current option if exists
+			$bget[ $option ] = $array['default']; // default will be based on current option if exists.
 		}
 		update_option( 'BGET', $bget );
 
@@ -1092,16 +1125,13 @@ class Plugin {
 			if ( property_exists( $metadata, 'results' ) ) {
 				$biblebooks = $metadata->results;
 				foreach ( $biblebooks as $key => $value ) {
-					$biblebooks_str = json_encode( $value );
+					$biblebooks_str = wp_json_encode( $value );
 					$option         = 'bibleget_biblebooks' . $key;
 					update_option( $option, $biblebooks_str );
 				}
 			}
 			if ( property_exists( $metadata, 'languages' ) ) {
-				// echo "<div style=\"border:3px solid Red;\">languages = ".print_r($metadata->languages,true)."</div>";
 				$languages = array_map( [ 'BibleGet\Plugin', 'to_proper_case' ], $metadata->languages );
-				// echo "<div style=\"border:3px solid Red;\">languages = ".print_r($languages,true)."</div>";
-				// $languages_str = json_encode($languages);
 				update_option( 'bibleget_languages', $languages );
 			}
 		}
@@ -1145,7 +1175,6 @@ class Plugin {
 						$temp['verse_limit']   = $value->verse_limit;
 						$temp['biblebooks']    = $value->biblebooks;
 						$temp['abbreviations'] = $value->abbreviations;
-						// $versionindex_str = json_encode($temp);
 						if ( WP_DEBUG ) {
 							self::write_log( "creating new option <bibleget_{$versabbr}IDX> with value:" );
 							self::write_log( $temp );
@@ -1158,7 +1187,7 @@ class Plugin {
 		}
 
 		// we only want the script to die if it's an ajax request...
-		if ( isset( $_POST['isajax'] ) && $_POST['isajax'] === 1 ) {
+		if ( isset( $_POST['isajax'] ) && 1 === $_POST['isajax'] ) {
 			$notices   = get_option( 'bibleget_admin_notices', [] );
 			$notices[] = 'BIBLEGET PLUGIN NOTICE: ' . __( 'BibleGet Server data has been successfully renewed.', 'bibleget-io' );
 			update_option( 'bibleget_admin_notices', $notices );
@@ -1167,6 +1196,9 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * Force refresh cached Bible quotes
+	 */
 	public static function flush_bible_quotes_cache() {
 		global $wpdb;
 		// The following SELECT should select both the transient and the transient_timeout
@@ -1186,7 +1218,9 @@ class Plugin {
 		wp_die();
 	}
 
-
+	/**
+	 * Search for Bible quotes from the BibleGet API by keyword
+	 */
 	public static function search_by_keyword() {
 		$keyword = $_POST['keyword'];
 		$version = $_POST['version'];
@@ -1221,7 +1255,9 @@ class Plugin {
 		wp_die();
 	}
 
-
+	/**
+	 * Update user preferences
+	 */
 	public static function update_bget() {
 		$options = $_POST['options'];
 		$bget    = get_option( 'BGET' );
@@ -1239,12 +1275,20 @@ class Plugin {
 				case 'number':
 					$bget[ $option ] = filter_var( $array['value'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 					break;
-				case 'boolean';
-					$bget[ $option ] = is_bool( $array['value'] ) ? $array['value'] : $array['value'] === 'true';
+				case 'boolean':
+					$bget[ $option ] = is_bool( $array['value'] )
+						? $array['value']
+						: filter_var( $array['value'], FILTER_VALIDATE_BOOLEAN );
 					break;
 				case 'array':
-					$bget[ $option ] = is_array( $array['value'] ) ? array_map( 'esc_html', $array['value'] ) : ( strpos( ',', $array['value'] ) ? explode( ',', $array['value'] ) : [] );
-					if ( count( $bget[ $option ] ) === 0 && $option === 'VERSION' ) {
+					$bget[ $option ] = is_array( $array['value'] )
+						? array_map( 'esc_html', $array['value'] )
+						: (
+							strpos( ',', $array['value'] )
+								? explode( ',', $array['value'] )
+								: []
+						);
+					if ( 0 === count( $bget[ $option ] ) && 'VERSION' === $option ) {
 						$bget[ $option ] = [ 'NABRE' ];
 					}
 					break;
@@ -1255,8 +1299,6 @@ class Plugin {
 		}
 		return update_option( 'BGET', $bget );
 	}
-
-
 
 
 	/**

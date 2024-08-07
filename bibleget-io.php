@@ -35,9 +35,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'You cannot access this file directly.' );
 }
 
-// error_reporting( E_ALL );
-// ini_set( 'display_errors', 'on' );
-
 use BibleGet\SettingsPage;
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
