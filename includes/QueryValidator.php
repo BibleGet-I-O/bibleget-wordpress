@@ -39,20 +39,20 @@ class QueryValidator {
 	private $current_query      = '';
 	private $current_full_query = '';
 	private $current_page_url   = '';
-	private $error_messages     = array();
-	private $initial_queries    = array();
-	private $versions_requested = array();
-	private $indexes            = array();
-	private $biblebooks         = array();
-	public $validated_queries   = array();
-	public $validated_variants  = array();
-	public $errs                = array();
+	private $error_messages     = [];
+	private $initial_queries    = [];
+	private $versions_requested = [];
+	private $indexes            = [];
+	private $biblebooks         = [];
+	public $validated_queries   = [];
+	public $validated_variants  = [];
+	public $errs                = [];
 
 
 	function __construct( $queries, $versions, $current_page_url ) {
 		$this->initial_queries    = $queries;
 		$this->versions_requested = $versions;
-		$this->error_messages     = array(
+		$this->error_messages     = [
 			/* translators: 1 = single bible quote reference, 2 = full query string with all bible quote references */
 			__( 'The first query <%1$s> in the querystring <%2$s> must start with a valid book indicator!', 'bibleget-io' ),
 			__( 'You must have a valid chapter following the book indicator!', 'bibleget-io' ),
@@ -66,7 +66,7 @@ class QueryValidator {
 			/* translators: 1 = bible verse, 2 = bible verse, 3 = bible quote reference */
 			__( 'Non consecutive verses must be in ascending order, instead %1$d >= %2$d in the expression <%3$s>', 'bibleget-io' ),
 			__( "A query that doesn't start with a book indicator must however start with a valid chapter indicator!", 'bibleget-io' ),
-		);
+		];
 
 		foreach ( $versions as $version ) {
 			$temp = get_option( 'bibleget_' . $version . 'IDX' );
@@ -165,7 +165,7 @@ class QueryValidator {
 
 	private static function force_array( $element ) {
 		if ( ! is_array( $element ) ) {
-			$element = array( $element );
+			$element = [ $element ];
 		}
 		return $element;
 	}
@@ -175,7 +175,7 @@ class QueryValidator {
 			$discontinuousVerses[1] = self::force_array( $discontinuousVerses[1] );
 			return $discontinuousVerses;
 		} else {
-			return array( array(), array() );
+			return [ [], [] ];
 		}
 	}
 
@@ -183,7 +183,7 @@ class QueryValidator {
 		if ( preg_match( '/,([1-9][0-9]{0,2})/', $query, $verse ) ) {
 			return $verse;
 		} else {
-			return array( array(), array() );
+			return [ [], [] ];
 		}
 	}
 
@@ -196,7 +196,7 @@ class QueryValidator {
 			$chapterIndicators[1] = self::force_array( $chapterIndicators[1] );
 			return $chapterIndicators;
 		} else {
-			return array( '', array() );
+			return [ '', [] ];
 		}
 	}
 
@@ -404,15 +404,15 @@ class QueryValidator {
 	public function validate_queries() {
 		// at least the first query must start with a book reference, which may have a number from 1 to 3 at the beginning
 		// echo "matching against: ".$queries[0]."<br />";
-		if ( $this->query_violates_any_rule_of( $this->initial_queries[0], array( self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR ) ) ) {
+		if ( $this->query_violates_any_rule_of( $this->initial_queries[0], [ self::QUERY_MUST_START_WITH_VALID_BOOK_INDICATOR ] ) ) {
 			return false;
 		}
 
 		foreach ( $this->initial_queries as $query ) {
 			$this->current_full_query = $query;
-			$this->current_query     = $query;
+			$this->current_query      = $query;
 
-			if ( $this->query_violates_any_rule_of( $this->current_query, array( self::VALID_CHAPTER_MUST_FOLLOW_BOOK ) ) ) {
+			if ( $this->query_violates_any_rule_of( $this->current_query, [ self::VALID_CHAPTER_MUST_FOLLOW_BOOK ] ) ) {
 				return false;
 			}
 
@@ -422,17 +422,17 @@ class QueryValidator {
 			}
 
 			if ( self::query_contains_non_consecutive_verses( $this->current_query ) ) {
-				$rules = array(
+				$rules = [
 					self::VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_CHAPTER_VERSE_SEPARATOR,
 					self::VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS,
-				);
+				];
 				if ( $this->query_violates_any_rule_of( $this->current_query, $rules ) ) {
 					continue;
 				}
 			}
 
 			if ( self::chunk_contains_chapter_verse_construct( $this->current_query ) ) {
-				if ( $this->query_violates_any_rule_of( $this->current_query, array( self::CHAPTER_VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS ) ) ) {
+				if ( $this->query_violates_any_rule_of( $this->current_query, [ self::CHAPTER_VERSE_SEPARATOR_MUST_BE_PRECEDED_BY_1_TO_3_DIGITS ] ) ) {
 					continue;
 				} else {
 					$chapterIndicators = self::get_all_chapter_indicators( $this->current_query );
@@ -452,11 +452,11 @@ class QueryValidator {
 			}
 
 			if ( strpos( $this->current_query, '-' ) ) {
-				$rules = array(
+				$rules = [
 					self::VERSE_RANGE_MUST_CONTAIN_VALID_VERSE_NUMBERS,
 					self::CORRESPONDING_CHAPTER_VERSE_CONSTRUCTS_IN_VERSE_RANGE_OVER_CHAPTERS,
 					self::CORRESPONDING_VERSE_SEPARATORS_FOR_MULTIPLE_VERSE_RANGES,
-				);
+				];
 				if ( $this->query_violates_any_rule_of( $this->current_query, $rules ) ) {
 					continue;
 				}

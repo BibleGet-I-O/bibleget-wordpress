@@ -22,7 +22,7 @@ class Properties {
 	 */
 	public $bget_options;
 
-	const OPTIONSDEFAULTS = array(
+	const OPTIONSDEFAULTS = [
 		'PARAGRAPHSTYLES_FONTFAMILY'          => 'Times New Roman',
 		'PARAGRAPHSTYLES_LINEHEIGHT'          => 1.5,
 		'PARAGRAPHSTYLES_PADDINGTOPBOTTOM'    => 12,
@@ -80,13 +80,13 @@ class Properties {
 		'LAYOUTPREFS_BOOKCHAPTERFORMAT'       => BGET::FORMAT['BIBLELANG'],
 		'LAYOUTPREFS_BOOKCHAPTERFULLQUERY'    => false, // false = just the name of the book and the chapter will be shown (i.e. 1 John 4), true = the full reference including the verses will be shown (i.e. 1 John 4:7-8).
 		'LAYOUTPREFS_SHOWVERSENUMBERS'        => BGET::VISIBILITY['SHOW'],
-		'VERSION'                             => array( 'NABRE' ),
+		'VERSION'                             => [ 'NABRE' ],
 		'QUERY'                               => 'Matthew1:1-5',
 		'POPUP'                               => false,
 		'PREFERORIGIN'                        => BGET::PREFERORIGIN['HEBREW'],
 		'FORCEVERSION'                        => false,
 		'FORCECOPYRIGHT'                      => false,
-	);
+	];
 
 	/**
 	 * Checks if an option has already been set, while ensuring the correct type
@@ -98,31 +98,31 @@ class Properties {
 	private function produce_option_by_type( $key, $value ) {
 		switch ( gettype( $value ) ) {
 			case 'string':
-				return array(
+				return [
 					'default' => self::set_and_not_nothing( $this->bget_options, $key ) ? $this->bget_options[ $key ] : $value,
 					'type'    => 'string',
-				);
+				];
 			case 'double':
-				return array(
+				return [
 					'default' => self::set_and_is_number( $this->bget_options, $key ) ? floatval( $this->bget_options[ $key ] ) : $value,
 					'type'    => 'number',
-				);
+				];
 			case 'integer':
-				return array(
+				return [
 					'default' => self::set_and_is_number( $this->bget_options, $key ) ? intval( $this->bget_options[ $key ] ) : $value,
 					'type'    => 'integer',
-				);
+				];
 			case 'boolean':
-				return array(
+				return [
 					'default' => self::set_and_is_boolean( $this->bget_options, $key ) ? $this->bget_options[ $key ] : $value,
 					'type'    => 'boolean',
-				);
+				];
 			case 'array':
-				return array(
+				return [
 					'default' => self::set_and_is_string_array( $this->bget_options, $key ) ? $this->bget_options[ $key ] : $value,
 					'type'    => 'array',
-					'items'   => array( 'type' => 'string' ),
-				);
+					'items'   => [ 'type' => 'string' ],
+				];
 		}
 	}
 
@@ -130,7 +130,7 @@ class Properties {
 	 * BibleGet_Properties constructor
 	 */
 	public function __construct() {
-		$this->bget_options = get_option( 'BGET', array() );
+		$this->bget_options = get_option( 'BGET', [] );
 		foreach ( self::OPTIONSDEFAULTS as $key => $value ) {
 			$this->options[ $key ] = $this->produce_option_by_type( $key, $value );
 		}

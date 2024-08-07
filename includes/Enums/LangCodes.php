@@ -3,7 +3,7 @@
 namespace BibleGet\Enums;
 
 class LangCodes {
-	public const ISO_639_1 = array(
+	public const ISO_639_1 = [
 		'af' => 'Afrikaans',
 		'ak' => 'Akan',
 		'sq' => 'Albanian',
@@ -127,6 +127,5 @@ class LangCodes {
 		'yi' => 'Yiddish',
 		'yo' => 'Yoruba',
 		'zu' => 'Zulu',
-	);
-
+	];
 }

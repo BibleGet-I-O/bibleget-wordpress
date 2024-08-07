@@ -42,32 +42,32 @@ use BibleGet\SettingsPage;
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-register_activation_hook( __FILE__, array( 'BibleGet\Plugin', 'on_activation' ) );
-register_uninstall_hook( __FILE__, array( 'BibleGet\Plugin', 'on_uninstall' ) );
+register_activation_hook( __FILE__, [ 'BibleGet\Plugin', 'on_activation' ] );
+register_uninstall_hook( __FILE__, [ 'BibleGet\Plugin', 'on_uninstall' ] );
 
 // should the action be 'init' instead of 'plugins_loaded'? see http://geertdedeckere.be/article/loading-wordpress-language-files-the-right-way.
-add_action( 'plugins_loaded', array( 'BibleGet\Plugin', 'bibleget_load_textdomain' ) );
+add_action( 'plugins_loaded', [ 'BibleGet\Plugin', 'bibleget_load_textdomain' ] );
 
 // should the action be 'init' instead of enqueue_block_editor_assets? add_action('init', array( 'BibleGet\Plugin', 'set_script_translations' ) ); .
-add_action( 'enqueue_block_editor_assets', array( 'BibleGet\Plugin', 'set_script_translations' ) );
+add_action( 'enqueue_block_editor_assets', [ 'BibleGet\Plugin', 'set_script_translations' ] );
 
-add_action( 'init', array( 'BibleGet\Plugin', 'gutenberg' ) );
+add_action( 'init', [ 'BibleGet\Plugin', 'gutenberg' ] );
 
-add_action( 'admin_enqueue_scripts', array( 'BibleGet\Plugin', 'gutenberg_scripts' ) );
+add_action( 'admin_enqueue_scripts', [ 'BibleGet\Plugin', 'gutenberg_scripts' ] );
 
-add_action( 'admin_notices', array( 'BibleGet\Plugin', 'admin_notices' ) );
+add_action( 'admin_notices', [ 'BibleGet\Plugin', 'admin_notices' ] );
 
-add_action( 'wp_ajax_refresh_bibleget_server_data', array( 'BibleGet\Plugin', 'set_options' ) );
+add_action( 'wp_ajax_refresh_bibleget_server_data', [ 'BibleGet\Plugin', 'set_options' ] );
 
-add_action( 'wp_ajax_flush_bible_quotes_cache', array( 'BibleGet\Plugin', 'flush_bible_quotes_cache' ) );
+add_action( 'wp_ajax_flush_bible_quotes_cache', [ 'BibleGet\Plugin', 'flush_bible_quotes_cache' ] );
 
-add_action( 'wp_ajax_search_by_keyword', array( 'BibleGet\Plugin', 'search_by_keyword' ) );
+add_action( 'wp_ajax_search_by_keyword', [ 'BibleGet\Plugin', 'search_by_keyword' ] );
 
-add_action( 'wp_ajax_update_bget', array( 'BibleGet\Plugin', 'update_bget' ) );
+add_action( 'wp_ajax_update_bget', [ 'BibleGet\Plugin', 'update_bget' ] );
 
-add_shortcode( 'bibleget', array( 'BibleGet\Plugin', 'shortcode' ) );
+add_shortcode( 'bibleget', [ 'BibleGet\Plugin', 'shortcode' ] );
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( 'BibleGet\Plugin', 'add_action_links' ) );
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), [ 'BibleGet\Plugin', 'add_action_links' ] );
 
 
 if ( is_admin() ) {
@@ -82,42 +82,42 @@ if ( is_admin() ) {
  * START OF CUSTOMIZER OPTIONS
  */
 
-add_action( 'wp_enqueue_scripts', array( 'BibleGet\Customize', 'bibleget_customizer_print_script' ) );
-add_action( 'admin_enqueue_scripts', array( 'BibleGet\Customize', 'bibleget_customizer_print_script' ) );
+add_action( 'wp_enqueue_scripts', [ 'BibleGet\Customize', 'bibleget_customizer_print_script' ] );
+add_action( 'admin_enqueue_scripts', [ 'BibleGet\Customize', 'bibleget_customizer_print_script' ] );
 
 // Setup the Theme Customizer settings and controls...
 add_action(
 	'customize_register',
-	array(
+	[
 		'BibleGet\Customize',
 		'register',
-	)
+	]
 );
 
 // Output custom CSS to live site.
 add_action(
 	'wp_head',
-	array(
+	[
 		'BibleGet\Customize',
 		'header_output',
-	)
+	]
 );
 
 // Output custom CSS to admin area for gutenberg previews.
 add_action(
 	'admin_head',
-	array(
+	[
 		'BibleGet\Customize',
 		'header_output',
-	)
+	]
 );
 
 
 // Enqueue live preview javascript in Theme Customizer admin screen.
 add_action(
 	'customize_preview_init',
-	array(
+	[
 		'BibleGet\Customize',
 		'live_preview',
-	)
+	]
 );

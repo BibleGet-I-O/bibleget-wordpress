@@ -3,6 +3,8 @@ A plugin that let's you insert Bible quotes into your WordPress pages or posts, 
 
 ![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/bibleget-io)
 ![WordPress Plugin Active Installs](https://img.shields.io/wordpress/plugin/installs/bibleget-io)
+[![WP compatibility](https://plugintests.com/plugins/wporg/bibleget-io/wp-badge.svg)](https://plugintests.com/plugins/wporg/bibleget-io/latest)
+[![PHP compatibility](https://plugintests.com/plugins/wporg/bibleget-io/php-badge.svg)](https://plugintests.com/plugins/wporg/bibleget-io/latest)
 [![CodeFactor](https://www.codefactor.io/repository/github/bibleget-i-o/bibleget-wordpress/badge)](https://www.codefactor.io/repository/github/bibleget-i-o/bibleget-wordpress)
 
 | Information       |                                                                                                                            |

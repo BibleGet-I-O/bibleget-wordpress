@@ -18,9 +18,6 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "require-dev": {
-        "wp-coding-standards/wpcs": "^3.0"
-    },
     "autoload": {
         "psr-4": {
             "BibleGet\\": "includes/"

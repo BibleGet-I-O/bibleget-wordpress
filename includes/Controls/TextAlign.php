@@ -12,7 +12,7 @@ class TextAlign extends \WP_Customize_Control {
 		wp_enqueue_script(
 			'bibleget-textalign-control', // Give the script a unique ID
 			plugins_url( '../../js/textalign-control.js', __FILE__ ), // Define the path to the JS file
-			array( 'jquery' ), // Define dependencies
+			[ 'jquery' ], // Define dependencies
 			'', // Define a version (optional)
 			true
 		); // Specify whether to put in footer (leave this true)

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset>
-	<rule ref="./vendor/wp-coding-standards/wpcs/WordPress" />
+	<!-- <rule ref="./vendor/wp-coding-standards/wpcs/WordPress" /> -->
+	<rule ref="WordPress" />
 	<rule ref="WordPress.NamingConventions.ValidVariableName">
 		<properties>
 			<property name="allowed_custom_properties" type="array" value="textContent,nextSibling"/>
@@ -9,8 +10,12 @@
 	<rule ref="WordPress">
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="NormalizedArrays.Arrays.CommaAfterLast" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
+	<!-- Enforce short arrays: -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 	<file>.</file>
-	<arg name="extensions" value="php"/>
-	<arg name="encoding" value="UTF-8"/>
+	<arg name="extensions" value="php" />
+	<arg name="encoding" value="UTF-8" />
 </ruleset>

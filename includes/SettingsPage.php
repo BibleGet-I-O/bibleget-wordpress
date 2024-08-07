@@ -35,7 +35,7 @@ class SettingsPage {
 		$this->gfonts_api_key              = '';
 		$this->gfonts_api_key_timeout      = 0;
 		$this->gfonts_api_key_check_result = false;
-		$this->gfonts_api_errors           = array();
+		$this->gfonts_api_errors           = [];
 		$this->versionsbylang              = $this->prepare_versions_by_lang(); // will now be an array with both versions and langs properties.
 		$this->versionlangscount           = count( $this->versionsbylang['versions'] );
 		$this->versionsbylangcount         = $this->count_versions_by_lang();
@@ -46,8 +46,8 @@ class SettingsPage {
 	 * Initialize admin menu and settings and check gfonts api key
 	 */
 	public function init() {
-		add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_menu', [ $this, 'add_plugin_page' ] );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
 		// if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
 		// so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
@@ -58,8 +58,8 @@ class SettingsPage {
 				// the gfonts_api_key is set, and transient has been set and successful curl call made to the google fonts API.
 				// error_log( 'AJAX ACTION NOW BEING ADDED WITH THESE VALUES' );
 				set_time_limit( 180 );
-				add_action( 'wp_ajax_store_gfonts_preview', array( $this, 'store_gfonts_preview' ) );
-				add_action( 'wp_ajax_bibleget_refresh_gfonts', array( $this, 'force_refresh_gfonts_results' ) );
+				add_action( 'wp_ajax_store_gfonts_preview', [ $this, 'store_gfonts_preview' ] );
+				add_action( 'wp_ajax_bibleget_refresh_gfonts', [ $this, 'force_refresh_gfonts_results' ] );
 				// enqueue and localize will be done in enqueue_scripts
 				break;
 			/*
@@ -75,9 +75,9 @@ class SettingsPage {
 			*/
 		}
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_print_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_print_scripts' ) );
-		add_action( 'load-' . $this->options_page_hook, array( $this, 'bibleget_plugin_settings_save' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_print_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_print_scripts' ] );
+		add_action( 'load-' . $this->options_page_hook, [ $this, 'bibleget_plugin_settings_save' ] );
 	}
 
 	public function get_versions_by_lang() {
@@ -92,7 +92,7 @@ class SettingsPage {
 	 * (For just the English names, use get_option("bibleget_languages") rather than this function )
 	 */
 	public function prepare_bible_books_langs() {
-		$biblebookslangsArr = array();
+		$biblebookslangsArr = [];
 
 		$biblebookslangs = get_option( 'bibleget_languages' );
 		if ( $biblebookslangs === false || ! is_array( $biblebookslangs ) || count( $biblebookslangs ) < 1 ) {
@@ -122,12 +122,12 @@ class SettingsPage {
 	}
 
 	public function prepare_versions_by_lang() {
-		$versions       = get_option( 'bibleget_versions', array() ); // theoretically should be an array.
-		$versionsbylang = array();
-		$langs          = array();
+		$versions       = get_option( 'bibleget_versions', [] ); // theoretically should be an array.
+		$versionsbylang = [];
+		$langs          = [];
 		if ( count( $versions ) < 1 ) {
 			Plugin::set_options(); // global function defined in bibleget-io.php
-			$versions = get_option( 'bibleget_versions', array() );
+			$versions = get_option( 'bibleget_versions', [] );
 		}
 		foreach ( $versions as $abbr => $versioninfo ) {
 			$info     = explode( '|', $versioninfo );
@@ -141,18 +141,18 @@ class SettingsPage {
 
 			if ( isset( $versionsbylang[ $lang ] ) ) {
 				if ( ! isset( $versionsbylang[ $lang ][ $abbr ] ) ) {
-					$versionsbylang[ $lang ][ $abbr ] = array(
+					$versionsbylang[ $lang ][ $abbr ] = [
 						'fullname' => $fullname,
 						'year'     => $year,
-					);
+					];
 				}
 			} else {
-				$versionsbylang[ $lang ] = array();
+				$versionsbylang[ $lang ] = [];
 				array_push( $langs, $lang );
-				$versionsbylang[ $lang ][ $abbr ] = array(
+				$versionsbylang[ $lang ][ $abbr ] = [
 					'fullname' => $fullname,
 					'year'     => $year,
-				);
+				];
 			}
 		}
 
@@ -162,10 +162,10 @@ class SettingsPage {
 			array_multisort( array_map( 'self::sortify', $langs ), $langs );
 		}
 
-		return array(
+		return [
 			'versions' => $versionsbylang,
 			'langs'    => $langs,
-		);
+		];
 	}
 
 	/**
@@ -208,8 +208,8 @@ class SettingsPage {
 			}
 			// we can start getting our return info ready
 			$bibleBooks           = new \stdClass();
-			$bibleBooks->fullname = array();
-			$bibleBooks->abbrev   = array();
+			$bibleBooks->fullname = [];
+			$bibleBooks->abbrev   = [];
 			for ( $i = 0; $i < 73; $i++ ) {
 				$jsbook = json_decode( get_option( 'bibleget_biblebooks' . $i ), true );
 				array_push( $bibleBooks->fullname, $jsbook[ $idx ][0] );
@@ -230,7 +230,7 @@ class SettingsPage {
 			'BibleGet I/O',                                // $menu_title.
 			'manage_options',                              // $capability.
 			'bibleget-settings-admin',                     // $menu_slug (Page ID).
-			array( $this, 'create_admin_page' )            // Callback Function.
+			[ $this, 'create_admin_page' ]            // Callback Function.
 		);
 	}
 
@@ -242,20 +242,20 @@ class SettingsPage {
 		register_setting(
 			'bibleget_settings_options', // Option group.
 			'bibleget_settings',         // Option name.
-			array( $this, 'sanitize' )   // Sanitize.
+			[ $this, 'sanitize' ]   // Sanitize.
 		);
 
 		add_settings_section(
 			'bibleget_settings_section2',                // Section ID.
 			__( 'Preferences Settings', 'bibleget-io' ), // Title.
-			array( $this, 'print_section_info2' ),       // Callback.
+			[ $this, 'print_section_info2' ],       // Callback.
 			'bibleget-settings-admin'                    // Page.
 		);
 
 		add_settings_field(
 			'favorite_version',
 			__( 'Preferred version or versions (when not indicated in shortcode)', 'bibleget-io' ),
-			array( $this, 'favorite_version_callback' ),
+			[ $this, 'favorite_version_callback' ],
 			'bibleget-settings-admin',
 			'bibleget_settings_section2'
 		);
@@ -263,7 +263,7 @@ class SettingsPage {
 		add_settings_field(
 			'googlefontsapi_key',
 			__( 'Google Fonts API key (for updated font list)', 'bibleget-io' ),
-			array( $this, 'googlefontsapikey_callback' ),
+			[ $this, 'googlefontsapikey_callback' ],
 			'bibleget-settings-admin',
 			'bibleget_settings_section2'
 		);
@@ -281,19 +281,19 @@ class SettingsPage {
 			return;
 		}
 
-		wp_register_script( 'admin-js', plugins_url( '../js/admin.js', __FILE__ ), array( 'jquery' ) );
+		wp_register_script( 'admin-js', plugins_url( '../js/admin.js', __FILE__ ), [ 'jquery' ] );
 		$thisoptions = get_option( 'bibleget_settings' );
-		$myoptions   = array();
+		$myoptions   = [];
 		if ( $thisoptions ) {
 			foreach ( $thisoptions as $key => $option ) {
 				$myoptions[ $key ] = esc_attr( $option );
 			}
 		}
-		$obj = array(
+		$obj = [
 			'options'    => $myoptions,
 			'ajax_url'   => admin_url( 'admin-ajax.php' ),
 			'ajax_nonce' => wp_create_nonce( 'bibleget-data' ),
-		);
+		];
 		wp_localize_script( 'admin-js', 'bibleGetOptionsFromServer', $obj );
 		wp_enqueue_script( 'admin-js' );
 
@@ -305,7 +305,7 @@ class SettingsPage {
 			// write_log("about to initialize creation of admin page...");
 			if ( get_filesystem_method() === 'direct' ) {
 				$gfonts_dir = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
-				$creds     = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, array() );
+				$creds      = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, [] );
 				/* initialize the API */
 				if ( WP_Filesystem( $creds ) ) {
 					global $wp_filesystem;
@@ -364,18 +364,18 @@ class SettingsPage {
 					'//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css'
 				);
 			}
-			$storeGfontsArr = array(
-				'job' => array(
+			$storeGfontsArr = [
+				'job' => [
 					'gfontsPreviewJob'   => (bool) true,
 					'gfontsNonce'        => wp_create_nonce( 'store_gfonts_preview_nonce' ),
 					'gfontsRefreshNonce' => wp_create_nonce( 'refresh_gfonts_results_nonce' ),
 					'ajax_url'           => admin_url( 'admin-ajax.php' ),
 					'gfontsWeblist'      => $this->gfonts_weblist,
 					'gfontsApiKey'       => $this->options['googlefontsapi_key'],
-					'gfonts_api_errors'   => json_encode( $this->gfonts_api_errors ),
+					'gfonts_api_errors'  => json_encode( $this->gfonts_api_errors ),
 					'max_execution_time' => ini_get( 'max_execution_time' ),
-				),
-			);
+				],
+			];
 			wp_localize_script( 'admin-js', 'gfontsBatch', $storeGfontsArr );
 		}
 	}
@@ -505,7 +505,7 @@ class SettingsPage {
 	 */
 	public function sanitize( $input ) {
 		// use absint for number fields instead of sanitize_text_field
-		$new_input = array();
+		$new_input = [];
 
 		if ( isset( $input['favorite_version'] ) ) {
 			$new_input['favorite_version'] = sanitize_text_field( $input['favorite_version'] );
@@ -545,10 +545,10 @@ class SettingsPage {
 		$versionsbylang = $this->versionsbylang['versions'];
 		$bget           = get_option( 'BGET' );
 		if ( false === $bget ) {
-			$bget = array();
+			$bget = [];
 		}
 		if ( false === isset( $bget['VERSION'] ) ) {
-			$bget['VERSION'] = array( 'NABRE' );
+			$bget['VERSION'] = [ 'NABRE' ];
 		}
 		foreach ( $langs as $lang ) {
 			echo '<optgroup label="-' . $lang . '-">';
@@ -576,10 +576,10 @@ class SettingsPage {
 					$d1 = new \DateTime(); // timestamp set to current time
 					$d2 = new \DateTime();
 					$d2->setTimestamp( $this->gfonts_api_key_timeout );
-					$diff                 = $d2->diff( $d1 );
+					$diff                   = $d2->diff( $d1 );
 					$gfonts_api_keyTimeLeft = $diff->m . ' months, ' . $diff->d . ' days';
 
-					$timeLeft = array();
+					$timeLeft = [];
 
 					if ( $diff->m > 0 ) {
 						$timeLeft[] = ( $diff->m . ' ' . _n( 'month', 'months', $diff->m, 'bibleget-io' ) );
@@ -659,8 +659,8 @@ class SettingsPage {
 	}
 
 	public function gfonts_api_key_check() {
-		$result                 = false;
-		$this->gfonts_api_errors = array(); // we want to start with a clean slate
+		$result                  = false;
+		$this->gfonts_api_errors = []; // we want to start with a clean slate
 
 		if ( isset( $this->options['googlefontsapi_key'] ) && $this->options['googlefontsapi_key'] != '' ) {
 			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
@@ -727,8 +727,8 @@ class SettingsPage {
 				// we have a previously saved api key which has been tested
 				// $result is not false
 				global $wpdb;
-				$transientKey              = md5( $this->options['googlefontsapi_key'] );
-				$transient_timeout         = $wpdb->get_col(
+				$transientKey                 = md5( $this->options['googlefontsapi_key'] );
+				$transient_timeout            = $wpdb->get_col(
 					"
 				  SELECT option_value
 				  FROM $wpdb->options
@@ -753,8 +753,8 @@ class SettingsPage {
 		$thisfamily        = '';
 		$familyurlname     = '';
 		$familyfilename    = '';
-		$errorinfo         = array();
-		$gfonts_dir         = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
+		$errorinfo         = [];
+		$gfonts_dir        = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
 		$gfontsWeblistFile = $gfonts_dir . 'gfontsWeblist.json';
 		$gfontsWeblist     = new \stdClass();
 		$returnInfo        = new \stdClass();
@@ -787,7 +787,7 @@ class SettingsPage {
 		}
 
 		if ( get_filesystem_method() === 'direct' ) {
-			$creds = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, array() );
+			$creds = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, [] );
 			/* initialize the API */
 			if ( WP_Filesystem( $creds ) ) {
 				global $wp_filesystem;
@@ -832,7 +832,7 @@ class SettingsPage {
 									}
 									// declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
 									// however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
-									curl_setopt( $ch3, CURLOPT_HTTPHEADER, array( 'Accept: font/woff2', 'Content-type: font/ttf' ) );
+									curl_setopt( $ch3, CURLOPT_HTTPHEADER, [ 'Accept: font/woff2', 'Content-type: font/ttf' ] );
 									if ( ini_get( 'open_basedir' ) === false ) {
 										curl_setopt( $ch3, CURLOPT_FOLLOWLOCATION, true );
 										curl_setopt( $ch3, CURLOPT_AUTOREFERER, true );
@@ -908,7 +908,7 @@ class SettingsPage {
 
 			// LAST STEP IS TO MINIFY ALL OF THE CSS FILES INTO ONE SINGLE FILE
 			$cssdirectory = $gfonts_dir . 'css';
-			$cssfiles     = array_diff( scandir( $cssdirectory ), array( '..', '.', 'gfonts_preview.css' ) );
+			$cssfiles     = array_diff( scandir( $cssdirectory ), [ '..', '.', 'gfonts_preview.css' ] );
 			$minifier     = new CSS( $cssdirectory . '/' . ( array_shift( $cssfiles ) ) );
 			while ( count( $cssfiles ) > 0 ) {
 				$minifier->add( $cssdirectory . '/' . ( array_shift( $cssfiles ) ) );
@@ -917,7 +917,7 @@ class SettingsPage {
 		}
 
 		if ( count( $errorinfo ) > 0 ) {
-			$returnInfo->errorinfo = array();
+			$returnInfo->errorinfo = [];
 			$returnInfo->errorinfo = $errorinfo;
 		} else {
 			$returnInfo->errorinfo = false;
