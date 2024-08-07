@@ -800,76 +800,58 @@ class Plugin {
 	private static function query_server( $finalquery ) {
 		$current_page_url = self::current_page_url();
 		$errs             = [];
-		// We will make a secure connection to the BibleGet service endpoint,
-		// if this server's OpenSSL and CURL versions support TLSv1.2
-		$curl_version = curl_version();
-		$ssl_version  = str_replace( 'OpenSSL/', '', $curl_version['ssl_version'] );
-		if ( version_compare( $curl_version['version'], '7.34.0', '>=' ) && version_compare( $ssl_version, '1.0.1', '>=' ) ) {
-			// we should be good to go for secure SSL communication supporting TLSv1_2.
-			$ch = curl_init( self::BIBLE_API . '?' . $finalquery . '&return=html&appid=wordpress&domain=' . urlencode( site_url() ) . '&pluginversion=' . self::VERSION );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-			curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-		} else {
-			$ch = curl_init( 'http://query.bibleget.io/v3/index.php?' . $finalquery . '&return=html&appid=wordpress&domain=' . urlencode( site_url() ) . '&pluginversion=' . self::VERSION );
-		}
-
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-		if ( false === ini_get( 'open_basedir' ) ) {
-			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
-		}
-		$output = curl_exec( $ch );
-		if ( $output && ! curl_errno( $ch ) ) {
-			// remove style and title tags from the output if they are present(should not be present with more recent BibleGet engine.
-			$output = substr( $output, 0, strpos( $output, '<style' ) ) . substr( $output, strpos( $output, '</style' ), strlen( $output ) );
-			$output = substr( $output, 0, strpos( $output, '<title' ) ) . substr( $output, strpos( $output, '</title' ), strlen( $output ) );
-
-			$count1 = null;
-			$count2 = null;
-			$output = preg_replace( '/&lt;(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '<span class="$1">', $output, -1, $count1 );
-			$output = preg_replace( '/&lt;\/(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '</span>', $output, -1, $count2 );
-			// $output .= "<br /><br />Effettuate ".$count1." e ".$count2." sostituzioni.";
-
-			$matches = null;
-			if ( preg_match_all( '/<div class="errors bibleQuote">.*?<\/div>/s', $output, $matches ) ) {
-				// capture table of error messages, and turn it into notices for backend.
-				$errorshtml = new \DOMDocument();
-				$errorshtml->loadHTML( '<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>' . $matches[0][0] . '</body>' );
-				$error_rows = $errorshtml->getElementsByTagName( 'tr' );
-				if ( null !== $error_rows && $error_rows->length > 0 ) {
-					$errs = get_option( 'bibleget_error_admin_notices', [] );
-					foreach ( $error_rows as $error_row ) {
-						$errormessage = self::get_elements_by_class( $error_row, 'td', 'errMessageVal' );
-						$errs[]       = 'BIBLEGET SERVER ERROR: <span style="color:Red;">' .
-							$errormessage[0]->nodeValue .
-							"</span><span style=\"color:DarkBlue;\">({$current_page_url})</span>.<br /><span style=\"color:Gray;font-style:italic;\">" .
-							__( 'If this error continues, please notify the BibleGet plugin author at' ) .
-							': <a target="_blank" href="mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=' .
-							rawurlencode(
-								"The WordPress Plugin is receiving this error message from the BibleGet Server:\n\n" .
-								$errormessage[0]->nodeValue .
-								"\n\nKind regards,\n\n"
-							) .
-							'">bibleget.io@gmail.com</a></span>';
-					}
-				}
-				$output = preg_replace( '/<div class="errors bibleQuote">.*?<\/div>/s', '', $output );
-			}
-		} else {
+		$request          = self::BIBLE_API . '?' . $finalquery
+							. '&return=html&appid=wordpress&domain='
+							. rawurlencode( site_url() )
+							. '&pluginversion=' . self::VERSION;
+		$response         = wp_remote_get( $request );
+		if ( is_wp_error( $response ) ) {
 			$errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' .
 				__( 'There was an error communicating with the BibleGet server, please wait a few minutes and try again', 'bibleget-io' ) .
-				': &apos;' . curl_error( $ch ) . '&apos;: ' .
+				': &apos;' . $response->get_error_message() . '&apos;: ' .
 				$finalquery .
 				'</span>';
-			$output = false;
+			update_option( 'bibleget_error_admin_notices', $errs );
+			return false;
 		}
-		curl_close( $ch );
-		update_option( 'bibleget_error_admin_notices', $errs );
+
+		$output = wp_remote_retrieve_body( $response );
+		// remove style and title tags from the output if they are present(should not be present with more recent BibleGet engine.
+		$output = substr( $output, 0, strpos( $output, '<style' ) ) . substr( $output, strpos( $output, '</style' ), strlen( $output ) );
+		$output = substr( $output, 0, strpos( $output, '<title' ) ) . substr( $output, strpos( $output, '</title' ), strlen( $output ) );
+
+		$count1 = null;
+		$count2 = null;
+		$output = preg_replace( '/&lt;(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '<span class="$1">', $output, -1, $count1 );
+		$output = preg_replace( '/&lt;\/(sm|pof|po|pol|pos|poif|poi|poil|po3|po3l|speaker)&gt;/', '</span>', $output, -1, $count2 );
+
+		$matches = null;
+		if ( preg_match_all( '/<div class="errors bibleQuote">.*?<\/div>/s', $output, $matches ) ) {
+			// capture table of error messages, and turn it into notices for backend.
+			$errorshtml = new \DOMDocument();
+			$errorshtml->loadHTML( '<!DOCTYPE HTML><head><title>BibleGet Query Errors</title></head><body>' . $matches[0][0] . '</body>' );
+			$error_rows = $errorshtml->getElementsByTagName( 'tr' );
+			if ( null !== $error_rows && $error_rows->length > 0 ) {
+				$errs = get_option( 'bibleget_error_admin_notices', [] );
+				foreach ( $error_rows as $error_row ) {
+					$errormessage = self::get_elements_by_class( $error_row, 'td', 'errMessageVal' );
+					$errs[]       = 'BIBLEGET SERVER ERROR: <span style="color:Red;">' .
+						$errormessage[0]->nodeValue .
+						"</span><span style=\"color:DarkBlue;\">({$current_page_url})</span>.<br /><span style=\"color:Gray;font-style:italic;\">" .
+						__( 'If this error continues, please notify the BibleGet plugin author at' ) .
+						': <a target="_blank" href="mailto:bibleget.io@gmail.com?subject=BibleGet+Server+Error&body=' .
+						rawurlencode(
+							"The WordPress Plugin is receiving this error message from the BibleGet Server:\n\n" .
+							$errormessage[0]->nodeValue .
+							"\n\nKind regards,\n\n"
+						) .
+						'">bibleget.io@gmail.com</a></span>';
+				}
+			}
+			$output = preg_replace( '/<div class="errors bibleQuote">.*?<\/div>/s', '', $output );
+		}
 		return $output;
 	}
-
 
 
 	/**
