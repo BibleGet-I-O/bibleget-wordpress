@@ -1099,10 +1099,8 @@ class Plugin {
 
 		$metadata = self::get_metadata( 'biblebooks' );
 		if ( false !== $metadata ) {
-			if ( WP_DEBUG ) {
-				self::write_log( 'Retrieved biblebooks metadata...' );
-				self::write_log( $metadata );
-			}
+			self::write_log( 'Retrieved biblebooks metadata...' );
+			self::write_log( $metadata );
 
 			if ( property_exists( $metadata, 'results' ) ) {
 				$biblebooks = $metadata->results;
@@ -1121,10 +1119,8 @@ class Plugin {
 		$metadata       = self::get_metadata( 'bibleversions' );
 		$versionsabbrev = [];
 		if ( false !== $metadata ) {
-			if ( WP_DEBUG ) {
-				self::write_log( 'Retrieved bibleversions metadata' );
-				self::write_log( $metadata );
-			}
+			self::write_log( 'Retrieved bibleversions metadata' );
+			self::write_log( $metadata );
 
 			if ( property_exists( $metadata, 'validversions_fullname' ) ) {
 				$bibleversions     = $metadata->validversions_fullname;
@@ -1134,20 +1130,16 @@ class Plugin {
 				update_option( 'bibleget_versions', $bbversions );
 			}
 
-			if ( WP_DEBUG ) {
-				self::write_log( 'versionsabbrev should now be populated:' );
-				self::write_log( $versionsabbrev );
-			}
+			self::write_log( 'versionsabbrev should now be populated:' );
+			self::write_log( $versionsabbrev );
 		}
 
 		if ( count( $versionsabbrev ) > 0 ) {
 			$versionsstr = implode( ',', $versionsabbrev );
 			$metadata    = self::get_metadata( 'versionindex&versions=' . $versionsstr );
 			if ( false !== $metadata ) {
-				if ( WP_DEBUG ) {
-					self::write_log( 'Retrieved versionindex metadata' );
-					self::write_log( $metadata );
-				}
+				self::write_log( 'Retrieved versionindex metadata' );
+				self::write_log( $metadata );
 
 				if ( property_exists( $metadata, 'indexes' ) ) {
 					foreach ( $metadata->indexes as $versabbr => $value ) {
@@ -1157,10 +1149,8 @@ class Plugin {
 						$temp['verse_limit']   = $value->verse_limit;
 						$temp['biblebooks']    = $value->biblebooks;
 						$temp['abbreviations'] = $value->abbreviations;
-						if ( WP_DEBUG ) {
-							self::write_log( "creating new option <bibleget_{$versabbr}IDX> with value:" );
-							self::write_log( $temp );
-						}
+						self::write_log( "creating new option <bibleget_{$versabbr}IDX> with value:" );
+						self::write_log( $temp );
 
 						update_option( 'bibleget_' . $versabbr . 'IDX', $temp );
 					}
@@ -1289,20 +1279,8 @@ class Plugin {
 	 * @param string $log
 	 */
 	public static function write_log( $log ) {
-		$debugfile = plugin_dir_path( __FILE__ ) . '../debug.txt';
-		$datetime  = date( 'Y-m-d H:i:s', time() );
-		$myfile    = fopen( $debugfile, 'a' );
-		if ( false !== $myfile ) {
-			if ( is_array( $log ) || is_object( $log ) ) {
-				if ( ! fwrite( $myfile, '[' . $datetime . '] ' . print_r( $log, true ) . "\n" ) ) {
-					echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
-				}
-			} elseif ( ! fwrite( $myfile, '[' . $datetime . '] ' . $log . "\n" ) ) {
-					echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
-			}
-			fclose( $myfile );
-		} else {
-			echo '<div style="border: 1px solid Red; background-color: LightRed;">impossible to open or write to: ' . $debugfile . '</div>';
+		if ( WP_DEBUG ) {
+			error_log( print_r( $log, true ) );
 		}
 	}
 
