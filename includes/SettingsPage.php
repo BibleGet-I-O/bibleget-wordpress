@@ -46,6 +46,7 @@ class SettingsPage {
 	 * Initialize admin menu and settings and check gfonts api key
 	 */
 	public function init() {
+		Plugin::write_log( 'BibleGet\SettingsPage init' );
 		add_action( 'admin_menu', [ $this, 'add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
@@ -448,7 +449,7 @@ class SettingsPage {
 						<li>
 						<?php
 							$string3 = $b1 . count( $this->biblebookslangs ) . $b2;
-							/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
+							/* translators: please do not change the placeholders %s, it will be substituted dynamically by values in the script. See http://php.net/printf. */
 							printf( __( 'The BibleGet I/O engine currently understands the names of the books of the Bible in %s different languages:', 'bibleget-io' ), $string3 );
 							echo '<br />';
 							echo '<div class="bibleget-dynamic-data-wrapper">' . implode( ', ', $this->biblebookslangs ) . '</div>';
@@ -671,11 +672,14 @@ class SettingsPage {
 
 		if ( isset( $this->options['googlefontsapi_key'] ) && '' !== $this->options['googlefontsapi_key'] ) {
 			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
+			Plugin::write_log( "We have a Google Fonts API key: $this->gfonts_api_key" );
 
 			// has this key been tested in the past 3 months at least?
-			$result = get_transient( md5( $this->options['googlefontsapi_key'] ) );
-			if ( false === $result ) {
+			$transient = get_transient( md5( $this->options['googlefontsapi_key'] ) );
+			if ( false === $transient ) {
+				Plugin::write_log( "The Google Fonts API key has not been tested in the past 3 months" );
 				$notices = get_option( 'bibleget_error_admin_notices', [] );
+
 				// We will make a secure connection to the Google Fonts API endpoint.
 				$request = 'https://www.googleapis.com/webfonts/v1/webfonts?key=' . $this->options['googlefontsapi_key'];
 				add_action( 'http_api_curl', [ 'BibleGet\SettingsPage', 'set_curl_interface' ] );
@@ -685,11 +689,12 @@ class SettingsPage {
 					$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
 						. sprintf(
 							/* translators: %s = error message placeholder, do not translate */
-							__( 'There was an error communicating with the Google Webfonts API: %s.' ),
+							__( 'There was an error communicating with the Google Webfonts API: %s.', 'bibleget-io' ),
 							$response->get_error_message()
 						)
 						. '</span>';
 					update_option( 'bibleget_error_admin_notices', $notices );
+					Plugin::write_log( $notices );
 					$result = 'CURL_ERROR';
 				}
 				$status = wp_remote_retrieve_response_code( $response );
@@ -717,6 +722,8 @@ class SettingsPage {
 						update_option( 'bibleget_error_admin_notices', $notices );
 						return 'JSON_ERROR';
 					}
+				} else {
+					Plugin::write_log( "HTTP status code of the request to the Google Fonts API key: $status" );
 				}
 			} else {
 				// We have a previously saved api key which has been tested.
@@ -731,10 +738,12 @@ class SettingsPage {
 				"
 				);
 				$this->gfonts_api_key_timeout = $transient_timeout[0];
+				Plugin::write_log( "We have a Google Fonts API key that has been tested within the past 3 months, current timeout is {$this->gfonts_api_key_timeout}" );
 			}
 		}
 
 		$this->gfonts_api_key_check_result = $result;
+		Plugin::write_log( "Result of the request to the Google Fonts API: $result" );
 		return $result;
 	}
 
