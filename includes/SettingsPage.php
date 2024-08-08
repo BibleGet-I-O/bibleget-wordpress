@@ -73,6 +73,8 @@ class SettingsPage {
 				break;
 			case "REQUEST_NOT_SENT":
 				break;
+			case "REQUEST_NOT_SUCCESSFUL":
+				break;
 			case false:
 				//the gfonts_api_key is not set, so let's just not do anything, ok
 				break;
@@ -663,6 +665,7 @@ class SettingsPage {
 	public static function set_curl_interface( $handle ) {
 		if ( isset( $_SERVER['SERVER_ADDR'] ) && false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 			curl_setopt( $handle, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
+			Plugin::write_log( "cURL option CURLOPT_INTERFACE set to IP {$_SERVER['SERVER_ADDR']}" );
 		}
 	}
 
@@ -694,8 +697,12 @@ class SettingsPage {
 						)
 						. '</span>';
 					update_option( 'bibleget_error_admin_notices', $notices );
-					Plugin::write_log( $notices );
+					Plugin::write_log( 'Request to Google Fonts API ended in failure' );
+					Plugin::write_log( $response );
 					$result = 'CURL_ERROR';
+				} else {
+					Plugin::write_log( 'Request to Google Fonts API did not end in failure' );
+					Plugin::write_log( $response );
 				}
 				$status = wp_remote_retrieve_response_code( $response );
 				$body   = wp_remote_retrieve_body( $response );
@@ -712,11 +719,12 @@ class SettingsPage {
 							$result               = 'SUCCESS';
 						}
 					} else {
+						$msg = JSON_ERROR_NONE !== json_last_error() ? json_last_error_msg() : 'Response was null';
 						$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
 							. sprintf(
 								/* translators: %s = error message placeholder, do not translate */
 								__( 'There was an error decoding the JSON response from the Google Webfonts API: %s.', 'bibleget-io' ),
-								json_last_error_msg()
+								$msg
 							)
 							. '</span>';
 						update_option( 'bibleget_error_admin_notices', $notices );
@@ -724,6 +732,17 @@ class SettingsPage {
 					}
 				} else {
 					Plugin::write_log( "HTTP status code of the request to the Google Fonts API key: $status" );
+					if ( 429 === $status ) {
+						$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
+							. sprintf(
+								/* translators: */
+								__( 'Could not retrieve Webfonts from the Google Fonts API, too many requests: %s.' ),
+								$body
+							)
+							. '</span>';
+						update_option( 'bibleget_error_admin_notices', $notices );
+						$result = 'REQUEST_NOT_SUCCESSFUL';
+					}
 				}
 			} else {
 				// We have a previously saved api key which has been tested.
@@ -740,6 +759,8 @@ class SettingsPage {
 				$this->gfonts_api_key_timeout = $transient_timeout[0];
 				Plugin::write_log( "We have a Google Fonts API key that has been tested within the past 3 months, current timeout is {$this->gfonts_api_key_timeout}" );
 			}
+		} else {
+			Plugin::write_log( 'We do not have a Google Fonts API key' );
 		}
 
 		$this->gfonts_api_key_check_result = $result;
