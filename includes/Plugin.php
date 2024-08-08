@@ -799,18 +799,18 @@ class Plugin {
 	 */
 	private static function query_server( $finalquery ) {
 		$current_page_url = self::current_page_url();
-		$errs             = [];
+		$errs             = get_option( 'bibleget_error_admin_notices', [] );
 		$request          = self::BIBLE_API . '?' . $finalquery
 							. '&return=html&appid=wordpress&domain='
 							. rawurlencode( site_url() )
 							. '&pluginversion=' . self::VERSION;
 		$response         = wp_remote_get( $request );
 		if ( is_wp_error( $response ) ) {
-			$errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">' .
-				__( 'There was an error communicating with the BibleGet server, please wait a few minutes and try again', 'bibleget-io' ) .
-				': &apos;' . $response->get_error_message() . '&apos;: ' .
-				$finalquery .
-				'</span>';
+			$errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">'
+				. __( 'There was an error communicating with the BibleGet server, please wait a few minutes and try again', 'bibleget-io' )
+				. ': &apos;' . $response->get_error_message() . '&apos;: '
+				. $finalquery
+				. '</span>';
 			update_option( 'bibleget_error_admin_notices', $errs );
 			return false;
 		}
@@ -932,64 +932,32 @@ class Plugin {
 		// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions.
 		$notices          = get_option( 'bibleget_error_admin_notices', [] );
 		$current_page_url = self::current_page_url();
-		$curl_version     = curl_version();
-		$ssl_version      = str_replace( 'OpenSSL/', '', $curl_version['ssl_version'] );
-		if ( version_compare( $curl_version['version'], '7.34.0', '>=' ) && version_compare( $ssl_version, '1.0.1', '>=' ) ) {
-			// we should be good to go for secure SSL communication supporting TLSv1_2.
-			$url = self::METADATA_API . '?query=' . $request . '&return=json';
-			$ch  = curl_init( $url );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-			curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-		} else {
-			$url = 'http://query.bibleget.io/v3/metadata.php?query=' . $request . '&return=json';
-			$ch  = curl_init( $url );
-		}
-
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-		if ( false === ini_get( 'open_basedir' ) ) {
-			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
-		}
-
-		$response = curl_exec( $ch );
-		if ( curl_errno( $ch ) && ( 77 === curl_errno( $ch ) || 60 === curl_errno( $ch ) ) && self::METADATA_API . '?query=' . $request . '&return=json' === $url ) {
-			// error 60: SSL certificate problem: unable to get local issuer certificate.
-			// error 77: error setting certificate verify locations CAPath: none.
-			// curl.cainfo needs to be set in php.ini to point to the curl pem bundle available at https://curl.haxx.se/ca/cacert.pem
-			// until that's fixed on the server environment let's resort to a simple http request.
-			$url = 'http://query.bibleget.io/v3/metadata.php?query=' . $request . '&return=json';
-			curl_setopt( $ch, CURLOPT_URL, $url );
-			$response = curl_exec( $ch );
-			if ( curl_errno( $ch ) ) {
-				self::set_communication_error( $notices, 1 );
-				return false;
-			} else {
-				$info = curl_getinfo( $ch );
-				// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-				if ( 200 !== $info['http_code'] && 304 !== $info['http_code'] ) {
-					self::set_communication_error( $notices, 2 );
-					return false;
-				}
-			}
-		} elseif ( curl_errno( $ch ) ) {
-			self::set_communication_error( $notices, 1 );
+		$request          = self::METADATA_API . '?query=' . $request . '&return=json';
+		$response         = wp_remote_get( $request );
+		if ( is_wp_error( $response ) ) {
+			$notices[] = 'COMMUNICATION ERROR WITH THE BIBLEGET API: <span style="color:Red;font-weight:bold;">' .
+				sprintf(
+					/* translators: %s = error message */
+					__( 'There was an error retrieving metadata from the BibleGet API: %s.', 'bibleget-io' ),
+					$response->get_error_message()
+				) .
+				'</span>';
+			update_option( 'bibleget_error_admin_notices', $notices );
 			return false;
-		} else {
-			$info = curl_getinfo( $ch );
-			// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-			if ( 200 !== $info['http_code'] && 304 !== $info['http_code'] ) {
-				self::set_communication_error( $notices, 2 );
-				return false;
-			}
 		}
-		curl_close( $ch );
 
-		$myjson = json_decode( $response );
+		$response_body = wp_remote_retrieve_body( $response );
+		$myjson        = json_decode( $response_body );
+		if ( JSON_ERROR_NONE !== json_last_error() ) {
+			$notices[] = 'ERROR DECODING METADATA FROM THE BIBLEGET API <span style="color:Red;font-weight:bold;">' .
+				json_last_error_msg() .
+				'</span>';
+				update_option( 'bibleget_error_admin_notices', $notices );
+				return false;
+		}
+
 		if ( property_exists( $myjson, 'results' ) ) {
 			return $myjson;
-			// var verses = myjson.results;.
 		} else {
 			$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
 			$notices[]  = 'BIBLEGET PLUGIN ERROR: ' .
@@ -1274,13 +1242,13 @@ class Plugin {
 
 
 	/**
-	 * Write info to a debug log
+	 * Write info to the WordPress debug log
 	 *
-	 * @param string $log
+	 * @param string $log Message to log.
 	 */
 	public static function write_log( $log ) {
 		if ( WP_DEBUG ) {
-			error_log( print_r( $log, true ) );
+			error_log( '[bibleget-io] ' . print_r( $log, true ) );
 		}
 	}
 
