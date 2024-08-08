@@ -49,18 +49,21 @@ class SettingsPage {
 		add_action( 'admin_menu', [ $this, 'add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
-		// if I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
-		// so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called
-		// this will change the transient set, it cannot happen in gfonts_api_key_check which is called on any admin interface
-		// we will have to leave the transient set to admin_print_scripts
-		switch ( $this->gfonts_api_key_check() ) { // can either check directly the return value of the script as we are doing here, or check the value as stored in the class private variable $this->gfonts_api_key_check_result
+		/**
+		 * If I understand correctly, ajax function callbacks need to be registered even before enqueue_scripts
+		 *  so let's pull it out of admin_print_scripts and place it here even before enqueue_scripts is called.
+		 * This will change the transient set, it cannot happen in gfonts_api_key_check which is called on any admin interface.
+		 * We will have to leave the transient set to admin_print_scripts.
+		 * We can either check directly the return value of the script as we are doing here,
+		 *  or check the value as stored in the class private variable $this->gfonts_api_key_check_result.
+		*/
+		switch ( $this->gfonts_api_key_check() ) {
 			case 'SUCCESS':
-				// the gfonts_api_key is set, and transient has been set and successful curl call made to the google fonts API.
-				// error_log( 'AJAX ACTION NOW BEING ADDED WITH THESE VALUES' );
+				// the gfonts_api_key is set, and transient has been set and successful call made to the google fonts API.
 				set_time_limit( 180 );
 				add_action( 'wp_ajax_store_gfonts_preview', [ $this, 'store_gfonts_preview' ] );
 				add_action( 'wp_ajax_bibleget_refresh_gfonts', [ $this, 'force_refresh_gfonts_results' ] );
-				// enqueue and localize will be done in enqueue_scripts
+				// enqueue and localize will be done in enqueue_scripts.
 				break;
 			/*
 			case "CURL_ERROR":
@@ -85,9 +88,7 @@ class SettingsPage {
 	}
 
 	/**
-	 * Function prepare_bible_books_langs
-	 *
-	 * returns the list of languages in which the BibleGet endpoint can understand the names of the books of the Bible
+	 * Returns the list of languages in which the BibleGet endpoint can understand the names of the books of the Bible
 	 * the language names are translated into the current locale
 	 * (For just the English names, use get_option("bibleget_languages") rather than this function )
 	 */
@@ -658,90 +659,80 @@ class SettingsPage {
 		return $isLocal;
 	}
 
+	public static function set_curl_interface( $handle ) {
+		if ( isset( $_SERVER['SERVER_ADDR'] ) && false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
+			curl_setopt( $handle, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
+		}
+	}
+
 	public function gfonts_api_key_check() {
 		$result                  = false;
-		$this->gfonts_api_errors = []; // we want to start with a clean slate
+		$this->gfonts_api_errors = []; // we want to start with a clean slate.
 
-		if ( isset( $this->options['googlefontsapi_key'] ) && $this->options['googlefontsapi_key'] != '' ) {
+		if ( isset( $this->options['googlefontsapi_key'] ) && '' !== $this->options['googlefontsapi_key'] ) {
 			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
 
 			// has this key been tested in the past 3 months at least?
 			$result = get_transient( md5( $this->options['googlefontsapi_key'] ) );
 			if ( false === $result ) {
-
-				// We will make a secure connection to the Google Fonts API endpoint
-				$curl_version = curl_version();
-				$ssl_version  = str_replace( 'OpenSSL/', '', $curl_version['ssl_version'] );
-				if ( version_compare( $curl_version['version'], '7.34.0', '>=' ) && version_compare( $ssl_version, '1.0.1', '>=' ) ) {
-					// we should be good to go for secure SSL communication supporting TLSv1_2
-					$ch = curl_init( 'https://www.googleapis.com/webfonts/v1/webfonts?key=' . $this->options['googlefontsapi_key'] );
-					curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
-					curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-					curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-					curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-					if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
-						curl_setopt( $ch, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
-					}
-					if ( ini_get( 'open_basedir' ) === false ) {
-						curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-						curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
-					}
-					$response = curl_exec( $ch );
-					$status   = (int) curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-					if ( $response && ! curl_errno( $ch ) && $status === 200 ) {
-						// let's see what was returned, and if it's what we're looking for
-						$json_response = json_decode( $response );
-						if ( $json_response !== null && json_last_error() === JSON_ERROR_NONE ) {
-							// So far so good, let's keep these results for other functions to access
-							if ( property_exists( $json_response, 'kind' ) && $json_response->kind === 'webfonts#webfontList' && property_exists( $json_response, 'items' ) ) {
-								$this->gfonts_weblist = $json_response;
-								$result               = 'SUCCESS';
-							}
-						} else {
-							$result = 'JSON_ERROR';
+				$notices = get_option( 'bibleget_error_admin_notices', [] );
+				// We will make a secure connection to the Google Fonts API endpoint.
+				$request = 'https://www.googleapis.com/webfonts/v1/webfonts?key=' . $this->options['googlefontsapi_key'];
+				add_action( 'http_api_curl', [ 'BibleGet\SettingsPage', 'set_curl_interface' ] );
+				$response = wp_remote_get( $request );
+				remove_action( 'http_api_curl', [ 'BibleGet\SettingsPage', 'set_curl_interface' ] );
+				if ( is_wp_error( $response ) ) {
+					$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
+						. sprintf(
+							/* translators: %s = error message placeholder, do not translate */
+							__( 'There was an error communicating with the Google Webfonts API: %s.' ),
+							$response->get_error_message()
+						)
+						. '</span>';
+					update_option( 'bibleget_error_admin_notices', $notices );
+					$result = 'CURL_ERROR';
+				}
+				$status = wp_remote_retrieve_response_code( $response );
+				$body   = wp_remote_retrieve_body( $response );
+				if ( 200 === $status ) {
+					$json_response = json_decode( $body );
+					if ( null !== $json_response && JSON_ERROR_NONE === json_last_error() ) {
+						// So far so good, let's keep these results for other functions to access.
+						if (
+							property_exists( $json_response, 'kind' )
+							&& 'webfonts#webfontList' === $json_response->kind
+							&& property_exists( $json_response, 'items' )
+						) {
+							$this->gfonts_weblist = $json_response;
+							$result               = 'SUCCESS';
 						}
 					} else {
-						if ( ! $response ) {
-							/* translators: refers to the outcome of the communication with the Google Fonts API as a boolean value */
-							$this->gfonts_api_errors[] = __( 'Response from curl request is false', 'bibleget-io' );
-						}
-						if ( curl_errno( $ch ) ) {
-							$this->gfonts_api_errors[] = curl_error( $ch );
-						}
-						if ( $status != 200 ) {
-							if ( $status === 403 ) {
-								$this->gfonts_api_errors[] = $status;
-							} else {
-								/* translators: refers to the status of the http response during communication with the Google Fonts API */
-								$this->gfonts_api_errors[] = __( 'Status', 'bibleget-io' ) . ' = ' . $status;
-							}
-						}
-						$result = 'CURL_ERROR';
+						$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
+							. sprintf(
+								/* translators: %s = error message placeholder, do not translate */
+								__( 'There was an error decoding the JSON response from the Google Webfonts API: %s.', 'bibleget-io' ),
+								json_last_error_msg()
+							)
+							. '</span>';
+						update_option( 'bibleget_error_admin_notices', $notices );
+						return 'JSON_ERROR';
 					}
-					curl_close( $ch );
-				} else {
-					// we're not going anywhere here, can't make a secure connection to the google fonts api
-					$result = 'REQUEST_NOT_SENT';
 				}
 			} else {
-				// we have a previously saved api key which has been tested
-				// $result is not false
+				// We have a previously saved api key which has been tested.
 				global $wpdb;
-				$transientKey                 = md5( $this->options['googlefontsapi_key'] );
+				$transient_key                = md5( $this->options['googlefontsapi_key'] );
 				$transient_timeout            = $wpdb->get_col(
 					"
 				  SELECT option_value
 				  FROM $wpdb->options
 				  WHERE option_name
-				  LIKE '%_transient_timeout_$transientKey%'
+				  LIKE '%_transient_timeout_$transient_key%'
 				"
 				);
 				$this->gfonts_api_key_timeout = $transient_timeout[0];
 			}
-		}/*
-		else {
-			//we don't have a previously saved api key, but really who cares
-		}*/
+		}
 
 		$this->gfonts_api_key_check_result = $result;
 		return $result;
