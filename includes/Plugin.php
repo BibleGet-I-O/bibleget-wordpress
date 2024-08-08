@@ -806,7 +806,7 @@ class Plugin {
 							. '&pluginversion=' . self::VERSION;
 		$response         = wp_remote_get( $request );
 		if ( is_wp_error( $response ) ) {
-			$errs[] = 'BIBLEGET SERVER ERROR: <span style="color:Red;font-weight:bold;">'
+			$errs[] = 'BIBLEGET API ERROR: <span style="color:Red;font-weight:bold;">'
 				. __( 'There was an error communicating with the BibleGet server, please wait a few minutes and try again', 'bibleget-io' )
 				. ': &apos;' . $response->get_error_message() . '&apos;: '
 				. $finalquery
@@ -1162,36 +1162,30 @@ class Plugin {
 	 * Search for Bible quotes from the BibleGet API by keyword
 	 */
 	public static function search_by_keyword() {
-		$keyword = $_POST['keyword'];
-		$version = $_POST['version'];
-		$request = 'query=keywordsearch&return=json&appid=wordpress&domain=' . rawurlencode( site_url() ) . '&pluginversion=' . self::VERSION . '&version=' . $version . '&keyword=' . $keyword;
-		$ch      = curl_init( self::SEARCH_API );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-		curl_setopt( $ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request );
-		if ( false === ini_get( 'open_basedir' ) ) {
-			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
+		$keyword  = $_POST['keyword'];
+		$version  = $_POST['version'];
+		$request  = self::SEARCH_API
+			. '?query=keywordsearch&return=json&appid=wordpress&domain='
+			. rawurlencode( site_url() )
+			. '&pluginversion='
+			. self::VERSION
+			. '&version=' . $version
+			. '&keyword=' . $keyword;
+		$response = wp_remote_get( $request );
+		$notices  = get_option( 'bibleget_error_admin_notices', [] );
+		if ( is_wp_error( $response ) ) {
+			$notices[] = 'BIBLEGET API ERROR: <span style="color:Red;font-weight:bold;">'
+				. sprintf(
+					/* translators: %s = error message */
+					__( 'There was an error searching for Bible quotes by keyword: %s.' ),
+					$response->get_error_message()
+				)
+				. '</span>';
+			update_option( 'bibleget_error_admin_notices', $notices );
+			return false;
 		}
-		$output = curl_exec( $ch );
-		$info   = curl_getinfo( $ch );
-		// echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url'];
-
-		if ( curl_errno( $ch ) ) {
-			$error          = new \stdClass();
-			$error->errno   = curl_errno( $ch );
-			$error->message = curl_error( $ch );
-			$error->request = $request;
-			echo json_encode( $error );
-		} elseif ( 200 !== $info['http_code'] ) {
-			echo json_encode( $info );
-		} elseif ( $output ) {
-			echo $output;
-		}
-		curl_close( $ch );
+		$output = wp_remote_retrieve_body( $response );
+		echo $output;
 		wp_die();
 	}
 
