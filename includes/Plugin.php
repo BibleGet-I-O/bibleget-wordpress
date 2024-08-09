@@ -101,7 +101,18 @@ class Plugin {
 	public static function set_script_translations() {
 		$script_handle = generate_block_asset_handle( 'bibleget/bible-quote', 'editorScript' );
 		wp_set_script_translations( $script_handle, 'bibleget-io' );
-		// wp_set_script_translations( $script_handle, 'bibleget-io', "bibleget-io/languages" );
+		// or should it be: wp_set_script_translations( $script_handle, 'bibleget-io', "bibleget-io/languages" );.
+
+		$plugin_path = plugin_dir_path( '../bibleget-io.php' );
+		self::write_log( 'plugin_dir_path when current file is passed: ' . plugin_dir_path( __FILE__ ) );
+		self::write_log( 'plugin_dir_path when ../bibleget-io.php is passed: ' . $plugin_path );
+		wp_enqueue_script(
+			'bibleget-block-variations',
+			plugins_url( '../js/variations.js', __FILE__ ),
+			[ 'wp-blocks', 'wp-dom-ready' ],
+			get_plugin_data( $plugin_path )['Version'],
+			false
+		);
 	}
 
 	/**
@@ -753,6 +764,7 @@ class Plugin {
 	 * @return string
 	 */
 	public static function render_gutenberg_block( $atts ) {
+		$wrapper_attributes = get_block_wrapper_attributes();
 		$output = ''; // this will be whatever html we are returning to be rendered
 		// Determine bible version(s).
 		$atts['VERSION'] = ( ! empty( $atts['VERSION'] ) ? $atts['VERSION'] : [ 'NABRE' ] );
@@ -786,8 +798,13 @@ class Plugin {
 			}
 		}
 
-		$queries = self::sanitize_query( $atts['QUERY'] );
-		return self::process_queries( $queries, $atts );
+		$queries    = self::sanitize_query( $atts['QUERY'] );
+		$block_html = self::process_queries( $queries, $atts );
+		if ( true === $atts['POPUP'] ) {
+			return $block_html;
+		} else {
+			return sprintf( $block_html, $wrapper_attributes );
+		}
 	}
 
 	/**
