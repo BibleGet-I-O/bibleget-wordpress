@@ -781,10 +781,14 @@ class SettingsPage {
 		$gfontsWeblist     = new \stdClass();
 		$returnInfo        = new \stdClass();
 
-		if ( file_exists( $gfontsWeblistFile ) ) {
-			$gfontsWeblistFileContents = file_get_contents( $gfontsWeblistFile );
-			$gfontsWeblist             = json_decode( $gfontsWeblistFileContents );
+		if ( false === file_exists( $gfontsWeblistFile ) ) {
+			$errorinfo[] = "File $gfontsWeblistFile not found.";
+			echo wp_json_encode( $errorinfo );
+			wp_die();
 		}
+
+		$gfontsWeblistFileContents = file_get_contents( $gfontsWeblistFile );
+		$gfontsWeblist             = json_decode( $gfontsWeblistFileContents );
 		if (
 			isset(
 				$_POST['gfontsCount'],
@@ -804,7 +808,7 @@ class SettingsPage {
 			$errorinfo[] = 'totalFonts according to the server script = ' . $totalFonts;
 		} else {
 			$errorinfo[] = 'We do not seem to have received all the necessary data... Request received: ' . json_encode( $_POST );
-			echo json_encode( $errorinfo );
+			echo wp_json_encode( $errorinfo );
 			wp_die();
 		}
 
