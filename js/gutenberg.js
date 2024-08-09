@@ -3337,11 +3337,6 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		return false;
 	});
 
-	/* Someone might say this is the wrong way to do this, but hey I don't care, as long as it works */
-	/*$(document).on("click", '[data-type="bibleget/bible-quote"]', () => {
-		//anything you put here will be triggered every time a Bible quote block is selected
-	});
-	*/
 })(
 	wp.blocks,
 	wp.element,
