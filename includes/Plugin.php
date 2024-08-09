@@ -99,7 +99,7 @@ class Plugin {
 	 * inside of our gutenberg block javascript file
 	 */
 	public static function set_script_translations() {
-		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io', WP_LANG_DIR . '/plugins' ) ) {
+		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
 			self::write_log( 'Script translations were correctly set (apparently).' );
 		} else {
 			self::write_log( 'Script translations were not correctly set.' );
