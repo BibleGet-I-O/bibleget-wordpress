@@ -103,14 +103,13 @@ class Plugin {
 		wp_set_script_translations( $script_handle, 'bibleget-io' );
 		// or should it be: wp_set_script_translations( $script_handle, 'bibleget-io', "bibleget-io/languages" );.
 
-		$plugin_path = plugin_dir_path( '../bibleget-io.php' );
-		self::write_log( 'plugin_dir_path when current file is passed: ' . plugin_dir_path( __FILE__ ) );
-		self::write_log( 'plugin_dir_path when ../bibleget-io.php is passed: ' . $plugin_path );
+		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
+		self::write_log( $plugin_data );
 		wp_enqueue_script(
 			'bibleget-block-variations',
 			plugins_url( '../js/variations.js', __FILE__ ),
 			[ 'wp-blocks', 'wp-dom-ready' ],
-			get_plugin_data( $plugin_path )['Version'],
+			$plugin_data['Version'],
 			false
 		);
 	}
@@ -607,7 +606,7 @@ class Plugin {
 
 		$have_gfonts      = $options_info->gfonts_api_key_check();
 		$gfonts           = null;
-		$gfonts_dir       = str_replace( '\\', '/', plugin_dir_path( __FILE__ ) ) . '../gfonts_preview/';
+		$gfonts_dir       = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
 		$gfonts_file_path = $gfonts_dir . 'gfontsWeblist.json';
 		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file_path ) ) {
 			$gfonts = json_decode( file_get_contents( $gfonts_file_path ) );
