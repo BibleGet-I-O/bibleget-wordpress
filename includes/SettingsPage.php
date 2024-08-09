@@ -680,7 +680,7 @@ class SettingsPage {
 			// has this key been tested in the past 3 months at least?
 			$transient = get_transient( md5( $this->options['googlefontsapi_key'] ) );
 			if ( false === $transient ) {
-				Plugin::write_log( "The Google Fonts API key has not been tested in the past 3 months" );
+				Plugin::write_log( 'The Google Fonts API key has not been tested in the past 3 months' );
 				$notices = get_option( 'bibleget_error_admin_notices', [] );
 
 				// We will make a secure connection to the Google Fonts API endpoint.
@@ -698,11 +698,11 @@ class SettingsPage {
 						. '</span>';
 					update_option( 'bibleget_error_admin_notices', $notices );
 					Plugin::write_log( 'Request to Google Fonts API ended in failure' );
-					Plugin::write_log( $response );
+					// Plugin::write_log( $response );
 					$result = 'CURL_ERROR';
 				} else {
 					Plugin::write_log( 'Request to Google Fonts API did not end in failure' );
-					Plugin::write_log( $response );
+					// Plugin::write_log( $response );
 				}
 				$status = wp_remote_retrieve_response_code( $response );
 				$body   = wp_remote_retrieve_body( $response );
@@ -733,11 +733,12 @@ class SettingsPage {
 				} else {
 					Plugin::write_log( "HTTP status code of the request to the Google Fonts API key: $status" );
 					if ( 429 === $status ) {
-						$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
+						$json_response = json_decode( $body );
+						$notices[]     = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
 							. sprintf(
 								/* translators: */
 								__( 'Could not retrieve Webfonts from the Google Fonts API, too many requests: %s.' ),
-								$body
+								$json_response->error->message
 							)
 							. '</span>';
 						update_option( 'bibleget_error_admin_notices', $notices );
