@@ -48,7 +48,9 @@ register_uninstall_hook( __FILE__, [ 'BibleGet\Plugin', 'on_uninstall' ] );
 add_action( 'plugins_loaded', [ 'BibleGet\Plugin', 'bibleget_load_textdomain' ] );
 
 // should the action be 'init' instead of enqueue_block_editor_assets? add_action('init', array( 'BibleGet\Plugin', 'set_script_translations' ) ); .
-add_action( 'enqueue_block_editor_assets', [ 'BibleGet\Plugin', 'set_script_translations' ] );
+add_action( 'init', [ 'BibleGet\Plugin', 'set_script_translations' ] );
+
+add_action( 'enqueue_block_editor_assets', [ 'BibleGet\Plugin', 'load_block_variation' ] );
 
 add_action( 'init', [ 'BibleGet\Plugin', 'gutenberg' ] );
 

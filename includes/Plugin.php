@@ -104,7 +104,12 @@ class Plugin {
 		} else {
 			self::write_log( 'Script translations were not correctly set.' );
 		}
+	}
 
+	/**
+	 * Create an inline Bible quote with popup block variation
+	 */
+	public static function load_block_variation() {
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		self::write_log( $plugin_data );
 		wp_enqueue_script(
