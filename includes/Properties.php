@@ -1,11 +1,16 @@
 <?php
+/**
+ * Options for the formatting and layout of Bible quotes
+ *
+ * @package BibleGet
+ */
 
 namespace BibleGet;
 
 use BibleGet\Enums\BGET;
 
 /**
- * Options for formatting and layout of Bible quotes
+ * Options for the formatting and layout of Bible quotes
  */
 class Properties {
 	/**
@@ -144,7 +149,7 @@ class Properties {
 	 * @return bool
 	 */
 	public static function set_and_not_nothing( $arr, $key ) {
-		return ( isset( $arr[ $key ] ) && $arr[ $key ] !== '' );
+		return ( isset( $arr[ $key ] ) && '' !== $arr[ $key ] );
 	}
 
 	/**

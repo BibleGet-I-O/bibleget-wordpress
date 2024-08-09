@@ -39,7 +39,7 @@ use BibleGet\SettingsPage;
 
 define( 'BIBLEGET_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+require_once BIBLEGET_PLUGIN_PATH . 'vendor/autoload.php';
 
 register_activation_hook( __FILE__, [ 'BibleGet\Plugin', 'on_activation' ] );
 register_uninstall_hook( __FILE__, [ 'BibleGet\Plugin', 'on_uninstall' ] );
