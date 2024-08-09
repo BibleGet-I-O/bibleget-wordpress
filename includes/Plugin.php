@@ -533,10 +533,10 @@ class Plugin {
 			wp_enqueue_script( 'jquery-ui-dialog' );
 			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 			$dir       = __DIR__;
-			$popup_css = '../js/popup.css';
+			$popup_css = '../css/popup.css';
 			wp_enqueue_style(
 				'bibleget-popup',
-				plugins_url( '../css/popup.css', __FILE__ ),
+				plugins_url( $popup_css, __FILE__ ),
 				[],
 				filemtime( "$dir/$popup_css" )
 			);
@@ -648,12 +648,12 @@ class Plugin {
 		}
 
 		$dir       = __DIR__;
-		$popup_css = '../js/popup.css';
+		$popup_css = '../css/popup.css';
 		wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_style(
 			'bibleget-popup',
-			plugins_url( '../css/popup.css', __FILE__ ),
+			plugins_url( $popup_css, __FILE__ ),
 			[],
 			filemtime( "$dir/$popup_css" )
 		);
@@ -764,7 +764,7 @@ class Plugin {
 	 */
 	public static function render_gutenberg_block( $atts ) {
 		$wrapper_attributes = get_block_wrapper_attributes();
-		$output = ''; // this will be whatever html we are returning to be rendered
+		$output = ''; // this will be whatever html we are returning to be rendered.
 		// Determine bible version(s).
 		$atts['VERSION'] = ( ! empty( $atts['VERSION'] ) ? $atts['VERSION'] : [ 'NABRE' ] );
 
