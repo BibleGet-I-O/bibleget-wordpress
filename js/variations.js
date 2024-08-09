@@ -1,4 +1,5 @@
 const { registerBlockVariation } = wp.blocks;
+const { __ } = wp.i18n;
 
 registerBlockVariation(
 	'bibleget/bible-quote',
