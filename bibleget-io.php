@@ -47,12 +47,11 @@ register_uninstall_hook( __FILE__, [ 'BibleGet\Plugin', 'on_uninstall' ] );
 // should the action be 'init' instead of 'plugins_loaded'? see http://geertdedeckere.be/article/loading-wordpress-language-files-the-right-way.
 add_action( 'plugins_loaded', [ 'BibleGet\Plugin', 'bibleget_load_textdomain' ] );
 
-// should the action be 'init' instead of enqueue_block_editor_assets? add_action('init', array( 'BibleGet\Plugin', 'set_script_translations' ) ); .
+add_action( 'init', [ 'BibleGet\Plugin', 'register_bibleget_block' ] );
+
 add_action( 'enqueue_block_editor_assets', [ 'BibleGet\Plugin', 'set_script_translations' ] );
 
 add_action( 'enqueue_block_editor_assets', [ 'BibleGet\Plugin', 'load_block_variation' ] );
-
-add_action( 'init', [ 'BibleGet\Plugin', 'gutenberg' ] );
 
 add_action( 'admin_enqueue_scripts', [ 'BibleGet\Plugin', 'gutenberg_scripts' ] );
 

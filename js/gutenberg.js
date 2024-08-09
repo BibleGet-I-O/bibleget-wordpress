@@ -228,11 +228,31 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		});
 	}
 
-	registerBlockType("bibleget/bible-quote", {
+	registerBlockType( "bibleget/bible-quote", {
 		title: __("Bible quote", "bibleget-io"), // Block title.
 		category: "widgets",
 		icon: "book-alt",
+		description: __("Insert Bible quotes from a choice of Bible versions into your articles or pages", "bibleget-io"),
+		keywords: [ "bible", "quote", "verses", "gospel" ],
+		version: BibleGetGlobal.plugin_version,
+		textdomain: "bibleget-io",
 		attributes: BibleGetGlobal.BibleGet_Properties,
+		supports: {
+			"align": [ "wide", "full" ],
+			"color": {
+				"gradients": true
+			},
+			"spacing": {
+				"padding": true,
+				"margin": true
+			}
+		},
+		example: {
+			"attributes": {
+				"QUERY": "1John 4:7-8",
+				"VERSION": "NABRE"
+			}
+		},
 		transforms: {
 			from: [
 				{

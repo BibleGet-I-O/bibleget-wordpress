@@ -563,7 +563,7 @@ class Plugin {
 	 * BibleGet Gutenberg Block!
 	 * Transforming the shortcode into a block
 	 */
-	public static function gutenberg() {
+	public static function register_bibleget_block() {
 		// Skip block registration if Gutenberg is not enabled/merged.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -619,6 +619,7 @@ class Plugin {
 			$gfonts = json_decode( file_get_contents( $gfonts_file_path ) );
 		}
 
+		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		$myvars = [
 			'ajax_url'            => admin_url( 'admin-ajax.php' ),
 			'bibleget_admin_url'  => admin_url( 'options-general.php?page=bibleget-settings-admin' ),
@@ -629,17 +630,41 @@ class Plugin {
 			'BibleGet_Properties' => $bget_properties->options,
 			'BGETConstants'       => $bget_constants,
 			'haveGFonts'          => $have_gfonts,
-			'GFonts'              => $gfonts
+			'GFonts'              => $gfonts,
+			'plugin_version'      => $plugin_data['Version']
 		];
 		wp_localize_script( 'bibleget-gutenberg-block', 'BibleGetGlobal', $myvars );
 
 		register_block_type(
 			'bibleget/bible-quote',
 			[
+				'title'           => __( 'Bible quote', 'bibleget-io' ),
+				'category'        => 'widgets',
+				'icon'            => 'book-alt',
+				'description'     => __( 'Insert Bible quotes from a choice of Bible versions into your articles or pages', 'bibleget-io' ),
+				'keywords'        => [ 'bible', 'quote', 'verses', 'gospel' ],
+				'version'         => $plugin_data['Version'],
+				'textdomain'      => 'bibleget-io',
+				'attributes'      => $bget_properties->options,
+				'supports'        => [
+					'align'   => [ 'wide', 'full' ],
+					'color'   => [
+						'gradients' => true
+					],
+					'spacing' => [
+						'padding' => true,
+						'margin'  => true
+					]
+				],
+				'example'         => [
+					'attributes' => [
+						'QUERY'   => '1John 4:7-8',
+						'VERSION' => 'NABRE'
+					]
+				],
 				'editor_script'   => 'bibleget-gutenberg-block',
 				'editor_style'    => 'bibleget-gutenberg-editor',
 				'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
-				'attributes'      => $bget_properties->options,
 			]
 		);
 	}
