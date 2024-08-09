@@ -1,277 +1,287 @@
 {
-    "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 3,
-    "name": "bibleget/bible-quote",
-    "title": "Bible quote",
-    "category": "widgets",
-    "icon": "book-alt",
-    "description": "Insert Bible quotes from a choice of Bible versions into your articles or pages",
-    "keywords": [ "bible", "quote", "citation", "verses", "gospel" ],
-    "version": "8.3",
-    "textdomain": "bibleget-io",
-    "attributes": {
-        "PARAGRAPHSTYLES_FONTFAMILY": {
-            "default": "Times New Roman",
-            "type": "string"
-        },
-        "PARAGRAPHSTYLES_LINEHEIGHT": {
-            "default": 1.5,
-            "type": "number"
-        },
-        "PARAGRAPHSTYLES_PADDINGTOPBOTTOM": {
-            "default": 12,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_PADDINGLEFTRIGHT": {
-            "default": 10,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_MARGINTOPBOTTOM": {
-            "default": 12,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_MARGINLEFTRIGHT": {
-            "default": 12,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT": {
-            "default": "auto",
-            "type": "string"
-        },
-        "PARAGRAPHSTYLES_PARAGRAPHALIGN": {
-            "default": 4,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_WIDTH": {
-            "default": 80,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_NOVERSIONFORMATTING": {
-            "default": false,
-            "type": "boolean"
-        },
-        "PARAGRAPHSTYLES_BORDERWIDTH": {
-            "default": 1,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_BORDERCOLOR": {
-            "default": "#0000ff",
-            "type": "string"
-        },
-        "PARAGRAPHSTYLES_BORDERSTYLE": {
-            "default": 3,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_BORDERRADIUS": {
-            "default": 12,
-            "type": "integer"
-        },
-        "PARAGRAPHSTYLES_BACKGROUNDCOLOR": {
-            "default": "#efece9",
-            "type": "string"
-        },
-        "VERSIONSTYLES_BOLD": {
-            "default": true,
-            "type": "boolean"
-        },
-        "VERSIONSTYLES_ITALIC": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSIONSTYLES_UNDERLINE": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSIONSTYLES_STRIKETHROUGH": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSIONSTYLES_TEXTCOLOR": {
-            "default": "#000044",
-            "type": "string"
-        },
-        "VERSIONSTYLES_FONTSIZE": {
-            "default": 10,
-            "type": "integer"
-        },
-        "VERSIONSTYLES_FONTSIZEUNIT": {
-            "default": "em",
-            "type": "string"
-        },
-        "VERSIONSTYLES_VALIGN": {
-            "default": 3,
-            "type": "integer"
-        },
-        "BOOKCHAPTERSTYLES_BOLD": {
-            "default": true,
-            "type": "boolean"
-        },
-        "BOOKCHAPTERSTYLES_ITALIC": {
-            "default": false,
-            "type": "boolean"
-        },
-        "BOOKCHAPTERSTYLES_UNDERLINE": {
-            "default": false,
-            "type": "boolean"
-        },
-        "BOOKCHAPTERSTYLES_STRIKETHROUGH": {
-            "default": false,
-            "type": "boolean"
-        },
-        "BOOKCHAPTERSTYLES_TEXTCOLOR": {
-            "default": "#000044",
-            "type": "string"
-        },
-        "BOOKCHAPTERSTYLES_FONTSIZE": {
-            "default": 10,
-            "type": "integer"
-        },
-        "BOOKCHAPTERSTYLES_FONTSIZEUNIT": {
-            "default": "em",
-            "type": "string"
-        },
-        "BOOKCHAPTERSTYLES_VALIGN": {
-            "default": 3,
-            "type": "integer"
-        },
-        "VERSENUMBERSTYLES_BOLD": {
-            "default": true,
-            "type": "boolean"
-        },
-        "VERSENUMBERSTYLES_ITALIC": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSENUMBERSTYLES_UNDERLINE": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSENUMBERSTYLES_STRIKETHROUGH": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSENUMBERSTYLES_TEXTCOLOR": {
-            "default": "#aa0000",
-            "type": "string"
-        },
-        "VERSENUMBERSTYLES_FONTSIZE": {
-            "default": 6,
-            "type": "integer"
-        },
-        "VERSENUMBERSTYLES_FONTSIZEUNIT": {
-            "default": "em",
-            "type": "string"
-        },
-        "VERSENUMBERSTYLES_VALIGN": {
-            "default": 1,
-            "type": "integer"
-        },
-        "VERSETEXTSTYLES_BOLD": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSETEXTSTYLES_ITALIC": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSETEXTSTYLES_UNDERLINE": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSETEXTSTYLES_STRIKETHROUGH": {
-            "default": false,
-            "type": "boolean"
-        },
-        "VERSETEXTSTYLES_TEXTCOLOR": {
-            "default": "#666666",
-            "type": "string"
-        },
-        "VERSETEXTSTYLES_FONTSIZE": {
-            "default": 10,
-            "type": "integer"
-        },
-        "VERSETEXTSTYLES_FONTSIZEUNIT": {
-            "default": "em",
-            "type": "string"
-        },
-        "VERSETEXTSTYLES_VALIGN": {
-            "default": 3,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_SHOWBIBLEVERSION": {
-            "default": true,
-            "type": "boolean"
-        },
-        "LAYOUTPREFS_BIBLEVERSIONALIGNMENT": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BIBLEVERSIONPOSITION": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BIBLEVERSIONWRAP": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BOOKCHAPTERALIGNMENT": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BOOKCHAPTERPOSITION": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BOOKCHAPTERWRAP": {
-            "default": 1,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BOOKCHAPTERFORMAT": {
-            "default": 2,
-            "type": "integer"
-        },
-        "LAYOUTPREFS_BOOKCHAPTERFULLQUERY": {
-            "default": true,
-            "type": "boolean"
-        },
-        "LAYOUTPREFS_SHOWVERSENUMBERS": {
-            "default": true,
-            "type": "boolean"
-        },
-        "VERSION": {
-            "default": [ "NABRE" ],
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
-        },
-        "QUERY": {
-            "default": "Matthew1:1-5",
-            "type": "string"
-        },
-        "POPUP": {
-            "default": false,
-            "type": "boolean"
-        },
-        "PREFERORIGIN": {
-            "default": 1,
-            "type": "integer"
-        },
-        "FORCEVERSION": {
-            "default": false,
-            "type": "boolean"
-        },
-        "FORCECOPYRIGHT": {
-            "default": false,
-            "type": "boolean"
-        }
-    },
-    "example": {
-        "attributes": {
-            "QUERY": "1John 4:7-8",
-            "VERSION": "NABRE"
-        }
-    },
-    "editorScript": "bibleget-gutenberg-block",
-    "editorStyle": "bibleget-gutenberg-editor"
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "bibleget/bible-quote",
+	"title": "Bible quote",
+	"category": "widgets",
+	"icon": "book-alt",
+	"description": "Insert Bible quotes from a choice of Bible versions into your articles or pages",
+	"keywords": [ "bible", "quote", "verses", "gospel" ],
+	"version": "8.3",
+	"textdomain": "bibleget-io",
+	"attributes": {
+		"PARAGRAPHSTYLES_FONTFAMILY": {
+			"default": "Times New Roman",
+			"type": "string"
+		},
+		"PARAGRAPHSTYLES_LINEHEIGHT": {
+			"default": 1.5,
+			"type": "number"
+		},
+		"PARAGRAPHSTYLES_PADDINGTOPBOTTOM": {
+			"default": 12,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_PADDINGLEFTRIGHT": {
+			"default": 10,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_MARGINTOPBOTTOM": {
+			"default": 12,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_MARGINLEFTRIGHT": {
+			"default": 12,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_MARGINLEFTRIGHTUNIT": {
+			"default": "auto",
+			"type": "string"
+		},
+		"PARAGRAPHSTYLES_PARAGRAPHALIGN": {
+			"default": 4,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_WIDTH": {
+			"default": 80,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_NOVERSIONFORMATTING": {
+			"default": false,
+			"type": "boolean"
+		},
+		"PARAGRAPHSTYLES_BORDERWIDTH": {
+			"default": 1,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_BORDERCOLOR": {
+			"default": "#0000ff",
+			"type": "string"
+		},
+		"PARAGRAPHSTYLES_BORDERSTYLE": {
+			"default": 3,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_BORDERRADIUS": {
+			"default": 12,
+			"type": "integer"
+		},
+		"PARAGRAPHSTYLES_BACKGROUNDCOLOR": {
+			"default": "#efece9",
+			"type": "string"
+		},
+		"VERSIONSTYLES_BOLD": {
+			"default": true,
+			"type": "boolean"
+		},
+		"VERSIONSTYLES_ITALIC": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSIONSTYLES_UNDERLINE": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSIONSTYLES_STRIKETHROUGH": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSIONSTYLES_TEXTCOLOR": {
+			"default": "#000044",
+			"type": "string"
+		},
+		"VERSIONSTYLES_FONTSIZE": {
+			"default": 10,
+			"type": "integer"
+		},
+		"VERSIONSTYLES_FONTSIZEUNIT": {
+			"default": "em",
+			"type": "string"
+		},
+		"VERSIONSTYLES_VALIGN": {
+			"default": 3,
+			"type": "integer"
+		},
+		"BOOKCHAPTERSTYLES_BOLD": {
+			"default": true,
+			"type": "boolean"
+		},
+		"BOOKCHAPTERSTYLES_ITALIC": {
+			"default": false,
+			"type": "boolean"
+		},
+		"BOOKCHAPTERSTYLES_UNDERLINE": {
+			"default": false,
+			"type": "boolean"
+		},
+		"BOOKCHAPTERSTYLES_STRIKETHROUGH": {
+			"default": false,
+			"type": "boolean"
+		},
+		"BOOKCHAPTERSTYLES_TEXTCOLOR": {
+			"default": "#000044",
+			"type": "string"
+		},
+		"BOOKCHAPTERSTYLES_FONTSIZE": {
+			"default": 10,
+			"type": "integer"
+		},
+		"BOOKCHAPTERSTYLES_FONTSIZEUNIT": {
+			"default": "em",
+			"type": "string"
+		},
+		"BOOKCHAPTERSTYLES_VALIGN": {
+			"default": 3,
+			"type": "integer"
+		},
+		"VERSENUMBERSTYLES_BOLD": {
+			"default": true,
+			"type": "boolean"
+		},
+		"VERSENUMBERSTYLES_ITALIC": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSENUMBERSTYLES_UNDERLINE": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSENUMBERSTYLES_STRIKETHROUGH": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSENUMBERSTYLES_TEXTCOLOR": {
+			"default": "#aa0000",
+			"type": "string"
+		},
+		"VERSENUMBERSTYLES_FONTSIZE": {
+			"default": 6,
+			"type": "integer"
+		},
+		"VERSENUMBERSTYLES_FONTSIZEUNIT": {
+			"default": "em",
+			"type": "string"
+		},
+		"VERSENUMBERSTYLES_VALIGN": {
+			"default": 1,
+			"type": "integer"
+		},
+		"VERSETEXTSTYLES_BOLD": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSETEXTSTYLES_ITALIC": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSETEXTSTYLES_UNDERLINE": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSETEXTSTYLES_STRIKETHROUGH": {
+			"default": false,
+			"type": "boolean"
+		},
+		"VERSETEXTSTYLES_TEXTCOLOR": {
+			"default": "#666666",
+			"type": "string"
+		},
+		"VERSETEXTSTYLES_FONTSIZE": {
+			"default": 10,
+			"type": "integer"
+		},
+		"VERSETEXTSTYLES_FONTSIZEUNIT": {
+			"default": "em",
+			"type": "string"
+		},
+		"VERSETEXTSTYLES_VALIGN": {
+			"default": 3,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_SHOWBIBLEVERSION": {
+			"default": true,
+			"type": "boolean"
+		},
+		"LAYOUTPREFS_BIBLEVERSIONALIGNMENT": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BIBLEVERSIONPOSITION": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BIBLEVERSIONWRAP": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BOOKCHAPTERALIGNMENT": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BOOKCHAPTERPOSITION": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BOOKCHAPTERWRAP": {
+			"default": 1,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BOOKCHAPTERFORMAT": {
+			"default": 2,
+			"type": "integer"
+		},
+		"LAYOUTPREFS_BOOKCHAPTERFULLQUERY": {
+			"default": true,
+			"type": "boolean"
+		},
+		"LAYOUTPREFS_SHOWVERSENUMBERS": {
+			"default": true,
+			"type": "boolean"
+		},
+		"VERSION": {
+			"default": [ "NABRE" ],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"QUERY": {
+			"default": "Matthew1:1-5",
+			"type": "string"
+		},
+		"POPUP": {
+			"default": false,
+			"type": "boolean"
+		},
+		"PREFERORIGIN": {
+			"default": 1,
+			"type": "integer"
+		},
+		"FORCEVERSION": {
+			"default": false,
+			"type": "boolean"
+		},
+		"FORCECOPYRIGHT": {
+			"default": false,
+			"type": "boolean"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"color": {
+			"gradients": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"QUERY": "1John 4:7-8",
+			"VERSION": "NABRE"
+		}
+	},
+	"editorScript": "bibleget-gutenberg-block",
+	"editorStyle": "bibleget-gutenberg-editor"
 }
