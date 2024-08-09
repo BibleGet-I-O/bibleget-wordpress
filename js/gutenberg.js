@@ -297,12 +297,6 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				return setAttributes({ PREFERORIGIN });
 			}
 
-			//Function to update whether the Bible quote will be showed in a popup or not
-			const changePopup = (POPUP) => {
-				//BibleGetGlobal.BibleGet_Properties['POPUP'].default = POPUP;
-				return setAttributes({ POPUP });
-			}
-
 			const changeBibleVersionVisibility = (LAYOUTPREFS_SHOWBIBLEVERSION) => {
 				BibleGetGlobal.BibleGet_Properties[
 					"LAYOUTPREFS_SHOWBIBLEVERSION"
@@ -2200,20 +2194,6 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 										"bibleget-io"
 									),
 									onChange: changePreferOrigin,
-								})
-							),
-							createElement(
-								PanelRow,
-								{},
-								//Select whether this will be a popup or not
-								createElement(ToggleControl, {
-									checked: attributes.POPUP,
-									label: __("Display in Popup", "bibleget-io"),
-									help: __(
-										"When activated, only the reference to the Bible quote will be shown in the document, and clicking on it will show the text of the Bible quote in a popup window.",
-										"bibleget-io"
-									),
-									onChange: changePopup,
 								})
 							),
 							createElement(

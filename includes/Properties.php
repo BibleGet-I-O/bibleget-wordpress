@@ -81,7 +81,7 @@ class Properties {
 		'LAYOUTPREFS_BOOKCHAPTERFULLQUERY'    => false, // false = just the name of the book and the chapter will be shown (i.e. 1 John 4), true = the full reference including the verses will be shown (i.e. 1 John 4:7-8).
 		'LAYOUTPREFS_SHOWVERSENUMBERS'        => BGET::VISIBILITY['SHOW'],
 		'VERSION'                             => [ 'NABRE' ],
-		'QUERY'                               => 'Matthew1:1-5',
+		'QUERY'                               => 'Matthew 1:1-5',
 		'POPUP'                               => false,
 		'PREFERORIGIN'                        => BGET::PREFERORIGIN['HEBREW'],
 		'FORCEVERSION'                        => false,

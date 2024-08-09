@@ -246,7 +246,7 @@
 			}
 		},
 		"QUERY": {
-			"default": "Matthew1:1-5",
+			"default": "Matthew 1:1-5",
 			"type": "string"
 		},
 		"POPUP": {
