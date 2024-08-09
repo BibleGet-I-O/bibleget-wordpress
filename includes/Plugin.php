@@ -101,12 +101,11 @@ class Plugin {
 	public static function set_script_translations() {
 		$script_handle = generate_block_asset_handle( 'bibleget/bible-quote', 'editorScript' );
 		self::write_log( "Script handle for block translations: $script_handle" );
-		if ( wp_set_script_translations( $script_handle, 'bibleget-io', WP_LANG_DIR . '/plugins/' ) ) {
+		if ( wp_set_script_translations( $script_handle, 'bibleget-io', WP_LANG_DIR . '/plugins' ) ) {
 			self::write_log( 'Script translations were correctly set (apparently).' );
 		} else {
 			self::write_log( 'Script translations were not correctly set.' );
 		}
-		// or should it be: wp_set_script_translations( $script_handle, 'bibleget-io', "bibleget-io/languages" );.
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		self::write_log( $plugin_data );
