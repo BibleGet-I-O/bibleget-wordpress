@@ -560,8 +560,7 @@ class Plugin {
 	}
 
 	/**
-	 * BibleGet Gutenberg Block!
-	 * Transforming the shortcode into a block
+	 * Register the 'Bible quote' block server side
 	 */
 	public static function register_bibleget_block() {
 		// Skip block registration if Gutenberg is not enabled/merged.
@@ -606,10 +605,14 @@ class Plugin {
 		// hey with this operation they transform quite nicely for the client side javascript!
 		$bgetreflection    = new \ReflectionClass( 'BibleGet\Enums\BGET' );
 		$bgetinstanceprops = $bgetreflection->getConstants();
+		self::write_log( 'bgetinstanceprops:' );
+		self::write_log( $bgetinstanceprops );
 		$bget_constants    = [];
 		foreach ( $bgetinstanceprops as $key => $value ) {
 			$bget_constants[ $key ] = $value;
 		}
+		self::write_log( 'bget_constants:' );
+		self::write_log( $bget_constants );
 
 		$have_gfonts      = $options_info->gfonts_api_key_check();
 		$gfonts           = null;
