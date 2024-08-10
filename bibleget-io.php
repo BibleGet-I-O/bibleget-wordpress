@@ -37,9 +37,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use BibleGet\SettingsPage;
 
+define( 'BIBLEGET_PLUGIN_VERSION', '8.3' );
 define( 'BIBLEGET_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
-define( 'BIBLEGET_PLUGIN_VERSION', $plugin_data['Version'] );
 
 require_once BIBLEGET_PLUGIN_PATH . 'vendor/autoload.php';
 
