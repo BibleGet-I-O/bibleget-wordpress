@@ -10,7 +10,7 @@ const vsdecorations = [],
 	vtdecorations   = [];
 
 const handleParagraphStyles = (BibleGetGlobal,key) => {
-	const { BGET, BGETConstants } = BibleGetGlobal;
+	const { BGET, bibleget_enums } = BibleGetGlobal;
 	switch(key){
 		case 'PARAGRAPHSTYLES_FONTFAMILY': {
 			const fontType = parent.jQuery('#bibleget-googlefonts').attr('data-fonttype');
@@ -48,7 +48,7 @@ const handleParagraphStyles = (BibleGetGlobal,key) => {
 			}
 		break;
 		case 'PARAGRAPHSTYLES_PARAGRAPHALIGN':
-			jQuery('.bibleQuote.results .versesParagraph').css('text-align', BGETConstants.CSSRULE.ALIGN[BGET[key]] );
+			jQuery('.bibleQuote.results .versesParagraph').css('text-align', bibleget_enums.CSSRULE.ALIGN[BGET[key]] );
 		break;
 		case 'PARAGRAPHSTYLES_WIDTH':
 			jQuery('.bibleQuote.results').css('width', BGET[key]+'%' );
@@ -63,7 +63,7 @@ const handleParagraphStyles = (BibleGetGlobal,key) => {
 			jQuery('.bibleQuote.results').css('border-color', BGET[key] );
 		break;
 		case 'PARAGRAPHSTYLES_BORDERSTYLE':
-			jQuery('.bibleQuote.results').css('border-style', BGETConstants.CSSRULE.BORDERSTYLE[BGET[key]] );
+			jQuery('.bibleQuote.results').css('border-style', bibleget_enums.CSSRULE.BORDERSTYLE[BGET[key]] );
 		break;
 		case 'PARAGRAPHSTYLES_BORDERRADIUS':
 			jQuery('.bibleQuote.results').css('border-radius', BGET[key]+'px' );
@@ -189,7 +189,7 @@ const handleBookChapterStyles = (BibleGetGlobal,key) => {
 }
 
 const handleVerseNumberStyles = (BibleGetGlobal,key) => {
-	const { BGET, BGETConstants } = BibleGetGlobal;
+	const { BGET, bibleget_enums } = BibleGetGlobal;
 	switch(key) {
 		case 'VERSENUMBERSTYLES_BOLD': {
 			const fontweight = BGET.VERSENUMBERSTYLES_BOLD ? 'bold' : 'normal';
@@ -240,17 +240,17 @@ const handleVerseNumberStyles = (BibleGetGlobal,key) => {
 		case 'VERSENUMBERSTYLES_VALIGN': {
 			const styles = {};
 			switch(BGET.VERSENUMBERSTYLES_VALIGN) {
-				case BGETConstants.VALIGN.SUPERSCRIPT:
+				case bibleget_enums.VALIGN.SUPERSCRIPT:
 					styles['vertical-align'] = 'baseline';
 					styles['position'] = 'relative';
 					styles['top'] = '-0.6em';
 					break;
-				case BGETConstants.VALIGN.SUBSCRIPT:
+				case bibleget_enums.VALIGN.SUBSCRIPT:
 					styles['vertical-align'] = 'baseline';
 					styles['position'] = 'relative';
 					styles['top'] = '0.6em';
 					break;
-				case BGETConstants.VALIGN.NORMAL:
+				case bibleget_enums.VALIGN.NORMAL:
 					styles['vertical-align'] = 'baseline';
 					styles['position'] = 'static';
 					break;
@@ -322,19 +322,19 @@ const handleVerseTextStyles = (BibleGetGlobal,key) => {
 if(
 	BibleGetGlobal !== null
 	&& typeof BibleGetGlobal === 'object'
-	&& BibleGetGlobal.hasOwnProperty('BibleGet_Properties')
-	&& BibleGetGlobal.hasOwnProperty('BGETConstants')
+	&& BibleGetGlobal.hasOwnProperty('bibleget_properties')
+	&& BibleGetGlobal.hasOwnProperty('bibleget_enums')
 	&& BibleGetGlobal.hasOwnProperty('BGET')
 ) {
 	//console.log('BibleGetGlobal is defined!');
 	if(
-		typeof BibleGetGlobal.BibleGet_Properties === 'object'
-		&& typeof BibleGetGlobal.BGETConstants === 'object'
+		typeof BibleGetGlobal.bibleget_properties === 'object'
+		&& typeof BibleGetGlobal.bibleget_enums === 'object'
 		&& typeof BibleGetGlobal.BGET === 'object'
 	) {
-		//console.log('BibleGet has properties BibleGet_Properties, BGETConstants and BGET');
-		const { BibleGet_Properties, BGET } = BibleGetGlobal;
-		for(const key in BibleGet_Properties ){
+		//console.log('BibleGet has properties bibleget_properties, bibleget_enums and BGET');
+		const { bibleget_properties, BGET } = BibleGetGlobal;
+		for(const key in bibleget_properties ){
 			wp.customize( 'BGET['+key+']', (value) => {
 				value.bind(function( newval ) {
 					//keep our local store of properties/attributes/preferences updated
@@ -360,7 +360,7 @@ if(
 		}
 	}
 	else{
-		alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the BibleGet_Properties property of the BibleGetGlobal object is not available');
+		alert('Live preview script seems to have been "localized" with BibleGetGlobal object, however the bibleget_properties property of the BibleGetGlobal object is not available');
 	}
 }
 else{

@@ -965,26 +965,22 @@ class Customize {
 			'bibleget-customizerpreview', // Give the script a unique ID.
 			plugins_url( '../js/customizer-preview.js', __FILE__ ), // Define the path to the JS file.
 			[ 'jquery', 'customize-preview' ], // Define dependencies.
-			'', // Define a version (optional).
-			true // Specify whether to put in footer (leave this true).
+			'', // Define script version for cache purposes.
+			true // Put in footer.
 		);
 
 		// and these are our constants, as close as I can get to ENUMS
 		// hey with this operation they transform quite nicely for the client side javascript!
-		$bgetreflection    = new \ReflectionClass( 'BibleGet\Enums\BGET' );
-		$bgetinstanceprops = $bgetreflection->getConstants();
-		$bget_constants    = [];
-		foreach ( $bgetinstanceprops as $key => $value ) {
-			$bget_constants[ $key ] = $value;
-		}
+		$bget_reflection = new \ReflectionClass( 'BibleGet\Enums\BGET' );
+		$bget_constants  = $bget_reflection->getConstants();
 		wp_localize_script(
 			'bibleget-customizerpreview',
 			'BibleGetGlobal',
 			[
-				'ajax_url'       => admin_url( 'admin-ajax.php' ),
-				'BGETProperties' => self::$bget_properties->options,
-				'BGETConstants'  => $bget_constants,
-				'BGET'           => self::$bget_properties->bget_options,
+				'ajax_url'            => admin_url( 'admin-ajax.php' ),
+				'bibleget_properties' => self::$bget_properties->options,
+				'bibleget_enums'      => $bget_constants,
+				'BGET'                => self::$bget_properties->bget_options,
 			]
 		);
 	}

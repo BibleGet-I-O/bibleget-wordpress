@@ -127,7 +127,7 @@ class Plugin {
 	 * @param array $atts Attributes defined on the shortcode.
 	 */
 	private static function process_shortcode_attributes( &$atts ) {
-		// retrieve all layout options based on BibleGet_Properties, and use defaults from there,
+		// retrieve all layout options based on bibleget_properties, and use defaults from there,
 		// so that shortcode Bible quotes will be consistent with Gutenberg block Bible quotes.
 		$bget            = [];
 		$bget_properties = new Properties();
@@ -596,24 +596,15 @@ class Plugin {
 		// we aren't actually going to create the settings page here,
 		// we're just using some of the same information that is used to create the settings page.
 		$options_info           = new SettingsPage();
-		$versions_by_lang       = $options_info->get_versions_by_lang();
-		$bibleget_books_in_lang = $options_info->get_bible_book_names_in_lang();
+		$bible_versions_by_lang = $options_info->get_versions_by_lang();
+		$bible_books_in_lang    = $options_info->get_bible_book_names_in_lang();
 		// These are our default settings, we will use them for the Gutenberg block
 		// they could perhaps take the place of the properties defined for the Customizer.
 		$bget_properties = new Properties();
-		// and these are our constants, as close as I can get to ENUMS
-		// hey with this operation they transform quite nicely for the client side javascript!
-		$bgetreflection    = new \ReflectionClass( 'BibleGet\Enums\BGET' );
-		$bgetinstanceprops = $bgetreflection->getConstants();
-		self::write_log( 'bgetinstanceprops:' );
-		self::write_log( $bgetinstanceprops );
-		$bget_constants    = [];
-		foreach ( $bgetinstanceprops as $key => $value ) {
-			$bget_constants[ $key ] = $value;
-		}
-		self::write_log( 'bget_constants:' );
-		self::write_log( $bget_constants );
-
+		// These are our constants, which act like Enums
+		// with this operation they transform quite nicely for the client side javascript!
+		$bget_reflection  = new \ReflectionClass( 'BibleGet\Enums\BGET' );
+		$bget_constants   = $bget_reflection->getConstants();
 		$have_gfonts      = $options_info->gfonts_api_key_check();
 		$gfonts           = null;
 		$gfonts_dir       = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
@@ -623,52 +614,53 @@ class Plugin {
 		}
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
-		$myvars = [
-			'ajax_url'            => admin_url( 'admin-ajax.php' ),
-			'bibleget_admin_url'  => admin_url( 'options-general.php?page=bibleget-settings-admin' ),
-			'langCodes'           => LangCodes::ISO_639_1,
-			'currentLangISO'      => get_bloginfo( 'language' ),
-			'versionsByLang'      => $versions_by_lang,
-			'biblebooks'          => $bibleget_books_in_lang,
-			'BibleGet_Properties' => $bget_properties->options,
-			'BGETConstants'       => $bget_constants,
-			'haveGFonts'          => $have_gfonts,
-			'GFonts'              => $gfonts,
-			'plugin_version'      => $plugin_data['Version']
+		$block_def   = [
+			'title'           => __( 'Bible quote', 'bibleget-io' ),
+			'category'        => 'widgets',
+			'icon'            => 'book-alt',
+			'description'     => __( 'Insert Bible quotes from a choice of Bible versions into your articles or pages', 'bibleget-io' ),
+			'keywords'        => [ 'bible', 'quote', 'verses', 'gospel' ],
+			'version'         => $plugin_data['Version'],
+			'textdomain'      => 'bibleget-io',
+			'attributes'      => $bget_properties->options,
+			'supports'        => [
+				'align'   => [ 'wide', 'full' ],
+				'color'   => [
+					'gradients' => true
+				],
+				'spacing' => [
+					'padding' => true,
+					'margin'  => true
+				]
+			],
+			'example'         => [
+				'attributes' => [
+					'QUERY'   => '1John 4:7-8',
+					'VERSION' => 'NABRE'
+				]
+			],
+			'editor_script'   => 'bibleget-gutenberg-block',
+			'editor_style'    => 'bibleget-gutenberg-editor',
+			'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
+		];
+		$myvars      = [
+			'ajax_url'               => admin_url( 'admin-ajax.php' ),
+			'bibleget_admin_url'     => admin_url( 'options-general.php?page=bibleget-settings-admin' ),
+			'lang_codes'             => LangCodes::ISO_639_1,
+			'blog_language'          => get_bloginfo( 'language' ),
+			'bible_versions_by_lang' => $bible_versions_by_lang,
+			'biblebooks'             => $bible_books_in_lang,
+			'bibleget_properties'    => $bget_properties->options,
+			'bibleget_enums'         => $bget_constants,
+			'have_gfonts'            => $have_gfonts,
+			'gfonts'                 => $gfonts,
+			'block_def'              => $block_def
 		];
 		wp_localize_script( 'bibleget-gutenberg-block', 'BibleGetGlobal', $myvars );
 
 		register_block_type(
 			'bibleget/bible-quote',
-			[
-				'title'           => __( 'Bible quote', 'bibleget-io' ),
-				'category'        => 'widgets',
-				'icon'            => 'book-alt',
-				'description'     => __( 'Insert Bible quotes from a choice of Bible versions into your articles or pages', 'bibleget-io' ),
-				'keywords'        => [ 'bible', 'quote', 'verses', 'gospel' ],
-				'version'         => $plugin_data['Version'],
-				'textdomain'      => 'bibleget-io',
-				'attributes'      => $bget_properties->options,
-				'supports'        => [
-					'align'   => [ 'wide', 'full' ],
-					'color'   => [
-						'gradients' => true
-					],
-					'spacing' => [
-						'padding' => true,
-						'margin'  => true
-					]
-				],
-				'example'         => [
-					'attributes' => [
-						'QUERY'   => '1John 4:7-8',
-						'VERSION' => 'NABRE'
-					]
-				],
-				'editor_script'   => 'bibleget-gutenberg-block',
-				'editor_style'    => 'bibleget-gutenberg-editor',
-				'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
-			]
+			$block_def
 		);
 	}
 

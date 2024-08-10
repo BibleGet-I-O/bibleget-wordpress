@@ -807,7 +807,7 @@ class SettingsPage {
 			$totalFonts  = ( count( $gfontsWeblist->items ) > 0 ) ? count( $gfontsWeblist->items ) : false;
 			$errorinfo[] = 'totalFonts according to the server script = ' . $totalFonts;
 		} else {
-			$errorinfo[] = 'We do not seem to have received all the necessary data... Request received: ' . json_encode( $_POST );
+			$errorinfo[] = 'We do not seem to have received all the necessary data... Request received: ' . wp_json_encode( $_POST );
 			echo wp_json_encode( $errorinfo );
 			wp_die();
 		}
@@ -824,7 +824,7 @@ class SettingsPage {
 						$familyurlname  = preg_replace( '/\s+/', '+', $thisfamily );
 						$familyfilename = preg_replace( '/\s+/', '', $thisfamily );
 						$errorinfo[]    = 'Now dealing with font-family ' . $thisfamily;
-						$fnttype        = 'ttf'; // 'woff', 'woff2', 'ttf'
+						$fnttype        = 'ttf'; // possible types are 'woff', 'woff2', and 'ttf'.
 
 						if ( ! file_exists( $gfonts_dir . "ttf/{$familyfilename}.{$fnttype}" ) ) { // $idx < $idxlimit &&
 							$ch2 = curl_init( "https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}" );
@@ -897,7 +897,7 @@ class SettingsPage {
 										if ( curl_errno( $ch3 ) ) {
 											$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error( $ch3 );
 										}
-										if ( $status3 != 200 ) {
+										if (200 !== $status3 ) {
 											$errorinfo[] = "Status on curl request 3 for font-family {$thisfamily}: " . $status3;
 										}
 									}
@@ -909,7 +909,7 @@ class SettingsPage {
 								if ( curl_errno( $ch2 ) ) {
 									$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error( $ch2 );
 								}
-								if ( $status2 != 200 ) {
+								if ( 200 !== $status2 ) {
 									$errorinfo[] = "Status on curl request 2 for font-family {$thisfamily}: " . $status2;
 								}
 							}
@@ -949,7 +949,7 @@ class SettingsPage {
 			$returnInfo->errorinfo = false;
 		}
 
-		echo json_encode( $returnInfo );
+		echo wp_json_encode( $returnInfo );
 		wp_die();
 	}
 

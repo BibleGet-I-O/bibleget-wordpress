@@ -132,7 +132,7 @@ class Properties {
 	}
 
 	/**
-	 * BibleGet_Properties constructor
+	 * bibleget_properties constructor
 	 */
 	public function __construct() {
 		$this->bget_options = get_option( 'BGET', [] );

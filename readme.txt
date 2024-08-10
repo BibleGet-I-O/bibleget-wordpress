@@ -182,7 +182,7 @@ There was recently an update to the BibleGet I/O API which slightly changed the 
 * see v7.9
 
 = 7.5 =
-* Fix: check `GFonts` for null value (like when Google Fonts previews are not installed or updated)
+* Fix: check `gfonts` for null value (like when Google Fonts previews are not installed or updated)
 
 = 7.4 =
 * Fix: recent updates to the Block editor gave a fixed height to all select inputs, whether they had the `multiple` attribute or not, needed to override it for `select[multiple]` until it's fixed in the Gutenberg repo
