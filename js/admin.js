@@ -324,10 +324,10 @@ const gfontsBatchRun = (postdata) => {
 					//);
 					//console.log(returndataJSON.errorinfo);
 					if (
-						(returndataJSON.hasOwnProperty("httpStatus2") &&
-							returndataJSON.httpStatus2 === 504) ||
-						(returndataJSON.hasOwnProperty("httpStatus3") &&
-							returndataJSON.httpStatus3 === 504)
+						(returndataJSON.hasOwnProperty("http_status_2") &&
+							returndataJSON.http_status_2 === 504) ||
+						(returndataJSON.hasOwnProperty("http_status_3") &&
+							returndataJSON.http_status_3 === 504)
 					) {
 						//there was a timeout at some point during the communication with the Google Fonts server
 						//we haven't finished yet, but let's try not to get stuck

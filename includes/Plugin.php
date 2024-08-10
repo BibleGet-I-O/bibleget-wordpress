@@ -423,10 +423,10 @@ class Plugin {
 						$usrprop  = 'bibleget_biblebooks' . ( $book_num - 1 );
 						$jsbook   = json_decode( get_option( $usrprop ), true );
 						// get the index of the current language from the available languages.
-						$biblebookslangs  = get_option( 'bibleget_languages' );
-						$current_lang_idx = array_search( $language_name, $biblebookslangs, true );
+						$bible_books_langs  = get_option( 'bibleget_languages' );
+						$current_lang_idx = array_search( $language_name, $bible_books_langs, true );
 						if ( false === $current_lang_idx ) {
-							$current_lang_idx = array_search( 'English', $biblebookslangs, true );
+							$current_lang_idx = array_search( 'English', $bible_books_langs, true );
 						}
 						$lclbook           = trim( explode( '|', $jsbook[ $current_lang_idx ][0] )[0] );
 						$lclabbrev         = trim( explode( '|', $jsbook[ $current_lang_idx ][1] )[0] );
