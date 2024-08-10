@@ -124,7 +124,7 @@ class SettingsPage {
 	 * Initialize admin menu and settings and check gfonts api key
 	 */
 	public function init() {
-		Plugin::write_log( __METHOD__ . ' BibleGet\SettingsPage init' );
+		Plugin::write_log( __METHOD__ );
 		add_action( 'admin_menu', [ $this, 'add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
@@ -938,8 +938,11 @@ class SettingsPage {
 			echo wp_json_encode( $errorinfo );
 			wp_die();
 		}
-
-		$gfonts_weblist_file_contents = file_get_contents( $gfonts_weblist_file );
+		try {
+			$gfonts_weblist_file_contents = file_get_contents( $gfonts_weblist_file );
+		} catch ( \Exception $ex ) {
+			Plugin::write_log( __METHOD__ . " There was an exception while trying to get contents of file $gfonts_weblist_file: {$ex->getMessage()}" );
+		}
 		if ( false === $gfonts_weblist_file_contents ) {
 			Plugin::write_log( __METHOD__ . " Could not read file $gfonts_weblist_file" );
 			$errorinfo[] = "Could not read file $gfonts_weblist_file.";

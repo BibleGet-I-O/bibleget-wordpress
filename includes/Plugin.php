@@ -611,7 +611,11 @@ class Plugin {
 		$gfonts_file_path = $gfonts_dir . 'gfontsWeblist.json';
 		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file_path ) ) {
 			self::write_log( __METHOD__ . " File $gfonts_file_path exists, now decoding" );
-			$gfonts_file = file_get_contents( $gfonts_file_path );
+			try {
+				$gfonts_file = file_get_contents( $gfonts_file_path );
+			} catch ( \Exception $ex ) {
+				self::write_log( __METHOD__ . " There was an exception while trying to get contents of file $gfonts_file_path: {$ex->getMessage()}" );
+			}
 			if ( false === $gfonts_file ) {
 				self::write_log( __METHOD__ . " Could not read contents from file $gfonts_file_path." );
 			}
