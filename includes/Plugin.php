@@ -113,8 +113,8 @@ class Plugin {
 	 * Create an inline Bible quote with popup block variation
 	 */
 	public static function load_block_variation() {
-		self::write_log( __METHOD__ . ' BIBLEGET_PLUGIN_PATH = ' . BIBLEGET_PLUGIN_PATH );
-		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
+		self::write_log( __METHOD__ . ' BIBLEGET_PLUGIN_FILE = ' . BIBLEGET_PLUGIN_FILE );
+		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_FILE );
 		self::write_log( $plugin_data );
 		wp_enqueue_script(
 			'bibleget-block-variations',
@@ -579,8 +579,8 @@ class Plugin {
 			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
-		self::write_log( __METHOD__ . ' Now retrieving plugin data for ' . BIBLEGET_PLUGIN_PATH );
-		$plugin_data  = get_plugin_data( BIBLEGET_PLUGIN_PATH );
+		self::write_log( __METHOD__ . ' Now retrieving plugin data for ' . BIBLEGET_PLUGIN_FILE );
+		$plugin_data  = get_plugin_data( BIBLEGET_PLUGIN_FILE );
 		self::write_log( __METHOD__ . ' Metadata retreived: ' );
 		self::write_log( $plugin_data );
 		$dir          = __DIR__;

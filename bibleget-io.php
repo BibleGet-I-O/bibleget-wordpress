@@ -39,6 +39,7 @@ use BibleGet\SettingsPage;
 
 define( 'BIBLEGET_PLUGIN_VERSION', '8.3' );
 define( 'BIBLEGET_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'BIBLEGET_PLUGIN_FILE', __FILE__ );
 
 require_once BIBLEGET_PLUGIN_PATH . 'vendor/autoload.php';
 
