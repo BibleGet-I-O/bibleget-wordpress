@@ -181,7 +181,6 @@ class SettingsPage {
 	 * @return array
 	 */
 	public function prepare_bible_books_langs() {
-		$ncm                   = __NAMESPACE__ . '\\' . __CLASS__ . '->' . __METHOD__ . ' ';
 		$bible_books_langs_arr = [];
 		$bible_books_langs     = get_option( 'bibleget_languages' );
 		if (
@@ -190,7 +189,7 @@ class SettingsPage {
 			|| count( $bible_books_langs ) < 1
 		) {
 			// these if conditions shouldn't ever verify, but if they were to be true, can we call global function from here?
-			Plugin::write_log( $ncm . 'It would seem that we do not have metadata about the languages in which the BibleGet API can understand the names of the books of the Bible. Now trying to set options...' );
+			Plugin::write_log( __METHOD__ . ' It would seem that we do not have metadata about the languages in which the BibleGet API can understand the names of the books of the Bible. Now trying to set options...' );
 			Plugin::set_options();
 			$bible_books_langs = get_option( 'bibleget_languages' );
 		}
@@ -409,7 +408,6 @@ class SettingsPage {
 			BIBLEGET_PLUGIN_VERSION,
 			true
 		);
-		$ncm         = __NAMESPACE__ . '\\' . __CLASS__ . '->' . __METHOD__ . ' ';
 		$thisoptions = get_option( 'bibleget_settings' );
 		$myoptions   = [];
 		if ( $thisoptions ) {
@@ -464,15 +462,15 @@ class SettingsPage {
 						wp_json_encode( $this->gfonts_weblist ),
 						FS_CHMOD_FILE // predefined mode settings for WP files.
 					) === false ) {
-						Plugin::write_log( $ncm . 'Could not write file gfonts_preview/gfontsWeblist.json' );
+						Plugin::write_log( __METHOD__ . ' Could not write file gfonts_preview/gfontsWeblist.json' );
 						$this->gfonts_api_errors[] = 'Could not write file gfonts_preview/gfontsWeblist.json';
 					}
 				} else {
-					Plugin::write_log( $ncm . 'Could not initialize WordPress filesystem with these credentials' );
+					Plugin::write_log( __METHOD__ . ' Could not initialize WordPress filesystem with these credentials' );
 					$this->gfonts_api_errors[] = 'Could not initialize WordPress filesystem with these credentials';
 				}
 			} else {
-				Plugin::write_log( $ncm . 'You do not have direct access permissions to the WordPress filesystem' );
+				Plugin::write_log( __METHOD__ . ' You do not have direct access permissions to the WordPress filesystem' );
 				$this->gfonts_api_errors[] = 'You do not have direct access permissions to the WordPress filesystem';
 			}
 			if ( count( $this->gfonts_api_errors ) > 0 ) {
@@ -820,17 +818,16 @@ class SettingsPage {
 	 * @return string|false
 	 */
 	public function gfonts_api_key_check() {
-		$ncm                     = __NAMESPACE__ . '\\' . __CLASS__ . '->' . __METHOD__ . ' ';
 		$result                  = false;
 		$this->gfonts_api_errors = []; // we want to start with a clean slate.
 		if ( isset( $this->options['googlefontsapi_key'] ) && '' !== $this->options['googlefontsapi_key'] ) {
 			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
-			Plugin::write_log( $ncm . "We have a Google Fonts API key: $this->gfonts_api_key" );
+			Plugin::write_log( __METHOD__ . " We have a Google Fonts API key: $this->gfonts_api_key" );
 
 			// has this key been tested in the past 3 months at least?
 			$transient = get_transient( md5( $this->options['googlefontsapi_key'] ) );
 			if ( false === $transient ) {
-				Plugin::write_log( $ncm . 'The Google Fonts API key has not been tested in the past 3 months' );
+				Plugin::write_log( __METHOD__ . ' The Google Fonts API key has not been tested in the past 3 months' );
 				$notices = get_option( 'bibleget_error_admin_notices', [] );
 
 				// We will make a secure connection to the Google Fonts API endpoint.
@@ -847,7 +844,7 @@ class SettingsPage {
 						)
 						. '</span>';
 					update_option( 'bibleget_error_admin_notices', $notices );
-					Plugin::write_log( $ncm . 'Request to Google Fonts API ended in failure' );
+					Plugin::write_log( __METHOD__ . ' Request to Google Fonts API ended in failure' );
 					// Plugin::write_log( $response );
 					$result = 'CURL_ERROR';
 				} else {
@@ -881,7 +878,7 @@ class SettingsPage {
 						return 'JSON_ERROR';
 					}
 				} else {
-					Plugin::write_log( $ncm . "HTTP status code of the request to the Google Fonts API key: $status" );
+					Plugin::write_log( __METHOD__ . " HTTP status code of the request to the Google Fonts API key: $status" );
 					if ( 429 === $status ) {
 						$json_response = json_decode( $body );
 						$notices[]     = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
@@ -908,15 +905,15 @@ class SettingsPage {
 				"
 				);
 				$this->gfonts_api_key_timeout = $transient_timeout[0];
-				Plugin::write_log( $ncm . "We have a Google Fonts API key that has been tested within the past 3 months, current timeout is {$this->gfonts_api_key_timeout}" );
+				Plugin::write_log( __METHOD__ . " We have a Google Fonts API key that has been tested within the past 3 months, current timeout is {$this->gfonts_api_key_timeout}" );
 			}
 		} else {
-			Plugin::write_log( $ncm . 'We do not have a Google Fonts API key' );
+			Plugin::write_log( __METHOD__ . ' We do not have a Google Fonts API key' );
 		}
 
 		$this->gfonts_api_key_check_result = $result;
 		if ( $result ) {
-			Plugin::write_log( $ncm . "Result of the request to the Google Fonts API: $result" );
+			Plugin::write_log( __METHOD__ . " Result of the request to the Google Fonts API: $result" );
 		}
 		return $result;
 	}
@@ -925,7 +922,6 @@ class SettingsPage {
 	 * Download a preview of Google Fonts locally.
 	 */
 	public function store_gfonts_preview() {
-		$ncm = __NAMESPACE__ . '\\' . __CLASS__ . '->' . __METHOD__ . ' ';
 		check_ajax_referer( 'store_gfonts_preview_nonce', 'security', true );
 		$thisfamily          = '';
 		$familyurlname       = '';
@@ -937,7 +933,7 @@ class SettingsPage {
 		$return_info         = new \stdClass();
 
 		if ( false === file_exists( $gfonts_weblist_file ) ) {
-			Plugin::write_log( $ncm . "File $gfonts_weblist_file not found." );
+			Plugin::write_log( __METHOD__ . " File $gfonts_weblist_file not found." );
 			$errorinfo[] = "File $gfonts_weblist_file not found.";
 			echo wp_json_encode( $errorinfo );
 			wp_die();
@@ -945,14 +941,14 @@ class SettingsPage {
 
 		$gfonts_weblist_file_contents = file_get_contents( $gfonts_weblist_file );
 		if ( false === $gfonts_weblist_file_contents ) {
-			Plugin::write_log( $ncm . "Could not read file $gfonts_weblist_file" );
+			Plugin::write_log( __METHOD__ . " Could not read file $gfonts_weblist_file" );
 			$errorinfo[] = "Could not read file $gfonts_weblist_file.";
 			echo wp_json_encode( $errorinfo );
 			wp_die();
 		}
 		$gfonts_weblist = json_decode( $gfonts_weblist_file_contents );
 		if ( JSON_ERROR_NONE !== json_last_error() ) {
-			Plugin::write_log( $ncm . "There was an error decoding $gfonts_weblist_file." );
+			Plugin::write_log( __METHOD__ . " There was an error decoding $gfonts_weblist_file." );
 			$errorinfo[] = "There was an error decoding $gfonts_weblist_file.";
 			echo wp_json_encode( $errorinfo );
 			wp_die();
@@ -975,9 +971,9 @@ class SettingsPage {
 			$total_fonts = ( count( $gfonts_weblist->items ) > 0 ) ? count( $gfonts_weblist->items ) : false;
 			$errorinfo[] = 'totalFonts according to the server script = ' . $total_fonts;
 		} else {
-			Plugin::write_log( $ncm . 'We do not seem to have received all the necessary data... Request received:' );
+			Plugin::write_log( __METHOD__ . ' We do not seem to have received all the necessary data... Request received:' );
 			Plugin::write_log( $_POST );
-			Plugin::write_log( $ncm . 'Request expected to have properties: gfontsCount, batchLimit, startIdx, lastBatchLimit, numRuns, currentRun; and gfonts_weblist expected to have property `items`.' );
+			Plugin::write_log( __METHOD__ . ' Request expected to have properties: gfontsCount, batchLimit, startIdx, lastBatchLimit, numRuns, currentRun; and gfonts_weblist expected to have property `items`.' );
 			$errorinfo[] = 'We do not seem to have received all the necessary data... Request received: ' . wp_json_encode( $_POST );
 			echo wp_json_encode( $errorinfo );
 			wp_die();
