@@ -170,6 +170,7 @@ class SettingsPage {
 	 * @return array
 	 */
 	public function get_versions_by_lang() {
+		Plugin::write_log( __METHOD__ );
 		return $this->bible_versions_by_lang;
 	}
 
@@ -181,6 +182,7 @@ class SettingsPage {
 	 * @return array
 	 */
 	public function prepare_bible_books_langs() {
+		Plugin::write_log( __METHOD__ );
 		$bible_books_langs_arr = [];
 		$bible_books_langs     = get_option( 'bibleget_languages' );
 		if (
@@ -222,6 +224,7 @@ class SettingsPage {
 	 * @return array
 	 */
 	public function prepare_versions_by_lang() {
+		Plugin::write_log( __METHOD__ );
 		$versions               = get_option( 'bibleget_versions', [] );
 		$bible_versions_by_lang = [];
 		$langs                  = [];
@@ -276,6 +279,7 @@ class SettingsPage {
 	 * @return int
 	 */
 	public function count_versions_by_lang() {
+		Plugin::write_log( __METHOD__ );
 		$counter = 0;
 		foreach ( $this->bible_versions_by_lang['versions'] as $lang => $versionbylang ) {
 			ksort( $this->bible_versions_by_lang['versions'][ $lang ] );
@@ -291,6 +295,7 @@ class SettingsPage {
 	 * @return \stdClass
 	 */
 	public function get_bible_book_names_in_lang( $lang = null ) {
+		Plugin::write_log( __METHOD__ );
 		if ( null === $lang ) {
 			$lang = $this->locale;
 		}
@@ -330,6 +335,7 @@ class SettingsPage {
 	 * Add options page
 	 */
 	public function add_plugin_page() {
+		Plugin::write_log( __METHOD__ );
 		// This page will be under "Settings".
 		$this->options_page_hook = add_options_page(
 			__( 'BibleGet I/O Settings', 'bibleget-io' ),  // $page_title.
@@ -344,6 +350,7 @@ class SettingsPage {
 	 * Register and add settings
 	 */
 	public function register_settings() {
+		Plugin::write_log( __METHOD__ );
 
 		register_setting(
 			'bibleget_settings_options', // Option group.
@@ -381,6 +388,7 @@ class SettingsPage {
 	 * @param string $hook Admin settings page hook.
 	 */
 	public function admin_print_styles( $hook ) {
+		Plugin::write_log( __METHOD__ );
 		if ( 'settings_page_bibleget-settings-admin' === $hook ) {
 			wp_enqueue_style(
 				'admin-css',
@@ -397,6 +405,7 @@ class SettingsPage {
 	 * @param string $hook Admin settings page hook.
 	 */
 	public function admin_print_scripts( $hook ) {
+		Plugin::write_log( __METHOD__ );
 		if ( 'settings_page_bibleget-settings-admin' !== $hook ) {
 			return;
 		}
@@ -520,6 +529,7 @@ class SettingsPage {
 	 * Admin settings page callback
 	 */
 	public function create_admin_page() {
+		Plugin::write_log( __METHOD__ );
 
 		// populate $this->bible_books_langs and $this->bible_versions_by_lang and $this->bible_versions_by_langcount
 		// based on current WordPress locale
@@ -636,6 +646,7 @@ class SettingsPage {
 	 * @param array $input Contains all settings fields as array keys.
 	 */
 	public function sanitize( $input ) {
+		Plugin::write_log( __METHOD__ );
 		$new_input = [];
 		if ( isset( $input['favorite_version'] ) ) {
 			$new_input['favorite_version'] = sanitize_text_field( $input['favorite_version'] );
@@ -651,6 +662,7 @@ class SettingsPage {
 	 * Print the Section text
 	 */
 	public function print_section_info2() {
+		Plugin::write_log( __METHOD__ );
 		print __( 'Choose your preferences to facilitate the usage of the shortcode:', 'bibleget-io' );
 	}
 
@@ -658,6 +670,7 @@ class SettingsPage {
 	 * Save option for preferred Bible version.
 	 */
 	public function favorite_version_callback() {
+		Plugin::write_log( __METHOD__ );
 		// double check to see if the values have been set.
 		if ( $this->bible_versions_by_langcount < 1 || $this->bible_version_langs_count < 1 ) {
 			$this->bible_versions_by_lang = $this->get_versions_by_lang();
@@ -692,6 +705,7 @@ class SettingsPage {
 	 * Save option for Google Fonts API key
 	 */
 	public function googlefontsapikey_callback() {
+		Plugin::write_log( __METHOD__ );
 
 		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfonts_api_key . '" size="50" /></label>';
 		if ( $this->gfonts_api_key_check_result ) {
@@ -778,6 +792,7 @@ class SettingsPage {
 	 * @return bool
 	 */
 	private static function is_local_ip( $ip ) {
+		Plugin::write_log( __METHOD__ );
 		$is_local = false;
 		if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
 			$ip_num = ip2long( $ip );
@@ -805,6 +820,7 @@ class SettingsPage {
 	 * @param \CurlHandle $handle The cURL handle.
 	 */
 	public static function set_curl_interface( $handle ) {
+		Plugin::write_log( __METHOD__ );
 		if ( isset( $_SERVER['SERVER_ADDR'] ) && false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 			//phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
 			curl_setopt( $handle, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
@@ -818,6 +834,7 @@ class SettingsPage {
 	 * @return string|false
 	 */
 	public function gfonts_api_key_check() {
+		Plugin::write_log( __METHOD__ );
 		$result                  = false;
 		$this->gfonts_api_errors = []; // we want to start with a clean slate.
 		if ( isset( $this->options['googlefontsapi_key'] ) && '' !== $this->options['googlefontsapi_key'] ) {
@@ -922,6 +939,7 @@ class SettingsPage {
 	 * Download a preview of Google Fonts locally.
 	 */
 	public function store_gfonts_preview() {
+		Plugin::write_log( __METHOD__ );
 		check_ajax_referer( 'store_gfonts_preview_nonce', 'security', true );
 		$thisfamily          = '';
 		$familyurlname       = '';
@@ -1128,6 +1146,7 @@ class SettingsPage {
 	 * Refresh Google Fonts without waiting for the three month period to expire.
 	 */
 	public function force_refresh_gfonts_results() {
+		Plugin::write_log( __METHOD__ );
 		check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', true );
 		if ( isset( $_POST['gfontsApiKey'] ) && '' !== $_POST['gfontsApiKey'] ) {
 			if ( get_transient( md5( $_POST['gfontsApiKey'] ) ) ) {
@@ -1144,6 +1163,7 @@ class SettingsPage {
 	 * Detect if options save was successful.
 	 */
 	public function bibleget_plugin_settings_save() {
+		Plugin::write_log( __METHOD__ );
 		if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) {
 			$this->options = get_option( 'bibleget_settings' );
 		}
@@ -1156,6 +1176,7 @@ class SettingsPage {
 	 * @return string
 	 */
 	public static function sortify( $str ) {
+		Plugin::write_log( __METHOD__ );
 		return preg_replace(
 			'~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|tilde|uml);~i',
 			'$1' . chr( 255 ) . '$2',
@@ -1169,6 +1190,7 @@ class SettingsPage {
 	 * @return string|false
 	 */
 	public function get_gfonts_api_key_check_result() {
+		Plugin::write_log( __METHOD__ );
 		return $this->gfonts_api_key_check_result;
 	}
 }

@@ -84,6 +84,7 @@ class Plugin {
 	 * Load plugin textdomain.
 	 */
 	public static function bibleget_load_textdomain() {
+		self::write_log( __METHOD__ );
 		$domain = 'bibleget-io';
 		// The "plugin_locale" filter is also used in load_plugin_textdomain().
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
@@ -99,6 +100,7 @@ class Plugin {
 	 * inside of our gutenberg block javascript file
 	 */
 	public static function set_script_translations() {
+		self::write_log( __METHOD__ );
 		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
 			self::write_log( __METHOD__ . ' Script translations were correctly set (apparently).' );
 		} else {
@@ -110,6 +112,7 @@ class Plugin {
 	 * Create an inline Bible quote with popup block variation
 	 */
 	public static function load_block_variation() {
+		self::write_log( __METHOD__ );
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		self::write_log( $plugin_data );
 		wp_enqueue_script(
@@ -127,6 +130,7 @@ class Plugin {
 	 * @param array $atts Attributes defined on the shortcode.
 	 */
 	private static function process_shortcode_attributes( &$atts ) {
+		self::write_log( __METHOD__ );
 		// retrieve all layout options based on bibleget_properties, and use defaults from there,
 		// so that shortcode Bible quotes will be consistent with Gutenberg block Bible quotes.
 		$bget            = [];
@@ -180,6 +184,7 @@ class Plugin {
 	 * @param array $versions Current supported Bible versions.
 	 */
 	private static function ensure_indexes_set( $versions ) {
+		self::write_log( __METHOD__ );
 		foreach ( $versions as $version ) {
 			if ( false === get_option( 'bibleget_' . $version . 'IDX' ) ) {
 				self::set_options();
@@ -191,6 +196,7 @@ class Plugin {
 	 * Ensure that we have set indexes for Bible books
 	 */
 	private static function ensure_biblebooks_set() {
+		self::write_log( __METHOD__ );
 		for ( $i = 0; $i < 73; $i++ ) {
 			if ( false === get_option( 'bibleget_biblebooks' . $i ) ) {
 				self::set_options();
@@ -210,6 +216,7 @@ class Plugin {
 	 * @param string $tag Shortcode tag.
 	 */
 	public static function shortcode( $atts = [], $content = null, $tag = '' ) {
+		self::write_log( __METHOD__ );
 		// add possibility of using "versions" parameter instead of "version".
 		if ( isset( $atts['versions'] ) ) {
 			$atts['version'] = explode( ',', $atts['versions'] );
@@ -261,6 +268,7 @@ class Plugin {
 	 * @param string|null $content Shortcode or block contents.
 	 */
 	private static function process_queries( $queries, $atts, $is_shortcode = false, $content = null ) {
+		self::write_log( __METHOD__ );
 		if ( is_array( $queries ) ) {
 			self::ensure_indexes_set( $atts['VERSION'] );
 			self::ensure_biblebooks_set();
@@ -326,6 +334,7 @@ class Plugin {
 	 * @return string
 	 */
 	private static function process_dom_document( $atts, $output, $content = null ) {
+		self::write_log( __METHOD__ );
 		// set this flag to true as soon as we see that we have a layout pref that isn't default value,
 		// so we will know to update the $output accordingly.
 		$non_default_layout = false;
@@ -563,11 +572,12 @@ class Plugin {
 	 * Register the 'Bible quote' block server side
 	 */
 	public static function register_bibleget_block() {
+		self::write_log( __METHOD__ );
 		// Skip block registration if Gutenberg is not enabled/merged.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
 		}
-
+		self::write_log( __METHOD__ );
 		$dir          = __DIR__;
 		$gutenberg_js = '../js/gutenberg.js';
 		wp_register_script(
@@ -603,26 +613,29 @@ class Plugin {
 		$bget_properties = new Properties();
 		// These are our constants, which act like Enums
 		// with this operation they transform quite nicely for the client side javascript!
-		$bget_reflection  = new \ReflectionClass( 'BibleGet\Enums\BGET' );
-		$bget_constants   = $bget_reflection->getConstants();
-		$have_gfonts      = $options_info->gfonts_api_key_check();
-		$gfonts           = null;
-		$gfonts_dir       = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
-		$gfonts_file_path = $gfonts_dir . 'gfontsWeblist.json';
-		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file_path ) ) {
-			self::write_log( __METHOD__ . " File $gfonts_file_path exists, now decoding" );
+		$bget_reflection = new \ReflectionClass( 'BibleGet\Enums\BGET' );
+		$bget_constants  = $bget_reflection->getConstants();
+		$have_gfonts     = $options_info->gfonts_api_key_check();
+		$gfonts          = null;
+		$gfonts_dir      = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
+		$gfonts_file     = $gfonts_dir . 'gfontsWeblist.json';
+		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file ) ) {
+			self::write_log( __METHOD__ . " File $gfonts_file exists, now decoding" );
 			try {
-				$gfonts_file = file_get_contents( $gfonts_file_path );
+				$gfonts_file_contents = file_get_contents( $gfonts_file );
 			} catch ( \Exception $ex ) {
-				self::write_log( __METHOD__ . " There was an exception while trying to get contents of file $gfonts_file_path: {$ex->getMessage()}" );
+				self::write_log( __METHOD__ . " There was an exception while trying to get contents of file $gfonts_file: {$ex->getMessage()}" );
 			}
-			if ( false === $gfonts_file ) {
-				self::write_log( __METHOD__ . " Could not read contents from file $gfonts_file_path." );
+			if ( false === $gfonts_file_contents ) {
+				self::write_log( __METHOD__ . " Could not read contents from file $gfonts_file." );
 			}
-			$gfonts = json_decode( $gfonts_file );
+			$gfonts = json_decode( $gfonts_file_contents );
 			if ( JSON_ERROR_NONE !== json_last_error() ) {
-				self::write_log( __METHOD__ . " Could not decode JSON contents from file $gfonts_file_path: " . json_last_error_msg() );
+				self::write_log( __METHOD__ . " Could not decode JSON contents from file $gfonts_file: " . json_last_error_msg() );
 			}
+		} else {
+			self::write_log( __METHOD__ . ' have_gfonts: ' . ( $have_gfonts ? 'true' : 'false' ) );
+			self::write_log( __METHOD__ . ' gfontsWeblist.json file exists: ' . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
 		}
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
@@ -679,9 +692,10 @@ class Plugin {
 	/**
 	 * Enqueue scripts for the Bible quote block
 	 *
-	 * @param string $hook
+	 * @param string $hook Current page hook.
 	 */
 	public static function gutenberg_scripts( $hook ) {
+		self::write_log( __METHOD__ );
 		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
 		}
@@ -732,6 +746,7 @@ class Plugin {
 	 * @return bool
 	 */
 	private static function is_fontawesome_enqueued() {
+		self::write_log( __METHOD__ );
 		global $wp_styles;
 		foreach ( $wp_styles->queue as $style ) {
 			if ( strpos( $wp_styles->registered[ $style ]->src, 'fontawesome' ) ) {
@@ -756,6 +771,7 @@ class Plugin {
 	 * @return string
 	 */
 	private static function process_output( $finalquery ) {
+		self::write_log( __METHOD__ );
 		$output = get_transient( self::TRANSIENT_PREFIX . md5( $finalquery ) );
 		if ( false === $output ) {
 			$output = self::query_server( $finalquery );
@@ -777,6 +793,7 @@ class Plugin {
 	 * @return string
 	 */
 	private static function process_final_query( $goodqueries, $atts ) {
+		self::write_log( __METHOD__ );
 		$finalquery  = 'query=';
 		$finalquery .= implode( ';', $goodqueries );
 		$finalquery .= '&version=';
@@ -802,6 +819,7 @@ class Plugin {
 	 * @return string
 	 */
 	public static function render_gutenberg_block( $atts ) {
+		self::write_log( __METHOD__ );
 		$wrapper_attributes = get_block_wrapper_attributes();
 		$output = ''; // this will be whatever html we are returning to be rendered.
 		// Determine bible version(s).
@@ -853,6 +871,7 @@ class Plugin {
 	 * @return string
 	 */
 	private static function query_server( $finalquery ) {
+		self::write_log( __METHOD__ );
 		$current_page_url = self::current_page_url();
 		$errs             = get_option( 'bibleget_error_admin_notices', [] );
 		$request          = self::BIBLE_API . '?' . $finalquery
@@ -918,6 +937,7 @@ class Plugin {
 	 * @return string
 	 */
 	public static function to_proper_case( $txt ) {
+		self::write_log( __METHOD__ );
 		// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";.
 		preg_match( '/\p{L}/u', $txt, $matches, PREG_OFFSET_CAPTURE );
 		$idx = intval( $matches[0][1] );
@@ -983,7 +1003,8 @@ class Plugin {
 	 * @param string $request Which kind of metadata to request.
 	 * @return object|false
 	 */
-	private static function get_metadata( $request ) {
+	private static function retrieve_bibleget_metadata( $request ) {
+		self::write_log( __METHOD__ );
 		// request can be for building the biblebooks variable, or for building version indexes, or for requesting current validversions.
 		$notices          = get_option( 'bibleget_error_admin_notices', [] );
 		$current_page_url = self::current_page_url();
@@ -1035,6 +1056,7 @@ class Plugin {
 	 * @return array|string
 	 */
 	private static function sanitize_query( $query ) {
+		self::write_log( __METHOD__ );
 		// enforce query rules.
 		if ( '' === $query ) {
 			return __( 'You cannot send an empty query.', 'bibleget-io' );
@@ -1066,9 +1088,10 @@ class Plugin {
 
 
 	/**
-	 *
+	 * Create notifications in admin area
 	 */
 	public static function admin_notices() {
+		self::write_log( __METHOD__ );
 		$notices = get_option( 'bibleget_error_admin_notices' );
 		if ( false !== $notices ) {
 			foreach ( $notices as $notice ) {
@@ -1087,9 +1110,10 @@ class Plugin {
 
 
 	/**
-	 *
+	 * Delete plugin options
 	 */
 	private static function delete_options() {
+		self::write_log( __METHOD__ );
 		// DELETE BIBLEGET_BIBLEBOOKS CACHED INFO.
 		for ( $i = 0; $i < 73; $i++ ) {
 			delete_option( 'bibleget_biblebooks' . $i );
@@ -1110,9 +1134,10 @@ class Plugin {
 
 
 	/**
-	 * Cache information about Bible books and Bible versions
+	 * Set plugin options (cache information about Bible books and Bible versions)
 	 */
 	public static function set_options() {
+		self::write_log( __METHOD__ );
 		$bget            = [];
 		$bget_properties = new Properties();
 		foreach ( $bget_properties->options as $option => $array ) {
@@ -1120,7 +1145,7 @@ class Plugin {
 		}
 		update_option( 'BGET', $bget );
 
-		$metadata = self::get_metadata( 'biblebooks' );
+		$metadata = self::retrieve_bibleget_metadata( 'biblebooks' );
 		if ( false !== $metadata ) {
 			self::write_log( __METHOD__ . ' Retrieved biblebooks metadata...' );
 			//self::write_log( $metadata );
@@ -1139,7 +1164,7 @@ class Plugin {
 			}
 		}
 
-		$metadata       = self::get_metadata( 'bibleversions' );
+		$metadata       = self::retrieve_bibleget_metadata( 'bibleversions' );
 		$versionsabbrev = [];
 		if ( false !== $metadata ) {
 			self::write_log( __METHOD__ . ' Retrieved bibleversions metadata' );
@@ -1159,7 +1184,7 @@ class Plugin {
 
 		if ( count( $versionsabbrev ) > 0 ) {
 			$versionsstr = implode( ',', $versionsabbrev );
-			$metadata    = self::get_metadata( 'versionindex&versions=' . $versionsstr );
+			$metadata    = self::retrieve_bibleget_metadata( 'versionindex&versions=' . $versionsstr );
 			if ( false !== $metadata ) {
 				self::write_log( __METHOD__ . ' Retrieved versionindex metadata' );
 				//self::write_log( $metadata );
@@ -1195,6 +1220,7 @@ class Plugin {
 	 * Force refresh cached Bible quotes
 	 */
 	public static function flush_bible_quotes_cache() {
+		self::write_log( __METHOD__ );
 		global $wpdb;
 		// The following SELECT should select both the transient and the transient_timeout
 		// This will also remove the Google Fonts API key transient if it uses the same prefix...
@@ -1217,6 +1243,7 @@ class Plugin {
 	 * Search for Bible quotes from the BibleGet API by keyword
 	 */
 	public static function search_by_keyword() {
+		self::write_log( __METHOD__ );
 		$keyword  = $_POST['keyword'];
 		$version  = $_POST['version'];
 		$request  = self::SEARCH_API
@@ -1245,9 +1272,10 @@ class Plugin {
 	}
 
 	/**
-	 * Update user preferences
+	 * Update plugin options / user preferences
 	 */
 	public static function update_bget() {
+		self::write_log( __METHOD__ );
 		$options = $_POST['options'];
 		$bget    = get_option( 'BGET' );
 		foreach ( $options as $option => $array ) {
@@ -1309,6 +1337,7 @@ class Plugin {
 	 * @return array
 	 */
 	public static function add_action_links( $links ) {
+		self::write_log( __METHOD__ );
 		$mylinks = [
 			'<a href="' . admin_url( 'options-general.php?page=bibleget-settings-admin' ) . '">' . __( 'Settings' ) . '</a>',
 		];
@@ -1325,6 +1354,7 @@ class Plugin {
 	 * @return array
 	 */
 	private static function get_elements_by_class( &$parent_node, $tag_name, $class_name ) {
+		self::write_log( __METHOD__ );
 		$nodes = [];
 
 		$child_node_list = $parent_node->getElementsByTagName( $tag_name );
@@ -1345,6 +1375,7 @@ class Plugin {
 	 * @return string
 	 */
 	private static function current_page_url() {
+		self::write_log( __METHOD__ );
 		$page_url = 'http';
 		if ( isset( $_SERVER['HTTPS'] ) ) {
 			if ( $_SERVER['HTTPS'] === 'on' ) {
