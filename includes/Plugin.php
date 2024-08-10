@@ -617,7 +617,7 @@ class Plugin {
 		$bget_constants  = $bget_reflection->getConstants();
 		$have_gfonts     = $options_info->gfonts_api_key_check();
 		$gfonts          = null;
-		$gfonts_dir      = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
+		$gfonts_dir      = str_replace( '\\', '/', wp_upload_dir()['basedir'] ) . '/gfonts_preview/';
 		$gfonts_file     = $gfonts_dir . 'gfontsWeblist.json';
 		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file ) ) {
 			self::write_log( __METHOD__ . " File $gfonts_file exists, now decoding" );
@@ -635,7 +635,7 @@ class Plugin {
 			}
 		} else {
 			self::write_log( __METHOD__ . ' have_gfonts: ' . ( $have_gfonts ? 'true' : 'false' ) );
-			self::write_log( __METHOD__ . "File $gfonts_file exists: " . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
+			self::write_log( __METHOD__ . " File $gfonts_file exists: " . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
 		}
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
