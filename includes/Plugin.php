@@ -100,9 +100,9 @@ class Plugin {
 	 */
 	public static function set_script_translations() {
 		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
-			self::write_log( 'Script translations were correctly set (apparently).' );
+			self::write_log( __METHOD__ . ' Script translations were correctly set (apparently).' );
 		} else {
-			self::write_log( 'Script translations were not correctly set.' );
+			self::write_log( __METHOD__ . ' Script translations were not correctly set.' );
 		}
 	}
 
@@ -278,7 +278,7 @@ class Plugin {
 
 			$finalquery = self::process_final_query( $query_validator->validated_queries, $atts );
 			if ( WP_DEBUG ) {
-				self::write_log( "value of finalquery = $finalquery" );
+				self::write_log( __METHOD__ . " value of finalquery = $finalquery" );
 			}
 
 			$output = self::process_output( $finalquery );
@@ -610,7 +610,15 @@ class Plugin {
 		$gfonts_dir       = str_replace( '\\', '/', BIBLEGET_PLUGIN_PATH ) . '../gfonts_preview/';
 		$gfonts_file_path = $gfonts_dir . 'gfontsWeblist.json';
 		if ( 'SUCCESS' === $have_gfonts && file_exists( $gfonts_file_path ) ) {
-			$gfonts = json_decode( file_get_contents( $gfonts_file_path ) );
+			self::write_log( __METHOD__ . " File $gfonts_file_path exists, now decoding" );
+			$gfonts_file = file_get_contents( $gfonts_file_path );
+			if ( false === $gfonts_file ) {
+				self::write_log( __METHOD__ . " Could not read contents from file $gfonts_file_path." );
+			}
+			$gfonts = json_decode( $gfonts_file );
+			if ( JSON_ERROR_NONE !== json_last_error() ) {
+				self::write_log( __METHOD__ . " Could not decode JSON contents from file $gfonts_file_path: " . json_last_error_msg() );
+			}
 		}
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
@@ -1110,7 +1118,7 @@ class Plugin {
 
 		$metadata = self::get_metadata( 'biblebooks' );
 		if ( false !== $metadata ) {
-			self::write_log( 'Retrieved biblebooks metadata...' );
+			self::write_log( __METHOD__ . ' Retrieved biblebooks metadata...' );
 			//self::write_log( $metadata );
 
 			if ( property_exists( $metadata, 'results' ) ) {
@@ -1130,7 +1138,7 @@ class Plugin {
 		$metadata       = self::get_metadata( 'bibleversions' );
 		$versionsabbrev = [];
 		if ( false !== $metadata ) {
-			self::write_log( 'Retrieved bibleversions metadata' );
+			self::write_log( __METHOD__ . ' Retrieved bibleversions metadata' );
 			//self::write_log( $metadata );
 
 			if ( property_exists( $metadata, 'validversions_fullname' ) ) {
@@ -1141,7 +1149,7 @@ class Plugin {
 				update_option( 'bibleget_versions', $bbversions );
 			}
 
-			self::write_log( 'versionsabbrev should now be populated:' );
+			self::write_log( __METHOD__ . ' versionsabbrev should now be populated:' );
 			//self::write_log( $versionsabbrev );
 		}
 
@@ -1149,7 +1157,7 @@ class Plugin {
 			$versionsstr = implode( ',', $versionsabbrev );
 			$metadata    = self::get_metadata( 'versionindex&versions=' . $versionsstr );
 			if ( false !== $metadata ) {
-				self::write_log( 'Retrieved versionindex metadata' );
+				self::write_log( __METHOD__ . ' Retrieved versionindex metadata' );
 				//self::write_log( $metadata );
 
 				if ( property_exists( $metadata, 'indexes' ) ) {
@@ -1160,7 +1168,7 @@ class Plugin {
 						$temp['verse_limit']   = $value->verse_limit;
 						$temp['biblebooks']    = $value->biblebooks;
 						$temp['abbreviations'] = $value->abbreviations;
-						self::write_log( "creating new option <bibleget_{$versabbr}IDX>" ); //with value:
+						self::write_log( __METHOD__ . " creating new option <bibleget_{$versabbr}IDX>" ); //with value:
 						//self::write_log( $temp );
 
 						update_option( 'bibleget_' . $versabbr . 'IDX', $temp );

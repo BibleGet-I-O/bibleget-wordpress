@@ -124,7 +124,7 @@ class SettingsPage {
 	 * Initialize admin menu and settings and check gfonts api key
 	 */
 	public function init() {
-		Plugin::write_log( 'BibleGet\SettingsPage init' );
+		Plugin::write_log( __METHOD__ . ' BibleGet\SettingsPage init' );
 		add_action( 'admin_menu', [ $this, 'add_plugin_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
@@ -808,7 +808,7 @@ class SettingsPage {
 		if ( isset( $_SERVER['SERVER_ADDR'] ) && false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
 			//phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
 			curl_setopt( $handle, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
-			Plugin::write_log( "cURL option CURLOPT_INTERFACE set to IP {$_SERVER['SERVER_ADDR']}" );
+			Plugin::write_log( __METHOD__ . " cURL option CURLOPT_INTERFACE set to IP {$_SERVER['SERVER_ADDR']}" );
 		}
 	}
 
@@ -848,7 +848,7 @@ class SettingsPage {
 					// Plugin::write_log( $response );
 					$result = 'CURL_ERROR';
 				} else {
-					Plugin::write_log( 'Request to Google Fonts API did not end in failure' );
+					Plugin::write_log( __METHOD__ . ' Request to Google Fonts API did not end in failure' );
 					// Plugin::write_log( $response );
 				}
 				$status = wp_remote_retrieve_response_code( $response );
