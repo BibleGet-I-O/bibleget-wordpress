@@ -575,9 +575,9 @@ class Plugin {
 		self::write_log( __METHOD__ );
 		// Skip block registration if Gutenberg is not enabled/merged.
 		if ( ! function_exists( 'register_block_type' ) ) {
+			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
-		self::write_log( __METHOD__ );
 		$dir          = __DIR__;
 		$gutenberg_js = '../js/gutenberg.js';
 		wp_register_script(
@@ -635,7 +635,7 @@ class Plugin {
 			}
 		} else {
 			self::write_log( __METHOD__ . ' have_gfonts: ' . ( $have_gfonts ? 'true' : 'false' ) );
-			self::write_log( __METHOD__ . ' gfontsWeblist.json file exists: ' . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
+			self::write_log( __METHOD__ . "File $gfonts_file exists: " . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
 		}
 
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
