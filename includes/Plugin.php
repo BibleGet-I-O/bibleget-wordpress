@@ -579,10 +579,13 @@ class Plugin {
 			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
+		self::write_log( __METHOD__ . ' Now retrieving plugin data for ' . BIBLEGET_PLUGIN_PATH );
 		$plugin_data  = get_plugin_data( BIBLEGET_PLUGIN_PATH );
+		self::write_log( __METHOD__ . ' Metadata retreived: ' );
+		self::write_log( $plugin_data );
 		$dir          = __DIR__;
 		$gutenberg_js = '../js/gutenberg.js';
-		self::write_log( __METHOD__ . ' ' . __LINE__ . " filemtime $dir/$gutenberg_js = " . filemtime( "$dir/$gutenberg_js" ) );
+		self::write_log( __METHOD__ . ' LINE ' . __LINE__ . ": filemtime $dir/$gutenberg_js = " . filemtime( "$dir/$gutenberg_js" ) );
 		wp_register_script(
 			'bibleget-gutenberg-block',
 			plugins_url( $gutenberg_js, __FILE__ ),
