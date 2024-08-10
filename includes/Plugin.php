@@ -101,6 +101,7 @@ class Plugin {
 	 */
 	public static function set_script_translations() {
 		self::write_log( __METHOD__ );
+		// The first parameter ( $handle ) must be the same as the block registration script.
 		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
 			self::write_log( __METHOD__ . ' Script translations were correctly set (apparently).' );
 		} else {
@@ -112,7 +113,7 @@ class Plugin {
 	 * Create an inline Bible quote with popup block variation
 	 */
 	public static function load_block_variation() {
-		self::write_log( __METHOD__ );
+		self::write_log( __METHOD__ . ' BIBLEGET_PLUGIN_PATH = ' . BIBLEGET_PLUGIN_PATH );
 		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		self::write_log( $plugin_data );
 		wp_enqueue_script(
@@ -578,8 +579,10 @@ class Plugin {
 			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
+		$plugin_data  = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		$dir          = __DIR__;
 		$gutenberg_js = '../js/gutenberg.js';
+		self::write_log( __METHOD__ . ' ' . __LINE__ . " filemtime $dir/$gutenberg_js = " . filemtime( "$dir/$gutenberg_js" ) );
 		wp_register_script(
 			'bibleget-gutenberg-block',
 			plugins_url( $gutenberg_js, __FILE__ ),
@@ -591,7 +594,7 @@ class Plugin {
 				'wp-components',
 				'jquery-ui-dialog',
 			],
-			filemtime( "$dir/$gutenberg_js" ),
+			$plugin_data['Version'],
 			true
 		);
 
@@ -600,7 +603,7 @@ class Plugin {
 			'bibleget-gutenberg-editor',
 			plugins_url( $gutenberg_css, __FILE__ ),
 			[ 'wp-jquery-ui-dialog' ],
-			filemtime( "$dir/$gutenberg_css" )
+			$plugin_data['Version']
 		);
 
 		// we aren't actually going to create the settings page here,
@@ -628,17 +631,17 @@ class Plugin {
 			}
 			if ( false === $gfonts_file_contents ) {
 				self::write_log( __METHOD__ . " Could not read contents from file $gfonts_file." );
-			}
-			$gfonts = json_decode( $gfonts_file_contents );
-			if ( JSON_ERROR_NONE !== json_last_error() ) {
-				self::write_log( __METHOD__ . " Could not decode JSON contents from file $gfonts_file: " . json_last_error_msg() );
+			} else {
+				$gfonts = json_decode( $gfonts_file_contents );
+				if ( JSON_ERROR_NONE !== json_last_error() ) {
+					self::write_log( __METHOD__ . " Could not decode JSON contents from file $gfonts_file: " . json_last_error_msg() );
+				}
 			}
 		} else {
 			self::write_log( __METHOD__ . ' have_gfonts: ' . ( $have_gfonts ? 'true' : 'false' ) );
 			self::write_log( __METHOD__ . " File $gfonts_file exists: " . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
 		}
 
-		$plugin_data = get_plugin_data( BIBLEGET_PLUGIN_PATH );
 		$block_def   = [
 			'title'           => __( 'Bible quote', 'bibleget-io' ),
 			'category'        => 'widgets',
