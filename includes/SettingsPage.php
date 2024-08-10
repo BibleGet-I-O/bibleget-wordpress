@@ -411,7 +411,7 @@ class SettingsPage {
 		}
 
 		wp_register_script(
-			'admin-js',
+			'bibleget-admin-js',
 			plugins_url( '../js/admin.js', __FILE__ ),
 			[ 'jquery' ],
 			BIBLEGET_PLUGIN_VERSION,
@@ -429,8 +429,8 @@ class SettingsPage {
 			'ajax_url'   => admin_url( 'admin-ajax.php' ),
 			'ajax_nonce' => wp_create_nonce( 'bibleget-data' )
 		];
-		wp_localize_script( 'admin-js', 'bibleGetOptionsFromServer', $obj );
-		wp_enqueue_script( 'admin-js' );
+		wp_localize_script( 'bibleget-admin-js', 'bibleGetOptionsFromServer', $obj );
+		wp_enqueue_script( 'bibleget-admin-js' );
 
 		if ( 'SUCCESS' === $this->gfonts_api_key_check_result ) {
 			// We only want the transient to be set from the bibleget settings page, so we wait until now
@@ -521,7 +521,7 @@ class SettingsPage {
 					'max_execution_time' => ini_get( 'max_execution_time' ),
 				],
 			];
-			wp_localize_script( 'admin-js', 'gfontsBatch', $store_gfonts_arr );
+			wp_localize_script( 'bibleget-admin-js', 'gfontsBatch', $store_gfonts_arr );
 		}
 	}
 
@@ -710,7 +710,30 @@ class SettingsPage {
 		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfonts_api_key . '" size="50" /></label>';
 		if ( $this->gfonts_api_key_check_result ) {
 			switch ( $this->gfonts_api_key_check_result ) {
+				case 'CURL_ERROR':
+					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __( 'CURL ERROR WHEN SENDING REQUEST', 'bibleget-io' ) . '</span><br />';
+					foreach ( $this->gfonts_api_errors as $er ) {
+						if ( 403 === $er ) {
+							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
+							echo __( "This server's IP address has not been given access to the Google Fonts API using this key.", 'bibleget-io' );
+							echo ' ' . __( 'Please verify that access has been given to the correct IP addresses.', 'bibleget-io' );
+							echo ' ' . sprintf( __( 'Once you are sure that this has been fixed you may %1$s click here %2$s to retest the key (you may need to wait a few minutes for the settings to take effect in the Google Cloud Console).', 'bibleget-io' ), '<span id="biblegetGFapiKeyRetest">', '</span>' );
+							echo '</i>';
+						}
+						echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . $er . '</i>';
+					}
+					break;
+				case 'JSON_ERROR':
+					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">' . __( 'NO VALID JSON RESPONSE', 'bibleget-io' ) . '</span><br />';
+					break;
+				case 'REQUEST_NOT_SENT':
+					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">' . __( 'SERVER UNABLE TO MAKE REQUESTS', 'bibleget-io' ) . '</span><br />';
+					break;
 				case 'SUCCESS':
+				default:
 					// Let's transform the transient timeout into a human readable format.
 
 					$d1 = new \DateTime(); // timestamp set to current time.
@@ -743,28 +766,6 @@ class SettingsPage {
 						'</span>'
 					);
 					echo '</i>';
-					break;
-				case 'CURL_ERROR':
-					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __( 'CURL ERROR WHEN SENDING REQUEST', 'bibleget-io' ) . '</span><br />';
-					foreach ( $this->gfonts_api_errors as $er ) {
-						if ( 403 === $er ) {
-							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
-							echo __( "This server's IP address has not been given access to the Google Fonts API using this key.", 'bibleget-io' );
-							echo ' ' . __( 'Please verify that access has been given to the correct IP addresses.', 'bibleget-io' );
-							echo ' ' . sprintf( __( 'Once you are sure that this has been fixed you may %1$s click here %2$s to retest the key (you may need to wait a few minutes for the settings to take effect in the Google Cloud Console).', 'bibleget-io' ), '<span id="biblegetGFapiKeyRetest">', '</span>' );
-							echo '</i>';
-						}
-						echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . $er . '</i>';
-					}
-					break;
-				case 'JSON_ERROR':
-					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">' . __( 'NO VALID JSON RESPONSE', 'bibleget-io' ) . '</span><br />';
-					break;
-				case 'REQUEST_NOT_SENT':
-					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">' . __( 'SERVER UNABLE TO MAKE REQUESTS', 'bibleget-io' ) . '</span><br />';
 					break;
 			}
 		} else {
@@ -839,7 +840,7 @@ class SettingsPage {
 		$this->gfonts_api_errors = []; // we want to start with a clean slate.
 		if ( isset( $this->options['googlefontsapi_key'] ) && '' !== $this->options['googlefontsapi_key'] ) {
 			$this->gfonts_api_key = $this->options['googlefontsapi_key'];
-			Plugin::write_log( __METHOD__ . " We have a Google Fonts API key: $this->gfonts_api_key" );
+			Plugin::write_log( __METHOD__ . " We have a Google Fonts API key: {$this->gfonts_api_key}" );
 
 			// has this key been tested in the past 3 months at least?
 			$transient = get_transient( md5( $this->options['googlefontsapi_key'] ) );
@@ -883,7 +884,9 @@ class SettingsPage {
 							$result               = 'SUCCESS';
 						}
 					} else {
-						$msg = JSON_ERROR_NONE !== json_last_error() ? json_last_error_msg() : 'Response was null';
+						$msg       = JSON_ERROR_NONE !== json_last_error()
+							? json_last_error_msg()
+							: 'Response was null';
 						$notices[] = 'BIBLEGET ERROR: <span style="color:Red;font-weight:bold;">'
 							. sprintf(
 								/* translators: %s = error message placeholder, do not translate */
@@ -912,6 +915,7 @@ class SettingsPage {
 			} else {
 				// We have a previously saved api key which has been tested.
 				global $wpdb;
+				$result                       = $transient;
 				$transient_key                = md5( $this->options['googlefontsapi_key'] );
 				$transient_timeout            = $wpdb->get_col(
 					"
@@ -930,7 +934,7 @@ class SettingsPage {
 
 		$this->gfonts_api_key_check_result = $result;
 		if ( $result ) {
-			Plugin::write_log( __METHOD__ . " Result of the request to the Google Fonts API: $result" );
+			Plugin::write_log( __METHOD__ . " Result of the Google Fonts API key check: $result" );
 		}
 		return $result;
 	}
