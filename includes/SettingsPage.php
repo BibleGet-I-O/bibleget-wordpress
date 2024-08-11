@@ -390,10 +390,10 @@ class SettingsPage {
 	public function admin_print_styles( $hook ) {
 		Plugin::write_log( __METHOD__ );
 		$dir       = __DIR__;
-		$admin_css = '../css/popup.css';
+		$admin_css = '../css/admin.css';
 		if ( 'settings_page_bibleget-settings-admin' === $hook ) {
 			wp_enqueue_style(
-				'admin-css',
+				'bibleget-admin-css',
 				plugins_url( $admin_css, __FILE__ ),
 				false,
 				filemtime( "$dir/$admin_css" )

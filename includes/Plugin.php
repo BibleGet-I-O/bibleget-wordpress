@@ -578,8 +578,9 @@ class Plugin {
 			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
+
 		$plugin_data   = get_plugin_data( BIBLEGET_PLUGIN_FILE );
-		$gutenberg_js  = '../js/gutenberg.js';
+		$gutenberg_js  = '../js/block.js';
 		$script_handle = generate_block_asset_handle( 'bibleget/bible-quote', 'editorScript' );
 		wp_register_script(
 			$script_handle,
@@ -596,7 +597,7 @@ class Plugin {
 			true
 		);
 
-		$gutenberg_css = '../css/gutenberg.css';
+		$gutenberg_css = '../css/block.css';
 		$style_handle  = generate_block_asset_handle( 'bibleget/bible-quote', 'editorStyle' );
 		wp_register_style(
 			$style_handle,
@@ -666,8 +667,8 @@ class Plugin {
 					'VERSION' => 'NABRE'
 				]
 			],
-			'editor_script'   => 'bibleget-gutenberg-block',
-			'editor_style'    => 'bibleget-gutenberg-editor',
+			'editor_script'   => $script_handle,
+			'editor_style'    => $style_handle,
 			'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
 		];
 		$myvars    = [
@@ -683,7 +684,7 @@ class Plugin {
 			'gfonts'                 => $gfonts,
 			'block_def'              => $block_def
 		];
-		wp_localize_script( 'bibleget-gutenberg-block', 'BibleGetGlobal', $myvars );
+		wp_localize_script( $script_handle, 'BibleGetGlobal', $myvars );
 
 		register_block_type(
 			'bibleget/bible-quote',
