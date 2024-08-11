@@ -1040,7 +1040,7 @@ class SettingsPage {
 								$errorinfo[] = "Response from request for font-family {$thisfamily} resulted in error: " . $response2->get_error_message();
 								Plugin::write_log( __METHOD__ . " Response from request for font-family {$thisfamily} resulted in error: " . $response2->get_error_message() );
 							} elseif ( 200 === $status2 ) {
-								$body2 = wp_remote_retrieve_body( $request2 );
+								$body2 = wp_remote_retrieve_body( $response2 );
 								Plugin::write_log( __METHOD__ . " Response from request for font-family {$thisfamily} was successful: " );
 								Plugin::write_log( $body2 );
 								if ( 1 === preg_match( '/url\((.*?)\)/', $body2, $match ) ) {
