@@ -37,7 +37,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use BibleGet\SettingsPage;
 
-define( 'BIBLEGET_PLUGIN_VERSION', '8.3' );
 define( 'BIBLEGET_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BIBLEGET_PLUGIN_FILE', __FILE__ );
 
@@ -46,7 +45,6 @@ require_once BIBLEGET_PLUGIN_PATH . 'vendor/autoload.php';
 register_activation_hook( __FILE__, [ 'BibleGet\Plugin', 'on_activation' ] );
 register_uninstall_hook( __FILE__, [ 'BibleGet\Plugin', 'on_uninstall' ] );
 
-// should the action be 'init' instead of 'plugins_loaded'? see http://geertdedeckere.be/article/loading-wordpress-language-files-the-right-way.
 add_action( 'plugins_loaded', [ 'BibleGet\Plugin', 'bibleget_load_textdomain' ] );
 
 add_action( 'init', [ 'BibleGet\Plugin', 'register_bibleget_block' ] );

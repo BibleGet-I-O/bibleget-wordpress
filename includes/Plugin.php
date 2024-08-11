@@ -102,7 +102,7 @@ class Plugin {
 	public static function set_script_translations() {
 		self::write_log( __METHOD__ );
 		// The first parameter ( $handle ) must be the same as the block registration script.
-		if ( wp_set_script_translations( 'bibleget-gutenberg-block', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
+		if ( wp_set_script_translations( 'bibleget-bible-quote-editor-script', 'bibleget-io' ) ) { // , WP_LANG_DIR . '/plugins' .
 			self::write_log( __METHOD__ . ' Script translations were correctly set (apparently).' );
 		} else {
 			self::write_log( __METHOD__ . ' Script translations were not correctly set.' );
@@ -120,7 +120,7 @@ class Plugin {
 			plugins_url( '../js/variations.js', __FILE__ ),
 			[ 'wp-blocks', 'wp-dom-ready', 'wp-i18n' ],
 			$plugin_data['Version'],
-			false
+			true
 		);
 	}
 
@@ -578,10 +578,11 @@ class Plugin {
 			self::write_log( __METHOD__ . ' Cannot register block: this instance of WordPress does not support Gutenberg.' );
 			return;
 		}
-		$plugin_data  = get_plugin_data( BIBLEGET_PLUGIN_FILE );
-		$gutenberg_js = '../js/gutenberg.js';
+		$plugin_data   = get_plugin_data( BIBLEGET_PLUGIN_FILE );
+		$gutenberg_js  = '../js/gutenberg.js';
+		$script_handle = generate_block_asset_handle( 'bibleget/bible-quote', 'editorScript' );
 		wp_register_script(
-			'bibleget-gutenberg-block',
+			$script_handle,
 			plugins_url( $gutenberg_js, __FILE__ ),
 			[
 				'wp-blocks',
@@ -596,8 +597,9 @@ class Plugin {
 		);
 
 		$gutenberg_css = '../css/gutenberg.css';
+		$style_handle  = generate_block_asset_handle( 'bibleget/bible-quote', 'editorStyle' );
 		wp_register_style(
-			'bibleget-gutenberg-editor',
+			$style_handle,
 			plugins_url( $gutenberg_css, __FILE__ ),
 			[ 'wp-jquery-ui-dialog' ],
 			$plugin_data['Version']
@@ -639,7 +641,7 @@ class Plugin {
 			self::write_log( __METHOD__ . " File $gfonts_file exists: " . ( file_exists( $gfonts_file ) ? 'true' : 'false' ) );
 		}
 
-		$block_def   = [
+		$block_def = [
 			'title'           => __( 'Bible quote', 'bibleget-io' ),
 			'category'        => 'widgets',
 			'icon'            => 'book-alt',
@@ -668,7 +670,7 @@ class Plugin {
 			'editor_style'    => 'bibleget-gutenberg-editor',
 			'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
 		];
-		$myvars      = [
+		$myvars    = [
 			'ajax_url'               => admin_url( 'admin-ajax.php' ),
 			'bibleget_admin_url'     => admin_url( 'options-general.php?page=bibleget-settings-admin' ),
 			'lang_codes'             => LangCodes::ISO_639_1,

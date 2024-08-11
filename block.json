@@ -282,6 +282,6 @@
 			"VERSION": "NABRE"
 		}
 	},
-	"editorScript": "bibleget-gutenberg-block",
-	"editorStyle": "bibleget-gutenberg-editor"
+	"editorScript": "bibleget-bible-quote-editor-script",
+	"editorStyle": "bibleget-bible-quote-editor-style"
 }

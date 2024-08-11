@@ -389,12 +389,14 @@ class SettingsPage {
 	 */
 	public function admin_print_styles( $hook ) {
 		Plugin::write_log( __METHOD__ );
+		$dir       = __DIR__;
+		$admin_css = '../css/popup.css';
 		if ( 'settings_page_bibleget-settings-admin' === $hook ) {
 			wp_enqueue_style(
 				'admin-css',
-				plugins_url( '../css/admin.css', __FILE__ ),
+				plugins_url( $admin_css, __FILE__ ),
 				false,
-				BIBLEGET_PLUGIN_VERSION
+				filemtime( "$dir/$admin_css" )
 			);
 		}
 	}
@@ -410,11 +412,13 @@ class SettingsPage {
 			return;
 		}
 
+		$dir      = __DIR__;
+		$admin_js = '../js/admin.js';
 		wp_register_script(
 			'bibleget-admin-js',
-			plugins_url( '../js/admin.js', __FILE__ ),
+			plugins_url( $admin_js, __FILE__ ),
 			[ 'jquery' ],
-			BIBLEGET_PLUGIN_VERSION,
+			filemtime( "$dir/$admin_js" ),
 			true
 		);
 		$thisoptions = get_option( 'bibleget_settings' );
@@ -915,6 +919,8 @@ class SettingsPage {
 			} else {
 				// We have a previously saved api key which has been tested.
 				global $wpdb;
+				// The transient is set to a value of 'SUCCESS', just as if we had made a successful API call.
+				// So setting $result to $transient means we will have a $result === 'SUCCESS'.
 				$result                       = $transient;
 				$transient_key                = md5( $this->options['googlefontsapi_key'] );
 				$transient_timeout            = $wpdb->get_col(
@@ -987,11 +993,11 @@ class SettingsPage {
 				$_POST['numRuns'],
 				$_POST['currentRun']
 			) && property_exists( $gfonts_weblist, 'items' ) ) {
-			// $gfonts_count = intval($_POST["gfontsCount"]);
+			// We don't actually use $_POST["gfontsCount"] here, it's taken care of on the javascript side.
 			$batch_limit = intval( $_POST['batchLimit'] );
 			$start_idx   = intval( $_POST['startIdx'] );
-			// $last_batch_limit = intval($_POST["lastBatchLimit"]);
-			// $num_runs = intval($_POST["numRuns"]);
+			// We don't actually use $_POST["lastBatchLimit"] here, it's taken care of on the javascript side.
+			// We don't actually use $_POST["numRuns"] here, it's taken care of on the javascript side.
 			$current_run = intval( $_POST['currentRun'] );
 			$total_fonts = ( count( $gfonts_weblist->items ) > 0 ) ? count( $gfonts_weblist->items ) : false;
 			$errorinfo[] = 'totalFonts according to the server script = ' . $total_fonts;
@@ -1016,97 +1022,70 @@ class SettingsPage {
 						$familyurlname  = preg_replace( '/\s+/', '+', $thisfamily );
 						$familyfilename = preg_replace( '/\s+/', '', $thisfamily );
 						$errorinfo[]    = 'Now dealing with font-family ' . $thisfamily;
-						$fnttype        = 'ttf'; // possible types are 'woff', 'woff2', and 'ttf'.
+						$fnttype        = 'woff2'; // possible types are 'woff', 'woff2', and 'ttf'.
 
-						if ( ! file_exists( $gfonts_dir . "ttf/{$familyfilename}.{$fnttype}" ) ) { // $idx < $idxlimit &&
-							$ch2 = curl_init( "https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}" );
-							curl_setopt( $ch2, CURLOPT_SSL_VERIFYPEER, true );
-							curl_setopt( $ch2, CURLOPT_SSL_VERIFYHOST, 2 );
-							curl_setopt( $ch2, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-							curl_setopt( $ch2, CURLOPT_RETURNTRANSFER, true );
-							if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
-								curl_setopt( $ch2, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
-							}
-							if ( ini_get( 'open_basedir' ) === false ) {
-								curl_setopt( $ch2, CURLOPT_FOLLOWLOCATION, true );
-								curl_setopt( $ch2, CURLOPT_AUTOREFERER, true );
-							}
-							$response2                  = curl_exec( $ch2 );
-							$status2                    = (int) curl_getinfo( $ch2, CURLINFO_HTTP_CODE );
+						if ( ! file_exists( $gfonts_dir . "ttf/{$familyfilename}.{$fnttype}" ) ) {
+							$request2                   = "https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}";
+							$args2                      = [
+								'headers' => [
+									'Accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+									'User-Agent' => 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116'
+								]
+							];
+							$response2                  = wp_remote_get( $request2, $args2 );
+							$status2                    = wp_remote_retrieve_response_code( $response2 );
 							$return_info->http_status_2 = $status2;
-							if ( $response2 && ! curl_errno( $ch2 ) && 200 === $status2 ) {
-								if ( 1 === preg_match( '/url\((.*?)\)/', $response2, $match ) ) {
+							if ( is_wp_error( $response2 ) ) {
+								$errorinfo[] = "Response from request for font-family {$thisfamily} resulted in error: " . $response2->get_error_message();
+							} elseif ( 200 === $status2 ) {
+								$body2 = wp_remote_retrieve_body( $request2 );
+								if ( 1 === preg_match( '/url\((.*?)\)/', $body2, $match ) ) {
 									$thisfonturl = $match[1];
 									$errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
 
-									// $ch3_headers = [];
-									$ch3 = curl_init( $thisfonturl );
-									curl_setopt( $ch3, CURLOPT_SSL_VERIFYPEER, true );
-									curl_setopt( $ch3, CURLOPT_SSL_VERIFYHOST, 2 );
-									curl_setopt( $ch3, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2 );
-									curl_setopt( $ch3, CURLOPT_RETURNTRANSFER, true );
-									if ( false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
-										curl_setopt( $ch3, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
-									}
-									// declaring acceptance of woff2 will make it possible to download the compressed version of the font with only the requested characters
-									// however it seems that the actual returned font will still be in ttf format, even though it is reduced to the requested characters
-									curl_setopt( $ch3, CURLOPT_HTTPHEADER, [ 'Accept: font/woff2', 'Content-type: font/ttf' ] );
-									if ( ini_get( 'open_basedir' ) === false ) {
-										curl_setopt( $ch3, CURLOPT_FOLLOWLOCATION, true );
-										curl_setopt( $ch3, CURLOPT_AUTOREFERER, true );
-									}
-									$response3 = curl_exec( $ch3 );
-									// $errorinfo[] = print_r($ch3_headers,TRUE);
-									$status3                    = (int) curl_getinfo( $ch3, CURLINFO_HTTP_CODE );
+									$request3                   = $thisfonturl;
+									$args3                      = [
+										'headers' => [
+											'Accept'     => '*/*',
+											'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+										]
+									];
+									$response3                  = wp_remote_get( $request3, $args3 );
+									$status3                    = wp_remote_retrieve_response_code( $response3 );
 									$return_info->http_status_3 = $status3;
-									if ( $response3 && ! curl_errno( $ch3 ) && 200 === $status3 ) {
+									if ( is_wp_error( $response3 ) ) {
+										$errorinfo[] = "Attempt to retrieve file for font {$thisfamily} from url {$thisfonturl} was not successful: " . $response3->get_error_message();
+									} elseif ( 200 === $status3 ) {
 										if ( $wp_filesystem ) {
-											// if(!file_exists($gfonts_dir . "ttf/{$familyfilename}.{$fnttype}") ){
 											if ( ! $wp_filesystem->put_contents(
 												$gfonts_dir . "ttf/{$familyfilename}.{$fnttype}",
 												$response3,
 												FS_CHMOD_FILE
 											) ) {
-												$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "ttf/{$familyfilename}.{$fnttype} with WordPress filesystem api, sorry";
+												$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "ttf/{$familyfilename}.{$fnttype} with WordPress filesystem api";
 											} else {
 												$upload_url       = wp_upload_dir()['baseurl'];
-												$gfont_stylesheet = preg_replace( '/url\((.*?)\)/', 'url(' . esc_url( "{$upload_url}/gfonts_preview/ttf/{$familyfilename}.{$fnttype}" ) . ')', $response2 );
+												$gfont_stylesheet = preg_replace( '/url\((.*?)\)/', 'url(' . esc_url( "{$upload_url}/gfonts_preview/ttf/{$familyfilename}.{$fnttype}" ) . ')', $body2 );
 												if ( ! file_exists( $gfonts_dir . "css/{$familyfilename}.css" ) ) {
 													if ( ! $wp_filesystem->put_contents(
 														$gfonts_dir . "css/{$familyfilename}.css",
 														$gfont_stylesheet,
 														FS_CHMOD_FILE
 													) ) {
-														$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "css/{$familyfilename}.css with WordPress filesystem api, sorry";
+														$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "css/{$familyfilename}.css with WordPress filesystem api";
 													}
 												}
 											}
 										}
 									} else {
-										if ( ! $response3 ) {
-											$errorinfo[] = "Response from curl request 3 is false for font-family {$thisfamily}";
-										}
-										if ( curl_errno( $ch3 ) ) {
-											$errorinfo[] = "Error on curl request 3 for font-family {$thisfamily}: " . curl_error( $ch3 );
-										}
-										if ( 200 !== $status3 ) {
-											$errorinfo[] = "Status on curl request 3 for font-family {$thisfamily}: " . $status3;
-										}
+										$errorinfo[] = "Status on woff2 request for font-family {$thisfamily}: " . $status3;
 									}
 								}
 							} else {
-								if ( ! $response2 ) {
-									$errorinfo[] = "Response from curl request 2 is false for font-family {$thisfamily}";
-								}
-								if ( curl_errno( $ch2 ) ) {
-									$errorinfo[] = "Error on curl request 2 for font-family {$thisfamily}: " . curl_error( $ch2 );
-								}
-								if ( 200 !== $status2 ) {
-									$errorinfo[] = "Status on curl request 2 for font-family {$thisfamily}: " . $status2;
-								}
+								$errorinfo[] = "Status on stylsheet request for font-family {$thisfamily}: " . $status2;
 							}
 						} else {
-							$errorinfo[] = 'File ' . $familyfilename . ".{$fnttype} already exists";
+							$errorinfo[] = "File {$familyfilename}.{$fnttype} already exists";
 						}
 					}
 				}
