@@ -1001,6 +1001,7 @@ class SettingsPage {
 			$current_run = intval( $_POST['currentRun'] );
 			$total_fonts = ( count( $gfonts_weblist->items ) > 0 ) ? count( $gfonts_weblist->items ) : false;
 			$errorinfo[] = 'totalFonts according to the server script = ' . $total_fonts;
+			Plugin::write_log( __METHOD__ . " Decoded $total_fonts font items from file $gfonts_weblist_file" );
 		} else {
 			Plugin::write_log( __METHOD__ . ' We do not seem to have received all the necessary data... Request received:' );
 			Plugin::write_log( $_POST );
@@ -1023,13 +1024,13 @@ class SettingsPage {
 						$familyfilename = preg_replace( '/\s+/', '', $thisfamily );
 						$errorinfo[]    = 'Now dealing with font-family ' . $thisfamily;
 						$fnttype        = 'woff2'; // possible types are 'woff', 'woff2', and 'ttf'.
-
 						if ( ! file_exists( $gfonts_dir . "ttf/{$familyfilename}.{$fnttype}" ) ) {
+							Plugin::write_log( __METHOD__ . " Font file ttf/{$familyfilename}.{$fnttype} not found, now attempting to download stylesheet..." );
 							$request2                   = "https://fonts.googleapis.com/css2?family={$familyurlname}&text={$familyfilename}";
 							$args2                      = [
 								'headers' => [
-									'Accept'     => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-									'User-Agent' => 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116'
+									'Accept'     => '*/*',
+									'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
 								]
 							];
 							$response2                  = wp_remote_get( $request2, $args2 );
@@ -1037,8 +1038,11 @@ class SettingsPage {
 							$return_info->http_status_2 = $status2;
 							if ( is_wp_error( $response2 ) ) {
 								$errorinfo[] = "Response from request for font-family {$thisfamily} resulted in error: " . $response2->get_error_message();
+								Plugin::write_log( __METHOD__ . " Response from request for font-family {$thisfamily} resulted in error: " . $response2->get_error_message() );
 							} elseif ( 200 === $status2 ) {
 								$body2 = wp_remote_retrieve_body( $request2 );
+								Plugin::write_log( __METHOD__ . " Response from request for font-family {$thisfamily} was successful: " );
+								Plugin::write_log( $body2 );
 								if ( 1 === preg_match( '/url\((.*?)\)/', $body2, $match ) ) {
 									$thisfonturl = $match[1];
 									$errorinfo[] = "font retrieval url for {$thisfamily} = {$thisfonturl}";
@@ -1054,15 +1058,18 @@ class SettingsPage {
 									$status3                    = wp_remote_retrieve_response_code( $response3 );
 									$return_info->http_status_3 = $status3;
 									if ( is_wp_error( $response3 ) ) {
+										Plugin::write_log( __METHOD__ . " Attempt to retrieve file for font {$thisfamily} from url {$thisfonturl} was not successful: " . $response3->get_error_message() );
 										$errorinfo[] = "Attempt to retrieve file for font {$thisfamily} from url {$thisfonturl} was not successful: " . $response3->get_error_message();
 									} elseif ( 200 === $status3 ) {
+										$body3 = wp_remote_retrieve_body( $response3 );
 										if ( $wp_filesystem ) {
 											if ( ! $wp_filesystem->put_contents(
 												$gfonts_dir . "ttf/{$familyfilename}.{$fnttype}",
-												$response3,
+												$body3,
 												FS_CHMOD_FILE
 											) ) {
 												$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "ttf/{$familyfilename}.{$fnttype} with WordPress filesystem api";
+												Plugin::write_log( __METHOD__ . " Cannot write file {$gfonts_dir}ttf/{$familyfilename}.{$fnttype} with WordPress filesystem api" );
 											} else {
 												$upload_url       = wp_upload_dir()['baseurl'];
 												$gfont_stylesheet = preg_replace( '/url\((.*?)\)/', 'url(' . esc_url( "{$upload_url}/gfonts_preview/ttf/{$familyfilename}.{$fnttype}" ) . ')', $body2 );
@@ -1073,27 +1080,33 @@ class SettingsPage {
 														FS_CHMOD_FILE
 													) ) {
 														$errorinfo[] = 'Cannot write file ' . $gfonts_dir . "css/{$familyfilename}.css with WordPress filesystem api";
+														Plugin::write_log( __METHOD__ . " Cannot write file {$gfonts_dir}css/{$familyfilename}.css with WordPress filesystem api" );
 													}
 												}
 											}
 										}
 									} else {
-										$errorinfo[] = "Status on woff2 request for font-family {$thisfamily}: " . $status3;
+										$errorinfo[] = "Status on woff2 request for font-family {$thisfamily}: $status3";
+										Plugin::write_log( __METHOD__ . " Status on woff2 request for font-family {$thisfamily}: $status3" );
 									}
 								}
 							} else {
-								$errorinfo[] = "Status on stylsheet request for font-family {$thisfamily}: " . $status2;
+								$errorinfo[] = "Status on stylesheet request for font-family {$thisfamily}: $status2";
+								Plugin::write_log( __METHOD__ . " Status on stylesheet request for font-family {$thisfamily}: $status2" );
 							}
 						} else {
 							$errorinfo[] = "File {$familyfilename}.{$fnttype} already exists";
+							Plugin::write_log( __METHOD__ . " Font file ttf/{$familyfilename}.{$fnttype} already exists, no further action taken" );
 						}
 					}
 				}
 			} else {
 				$errorinfo[] = 'Could not initialize WordPress filesystem with these credentials';
+				Plugin::write_log( 'Could not initialize WordPress filesystem with these credentials' );
 			}
 		} else {
 			$errorinfo[] = 'You do not have direct access permissions to the WordPress filesystem';
+			Plugin::write_log( 'You do not have direct access permissions to the WordPress filesystem' );
 		}
 
 		if ( ( $start_idx + ( $batch_limit - 1 ) ) < ( $total_fonts - 1 ) ) {
