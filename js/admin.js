@@ -1,278 +1,14 @@
-//using localize script to pass in values from options array, access with "bibleGetOptionsFromServer" which has "options"
-
-//console.log("admin.js is successfully loaded");
-//console.log(bibleGetOptionsFromServer);
+let myProgressInterval = null;
+let myMaxExecutionTimer = null;
+let $gfontsBatchRunProgressbar;
+let $gfontsBatchRunProgressbarWrapper;
+let $gfontsBatchRunModal;
 
 const enableNotificationDismissal = () => {
 	jQuery(".bibleget-settings-notification-dismiss").click(() => {
 		jQuery("#bibleget-settings-notification").fadeOut("slow");
 	});
 }
-
-jQuery(document).ready(($) => {
-	let fval = jQuery("#versionselect").val();
-	if (fval !== null && fval.length > 0) {
-		jQuery("#favorite_version").val(fval.join(","));
-	}
-
-	jQuery("#versionselect").change((ev) => {
-		//console.log(ev);
-		let fval = jQuery(ev.currentTarget).val();
-		if (fval === null || fval.length === 0) {
-			fval = ["NABRE"];
-		}
-		jQuery.ajax({
-			url: ajaxurl,
-			data: {
-				action: "update_bget",
-				options: { VERSION: { value: fval, type: "array" } },
-			},
-			method: "POST",
-			beforeSend: () => {
-				jQuery("#bibleget_ajax_spinner").show();
-			},
-			complete: () => {
-				jQuery("#bibleget_ajax_spinner").hide();
-			},
-			success: () => {},
-			error: (jqXHR, textStatus, errorThrown) => {
-				alert(
-					"BGET options not updated, error " + textStatus + ": " + errorThrown
-				);
-			},
-		});
-	});
-
-	jQuery("#bibleget-server-data-renew-btn").click(() => {
-		// check again how to do wordpress ajax,
-		// really no need to do a makeshift ajax
-		// post to this page
-		postdata = {
-			action: "refresh_bibleget_server_data",
-			security: bibleGetOptionsFromServer.ajax_nonce,
-			isajax: 1,
-		};
-		jQuery.ajax({
-			type: "POST",
-			url: bibleGetOptionsFromServer.ajax_url,
-			data: postdata,
-			beforeSend: () => {
-				jQuery("#bibleget_ajax_spinner").show();
-			},
-			complete: () => {
-				jQuery("#bibleget_ajax_spinner").hide();
-			},
-			success: (returndata) => {
-				if (returndata === "datarefreshed") {
-					jQuery("#bibleget-settings-notification")
-						.append(
-							'Data from server retrieved successfully, now refreshing page... <span id="bibleget-countdown">3 secs...</span>'
-						)
-						.fadeIn("slow", () => {
-							let seconds = 3;
-							let interval1 = setInterval(() => {
-								jQuery("#bibleget-countdown").text(
-									--seconds + (seconds === 1 ? " sec..." : " secs...")
-								);
-							}, 1000);
-							setTimeout(() => {
-								clearInterval(interval1);
-								location.reload();
-							}, 3000);
-						});
-				} else {
-					jQuery("#bibleget-settings-notification")
-						.append(
-							"Communication with the server seems to have been successful, however it does not seem that we have received the refreshed data... Perhaps try again?"
-						)
-						.fadeIn("slow");
-				}
-				enableNotificationDismissal();
-			},
-			error: (xhr) => {
-				jQuery("#bibleget-settings-notification")
-					.fadeIn("slow")
-					.append(
-						"Communication with the BibleGet server was not successful... ERROR: " +
-							xhr.responseText
-					);
-				enableNotificationDismissal();
-			},
-		});
-	});
-
-	jQuery("#bibleget-cache-flush-btn").on("click", () => {
-		jQuery.ajax({
-			type: "POST",
-			url: bibleGetOptionsFromServer.ajax_url,
-			data: { action: "flush_bible_quotes_cache" },
-			beforeSend: () => {
-				jQuery("#bibleget_ajax_spinner").show();
-			},
-			complete: () => {
-				jQuery("#bibleget_ajax_spinner").hide();
-			},
-			success: (returndata) => {
-				if (returndata === "cacheflushed") {
-					jQuery("#bibleget-settings-notification")
-						.append("Bible quotes cache emptied successfully")
-						.fadeIn("slow");
-				} else {
-					jQuery("#bibleget-settings-notification")
-						.append(
-							"There was an error while attempting to flush the Bible quotes cache... Perhaps try again?"
-						)
-						.fadeIn("slow");
-				}
-				enableNotificationDismissal();
-			},
-			error: (xhr) => {
-				jQuery("#bibleget-settings-notification")
-					.fadeIn("slow")
-					.append(
-						"Emptying of Bible quotes cache was not successful... ERROR: " +
-							xhr.responseText
-					);
-				enableNotificationDismissal();
-			},
-		});
-	});
-
-	if (
-		typeof gfontsBatch !== "undefined" &&
-		typeof gfontsBatch === "object" &&
-		gfontsBatch.hasOwnProperty("job") &&
-		gfontsBatch.job.hasOwnProperty("gfontsPreviewJob") &&
-		gfontsBatch.job.gfontsPreviewJob === true &&
-		gfontsBatch.job.hasOwnProperty("gfontsWeblist") &&
-		typeof gfontsBatch.job.gfontsWeblist === "object" &&
-		gfontsBatch.job.gfontsWeblist.hasOwnProperty("items")
-	) {
-		//console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
-		//console.log(gfontsBatch);
-		//check for errors in writing to the filesystem
-		const wpFsErrors = JSON.parse(gfontsBatch.job.gfonts_api_errors);
-		if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
-			//console.log(wpFsErrors);
-			jQuery("#googlefontsapi_key")
-				.closest("td")
-				.append(
-					$("<div>", {
-						html:
-							"!!! Impossible to write data to the BibleGet plugin directory, please check permissions!<br>" + wpFsErrors.join('<br>'),
-						style:
-							"color: white; background-color: red; padding: 3px 9px; display: inline-block; font-weight: bold; font-family: sans-serif;",
-					})
-				);
-		} else {
-			const max_execution_time = gfontsBatch.job.max_execution_time;
-			const gfontsCount        = gfontsBatch.job.gfontsWeblist.items.length;
-			const batchLimit         = 300; //general batch limit for each run, so that we don't block the server but yet we try to do a good number if we can
-			let lastBatchLimit       = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
-			let numRuns              = 0; //we'll set this in a minute
-
-			//Let's calculate how many times we will have to make the ajax call
-			//  in order to complete the local download of all the requested miniaturized font files
-			//Perhaps lastBatchLimit variable is superfluous because PHP will check bounds,
-			//  but hey let's be precise on each side, why not
-			if (gfontsCount % batchLimit === 0) {
-				numRuns = gfontsCount / batchLimit;
-				//console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
-			} else if (gfontsCount % batchLimit > 0) {
-				numRuns = Math.floor(gfontsCount / batchLimit) + 1;
-				lastBatchLimit = gfontsCount % batchLimit;
-				//console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
-				//console.log('gfontsCount = '+gfontsCount);
-				//console.log('batchLimit = '+batchLimit);
-			}
-			//We actually need to run one more time than the batchlimit, in order for the minify stage to take place
-			numRuns++;
-
-			//$gfontsBatchRunProgressbarOverlay, $gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global variables so don't use "var" here
-			$gfontsBatchRunProgressbarOverlay = jQuery("<div>", {
-				id: "gfontsBatchRunProgressBarOverlay",
-			});
-			jQuery("body").append($gfontsBatchRunProgressbarOverlay);
-			$gfontsBatchRunProgressbarWrapper = jQuery("<div>", {
-				id: "gfontsBatchRunProgressBarWrapper",
-			});
-			jQuery("body").append($gfontsBatchRunProgressbarWrapper);
-			$gfontsBatchRunProgressbar = jQuery(
-				'<div id="gfontsBatchRunProgressbar"><div id="gfontsBatchRunProgressbarLabelWrapper"><div id="gfontsBatchRunProgressbarLabel">Installation process of Google Fonts preview 0%</div></div></div>'
-			);
-			jQuery($gfontsBatchRunProgressbarWrapper).append(
-				$gfontsBatchRunProgressbar
-			);
-			jQuery($gfontsBatchRunProgressbarWrapper).append(`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to 7 minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OUT OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`);
-			performance.mark('processStart');
-			//var inProgress = false;
-
-			$gfontsBatchRunProgressbar.progressbar({
-				value: 0,
-				change: (ev) => {
-					//console.log(ev);
-					const currentVal = jQuery(ev.target).progressbar("value");
-					jQuery("#gfontsBatchRunProgressbarLabel").text(
-						`Installation process of Google Fonts preview ${currentVal}%`
-					);
-				},
-				complete: () => {
-					jQuery("#gfontsBatchRunProgressbarLabel").text(
-						"Installation process of Google Font preview COMPLETE"
-					);
-					setTimeout(() => {
-						$gfontsBatchRunProgressbarWrapper
-							.add($gfontsBatchRunProgressbarOverlay)
-							.fadeOut(1000);
-					}, 1000);
-				}
-			});
-
-			postdata = {
-				action: "store_gfonts_preview",
-				security: gfontsBatch.job.gfontsNonce,
-				gfontsCount: gfontsCount,
-				batchLimit: batchLimit,
-				lastBatchLimit: lastBatchLimit,
-				numRuns: numRuns,
-				currentRun: 1, //of course we start from 1, the first run
-				startIdx: 0,
-				max_execution_time: max_execution_time
-			};
-			//console.log(postdata);
-			gfontsBatchRun(postdata);
-		}
-	} else {
-		//        console.log('We do not seem to have a gfontsPreviewJob');
-		//        console.log(typeof gfontsBatch);
-		//        console.log(gfontsBatch);
-		//        console.log('TEST CONDITION 1: typeof gfontsBatch !== \'undefined\'');
-		//        console.log(typeof gfontsBatch !== 'undefined');
-		//        console.log('TEST CONDITION 2: typeof gfontsBatch === \'object\'');
-		//        console.log(typeof gfontsBatch === 'object');
-		//        console.log('TEST CONDITION 3: gfontsBatch.hasOwnProperty(\'job\')');
-		//        console.log(gfontsBatch.hasOwnProperty('job'));
-		//        console.log('TEST CONDITION 4: gfontsBatch.job.hasOwnProperty(\'gfontsPreviewJob\')');
-		//        console.log(gfontsBatch.job.hasOwnProperty('job'));
-		//        console.log('TEST CONDITION 5: gfontsBatch.job.gfontsPreviewJob === true (an actual boolean value)');
-		//        console.log(gfontsBatch.job.gfontsPreviewJob === true);
-	}
-
-	jQuery("#biblegetGFapiKeyRetest").on("click", () => {
-		location.reload();
-	});
-
-	jQuery("#biblegetForceRefreshGFapiResults").on(
-		"click",
-		bibleGetForceRefreshGFapiResults
-	);
-});
-
-let myProgressInterval = null;
-let myMaxExecutionTimer = null;
-let $gfontsBatchRunProgressbarOverlay;
-let $gfontsBatchRunProgressbar;
-let $gfontsBatchRunProgressbarWrapper;
 
 const gfontsBatchRun = (postdata) => {
 	jQuery.ajax({
@@ -514,3 +250,265 @@ const bibleGetForceRefreshGFapiResults = () => {
 		//console.log('cannot force refresh gfonts list, nonce not found');
 	}*/
 };
+
+
+jQuery(document).ready(($) => {
+	let fval = jQuery("#versionselect").val();
+	if (fval !== null && fval.length > 0) {
+		jQuery("#favorite_version").val(fval.join(","));
+	}
+
+	jQuery("#versionselect").change((ev) => {
+		//console.log(ev);
+		let fval = jQuery(ev.currentTarget).val();
+		if (fval === null || fval.length === 0) {
+			fval = ["NABRE"];
+		}
+		jQuery.ajax({
+			url: ajaxurl,
+			data: {
+				action: "update_bget",
+				options: { VERSION: { value: fval, type: "array" } },
+			},
+			method: "POST",
+			beforeSend: () => {
+				jQuery("#bibleget_ajax_spinner").show();
+			},
+			complete: () => {
+				jQuery("#bibleget_ajax_spinner").hide();
+			},
+			success: () => {},
+			error: (jqXHR, textStatus, errorThrown) => {
+				alert(
+					"BGET options not updated, error " + textStatus + ": " + errorThrown
+				);
+			},
+		});
+	});
+
+	jQuery("#bibleget-server-data-renew-btn").click(() => {
+		// check again how to do wordpress ajax,
+		// really no need to do a makeshift ajax
+		// post to this page
+		postdata = {
+			action: "refresh_bibleget_server_data",
+			security: bibleGetOptionsFromServer.ajax_nonce,
+			isajax: 1,
+		};
+		jQuery.ajax({
+			type: "POST",
+			url: bibleGetOptionsFromServer.ajax_url,
+			data: postdata,
+			beforeSend: () => {
+				jQuery("#bibleget_ajax_spinner").show();
+			},
+			complete: () => {
+				jQuery("#bibleget_ajax_spinner").hide();
+			},
+			success: (returndata) => {
+				if (returndata === "datarefreshed") {
+					jQuery("#bibleget-settings-notification")
+						.append(
+							'Data from server retrieved successfully, now refreshing page... <span id="bibleget-countdown">3 secs...</span>'
+						)
+						.fadeIn("slow", () => {
+							let seconds = 3;
+							let interval1 = setInterval(() => {
+								jQuery("#bibleget-countdown").text(
+									--seconds + (seconds === 1 ? " sec..." : " secs...")
+								);
+							}, 1000);
+							setTimeout(() => {
+								clearInterval(interval1);
+								location.reload();
+							}, 3000);
+						});
+				} else {
+					jQuery("#bibleget-settings-notification")
+						.append(
+							"Communication with the server seems to have been successful, however it does not seem that we have received the refreshed data... Perhaps try again?"
+						)
+						.fadeIn("slow");
+				}
+				enableNotificationDismissal();
+			},
+			error: (xhr) => {
+				jQuery("#bibleget-settings-notification")
+					.fadeIn("slow")
+					.append(
+						"Communication with the BibleGet server was not successful... ERROR: " +
+							xhr.responseText
+					);
+				enableNotificationDismissal();
+			},
+		});
+	});
+
+	jQuery("#bibleget-cache-flush-btn").on("click", () => {
+		jQuery.ajax({
+			type: "POST",
+			url: bibleGetOptionsFromServer.ajax_url,
+			data: { action: "flush_bible_quotes_cache" },
+			beforeSend: () => {
+				jQuery("#bibleget_ajax_spinner").show();
+			},
+			complete: () => {
+				jQuery("#bibleget_ajax_spinner").hide();
+			},
+			success: (returndata) => {
+				if (returndata === "cacheflushed") {
+					jQuery("#bibleget-settings-notification")
+						.append("Bible quotes cache emptied successfully")
+						.fadeIn("slow");
+				} else {
+					jQuery("#bibleget-settings-notification")
+						.append(
+							"There was an error while attempting to flush the Bible quotes cache... Perhaps try again?"
+						)
+						.fadeIn("slow");
+				}
+				enableNotificationDismissal();
+			},
+			error: (xhr) => {
+				jQuery("#bibleget-settings-notification")
+					.fadeIn("slow")
+					.append(
+						"Emptying of Bible quotes cache was not successful... ERROR: " +
+							xhr.responseText
+					);
+				enableNotificationDismissal();
+			},
+		});
+	});
+
+	if (
+		typeof gfontsBatch !== "undefined" &&
+		typeof gfontsBatch === "object" &&
+		gfontsBatch.hasOwnProperty("job") &&
+		gfontsBatch.job.hasOwnProperty("gfontsPreviewJob") &&
+		gfontsBatch.job.gfontsPreviewJob === true &&
+		gfontsBatch.job.hasOwnProperty("gfontsWeblist") &&
+		typeof gfontsBatch.job.gfontsWeblist === "object" &&
+		gfontsBatch.job.gfontsWeblist.hasOwnProperty("items")
+	) {
+		//console.log('We have a gfontsPreviewJob to do! gfontsBatch: ');
+		//console.log(gfontsBatch);
+		//check for errors in writing to the filesystem
+		const wpFsErrors = JSON.parse(gfontsBatch.job.gfonts_api_errors);
+		if (Array.isArray(wpFsErrors) && wpFsErrors.length > 0) {
+			//console.log(wpFsErrors);
+			jQuery("#googlefontsapi_key")
+				.closest("td")
+				.append(
+					$("<div>", {
+						html:
+							"!!! Impossible to write data to the BibleGet plugin directory, please check permissions!<br>" + wpFsErrors.join('<br>'),
+						style:
+							"color: white; background-color: red; padding: 3px 9px; display: inline-block; font-weight: bold; font-family: sans-serif;",
+					})
+				);
+		} else {
+			const max_execution_time = gfontsBatch.job.max_execution_time;
+			const gfontsCount        = gfontsBatch.job.gfontsWeblist.items.length;
+			const batchLimit         = 300; //general batch limit for each run, so that we don't block the server but yet we try to do a good number if we can
+			let lastBatchLimit       = 0; //if we have a remainder from the full batches, this will be the batchLimit for that remainder
+			let numRuns              = 0; //we'll set this in a minute
+
+			//Let's calculate how many times we will have to make the ajax call
+			//  in order to complete the local download of all the requested miniaturized font files
+			//Perhaps lastBatchLimit variable is superfluous because PHP will check bounds,
+			//  but hey let's be precise on each side, why not
+			if (gfontsCount % batchLimit === 0) {
+				numRuns = gfontsCount / batchLimit;
+				//console.log('gfontsCount is divided evenly by the batchLimit, numRuns should be an integer such as 3. numRuns = '+numRuns);
+			} else if (gfontsCount % batchLimit > 0) {
+				numRuns = Math.floor(gfontsCount / batchLimit) + 1;
+				lastBatchLimit = gfontsCount % batchLimit;
+				//console.log('gfontsCount is not divided evenly by the batchLimit, we have a remainder. numRuns should be an integer larger by one compared to the value of that division, 4 in this case. numRuns = '+numRuns);
+				//console.log('gfontsCount = '+gfontsCount);
+				//console.log('batchLimit = '+batchLimit);
+			}
+			//We actually need to run one more time than the batchlimit, in order for the minify stage to take place
+			numRuns++;
+
+			//$gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global
+			$gfontsBatchRunProgressbarWrapper = jQuery("<div>", {
+				id: "gfontsBatchRunProgressBarWrapper"
+			});
+
+			jQuery($gfontsBatchRunProgressbarWrapper).append(
+				`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to two or three minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OUT OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`
+			);
+
+			$gfontsBatchRunProgressbar = jQuery(
+				'<div id="gfontsBatchRunProgressbar"><div id="gfontsBatchRunProgressbarLabelWrapper"><div id="gfontsBatchRunProgressbarLabel">Installation process of Google Fonts preview 0%</div></div></div>'
+			);
+			jQuery($gfontsBatchRunProgressbarWrapper).append(
+				$gfontsBatchRunProgressbar
+			);
+
+			$gfontsBatchRunProgressbar.progressbar({
+				value: 0,
+				change: (ev) => {
+					const currentVal = jQuery(ev.target).progressbar("value");
+					jQuery("#gfontsBatchRunProgressbarLabel").text(
+						`Installation process of Google Fonts preview ${currentVal}%`
+					);
+				},
+				complete: () => {
+					jQuery("#gfontsBatchRunProgressbarLabel").text(
+						"Installation process of Google Font preview COMPLETE"
+					);
+					setTimeout(() => {
+						$gfontsBatchRunModal.close()
+					}, 1000);
+				}
+			});
+
+			$gfontsBatchRunModal = $gfontsBatchRunProgressbarWrapper.dialog({
+				modal: true,
+				autoOpen: true,
+				hide: { effect: 'fadeOut', duration: 1000 }
+			});
+
+			postdata = {
+				action: "store_gfonts_preview",
+				security: gfontsBatch.job.gfontsNonce,
+				gfontsCount: gfontsCount,
+				batchLimit: batchLimit,
+				lastBatchLimit: lastBatchLimit,
+				numRuns: numRuns,
+				currentRun: 1, //of course we start from 1, the first run
+				startIdx: 0,
+				max_execution_time: max_execution_time
+			};
+			//console.log(postdata);
+			performance.mark('processStart');
+			gfontsBatchRun(postdata);
+		}
+	} else {
+		//        console.log('We do not seem to have a gfontsPreviewJob');
+		//        console.log(typeof gfontsBatch);
+		//        console.log(gfontsBatch);
+		//        console.log('TEST CONDITION 1: typeof gfontsBatch !== \'undefined\'');
+		//        console.log(typeof gfontsBatch !== 'undefined');
+		//        console.log('TEST CONDITION 2: typeof gfontsBatch === \'object\'');
+		//        console.log(typeof gfontsBatch === 'object');
+		//        console.log('TEST CONDITION 3: gfontsBatch.hasOwnProperty(\'job\')');
+		//        console.log(gfontsBatch.hasOwnProperty('job'));
+		//        console.log('TEST CONDITION 4: gfontsBatch.job.hasOwnProperty(\'gfontsPreviewJob\')');
+		//        console.log(gfontsBatch.job.hasOwnProperty('job'));
+		//        console.log('TEST CONDITION 5: gfontsBatch.job.gfontsPreviewJob === true (an actual boolean value)');
+		//        console.log(gfontsBatch.job.gfontsPreviewJob === true);
+	}
+
+	jQuery("#biblegetGFapiKeyRetest").on("click", () => {
+		location.reload();
+	});
+
+	jQuery("#biblegetForceRefreshGFapiResults").on(
+		"click",
+		bibleGetForceRefreshGFapiResults
+	);
+});
+

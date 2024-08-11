@@ -388,17 +388,19 @@ class SettingsPage {
 	 * @param string $hook Admin settings page hook.
 	 */
 	public function admin_print_styles( $hook ) {
+		if ( 'settings_page_bibleget-settings-admin' !== $hook ) {
+			return;
+		}
+
 		Plugin::write_log( __METHOD__ );
 		$dir       = __DIR__;
 		$admin_css = '../css/admin.css';
-		if ( 'settings_page_bibleget-settings-admin' === $hook ) {
-			wp_enqueue_style(
-				'bibleget-admin-css',
-				plugins_url( $admin_css, __FILE__ ),
-				false,
-				filemtime( "$dir/$admin_css" )
-			);
-		}
+		wp_enqueue_style(
+			'bibleget-admin-css',
+			plugins_url( $admin_css, __FILE__ ),
+			false,
+			filemtime( "$dir/$admin_css" )
+		);
 	}
 
 	/**
@@ -407,11 +409,11 @@ class SettingsPage {
 	 * @param string $hook Admin settings page hook.
 	 */
 	public function admin_print_scripts( $hook ) {
-		Plugin::write_log( __METHOD__ );
 		if ( 'settings_page_bibleget-settings-admin' !== $hook ) {
 			return;
 		}
 
+		Plugin::write_log( __METHOD__ );
 		$dir      = __DIR__;
 		$admin_js = '../js/admin.js';
 		wp_register_script(
@@ -501,11 +503,7 @@ class SettingsPage {
 					}
 				);
 			}
-			wp_enqueue_script( 'jquery-ui-progressbar' );
-			if (
-				! wp_style_is( 'jquery-ui-css', 'registered' )
-				|| ! wp_style_is( 'jquery-ui-css', 'enqueued' )
-			) {
+			if ( ! wp_style_is( 'jquery-ui-css', 'registered' ) ) {
 				wp_enqueue_style(
 					'jquery-ui-css',
 					'//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
@@ -513,6 +511,8 @@ class SettingsPage {
 					wp_scripts()->registered['jquery-ui-core']->ver
 				);
 			}
+			wp_enqueue_script( 'jquery-ui-progressbar' );
+			wp_enqueue_script( 'jquery-ui-dialog' );
 			$store_gfonts_arr = [
 				'job' => [
 					'gfontsPreviewJob'   => (bool) true,
