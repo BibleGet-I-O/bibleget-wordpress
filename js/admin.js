@@ -1,8 +1,7 @@
 let myProgressInterval = null;
 let myMaxExecutionTimer = null;
+let $gfontsInstallationModal;
 let $gfontsBatchRunProgressbar;
-let $gfontsBatchRunProgressbarWrapper;
-let $gfontsBatchRunModal;
 
 const enableNotificationDismissal = () => {
 	jQuery(".bibleget-settings-notification-dismiss").click(() => {
@@ -17,8 +16,6 @@ const gfontsBatchRun = (postdata) => {
 		data: postdata,
 		dataType: "json",
 		beforeSend: () => {
-			//jQuery("#bibleget_ajax_spinner").show();
-			//$gfontsBatchRunProgressbar.progressbar("value");
 			performance.mark('batchStart');
 			myProgressInterval = setInterval(
 				updateGfontsBatchRunProgressbarProgress,
@@ -32,9 +29,10 @@ const gfontsBatchRun = (postdata) => {
 				postdata.max_execution_time
 			);
 			jQuery('#batchRun').text(postdata.currentRun);
+			jQuery('#gfonts-progress-details').append(`<p>Starting batch run ${postdata.currentRun}</p>`);
 		},
 		complete: () => {
-			jQuery("#bibleget_ajax_spinner").hide();
+			// nothing to do here
 		},
 		success: (returndata) => {
 			clearInterval(myProgressInterval);
@@ -73,6 +71,7 @@ const gfontsBatchRun = (postdata) => {
 				if (returndataJSON.hasOwnProperty("state")) {
 					switch (returndataJSON.state) {
 						case "RUN_PROCESSED":
+							jQuery('#gfonts-progress-details').append(`<p>Batch run ${thisRun} complete</p>`);
 							$gfontsBatchRunProgressbar.progressbar(
 								"value",
 								Math.floor(maxedOutUpdateThisRun)
@@ -103,8 +102,8 @@ const gfontsBatchRun = (postdata) => {
 							}
 							break;
 						case "COMPLETE":
+							jQuery('#gfonts-progress-details').append(`<p>All jobs completed!</p>`);
 							$gfontsBatchRunProgressbar.progressbar("value", 100);
-
 							// if (thisRun === postdata.numRuns) {
 							//   console.log("gfontsBatchRun has finished the job!");
 							// } else {
@@ -191,7 +190,7 @@ const updateExecutionCountdown = (max_execution_time) => {
 	const executionLimitPercentage = Math.floor((executionSeconds / max_execution_time) * 100);
 	jQuery('.chart').css({background: `conic-gradient(red ${executionLimitPercentage}%, white 0)`});
 	jQuery('#current_execution_time').text(executionSeconds);
-	jQuery('#total_execution_time').text(totalExecutionString)
+	jQuery('#total_execution_time').text(totalExecutionString);
 }
 
 const bibleGetForceRefreshGFapiResults = () => {
@@ -431,44 +430,50 @@ jQuery(document).ready(($) => {
 			//We actually need to run one more time than the batchlimit, in order for the minify stage to take place
 			numRuns++;
 
-			//$gfontsBatchRunProgressbarWrapper, and $gfontsBatchRunProgressbar are global
-			$gfontsBatchRunProgressbarWrapper = jQuery("<div>", {
+			const $gfontsInstallationModalContents = jQuery("<div>", {
 				id: "gfontsBatchRunProgressBarWrapper"
 			});
 
-			jQuery($gfontsBatchRunProgressbarWrapper).append(
-				`<div class="chart_before">PHP MAX EXECUTION TIME = <span id="php_max_execution_time">${max_execution_time}</span> seconds<br />Please be patient, the process can take up to two or three minutes...</div><div class="chart"></div><div class="chart_after">BATCH RUN <span id="batchRun">x</span> OUT OF ${numRuns}<br />CURRENT EXECUTION TIME = <span id="current_execution_time">0</span> seconds<br />TOTAL EXECUTION TIME = <span id="total_execution_time">0 seconds</span></div>`
-			);
+			const msg_patience_p = `<p>The process can take up to two or three minutes depending on your connection speed, please be patient...</p>`;
+			const chart_wrapper = `<div id="chart-wrapper"><div id="chart_before">Batch run <span id="batchRun">x</span> of ${numRuns}<br />Current execution time: <span id="current_execution_time">0</span> seconds</div><div id="chart"></div></div>`;
+			const progressbar_div = `<div id="gfontsTotalRunProgressbar"><div id="gfontsTotalRunProgressbarLabelWrapper"><div id="gfontsTotalRunProgressbarLabel" title="PHP Max execution time: ${max_execution_time}">Installation of Google Fonts previews 0%</div></div></div>`;
+			const total_execution_time_p = `<p style="text-align: center;">TOTAL EXECUTION TIME: <span id="total_execution_time">0 seconds</span></p>`;
+			const show_details = `<details><summary>Show details</summary><p id="gfonts-progress-details"></p></details>`;
 
-			$gfontsBatchRunProgressbar = jQuery(
-				'<div id="gfontsBatchRunProgressbar"><div id="gfontsBatchRunProgressbarLabelWrapper"><div id="gfontsBatchRunProgressbarLabel">Installation process of Google Fonts preview 0%</div></div></div>'
-			);
-			jQuery($gfontsBatchRunProgressbarWrapper).append(
-				$gfontsBatchRunProgressbar
-			);
+			$gfontsBatchRunProgressbar = jQuery(progressbar_div);
+
+			jQuery($gfontsInstallationModalContents).append(msg_patience_p);
+			jQuery($gfontsInstallationModalContents).append(chart_wrapper);
+			jQuery($gfontsInstallationModalContents).append($gfontsBatchRunProgressbar);
+			jQuery($gfontsInstallationModalContents).append(total_execution_time_p);
+			jQuery($gfontsInstallationModalContents).append(show_details);
 
 			$gfontsBatchRunProgressbar.progressbar({
 				value: 0,
 				change: (ev) => {
 					const currentVal = jQuery(ev.target).progressbar("value");
-					jQuery("#gfontsBatchRunProgressbarLabel").text(
-						`Installation process of Google Fonts preview ${currentVal}%`
+					jQuery("#gfontsTotalRunProgressbarLabel").text(
+						`Installation of Google Fonts previews ${currentVal}%`
 					);
 				},
 				complete: () => {
 					jQuery("#gfontsBatchRunProgressbarLabel").text(
-						"Installation process of Google Font preview COMPLETE"
+						"Installation of Google Font previews COMPLETE"
 					);
 					setTimeout(() => {
-						$gfontsBatchRunModal.close()
+						$gfontsInstallationModal.close()
 					}, 1000);
 				}
 			});
 
-			$gfontsBatchRunModal = $gfontsBatchRunProgressbarWrapper.dialog({
+			$gfontsInstallationModal = $gfontsInstallationModalContents.dialog({
+				title: 'Installation of local previews for Google Webfonts',
 				modal: true,
 				autoOpen: true,
-				hide: { effect: 'fadeOut', duration: 1000 }
+				hide: { effect: 'fadeOut', duration: 1000 },
+				closeOnEscape: false,
+				dialogClass: 'no-close',
+				minWidth: 800
 			});
 
 			postdata = {
