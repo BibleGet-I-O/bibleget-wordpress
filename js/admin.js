@@ -190,6 +190,7 @@ const updateExecutionCountdown = (max_execution_time) => {
 	const executionLimitPercentage = Math.floor((executionSeconds / max_execution_time) * 100);
 	const chartEl = document.querySelector('#chart');
 	chartEl.style.setProperty('--percent-complete', `${executionLimitPercentage}%`);
+	chartEl.style.setProperty('--white-bg-percent', `${executionLimitPercentage+2}%`);
 	if (executionLimitPercentage >= 75 && false === chartEl.classList.contains('danger')) {
 		chartEl.classList.remove('warning');
 		chartEl.classList.add('danger');
@@ -443,8 +444,8 @@ jQuery(document).ready(($) => {
 			});
 
 			const msg_patience_p = `<p>The process can take up to two or three minutes depending on your connection speed, please be patient...</p>`;
-			const chart_wrapper = `<div id="chart-wrapper"><div id="chart_before">Batch run <span id="batchRun">x</span> of ${numRuns}<br />Current execution time: <span id="current_execution_time">0</span> seconds</div><div id="chart"></div></div>`;
-			const progressbar_div = `<div id="gfontsTotalRunProgressbar"><div id="gfontsTotalRunProgressbarLabelWrapper"><div id="gfontsTotalRunProgressbarLabel" title="PHP Max execution time: ${max_execution_time}">Installation of Google Fonts previews 0%</div></div></div>`;
+			const chart_wrapper = `<div id="chart-wrapper"><div id="chart_before">Batch run <span id="batchRun">x</span> of ${numRuns}<br />Current execution time: <span id="current_execution_time">0</span> seconds</div><div id="chart" title="PHP Max execution time: ${max_execution_time}"></div></div>`;
+			const progressbar_div = `<div id="gfontsTotalRunProgressbar"><div id="gfontsTotalRunProgressbarLabelWrapper"><div id="gfontsTotalRunProgressbarLabel">Installation of Google Fonts previews 0%</div></div></div>`;
 			const total_execution_time_p = `<p style="text-align: center;">TOTAL EXECUTION TIME: <span id="total_execution_time">0 seconds</span></p>`;
 			const show_details = `<details><summary>Show details</summary><p id="gfonts-progress-details"></p></details>`;
 

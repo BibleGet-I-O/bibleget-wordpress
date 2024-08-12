@@ -228,8 +228,9 @@ form input[type="color"] {
     --base-bg-color: rgb(0, 180, 0);
     --warning-bg-color: rgb(230, 230, 0);
     --danger-bg-color: rgb(230, 0, 0);
-    --percent-complete: 0%;
-    background: conic-gradient(var(--base-bg-color) var(--percent-complete), white 0);
+    --percent-complete: 0;
+    --white-bg-percent: 0;
+    background: conic-gradient(var(--base-bg-color) var(--percent-complete), white var(--white-bg-percent));
     border: 3px solid gray;
     border-radius: 50%;
     width: 40px;
@@ -237,9 +238,9 @@ form input[type="color"] {
 }
 
 #chart.warning {
-    background: conic-gradient(var(--warning-bg-color) var(--percent-complete), white 0);;
+    background: conic-gradient(var(--warning-bg-color) var(--percent-complete), white var(--white-bg-percent));
 }
 
 #chart.danger {
-    background: conic-gradient(var(--danger-bg-color) var(--percent-complete), white 0);;
+    background: conic-gradient(var(--danger-bg-color) var(--percent-complete), white var(--white-bg-percent));
 }
