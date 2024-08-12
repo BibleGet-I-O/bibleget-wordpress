@@ -188,7 +188,15 @@ const updateExecutionCountdown = (max_execution_time) => {
 		}
 	}
 	const executionLimitPercentage = Math.floor((executionSeconds / max_execution_time) * 100);
-	jQuery('.chart').css({background: `conic-gradient(red ${executionLimitPercentage}%, white 0)`});
+	const chartEl = document.querySelector('#chart');
+	chartEl.style.setProperty('--percent-complete', `${executionLimitPercentage}%`);
+	if (executionLimitPercentage >= 75 && false === chartEl.classList.contains('danger')) {
+		chartEl.classList.remove('warning');
+		chartEl.classList.add('danger');
+	}
+	else if (executionLimitPercentage >= 50 && false === chartEl.classList.contains('warning')) {
+		chartEl.classList.add('warning');
+	}
 	jQuery('#current_execution_time').text(executionSeconds);
 	jQuery('#total_execution_time').text(totalExecutionString);
 }

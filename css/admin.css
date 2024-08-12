@@ -212,9 +212,21 @@ form input[type="color"] {
 }
 
 #chart {
-    background: conic-gradient(#4CAF50 0%, white 0);
+    --base-bg-color: rgb(0, 180, 0);
+    --warning-bg-color: rgb(230, 230, 0);
+    --danger-bg-color: rgb(230, 0, 0);
+    --percent-complete: 0%;
+    background: conic-gradient(var(--base-bg-color) var(--percent-complete), white 0);
     border: 3px solid gray;
     border-radius: 50%;
     width: 40px;
     height: 40px;
+}
+
+#chart.warning {
+    background: conic-gradient(var(--warning-bg-color) var(--percent-complete), white 0);;
+}
+
+#chart.danger {
+    background: conic-gradient(var(--danger-bg-color) var(--percent-complete), white 0);;
 }
