@@ -167,6 +167,17 @@ form input[type="color"] {
     margin: 0 auto;
 }
 
+#gfonts-progress-details {
+    border: 3px inset darkgrey;
+    background: lightyellow;
+    padding: .5rem;
+}
+
+#gfonts-progress-details p {
+    margin: 0;
+    padding: 0;
+}
+
 .no-close .ui-button.ui-dialog-titlebar-close {
     display: none;
 }
