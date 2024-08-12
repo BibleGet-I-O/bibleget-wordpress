@@ -1,7 +1,7 @@
 let myProgressInterval = null;
 let myMaxExecutionTimer = null;
 let $gfontsInstallationModal;
-let $gfontsBatchRunProgressbar;
+let $gfontsTotalRunProgressbar;
 
 const enableNotificationDismissal = () => {
 	jQuery(".bibleget-settings-notification-dismiss").click(() => {
@@ -72,7 +72,7 @@ const gfontsBatchRun = (postdata) => {
 					switch (returndataJSON.state) {
 						case "RUN_PROCESSED":
 							jQuery('#gfonts-progress-details').append(`<p>Batch run ${thisRun} complete</p>`);
-							$gfontsBatchRunProgressbar.progressbar(
+							$gfontsTotalRunProgressbar.progressbar(
 								"value",
 								Math.floor(maxedOutUpdateThisRun)
 							);
@@ -103,7 +103,7 @@ const gfontsBatchRun = (postdata) => {
 							break;
 						case "COMPLETE":
 							jQuery('#gfonts-progress-details').append(`<p>All jobs completed!</p>`);
-							$gfontsBatchRunProgressbar.progressbar("value", 100);
+							$gfontsTotalRunProgressbar.progressbar("value", 100);
 							// if (thisRun === postdata.numRuns) {
 							//   console.log("gfontsBatchRun has finished the job!");
 							// } else {
@@ -146,18 +146,18 @@ const gfontsBatchRun = (postdata) => {
 };
 
 const updateGfontsBatchRunProgressbarProgress = (currentRun, numRuns) => {
-	//console.log('half second tick and $gfontsBatchRunProgressbar.progressbar("value") = '+$gfontsBatchRunProgressbar.progressbar("value"));
+	//console.log('half second tick and $gfontsTotalRunProgressbar.progressbar("value") = '+$gfontsTotalRunProgressbar.progressbar("value"));
 	//console.log('half second tick and currentRun = '+currentRun+', numRuns = '+numRuns);
 	const maxUpdatePerRun = Math.floor(100 / parseInt(numRuns)); //if we do 4 runs, we will update no more than 25% of the progressbar for each run
 	//console.log('half second tick and maxUpdatePerRun = '+maxUpdatePerRun+', (maxUpdatePerRun * currentRun) = '+(maxUpdatePerRun * currentRun));
 	if (
-		$gfontsBatchRunProgressbar.progressbar("value") <
+		$gfontsTotalRunProgressbar.progressbar("value") <
 		maxUpdatePerRun * parseInt(currentRun)
 	) {
 		let currentProgressBarValue = parseInt(
-			$gfontsBatchRunProgressbar.progressbar("value")
+			$gfontsTotalRunProgressbar.progressbar("value")
 		);
-		$gfontsBatchRunProgressbar.progressbar("value", Math.floor(++currentProgressBarValue));
+		$gfontsTotalRunProgressbar.progressbar("value", Math.floor(++currentProgressBarValue));
 	}
 };
 
@@ -439,7 +439,7 @@ jQuery(document).ready(($) => {
 			numRuns++;
 
 			const $gfontsInstallationModalContents = jQuery("<div>", {
-				id: "gfontsBatchRunProgressBarWrapper"
+				id: "gfontsTotalRunProgressBarWrapper"
 			});
 
 			const msg_patience_p = `<p>The process can take up to two or three minutes depending on your connection speed, please be patient...</p>`;
@@ -448,31 +448,13 @@ jQuery(document).ready(($) => {
 			const total_execution_time_p = `<p style="text-align: center;">TOTAL EXECUTION TIME: <span id="total_execution_time">0 seconds</span></p>`;
 			const show_details = `<details><summary>Show details</summary><p id="gfonts-progress-details"></p></details>`;
 
-			$gfontsBatchRunProgressbar = jQuery(progressbar_div);
+			$gfontsTotalRunProgressbar = jQuery(progressbar_div);
 
 			jQuery($gfontsInstallationModalContents).append(msg_patience_p);
 			jQuery($gfontsInstallationModalContents).append(chart_wrapper);
-			jQuery($gfontsInstallationModalContents).append($gfontsBatchRunProgressbar);
+			jQuery($gfontsInstallationModalContents).append($gfontsTotalRunProgressbar);
 			jQuery($gfontsInstallationModalContents).append(total_execution_time_p);
 			jQuery($gfontsInstallationModalContents).append(show_details);
-
-			$gfontsBatchRunProgressbar.progressbar({
-				value: 0,
-				change: (ev) => {
-					const currentVal = jQuery(ev.target).progressbar("value");
-					jQuery("#gfontsTotalRunProgressbarLabel").text(
-						`Installation of Google Fonts previews ${currentVal}%`
-					);
-				},
-				complete: () => {
-					jQuery("#gfontsBatchRunProgressbarLabel").text(
-						"Installation of Google Font previews COMPLETE"
-					);
-					setTimeout(() => {
-						$gfontsInstallationModal.close()
-					}, 1000);
-				}
-			});
 
 			$gfontsInstallationModal = $gfontsInstallationModalContents.dialog({
 				title: 'Installation of local previews for Google Webfonts',
@@ -482,6 +464,24 @@ jQuery(document).ready(($) => {
 				closeOnEscape: false,
 				dialogClass: 'no-close',
 				minWidth: 800
+			});
+
+			$gfontsTotalRunProgressbar.progressbar({
+				value: 0,
+				change: (ev) => {
+					const currentVal = jQuery(ev.target).progressbar("value");
+					jQuery("#gfontsTotalRunProgressbarLabel").text(
+						`Installation of Google Fonts previews ${currentVal}%`
+					);
+				},
+				complete: () => {
+					jQuery("#gfontsTotalRunProgressbarLabel").text(
+						"Installation of Google Font previews COMPLETE"
+					);
+					setTimeout(() => {
+						$gfontsInstallationModal.close()
+					}, 1000);
+				}
 			});
 
 			postdata = {

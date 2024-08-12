@@ -146,20 +146,20 @@ form input[type="color"] {
 }
 
 
-#gfontsBatchRunProgressbar {
+#gfontsTotalRunProgressbar {
     position: relative;
     width: 90%;
     margin: 1.3rem auto;
 }
 
-#gfontsBatchRunProgressbarLabelWrapper {
+#gfontsTotalRunProgressbarLabelWrapper {
     position: absolute;
     top: 5px;
     width: 100%;
     text-align: center;
 }
 
-#gfontsBatchRunProgressbarLabel {
+#gfontsTotalRunProgressbarLabel {
     position: relative;
     color: #000;
     font-weight: bold;
