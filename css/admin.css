@@ -171,6 +171,8 @@ form input[type="color"] {
     border: 3px inset darkgrey;
     background: lightyellow;
     padding: .5rem;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 #gfonts-progress-details p {

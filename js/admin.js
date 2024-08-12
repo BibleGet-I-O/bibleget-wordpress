@@ -479,7 +479,7 @@ jQuery(document).ready(($) => {
 						"Installation of Google Font previews COMPLETE"
 					);
 					setTimeout(() => {
-						$gfontsInstallationModal.close()
+						$gfontsInstallationModal.dialog('close');
 					}, 1000);
 				}
 			});
