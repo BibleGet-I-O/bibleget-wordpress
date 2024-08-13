@@ -118,7 +118,7 @@ class Plugin {
 		wp_enqueue_script(
 			'bibleget-block-variations',
 			plugins_url( '../js/variations.js', __FILE__ ),
-			[ 'wp-blocks', 'wp-dom-ready', 'wp-i18n' ],
+			[ 'wp-blocks', 'wp-dom-ready', 'wp-i18n', 'wp-element' ],
 			$plugin_data['Version'],
 			true
 		);

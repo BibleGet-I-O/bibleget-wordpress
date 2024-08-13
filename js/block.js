@@ -30,8 +30,8 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		ComboboxControl,
 	} = components; //WordPress form inputs and server-side renderer
 
-	const colorizeIco = createElement(Dashicon, { icon: "color-picker" });
-	const bibleIcon = createElement('svg', {
+	const colorizeIco = createElement(Dashicon, { icon: "color-picker" }),
+		bibleIcon = createElement('svg', {
 			'aria-hidden': 'true',
 			focusable: 'false',
 			width: 20,
