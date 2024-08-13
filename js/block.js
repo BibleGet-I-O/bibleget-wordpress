@@ -34,19 +34,21 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 	const bibleIcon = createElement('svg', {
 			'aria-hidden': 'true',
 			focusable: 'false',
-			width: '20',
-			height: '20',
+			width: 20,
+			height: 20,
 			role: 'img',
 			'viewBox': '0 0 20 20',
 			xmlns: "http://www.w3.org/2000/svg"
 		}, createElement('rect', {
-			x: "0",
+			x: 0,
 			fill: "none",
-			width: "20",
-			height: "20"
+			width: 20,
+			height: 20
 		}), createElement('path', {
 			d: "m 15,10 h -4 v 2 h 1 l 1,1 v -1 h 2 z m -5,2 H 9 v 2 H 5 v -4 h 5 z m -2,1 v 1 l 1,-1 z",
-			style: "fill:#000000"
+			style: {
+				fill: "#000000"
+			}
 		}), createElement('path', {
 			d: "m 5,17 h 13 v 2 H 5 C 3.34,19 2,17.66 2,16 V 4 C 2,2.34 3.34,1 5,1 H 18 V 15 H 5 c -0.55,0 -1,0.45 -1,1 0,0.55 0.45,1 1,1 z m 6,-3.5 V 6.25 h 3.5 c 0.235702,0 0.5,-0.2642977 0.5,-0.5 0,-0.2357023 -0.264298,-0.5 -0.5,-0.5 H 11 V 2.5 C 11,2.22 10.78,2 10.5,2 10.22,2 10,2.22 10,2.5 V 5.25 H 6.5 C 6.2642977,5.25 6,5.5142977 6,5.75 6,5.9857023 6.2642977,6.25 6.5,6.25 H 10 v 7.25 c 0,0.28 0.22,0.5 0.5,0.5 0.28,0 0.5,-0.22 0.5,-0.5 z"
 		}), createElement('g', {
@@ -55,7 +57,10 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 				d: "m 5.75,16.425 h 1.5 v 3.5 L 6.5,19.225 5.75,19.925 Z"
 			}), createElement('path', {
 				d: "m 6,16.325 h 1 v 3.1 L 6.5,18.925 6,19.425 Z",
-				style: "fill:#ffffff;stroke-width:0.756"
+				style: {
+					fill: "#ffffff",
+					strokeWidth: 0.756
+				}
 			})
 		)
 	);
