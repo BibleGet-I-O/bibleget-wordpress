@@ -1,7 +1,7 @@
 .bibleget-popup-trigger {
 	cursor: pointer;
 }
-.bibleget-quote-div.bibleget-popup {
+.wp-block-bibleget-bible-quote.bibleget-popup {
 	display: none;
 	z-index: 999;
 	clear: both;

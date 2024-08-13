@@ -503,16 +503,10 @@ class SettingsPage {
 					}
 				);
 			}
-			if ( ! wp_style_is( 'jquery-ui-css', 'registered' ) ) {
-				wp_enqueue_style(
-					'jquery-ui-css',
-					'//ajax.googleapis.com/ajax/libs/jqueryui/' . wp_scripts()->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
-					false,
-					wp_scripts()->registered['jquery-ui-core']->ver
-				);
-			}
 			wp_enqueue_script( 'jquery-ui-progressbar' );
 			wp_enqueue_script( 'jquery-ui-dialog' );
+			wp_enqueue_style( 'wp-jquery-ui-progressbar' );
+			wp_enqueue_style( 'wp-jquery-ui-dialog' );
 			$store_gfonts_arr = [
 				'job' => [
 					'gfontsPreviewJob'   => (bool) true,

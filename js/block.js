@@ -3328,7 +3328,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 		const tgt = ev.currentTarget;
 		const popup_content = he.decode($(tgt).attr("data-popupcontent"));
 		const dlg = $(
-			'<div class="bibleget-quote-div bibleget-popup">' +
+			'<div class="wp-block-bibleget-bible-quote bibleget-popup">' +
 				popup_content +
 				"</div>"
 		).dialog({
@@ -3343,7 +3343,7 @@ const getKeyByValue = (object, value) => Object.keys(object).find((key) => objec
 			close: () => {
 				//autodestruct so we don't clutter with multiple dialog instances
 				dlg.dialog("destroy");
-				$(".bibleget-quote-div.bibleget-popup").remove();
+				$(".wp-block-bibleget-bible-quote.bibleget-popup").remove();
 			}
 		});
 		return false;

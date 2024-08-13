@@ -4,7 +4,7 @@
 
 		jQuery(".bibleget-popup-trigger").each(function(){
 			const popup_content = he.decode($(this).attr("data-popupcontent"));
-			const dlg = $('<div class="bibleget-quote-div bibleget-popup">'+popup_content+'</div>').dialog({
+			const dlg = $('<div class="wp-block-bibleget-bible-quote bibleget-popup">'+popup_content+'</div>').dialog({
 				autoOpen: false,
 				width: ($(window).width() * 0.8),
 				maxHeight: ($(window).height() * 0.8),
@@ -23,13 +23,13 @@
 
 
 		jQuery('.versesParagraph .verseText').each(function(){
-			jQuery(this).contents().first().filter(function(){ 
-				return ( 
+			jQuery(this).contents().first().filter(function(){
+				return (
 					this.nodeType === 1
 					&& ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
 					&& ( jQuery(this).parent('.verseText').prevAll('.verseText').length == 0 //is the first .verseText of a chapter
 						|| jQuery(this).parent('.verseText').prev('.verseText').contents().last().filter( function() { //the last node within the preceding .verseText node
-							return this.nodeType === 1 
+							return this.nodeType === 1
 								&& ( jQuery(this).hasClass('pof') || jQuery(this).hasClass('po') || jQuery(this).hasClass('pol') || jQuery(this).hasClass('pos') || jQuery(this).hasClass('poif') || jQuery(this).hasClass('poi') || jQuery(this).hasClass('poil') )
 						})
 					)
@@ -46,11 +46,11 @@
 			//AND it IS an element node with class pof,poif,po,poi,pol,pos,poil...
 			//AND (
 			//--	this is the first .verseText node of a chapter
-			//--	OR 
+			//--	OR
 			//--	the last node within the preceding .verseText node IS an ELEMENT node and HAS CLASS pof,poif,po,poi,poil
 			//-- )
 
-			//THEN change the css display of that (first node) to "inline-block" and left position it removing the width of the span with the verse number 
+			//THEN change the css display of that (first node) to "inline-block" and left position it removing the width of the span with the verse number
 			//TODO: shouldn't we do this any time it's the first node within a verseText node, since it follows a verseNum?
 
 
@@ -60,10 +60,10 @@
 								jQuery(this).hasClass('pof') && jQuery(this).parent('.verseText').prevAll('.verseText').length > 0
 						)
 				)
-			}).parent('.verseText').prev('.verseNum').before('<br>'); 
+			}).parent('.verseText').prev('.verseNum').before('<br>');
 			//HERE IS THE LOGIC:
 			//IF the (first node) following a .verseText node is not a text node,
-			//AND it IS an element node with class pof	 
+			//AND it IS an element node with class pof
 			//AND this is not the first .verseText node of a chapter
 			//THEN add a newline before the preceding .verseNum node containing the verse number
 
@@ -81,7 +81,7 @@
 			//AND it IS an element node with class po
 			//AND this is not the first .verseText node of a chapter
 			//AND the last node of the previous .verseText node has css display:inline-block
-			//THEN add a newline before the preceding .verseNum node containing the verse number 
+			//THEN add a newline before the preceding .verseNum node containing the verse number
 
 			//HERE INSTEAD WE REMOVE ANY EXTRA SPACES AT THE BEGINNING OF A VERSE...
 			jQuery(this).html( jQuery(this).html().replace( /^\s/, '' ) );

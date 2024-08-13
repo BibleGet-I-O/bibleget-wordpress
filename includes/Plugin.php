@@ -246,7 +246,7 @@ class Plugin {
 					$optionsurl = admin_url( 'options-general.php?page=bibleget-settings-admin' );
 					/* translators: you must not change the placeholders \"%s\" or the html <a href=\"%s\">, </a> */
 					$output = '<span style="color:Red;font-weight:bold;">' . sprintf( __( 'The requested version "%1$s" is not valid, please check the list of valid versions in the <a href="%2$s">settings page</a>', 'bibleget-io' ), $version, $optionsurl ) . '</span>';
-					return '<div class="bibleget-quote-div">' . $output . '</div>';
+					return '<div class="wp-block-bibleget-bible-quote">' . $output . '</div>';
 				}
 			}
 		}
@@ -277,7 +277,11 @@ class Plugin {
 			$query_validator = new QueryValidator( $queries, $atts['VERSION'], $current_page_url );
 			if ( false === $query_validator->validate_queries() ) {
 				$output = __( 'Bible Quote failure... (error processing query, please check syntax)', 'bibleget-io' );
-				return '<div class="bibleget-quote-div"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
+				if ( $is_shortcode ) {
+					return '<div class="wp-block-bibleget-bible-quote"><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
+				} else {
+					return '<div %s><span style="color:Red;font-weight:bold;">' . $output . '</span></div>';
+				}
 			}
 
 			$notices = get_option( 'bibleget_error_admin_notices', [] );
@@ -292,8 +296,8 @@ class Plugin {
 			$output = self::process_output( $finalquery );
 
 			if ( $is_shortcode ) {
-				wp_enqueue_script( 'bibleget-script', plugins_url( '../js/shortcode.js', __FILE__ ), [ 'jquery' ], '1.0', true );
-				wp_enqueue_script( 'htmlentities-script', '//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', [ 'jquery' ], '1.2.0', true );
+				wp_enqueue_script( 'bibleget-shortcode-script', plugins_url( '../js/shortcode.js', __FILE__ ), [ 'jquery' ], '1.0', true );
+				wp_enqueue_script( 'mathiasbynens-he-script', '//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js', [ 'jquery' ], '1.2.0', true );
 				// it shouldn't be necessary to call update_option here,
 				// because even though it's theoretically possible now to set all options inside the shortcode
 				// it would be so impractical that I cannot see anyone actual doing it
@@ -321,7 +325,7 @@ class Plugin {
 				. __( 'There are errors in the shortcode, please check carefully your query syntax:', 'bibleget-io' )
 				. " $queries"
 				. '</span>';
-			return '<div class="bibleget-quote-div">' . $output . '</div>';
+			return '<div %s>' . $output . '</div>';
 		}
 	}
 
@@ -564,7 +568,7 @@ class Plugin {
 						. htmlspecialchars( $output ) . '">' . $atts['QUERY'] . '</a>';
 			}
 		} else {
-			return '<div class="bibleget-quote-div">' . $output . '</div>';
+			return '<div %s>' . $output . '</div>';
 		}
 	}
 
@@ -668,7 +672,7 @@ class Plugin {
 			],
 			'editor_script'   => $script_handle,
 			'editor_style'    => $style_handle,
-			'render_callback' => [ 'BibleGet\Plugin', 'render_gutenberg_block' ],
+			'render_callback' => [ 'BibleGet\Plugin', 'render_block' ],
 		];
 		$myvars    = [
 			'ajax_url'               => admin_url( 'admin-ajax.php' ),
@@ -713,7 +717,7 @@ class Plugin {
 			filemtime( "$dir/$popup_css" )
 		);
 		wp_enqueue_script(
-			'htmlentities-script',
+			'mathiasbynens-he-script',
 			'//cdn.jsdelivr.net/gh/mathiasbynens/he@1.2.0/he.min.js',
 			[ 'jquery' ],
 			'1.2.0',
@@ -815,12 +819,12 @@ class Plugin {
 	}
 
 	/**
-	 * Gutenberg Render callback
+	 * Server Side Render callback for our Bible quote block
 	 *
 	 * @param array $atts Block attributes.
 	 * @return string
 	 */
-	public static function render_gutenberg_block( $atts ) {
+	public static function render_block( $atts ) {
 		self::write_log( __METHOD__ );
 		$wrapper_attributes = get_block_wrapper_attributes();
 		$output = ''; // this will be whatever html we are returning to be rendered.
@@ -830,7 +834,7 @@ class Plugin {
 		if ( count( $atts['VERSION'] ) < 1 ) {
 			/* translators: do NOT translate the parameter names "version" or "versions" !!! */
 			$output = '<span style="color:Red;font-weight:bold;">' . __( 'You must indicate the desired version with the parameter "version" (or the desired versions as a comma separated list with the parameter "versions")', 'bibleget-io' ) . '</span>';
-			return '<div class="bibleget-quote-div">' . $output . '</div>';
+			return "<div $wrapper_attributes>" . $output . '</div>';
 		}
 
 		$vversions = get_option( 'bibleget_versions', [] );
@@ -851,7 +855,7 @@ class Plugin {
 							$optionsurl
 						)
 						. '</span>';
-					return '<div class="bibleget-quote-div">' . $output . '</div>';
+					return "<div $wrapper_attributes>" . $output . '</div>';
 				}
 			}
 		}
