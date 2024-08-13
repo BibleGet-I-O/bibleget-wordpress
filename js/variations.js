@@ -16,58 +16,51 @@ const biblePopupIcon = createElement('svg', {
 		width: 20,
 		height: 20
 	}), createElement('path', {
-		d: "m 15,10 h -4 v 2 h 1 l 1,1 v -1 h 2 z m -5,2 H 9 v 2 H 5 v -4 h 5 z m -2,1 v 1 l 1,-1 z",
-		style: {
-			fill: "#000000"
-		}
-	}), createElement('path', {
-		d: "m 5,17 h 13 v 2 H 5 C 3.34,19 2,17.66 2,16 V 4 C 2,2.34 3.34,1 5,1 H 18 V 15 H 5 c -0.55,0 -1,0.45 -1,1 0,0.55 0.45,1 1,1 z m 6,-3.5 V 6.25 h 3.5 c 0.235702,0 0.5,-0.2642977 0.5,-0.5 0,-0.2357023 -0.264298,-0.5 -0.5,-0.5 H 11 V 2.5 C 11,2.22 10.78,2 10.5,2 10.22,2 10,2.22 10,2.5 V 5.25 H 6.5 C 6.2642977,5.25 6,5.5142977 6,5.75 6,5.9857023 6.2642977,6.25 6.5,6.25 H 10 v 7.25 c 0,0.28 0.22,0.5 0.5,0.5 0.28,0 0.5,-0.22 0.5,-0.5 z"
+		d: "M 5 17 L 18 17 L 18 19 L 5 19 C 3.34 19 2 17.66 2 16 L 2 4 C 2 2.34 3.34 1 5 1 L 18 1 L 18 15 L 5 15 C 4.45 15 4 15.45 4 16 C 4 16.55 4.45 17 5 17 Z M 11.519 13.469 L 11.5 6.9 L 14.5 6.8 C 15 6.5 15 5.986 15 5.75 C 15 5.514 15 5.1 14.5 4.8 L 11.5 4.8 L 11.5 2.5 C 11.2 2 10.78 2 10.5 2 C 10.22 2 9.8 2 9.5 2.5 L 9.5 4.8 L 6.5 4.8 C 6 5.1 6 5.514 6 5.75 C 6 5.986 6 6.5 6.5 6.8 L 9.5 6.8 L 9.5 13.5 C 9.8 14 10.22 14 10.5 14 C 10.78 14 11.2 14 11.5 13.5 L 11.519 13.469 Z"
 	}), createElement('g', {
-			transform: "translate(-1)"
 		}, createElement('path', {
-			d: "m 5.75,16.425 h 1.5 v 3.5 L 6.5,19.225 5.75,19.925 Z"
+			d: "M 5.7 16.4 L 7.5 16.4 L 7.5 19.9 L 6.5 19.23 L 5.5 19.9 L 5.5 16.4 L 5.7 16.4 Z"
 		}), createElement('path', {
-			d: "m 6,16.325 h 1 v 3.1 L 6.5,18.925 6,19.425 Z",
+			d: "M 6 16.3 L 7 16.3 L 7 19.1 L 6.5 18.7 L 6 19.1 L 6 16.3 Z",
 			style: {
-				fill: "#ffffff",
-				strokeWidth: 0.756
+				fill: "#ffffff"
 			}
 		})
 	), createElement('g', {
 		}, createElement('path', {
-			d: "m 15.168293,0.0909007 h 3.334838 c 0.755795,0 1.364252,0.60910246 1.364252,1.3657007 v 1.3657005 c 0,0.7565981 -0.608457,1.3657006 -1.364252,1.3657006 h -3.334838 l -1.363807,0.8398426 c 0,0 -4.45e-4,-1.8272441 -4.45e-4,-2.2055432 V 1.4566014 c 0,-0.75659824 0.608456,-1.3657007 1.364252,-1.3657007 z",
+			d: "m 15.168,0.09 h 3.335 c 0.756,0 1.364,0.609 1.364,1.366 v 1.366 c 0,0.757 -0.608,1.366 -1.364,1.366 h -3.335 l -1.364,0.84 c 0,0 -4.45e-4,-1.827 -4.45e-4,-2.206 V 1.457 c 0,-0.757 0.608,-1.366 1.364,-1.366 z",
 			style: {
 				fill: "#ffffff",
 				stroke: "#ffffff",
-				strokeWidth: 0.2,
+				strokeWidth: 0.8,
 				strokeMiterlimit: 4,
 				strokeDasharray: "none"
 			}
 		}), createElement('path', {
-			d: "m 15.177478,0.17135863 h 3.231335 c 0.732337,0 1.321909,0.5895716 1.321909,1.32190947 v 1.3219094 c 0,0.7323378 -0.589572,1.3219094 -1.321909,1.3219094 H 15.177478 L 13.856,4.95 c 0,0 -4.31e-4,-1.7686536 -4.31e-4,-2.1348225 V 1.4932681 c 0,-0.73233787 0.589571,-1.32190947 1.321909,-1.32190947 z",
+			d: "m 15.177,0.171 h 3.231 c 0.732,0 1.322,0.59 1.322,1.322 v 1.322 c 0,0.732 -0.59,1.322 -1.322,1.322 H 15.177 L 13.856,4.95 c 0,0 -4.31e-4,-1.769 -4.31e-4,-2.135 V 1.493 c 0,-0.732 0.59,-1.322 1.322,-1.322 z",
 			style: {
 				fill: "#ffffff",
 				stroke: "#000000",
-				strokeWidth: 0.2,
+				strokeWidth: 0.5,
 				strokeMiterlimit: 4,
 				strokeDasharray: "none"
 			}
 		}), createElement('circle', {
-			r: 0.073,
+			r: 0.1,
 			cy: 2.23,
 			cx: 15.92,
 			style: {
 				fill:"#000000"
 			}
 		}), createElement('circle', {
-			r: 0.073,
+			r: 0.1,
 			cy: 2.23,
 			cx: 16.92,
 			style: {
 				fill:"#000000"
 			}
 		}), createElement('circle', {
-			r: 0.073,
+			r: 0.1,
 			cy: 2.23,
 			cx: 17.92,
 			style: {
@@ -76,7 +69,7 @@ const biblePopupIcon = createElement('svg', {
 		})
 	), createElement('rect', {
 		width: 3.3,
-		height: 0.8,
+		height: 1,
 		x: 16.5,
 		y: 6.2,
 		ry: 0.38,
@@ -84,7 +77,7 @@ const biblePopupIcon = createElement('svg', {
 		style: {
 			fill: "#ffffff",
 			stroke: "#000000",
-			strokeWidth: 0.06,
+			strokeWidth: 0.2,
 			strokeLinecap: "round",
 			strokeLinejoin: "miter",
 			strokeMiterlimit: 4,
@@ -92,14 +85,14 @@ const biblePopupIcon = createElement('svg', {
 		}
 	}), createElement('rect', {
 		width: 3.8,
-		height: 0.8,
+		height: 1,
 		x: 15.6,
 		y: 8.7,
 		ry: 0.38,
 		style: {
 			fill: "#ffffff",
 			stroke: "#000000",
-			strokeWidth: 0.06,
+			strokeWidth: 0.2,
 			strokeLinecap: "round",
 			strokeLinejoin: "miter",
 			strokeMiterlimit: 4,
@@ -107,7 +100,7 @@ const biblePopupIcon = createElement('svg', {
 		}
 	}), createElement('rect', {
 		width: 3.3,
-		height: 0.8,
+		height: 1,
 		x: 16.5,
 		y: 11.6,
 		ry: 0.38,
@@ -115,7 +108,7 @@ const biblePopupIcon = createElement('svg', {
 		style: {
 			fill: "#ffffff",
 			stroke: "#000000",
-			strokeWidth: 0.06,
+			strokeWidth: 0.2,
 			strokeLinecap: "round",
 			strokeLinejoin: "miter",
 			strokeMiterlimit: 4,
