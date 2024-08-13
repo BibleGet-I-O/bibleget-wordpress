@@ -4,7 +4,6 @@
 	"name": "bibleget/bible-quote",
 	"title": "Bible quote",
 	"category": "widgets",
-	"icon": "book-alt",
 	"description": "Insert Bible quotes from a choice of Bible versions into your articles or pages",
 	"keywords": [ "bible", "quote", "verses", "gospel" ],
 	"version": "8.3",

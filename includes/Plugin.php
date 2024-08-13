@@ -645,7 +645,6 @@ class Plugin {
 		$block_def = [
 			'title'           => __( 'Bible quote', 'bibleget-io' ),
 			'category'        => 'widgets',
-			'icon'            => 'book-alt',
 			'description'     => __( 'Insert Bible quotes from a choice of Bible versions into your articles or pages', 'bibleget-io' ),
 			'keywords'        => [ 'bible', 'quote', 'verses', 'gospel' ],
 			'version'         => $plugin_data['Version'],
