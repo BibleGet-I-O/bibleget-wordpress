@@ -695,8 +695,8 @@ class SettingsPage {
 		}
 
 		$counter = ( $this->bible_versions_by_langcount + $this->bible_version_langs_count );
-		$size    = $counter < 10 ? $counter : 10;
-		echo '<select id="versionselect" size=' . intval( $size ) . ' multiple>';
+		// $size    = $counter < 10 ? $counter : 10;
+		echo '<select id="versionselect" size=' . intval( $counter ) . ' multiple>';
 
 		$langs                  = $this->bible_versions_by_lang['langs'];
 		$bible_versions_by_lang = $this->bible_versions_by_lang['versions'];
