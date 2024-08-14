@@ -536,7 +536,7 @@ class SettingsPage {
 		// HTML of the main section of the options page.
 		?>
 		<div id="page-wrap">
-			<h2 id="bibleget-h2"><?php _e( 'BibleGet I/O Settings', 'bibleget-io' ); ?></h2>
+			<h2 id="bibleget-h2"><?php esc_html_e( 'BibleGet I/O Settings', 'bibleget-io' ); ?></h2>
 			<div id="form-wrapper">
 				<form method="post" action="options.php">
 					<?php
@@ -559,7 +559,7 @@ class SettingsPage {
 					by the BibleGet service endpoint -->
 			<div id="bibleget-settings-container">
 				<div id="bibleget-settings-contents">
-					<h3><?php _e( 'Current BibleGet I/O engine information:', 'bibleget-io' ); ?></h3>
+					<h3><?php esc_html_e( 'Current BibleGet I/O engine information:', 'bibleget-io' ); ?></h3>
 					<ol type="A">
 						<li>
 						<?php
@@ -572,16 +572,25 @@ class SettingsPage {
 							$b2      = '</b>';
 							$string1 = $b1 . $this->bible_versions_by_langcount . $b2;
 							$string2 = $b1 . $this->bible_version_langs_count . $b2;
-							/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
-							printf( __( 'The BibleGet I/O engine currently supports %1$s versions of the Bible in %2$s different languages.', 'bibleget-io' ), $string1, $string2 );
-							echo '<br />';
-							_e( 'List of currently supported Bible versions, subdivided by language:', 'bibleget-io' );
+							$msg     = sprintf(
+								/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/printf. */
+								__( 'The BibleGet I/O engine currently supports %1$s versions of the Bible in %2$s different languages.', 'bibleget-io' ),
+								$string1,
+								$string2
+							);
+							echo esc_html( $msg ) . '<br />';
+							esc_html_e( 'List of currently supported Bible versions, subdivided by language:', 'bibleget-io' );
 							echo '<div class="bibleget-dynamic-data-wrapper"><ol id="versionlangs-ol">';
 							$cc = 0;
 						foreach ( $this->bible_versions_by_lang['langs'] as $lang ) {
-							echo '<li>-' . $lang . '-<ul>';
+							echo '<li>-' . esc_html( $lang ) . '-<ul>';
 							foreach ( $this->bible_versions_by_lang['versions'][ $lang ] as $abbr => $value ) {
-								echo '<li>' . ( ++$cc ) . ') ' . $abbr . ' — ' . $value['fullname'] . ' (' . $value['year'] . ')</li>';
+								echo '<li>'
+									. esc_html(
+										( ++$cc ) . ') ' . $abbr . ' — ' . $value['fullname']
+										. ' (' . $value['year'] . ')'
+									)
+									. '</li>';
 							}
 							echo '</ul></li>';
 						}
@@ -591,27 +600,34 @@ class SettingsPage {
 						<li>
 						<?php
 							$string3 = $b1 . count( $this->bible_books_langs ) . $b2;
-							/* translators: please do not change the placeholders %s, it will be substituted dynamically by values in the script. See http://php.net/printf. */
-							printf( __( 'The BibleGet I/O engine currently understands the names of the books of the Bible in %s different languages:', 'bibleget-io' ), $string3 );
-							echo '<br />';
-							echo '<div class="bibleget-dynamic-data-wrapper">' . implode( ', ', $this->bible_books_langs ) . '</div>';
+							$msg     = sprintf(
+								/* translators: please do not change the placeholders %s, it will be substituted dynamically by values in the script. See http://php.net/printf. */
+								__( 'The BibleGet I/O engine currently understands the names of the books of the Bible in %s different languages:', 'bibleget-io' ),
+								$string3
+							);
+							echo esc_html( $msg ) . '<br />';
+							echo '<div class="bibleget-dynamic-data-wrapper">' . esc_html( implode( ', ', $this->bible_books_langs ) ) . '</div>';
 						?>
 							</li>
 					</ol>
 					<div class="flexcontainer">
 						<div class="flexitem">
-							<p><?php _e( 'This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.', 'bibleget-io' ); ?></p>
-							<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php _e( 'RENEW INFORMATION FROM BIBLEGET SERVER', 'bibleget-io' ); ?></button>
+							<p><?php esc_html_e( 'This information from the BibleGet server is cached locally to improve performance. If new versions have been added to the BibleGet server or new languages are supported, this information might be outdated. In that case you can click on the button below to renew the information.', 'bibleget-io' ); ?></p>
+							<button id="bibleget-server-data-renew-btn" class="button button-secondary"><?php
+								esc_html_e( 'RENEW INFORMATION FROM BIBLEGET SERVER', 'bibleget-io' );
+							?></button>
 						</div>
 						<div class="flexitem">
-							<p>
-								<?php _e( 'If there has been a recent update to the plugin with new functionality, or a recent update to the BibleGet endpoint engine, you may have to flush the cached Bible quotes in order for any new functionalities to work correctly. The cached Bible quotes will be emptied on their own within a week; click here in order to flush them immediately. However use with caution: the BibleGet endpoint imposes a hard limit of 30 requests in a two day period day for the same Bible quote, and 100 requests in a two day period for different Bible quotes. If you have a large number of Bible quotes in your articles and pages, make sure you are not over the limit, otherwise you may start seeing empty Bible quotes appear on your website.', 'bibleget-io' ); ?>
-							</p>
-							<button id="bibleget-cache-flush-btn" class="button button-secondary"><?php _e( 'FLUSH CACHED BIBLE QUOTES', 'bibleget-io' ); ?></button>
+							<p><?php
+								esc_html_e( 'If there has been a recent update to the plugin with new functionality, or a recent update to the BibleGet endpoint engine, you may have to flush the cached Bible quotes in order for any new functionalities to work correctly. The cached Bible quotes will be emptied on their own within a week; click here in order to flush them immediately. However use with caution: the BibleGet endpoint imposes a hard limit of 30 requests in a two day period day for the same Bible quote, and 100 requests in a two day period for different Bible quotes. If you have a large number of Bible quotes in your articles and pages, make sure you are not over the limit, otherwise you may start seeing empty Bible quotes appear on your website.', 'bibleget-io' );
+							?></p>
+							<button id="bibleget-cache-flush-btn" class="button button-secondary"><?php
+								esc_html_e( 'FLUSH CACHED BIBLE QUOTES', 'bibleget-io' );
+							?></button>
 						</div>
 					</div>
 				</div>
-				<div id="bibleget_ajax_spinner"><img src="<?php echo admin_url(); ?>images/wpspin_light-2x.gif" /></div>
+				<div id="bibleget_ajax_spinner"><img src="<?php echo esc_url( admin_url( 'images/wpspin_light-2x.gif' ) ); ?>" /></div>
 			</div>
 			<div class="page-clear"></div>
 			<hr>
@@ -629,7 +645,11 @@ class SettingsPage {
 				$donate_img = plugins_url( '../images/btn_donateCC_LG.gif', __FILE__ );
 			}
 			?>
-			<div id="bibleget-donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58"><button><img src="<?php echo $donate_img; ?>" /></button></a></div>
+			<div id="bibleget-donate">
+				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HDS7XQKGFHJ58">
+					<button><img src="<?php echo esc_html( $donate_img ); ?>" /></button>
+				</a>
+			</div>
 		</div>
 		<div id="bibleget-settings-notification">
 			<span class="bibleget-settings-notification-dismiss"><a title="dismiss this notification">x</a></span>
@@ -661,7 +681,7 @@ class SettingsPage {
 	 */
 	public function print_section_info2() {
 		Plugin::write_log( __METHOD__ );
-		print __( 'Choose your preferences to facilitate the usage of the shortcode:', 'bibleget-io' );
+		esc_html_e( 'Choose your preferences to facilitate the usage of the shortcode:', 'bibleget-io' );
 	}
 
 	/**
@@ -676,7 +696,7 @@ class SettingsPage {
 
 		$counter = ( $this->bible_versions_by_langcount + $this->bible_version_langs_count );
 		$size    = $counter < 10 ? $counter : 10;
-		echo '<select id="versionselect" size=' . $size . ' multiple>';
+		echo '<select id="versionselect" size=' . intval( $size ) . ' multiple>';
 
 		$langs                  = $this->bible_versions_by_lang['langs'];
 		$bible_versions_by_lang = $this->bible_versions_by_lang['versions'];
@@ -685,18 +705,22 @@ class SettingsPage {
 			$bget['VERSION'] = [ 'NABRE' ];
 		}
 		foreach ( $langs as $lang ) {
-			echo '<optgroup label="-' . $lang . '-">';
+			echo '<optgroup label="-' . esc_html( $lang ) . '-">';
 			foreach ( $bible_versions_by_lang[ $lang ] as $abbr => $value ) {
 				$selectedstr = '';
 				if ( in_array( $abbr, $bget['VERSION'], true ) ) {
 					$selectedstr = ' SELECTED';
 				}
-				echo '<option value="' . $abbr . '"' . $selectedstr . '>' . $abbr . ' — ' . $value['fullname'] . ' (' . $value['year'] . ')</option>';
+				echo '<option value="' . esc_html( $abbr ) . '"' . esc_html( $selectedstr ) . '>'
+					. esc_html( $abbr . ' — ' . $value['fullname'] . ' (' . $value['year'] . ')' )
+					. '</option>';
 			}
 			echo '</optgroup>';
 		}
 		echo '</select>';
-		echo '<br /><i>' . __( 'In order to select multiple items, hold down CTRL key (Command key on Mac) while clicking items.', 'bibleget-io' ) . '</i>';
+		echo '<br /><i>'
+			. esc_html( __( 'In order to select multiple items, hold down CTRL key (Command key on Mac) while clicking items.', 'bibleget-io' ) )
+			. '</i>';
 	}
 
 	/**
@@ -705,30 +729,45 @@ class SettingsPage {
 	public function googlefontsapikey_callback() {
 		Plugin::write_log( __METHOD__ );
 
-		echo '<label for="googlefontsapi_key">' . __( 'Google Fonts API Key', 'bibleget-io' ) . ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . $this->gfonts_api_key . '" size="50" /></label>';
+		echo '<label for="googlefontsapi_key">' . esc_html( __( 'Google Fonts API Key', 'bibleget-io' ) )
+			. ' <input type="text" id="googlefontsapi_key" name="bibleget_settings[googlefontsapi_key]" value="' . esc_html( $this->gfonts_api_key ) . '" size="50" />'
+			. '</label>';
 		if ( $this->gfonts_api_key_check_result ) {
 			switch ( $this->gfonts_api_key_check_result ) {
 				case 'CURL_ERROR':
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">' . __( 'CURL ERROR WHEN SENDING REQUEST', 'bibleget-io' ) . '</span><br />';
+					echo '<span style="color:DarkViolet;font-weight:bold;margin-left:12px;">'
+						. esc_html( __( 'CURL ERROR WHEN SENDING REQUEST', 'bibleget-io' ) )
+						. '</span><br />';
 					foreach ( $this->gfonts_api_errors as $er ) {
 						if ( 403 === $er ) {
 							echo '<br /><i style="color:DarkViolet;margin-left:12px;">';
-							echo __( "This server's IP address has not been given access to the Google Fonts API using this key.", 'bibleget-io' );
-							echo ' ' . __( 'Please verify that access has been given to the correct IP addresses.', 'bibleget-io' );
-							echo ' ' . sprintf( __( 'Once you are sure that this has been fixed you may %1$s click here %2$s to retest the key (you may need to wait a few minutes for the settings to take effect in the Google Cloud Console).', 'bibleget-io' ), '<span id="biblegetGFapiKeyRetest">', '</span>' );
+							echo esc_html( __( "This server's IP address has not been given access to the Google Fonts API using this key.", 'bibleget-io' ) );
+							echo ' ';
+							echo esc_html( __( 'Please verify that access has been given to the correct IP addresses.', 'bibleget-io' ) );
+							echo ' ';
+							printf(
+								/* translators: 1. <span id="biblegetGFapiKeyRetest">, 2. </span> */
+								esc_html( __( 'Once you are sure that this has been fixed you may %1$s click here %2$s to retest the key (you may need to wait a few minutes for the settings to take effect in the Google Cloud Console).', 'bibleget-io' ) ),
+								'<span id="biblegetGFapiKeyRetest">',
+								'</span>'
+							);
 							echo '</i>';
 						}
-						echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . $er . '</i>';
+						echo '<br /><i style="color:DarkViolet;margin-left:12px;">' . intval( $er ) . '</i>';
 					}
 					break;
 				case 'JSON_ERROR':
-					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">' . __( 'NO VALID JSON RESPONSE', 'bibleget-io' ) . '</span><br />';
+					echo '<span style="color:Orange;font-weight:bold;margin-left:12px;">'
+						/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+						. esc_html( __( 'NO VALID JSON RESPONSE', 'bibleget-io' ) )
+						. '</span><br />';
 					break;
 				case 'REQUEST_NOT_SENT':
-					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">' . __( 'SERVER UNABLE TO MAKE REQUESTS', 'bibleget-io' ) . '</span><br />';
+					echo '<span style="color:Red;font-weight:bold;margin-left:12px;">'
+						/* translators: refers to the outcome of the validity check of the Google Fonts API key */
+						. esc_html( __( 'SERVER UNABLE TO MAKE REQUESTS', 'bibleget-io' ) )
+						. '</span><br />';
 					break;
 				case 'SUCCESS':
 				default:
@@ -752,14 +791,19 @@ class SettingsPage {
 						: '[0 ' . _n( 'day', 'days', 2, 'bibleget-io' ) . ']';
 
 					/* translators: refers to the outcome of the validity check of the Google Fonts API key */
-					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">' . __( 'VALID', 'bibleget-io' ) . '</span><br />';
-					echo ' <i>' . sprintf(
-						__( 'Google Fonts API refresh scheduled in: %s', 'bibleget-io' ),
-						$gfonts_api_key_time_left
+					echo '<span style="color:Green;font-weight:bold;margin-left:12px;">'
+						. esc_html( __( 'VALID', 'bibleget-io' ) )
+						. '</span><br />';
+					echo ' <i>' . esc_html(
+						sprintf(
+							/* translators: period of time (month, days, hours, minutes) until next sync with the Google Fonts API */
+							__( 'Google Fonts API refresh scheduled in: %s', 'bibleget-io' ),
+							$gfonts_api_key_time_left
+						)
 					);
 					echo ' ' . sprintf(
 						/* translators: 1. html span open, 2. html span close */
-						__( 'OR %1$s Click here %2$s to force refresh the list of fonts from the Google Fonts API', 'bibleget-io' ),
+						esc_html( __( 'OR %1$s Click here %2$s to force refresh the list of fonts from the Google Fonts API', 'bibleget-io' ) ),
 						'<span id="biblegetForceRefreshGFapiResults">',
 						'</span>'
 					);
@@ -767,19 +811,30 @@ class SettingsPage {
 					break;
 			}
 		} else {
-			echo '<br /><i>' . __( 'If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.', 'bibleget-io' ) .
-				' ' . __( 'If you do not yet have a Google Fonts API Key, you can get one here', 'bibleget-io' ) .
+			echo '<br /><i>' .
+				esc_html( __( 'If you would like to use a Google Font that is not already included in the list of available fonts, you should use a Google Fonts API key.', 'bibleget-io' ) ) .
+				' ' . esc_html( __( 'If you do not yet have a Google Fonts API Key, you can get one here', 'bibleget-io' ) ) .
 				': <a href="https://developers.google.com/fonts/docs/developer_api">https://developers.google.com/fonts/docs/developer_api</a>' .
-				' ' . __( "If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'", 'bibleget-io' ) .
-				' ' . __( 'and if you restrict to specific IP addresses be sure to include any and all IP addresses that this server may use', 'bibleget-io' ) .
-				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-				', ' . sprintf( __( 'specifically the ip address found in the %s variable (it may take a few minutes to be effective).', 'bibleget-io' ), '&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;' ) .
-				' ' . __( 'A successful key will be cached and retested every 3 months.', 'bibleget-io' ) .
-				' ' . __( 'Please note that this may have a little bit of an impact on the loading performance of your WordPress Customizer.', 'bibleget-io' ) .
-				' ' . __( 'If you notice that it becomes too sluggish, you had best leave this field empty.', 'bibleget-io' ) .
-				/* translators: please do not change the placeholders %s, they will be substituted dynamically by values in the script. See http://php.net/sprintf. */
-				'<br /> (' . sprintf( __( 'To see the value of the %1$s variable on your server %2$s Press here %3$s', 'bibleget-io' ), '&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;', '<span id="biblegetio_reveal_server_variable" tabindex="0">', '</span>' ) .
-				'<span id="biblegetio_hidden_server_variable"> [' . $_SERVER['SERVER_ADDR'] . '] )</span>' .
+				' ' . esc_html( __( "If you choose to apply restrictions to your api key, choose 'IP Addresses (web servers, cron jobs etc)'", 'bibleget-io' ) ) .
+				' ' . esc_html( __( 'and if you restrict to specific IP addresses be sure to include any and all IP addresses that this server may use', 'bibleget-io' ) ) .
+				', ' . sprintf(
+					/* translators: %s = $_SERVER['SERVER_ADDR'] */
+					esc_html( __( 'specifically the ip address found in the %s variable (it may take a few minutes to be effective).', 'bibleget-io' ) ),
+					'&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;'
+				) .
+				' ' . esc_html( __( 'A successful key will be cached and retested every 3 months.', 'bibleget-io' ) ) .
+				' ' . esc_html( __( 'Please note that this may have a little bit of an impact on the loading performance of your WordPress Customizer.', 'bibleget-io' ) ) .
+				' ' . esc_html( __( 'If you notice that it becomes too sluggish, you had best leave this field empty.', 'bibleget-io' ) ) .
+				'<br /> (' . sprintf(
+					/* translators: 1. $_SERVER['SERVER_ADDR'], 2. <span>, 3. </span> */
+					esc_html( __( 'To see the value of the %1$s variable on your server %2$s Press here %3$s', 'bibleget-io' ) ),
+					'&#x24;&#x5F;SERVER&#x5B;&#x27;SERVER&#x5F;ADDR&#x27;&#x5D;',
+					'<span id="biblegetio_reveal_server_variable" tabindex="0">',
+					'</span>'
+				) .
+				'<span id="biblegetio_hidden_server_variable"> [' .
+				( isset( $_SERVER['SERVER_ADDR'] ) ? esc_html( sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) ) : 'N/A' ) .
+				'] )</span>' .
 				'</i>';
 		}
 	}
@@ -820,10 +875,13 @@ class SettingsPage {
 	 */
 	public static function set_curl_interface( $handle ) {
 		Plugin::write_log( __METHOD__ );
-		if ( isset( $_SERVER['SERVER_ADDR'] ) && false === self::is_local_ip( $_SERVER['SERVER_ADDR'] ) ) {
-			//phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
-			curl_setopt( $handle, CURLOPT_INTERFACE, $_SERVER['SERVER_ADDR'] );
-			Plugin::write_log( __METHOD__ . " cURL option CURLOPT_INTERFACE set to IP {$_SERVER['SERVER_ADDR']}" );
+		if ( isset( $_SERVER['SERVER_ADDR'] ) ) {
+			$addr = sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) );
+			if ( false === self::is_local_ip( $addr ) ) {
+				//phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
+				curl_setopt( $handle, CURLOPT_INTERFACE, $addr );
+				Plugin::write_log( __METHOD__ . " cURL option CURLOPT_INTERFACE set to IP {$addr}" );
+			}
 		}
 	}
 
@@ -861,11 +919,11 @@ class SettingsPage {
 						. '</span>';
 					update_option( 'bibleget_error_admin_notices', $notices );
 					Plugin::write_log( __METHOD__ . ' Request to Google Fonts API ended in failure' );
-					// Plugin::write_log( $response );
+					// Plugin::write_log( $response );.
 					$result = 'CURL_ERROR';
 				} else {
 					Plugin::write_log( __METHOD__ . ' Request to Google Fonts API did not end in failure' );
-					// Plugin::write_log( $response );
+					// Plugin::write_log( $response );.
 				}
 				$status = wp_remote_retrieve_response_code( $response );
 				$body   = wp_remote_retrieve_body( $response );
@@ -1139,8 +1197,9 @@ class SettingsPage {
 		Plugin::write_log( __METHOD__ );
 		check_ajax_referer( 'refresh_gfonts_results_nonce', 'security', true );
 		if ( isset( $_POST['gfontsApiKey'] ) && '' !== $_POST['gfontsApiKey'] ) {
-			if ( get_transient( md5( $_POST['gfontsApiKey'] ) ) ) {
-				delete_transient( md5( $_POST['gfontsApiKey'] ) );
+			$gfonts_api_key = sanitize_text_field( wp_unslash( $_POST['gfontsApiKey'] ) );
+			if ( get_transient( md5( $gfonts_api_key ) ) ) {
+				delete_transient( md5( $gfonts_api_key ) );
 				echo 'TRANSIENT_DELETED';
 				wp_die();
 			}

@@ -152,7 +152,11 @@ class Plugin {
 				} elseif ( str_ends_with( $option_ucase, 'FORMAT' ) ) {
 					$option_ucase = 'FORMAT';
 				}
-				if ( $r->getConstant( $option_ucase ) && is_array( $r->getConstant( $option_ucase ) ) && in_array( $atts[ $option ], array_keys( $r->getConstant( $option_ucase ) ) ) ) {
+				if (
+					$r->getConstant( $option_ucase )
+					&& is_array( $r->getConstant( $option_ucase ) )
+					&& in_array( $atts[ $option ], array_keys( $r->getConstant( $option_ucase ) ), true )
+				) {
 					// if user is using a string value instead of our enum values, let's try to get an enum value from the string value.
 					$atts[ $option ] = $r->getConstant( $option_ucase )[ $atts[ $option ] ];
 				}
@@ -207,9 +211,9 @@ class Plugin {
 	/**
 	 * Creates the shortcode useful for injecting Bible Verses into a page
 	 * Example usage:
-	 * [bibleget query="Matthew1:1-5" version="CEI2008"]
-	 * [bibleget query="Matthew1:1-5" versions="CEI2008,NVBSE"]
-	 * [bibleget]Matthew1:1-5[/bibleget]
+	 * [bibleget query="Matthew 1:1-5" version="CEI2008"]
+	 * [bibleget query="Matthew 1:1-5" versions="CEI2008,NVBSE"]
+	 * [bibleget]Matthew 1:1-5[/bibleget]
 	 *
 	 * @param array  $atts Shortcode attributes.
 	 * @param string $content Shortcode content between opening and closing tag.
@@ -358,6 +362,11 @@ class Plugin {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
+					/**
+					 * \DomNode is \DomElement
+					 *
+					 * @var \DomElement $bible_version_el
+					 */
 					$bible_version_el->setAttribute( 'style', 'display:none;' );
 				}
 			}
@@ -366,6 +375,11 @@ class Plugin {
 				$non_default_layout = true;
 				$bible_version_els  = $xpath->query( '//p[contains(@class,"bibleVersion")]' );
 				foreach ( $bible_version_els as $bible_version_el ) {
+					/**
+					 * \DomNode is \DomElement
+					 *
+					 * @var \DomElement $bible_version_el
+					 */
 					$el_class = $bible_version_el->getAttribute( 'class' );
 					$bible_version_el->setAttribute( 'class', $el_class . ' bbGetAlign' . $atts['LAYOUTPREFS_BIBLEVERSIONALIGNMENT'] );
 				}
@@ -417,6 +431,11 @@ class Plugin {
 				$non_default_layout = true;
 				$book_chapter_els   = $xpath->query( '//p[contains(@class,"bookChapter")]' );
 				foreach ( $book_chapter_els as $book_chapter_el ) {
+					/**
+					 * \DomNode is \DomElement
+					 *
+					 * @var \DomElement $book_chapter_el
+					 */
 					$el_class = $book_chapter_el->getAttribute( 'class' );
 					$book_chapter_el->setAttribute( 'class', $el_class . ' bbGetAlign' . $atts['LAYOUTPREFS_BOOKCHAPTERALIGNMENT'] );
 				}
@@ -436,8 +455,8 @@ class Plugin {
 						$usrprop  = 'bibleget_biblebooks' . ( $book_num - 1 );
 						$jsbook   = json_decode( get_option( $usrprop ), true );
 						// get the index of the current language from the available languages.
-						$bible_books_langs  = get_option( 'bibleget_languages' );
-						$current_lang_idx = array_search( $language_name, $bible_books_langs, true );
+						$bible_books_langs = get_option( 'bibleget_languages' );
+						$current_lang_idx  = array_search( $language_name, $bible_books_langs, true );
 						if ( false === $current_lang_idx ) {
 							$current_lang_idx = array_search( 'English', $bible_books_langs, true );
 						}
@@ -518,6 +537,11 @@ class Plugin {
 						break;
 					case BGET::POS['BOTTOMINLINE']:
 						foreach ( $book_chapter_els as $book_chapter_el ) {
+							/**
+							 * \DomNode is \DomElement
+							 *
+							 * @var \DomElement $book_chapter_el
+							 */
 							$class = $book_chapter_el->getAttribute( 'class' );
 							$text  = $book_chapter_el->textContent;
 							$span  = $dom_document->createElement( 'span', $text );
@@ -533,6 +557,11 @@ class Plugin {
 				$non_default_layout = true;
 				$verse_number_els   = $xpath->query( '//span[contains(@class,"verseNum")]' );
 				foreach ( $verse_number_els as $verse_number_el ) {
+					/**
+					 * \DomNode is \DomElement
+					 *
+					 * @var \DomElement $verse_number_el
+					 */
 					$verse_number_el->setAttribute( 'style', 'display:none;' );
 				}
 			}
@@ -568,7 +597,7 @@ class Plugin {
 						. htmlspecialchars( $output ) . '">' . $atts['QUERY'] . '</a>';
 			}
 		} else {
-			return '<div %s>' . $output . '</div>';
+			return '<div class="wp-block-bibleget-bible-quote">' . $output . '</div>';
 		}
 	}
 
@@ -944,15 +973,11 @@ class Plugin {
 	 */
 	public static function to_proper_case( $txt ) {
 		self::write_log( __METHOD__ );
-		// echo "<div style=\"border:3px solid Yellow;\">txt = $txt</div>";.
 		preg_match( '/\p{L}/u', $txt, $matches, PREG_OFFSET_CAPTURE );
 		$idx = intval( $matches[0][1] );
-		// echo "<div style=\"border:3px solid Purple;\">idx = $idx</div>";.
 		$chr = mb_substr( $txt, $idx, 1, 'UTF-8' );
-		// echo "<div style=\"border:3px solid Pink;\">chr = $chr</div>";.
 		if ( preg_match( '/\p{L&}/u', $chr ) ) {
 			$post = mb_substr( $txt, $idx + 1, mb_strlen( $txt ), 'UTF-8' );
-			// echo "<div style=\"border:3px solid Black;\">post = $post</div>";.
 			return mb_substr( $txt, 0, $idx, 'UTF-8' ) . mb_strtoupper( $chr, 'UTF-8' ) . mb_strtolower( $post, 'UTF-8' );
 		} else {
 			return $txt;
